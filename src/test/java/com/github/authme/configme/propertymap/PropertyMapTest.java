@@ -1,7 +1,6 @@
 package com.github.authme.configme.propertymap;
 
 import com.github.authme.configme.properties.Property;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -11,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +40,8 @@ public class PropertyMapTest {
             resultPaths.add(entry.getKey().getPath());
         }
 
-        Assert.assertThat(resultPaths, contains("japan", "japan.tokyo", "japan.tokyo.taito", "japan.nagoya",
+        assertThat(map.size(), equalTo(paths.size()));
+        assertThat(resultPaths, contains("japan", "japan.tokyo", "japan.tokyo.taito", "japan.nagoya",
             "indonesia.jakarta", "indonesia.jakarta.tugu", "china", "china.shanghai", "china.shenzhen",
             "egypt", "egypt.cairo"));
     }

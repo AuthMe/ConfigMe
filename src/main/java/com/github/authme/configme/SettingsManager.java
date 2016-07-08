@@ -158,8 +158,13 @@ public class SettingsManager {
     private <T> String toYaml(Property<T> property, int indent, Yaml simpleYaml, Yaml singleQuoteYaml) {
         String representation = property.toYaml(configuration, simpleYaml, singleQuoteYaml);
         String result = "";
-        for (String line : representation.split("\\n")) {
-            result += "\n" + indent(indent) + line;
+        String[] lines = representation.split("\\n");
+        for (int i = 0; i < lines.length; ++i) {
+            if (i == 0) {
+                result = lines[0];
+            } else {
+                result += "\n" + indent(indent) + lines[i];
+            }
         }
         return result;
     }

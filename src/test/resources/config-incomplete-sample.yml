@@ -1,0 +1,17 @@
+# Test config file with missing options from TestConfiguration
+# Notice the commented out lines!
+
+test:
+    duration: 22
+sample:
+    ratio:
+        fields:
+            - 'Australia'
+            - 'Burundi'
+            - 'Colombia'
+features:
+    cool:
+        options:
+            - 'Dinosaurs'
+            - 'Explosions'
+            - 'Big trucks'

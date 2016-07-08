@@ -13,7 +13,7 @@ import java.util.List;
  * Utility class responsible for retrieving all {@link Property} fields
  * from {@link SettingsHolder} implementations via reflection.
  */
-public final class SettingsFieldRetriever {
+public class SettingsFieldRetriever {
 
     /** The classes to scan for properties. */
     private final List<Class<? extends SettingsHolder>> classes;
