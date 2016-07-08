@@ -4,17 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>fr.xephi</groupId>
-    <artifactId>authme</artifactId>
-    <version>5.2-SNAPSHOT</version>
+    <groupId>com.github.authme</groupId>
+    <artifactId>configme</artifactId>
+    <version>0.1-SNAPSHOT</version>
 
     <name>ConfigMe</name>
-    <description>Config manager for Minecraft plugins</description>
+    <description>A simple configuration management library for Bukkit plugins!</description>
     <inceptionYear>2016</inceptionYear>
     <url>https://github.com/AuthMe/ConfigMe</url>
 
     <organization>
-        <name>AuthMe-Team</name>
+        <name>The AuthMe Team</name>
         <url>https://github.com/AuthMe</url>
     </organization>
 
@@ -31,37 +31,94 @@
 
     <licenses>
         <license>
-            <!-- TODO sgdc3: Fix license -->
-            <name>The GNU General Public Licence version 3 (GPLv3)</name>
-            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
 
     <properties>
-        <!-- Project properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.jdkVersion>1.7</project.jdkVersion>
-
-        <!-- Output properties -->
-        <project.outputName>AuthMe</project.outputName>
-        <project.skipExtendedHashTests>false</project.skipExtendedHashTests>
-        <project.versionCode>${project.version}-b${project.buildNumber}</project.versionCode>
-        <project.finalName>${project.outputName}-${project.version}</project.finalName>
-
-        <!-- BukkitPlugin properties -->
-        <bukkitplugin.name>${project.outputName}</bukkitplugin.name>
-        <bukkitplugin.version>${project.versionCode}</bukkitplugin.version>
-        <bukkitplugin.main>${project.groupId}.${project.artifactId}.${bukkitplugin.name}</bukkitplugin.main>
-        <bukkitplugin.authors>Xephi, sgdc3, DNx5, timvisee, games647, ljacqu, Gnat008</bukkitplugin.authors>
-
-        <!-- Change Bukkit Version HERE! -->
-        <bukkit.version>1.10-R0.1-SNAPSHOT</bukkit.version>
     </properties>
 
+    
+    <!-- Release profile with more plugins -->
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Release plugin -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>2.5.3</version>
+                    </plugin>
+                    <!-- Source plugin -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Javadoc plugin -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- GPG plugin: requires 'gpg' being installed and settings.xml with credentials
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    -->
+                    <!-- Nexus Staging plugin
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.3</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    -->
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
-        <!-- Name of the unshaded jar (no shaded/relocated libraries) -->
-        <finalName>${project.finalName}-noshade</finalName>
+        <finalName>${project.name}-${project.version}</finalName>
 
         <plugins>
             <!-- Maven Java Compiler -->
@@ -74,7 +131,8 @@
                     <target>${project.jdkVersion}</target>
                 </configuration>
             </plugin>
-            <!-- Test Plugin -->
+
+            <!-- Unit Test Runner -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -84,7 +142,18 @@
                     <argLine>-Dfile.encoding=${project.build.sourceEncoding} @{argLine}</argLine>
                 </configuration>
             </plugin>
-            <!-- Libs Shading and Relocation -->
+
+            <!-- Coverage report publisher -->
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>4.2.0</version>
+                <configuration>
+                    <!-- Provided by Travis CI -->
+                    <repoToken>${env.coveralls_repo_token}</repoToken>
+                    <failOnServiceError>false</failOnServiceError>
+                </configuration>
+            </plugin>
 
             <!-- Coverage report generator -->
             <plugin>
@@ -100,7 +169,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 
@@ -119,21 +187,11 @@
     </repositories>
 
     <dependencies>
-        <!-- Guava (the version provided by the latest bukkit version) -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>17.0</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-
-
         <!-- Spigot API, http://www.spigotmc.org/ or http://bukkit.org/ -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>${bukkit.version}</version>
+            <version>1.10.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -151,10 +209,6 @@
                 <exclusion>
                     <artifactId>persistence-api</artifactId>
                     <groupId>javax.persistence</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>bungeecord-chat</artifactId>
