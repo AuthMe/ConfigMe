@@ -4,9 +4,6 @@ import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.propertymap.PropertyMap;
 import com.github.authme.configme.utils.CollectionUtils;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.yaml.snakeyaml.DumperOptions;
@@ -24,6 +21,8 @@ import java.util.Map;
  * The new settings manager.
  */
 public class SettingsManager {
+
+    private final static String IDENTATION = "    ";
 
     private final File configFile;
     private final PropertyMap propertyMap;
@@ -53,8 +52,7 @@ public class SettingsManager {
      * @param propertyMap The property map whose properties should be verified for presence, or null to skip this
      * @param migrationService Migration service, or null to skip migration checks
      */
-    @VisibleForTesting
-    SettingsManager(FileConfiguration configuration, File configFile,
+    protected SettingsManager(FileConfiguration configuration, File configFile,
                     PropertyMap propertyMap, MigrationService migrationService) {
         this.configuration = configuration;
         this.configFile = configFile;
@@ -159,7 +157,11 @@ public class SettingsManager {
 
     private <T> String toYaml(Property<T> property, int indent, Yaml simpleYaml, Yaml singleQuoteYaml) {
         String representation = property.toYaml(configuration, simpleYaml, singleQuoteYaml);
-        return Joiner.on("\n" + indent(indent)).join(representation.split("\\n"));
+        String result = "";
+        for(String line : representation.split("\\n")) {
+            result += "\n" + indent(indent) + line;
+        }
+        return result;
     }
 
     private static Yaml newYaml(boolean useSingleQuotes) {
@@ -173,8 +175,11 @@ public class SettingsManager {
     }
 
     private static String indent(int level) {
-        // We use an indentation of 4 spaces
-        return Strings.repeat(" ", level * 4);
+        String result = "";
+        for(int i=0; i<level; i++) {
+            result += IDENTATION;
+        }
+        return result;
     }
 
 }
