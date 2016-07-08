@@ -3,7 +3,7 @@ sudo: false
 language: java
 jdk: oraclejdk7
 
-script: mvn clean verify -B
+script: mvn clean verify jacoco:report coveralls:report -B -U
 
 notifications:
   webhooks:
