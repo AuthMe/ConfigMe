@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>fr.xephi</groupId>
+    <artifactId>authme</artifactId>
+    <version>5.2-SNAPSHOT</version>
+
+    <name>ConfigMe</name>
+    <description>Config manager for Minecraft plugins</description>
+    <inceptionYear>2016</inceptionYear>
+    <url>https://github.com/AuthMe/ConfigMe</url>
+
+    <organization>
+        <name>AuthMe-Team</name>
+        <url>https://github.com/AuthMe</url>
+    </organization>
+
+    <scm>
+        <connection>scm:git:https://github.com/AuthMe/ConfigMe.git</connection>
+        <developerConnection>scm:git:git@github.com:AuthMe/ConfigMe.git</developerConnection>
+        <url>https://github.com/AuthMe/ConfigMe/issues</url>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/AuthMe/ConfigMe/issues</url>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <!-- TODO sgdc3: Fix license -->
+            <name>The GNU General Public Licence version 3 (GPLv3)</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <properties>
+        <!-- Project properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.jdkVersion>1.7</project.jdkVersion>
+
+        <!-- Output properties -->
+        <project.outputName>AuthMe</project.outputName>
+        <project.skipExtendedHashTests>false</project.skipExtendedHashTests>
+        <project.versionCode>${project.version}-b${project.buildNumber}</project.versionCode>
+        <project.finalName>${project.outputName}-${project.version}</project.finalName>
+
+        <!-- BukkitPlugin properties -->
+        <bukkitplugin.name>${project.outputName}</bukkitplugin.name>
+        <bukkitplugin.version>${project.versionCode}</bukkitplugin.version>
+        <bukkitplugin.main>${project.groupId}.${project.artifactId}.${bukkitplugin.name}</bukkitplugin.main>
+        <bukkitplugin.authors>Xephi, sgdc3, DNx5, timvisee, games647, ljacqu, Gnat008</bukkitplugin.authors>
+
+        <!-- Change Bukkit Version HERE! -->
+        <bukkit.version>1.10-R0.1-SNAPSHOT</bukkit.version>
+    </properties>
+
+    <build>
+        <!-- Name of the unshaded jar (no shaded/relocated libraries) -->
+        <finalName>${project.finalName}-noshade</finalName>
+
+        <plugins>
+            <!-- Maven Java Compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <source>${project.jdkVersion}</source>
+                    <target>${project.jdkVersion}</target>
+                </configuration>
+            </plugin>
+            <!-- Test Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <!-- Force the right file encoding during unit testing -->
+                    <argLine>-Dfile.encoding=${project.build.sourceEncoding} @{argLine}</argLine>
+                </configuration>
+            </plugin>
+            <!-- Libs Shading and Relocation -->
+
+            <!-- Coverage report generator -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.7.201606060606</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <repositories>
+        <!-- SpigotAPI Repo -->
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
+        </repository>
+
+        <!-- Our Repo (Many libs) -->
+        <repository>
+            <id>xephi-repo</id>
+            <url>http://ci.xephi.fr/plugin/repository/everything/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Guava (the version provided by the latest bukkit version) -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>17.0</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+
+
+        <!-- Spigot API, http://www.spigotmc.org/ or http://bukkit.org/ -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${bukkit.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>junit</artifactId>
+                    <groupId>junit</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>json-simple</artifactId>
+                    <groupId>com.googlecode.json-simple</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>gson</artifactId>
+                    <groupId>com.google.code.gson</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>persistence-api</artifactId>
+                    <groupId>javax.persistence</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bungeecord-chat</artifactId>
+                    <groupId>net.md-5</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Unit testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+            <version>4.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
+            <scope>test</scope>
+            <version>2.0.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+            <version>2.0.5-beta</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>hamcrest-core</artifactId>
+                    <groupId>org.hamcrest</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+</project>
