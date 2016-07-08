@@ -218,6 +218,14 @@
                 	<artifactId>guava</artifactId>
                 	<groupId>com.google.guava</groupId>
                 </exclusion>
+                <exclusion>
+                	<artifactId>ebean</artifactId>
+                	<groupId>org.avaje</groupId>
+                </exclusion>
+                <exclusion>
+                	<artifactId>commons-lang</artifactId>
+                	<groupId>commons-lang</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
