@@ -18,6 +18,7 @@ public final class SettingsFieldRetriever {
     /** The classes to scan for properties. */
     private final List<Class<? extends SettingsHolder>> classes;
 
+    @SafeVarargs
     public SettingsFieldRetriever(Class<? extends SettingsHolder>... classes) {
         this.classes = Arrays.asList(classes);
     }

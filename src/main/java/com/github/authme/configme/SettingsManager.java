@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class SettingsManager {
 
-    private final static String IDENTATION = "    ";
+    private static final String INDENTATION = "    ";
 
     private final File configFile;
     private final PropertyMap propertyMap;
@@ -158,7 +158,7 @@ public class SettingsManager {
     private <T> String toYaml(Property<T> property, int indent, Yaml simpleYaml, Yaml singleQuoteYaml) {
         String representation = property.toYaml(configuration, simpleYaml, singleQuoteYaml);
         String result = "";
-        for(String line : representation.split("\\n")) {
+        for (String line : representation.split("\\n")) {
             result += "\n" + indent(indent) + line;
         }
         return result;
@@ -176,8 +176,8 @@ public class SettingsManager {
 
     private static String indent(int level) {
         String result = "";
-        for(int i=0; i<level; i++) {
-            result += IDENTATION;
+        for (int i = 0; i < level; i++) {
+            result += INDENTATION;
         }
         return result;
     }
