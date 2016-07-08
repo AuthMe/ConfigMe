@@ -178,54 +178,43 @@
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
         </repository>
-
-        <!-- Our Repo (Many libs) -->
-        <repository>
-            <id>xephi-repo</id>
-            <url>http://ci.xephi.fr/plugin/repository/everything/</url>
-        </repository>
     </repositories>
 
     <dependencies>
-        <!-- Spigot API, http://www.spigotmc.org/ or http://bukkit.org/ -->
+        <!-- SnakeYAML library -->
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
+		    <groupId>org.yaml</groupId>
+		    <artifactId>snakeyaml</artifactId>
+		    <version>1.17</version>
+		</dependency>
+
+        <!-- Bukkit API, http://www.spigotmc.org/ or http://bukkit.org/ -->
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
             <version>1.10.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
-                <exclusion>
-                    <artifactId>junit</artifactId>
-                    <groupId>junit</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>json-simple</artifactId>
-                    <groupId>com.googlecode.json-simple</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>gson</artifactId>
-                    <groupId>com.google.code.gson</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>persistence-api</artifactId>
-                    <groupId>javax.persistence</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>bungeecord-chat</artifactId>
-                    <groupId>net.md-5</groupId>
-                </exclusion>
-                <exclusion>
-                	<artifactId>guava</artifactId>
-                	<groupId>com.google.guava</groupId>
-                </exclusion>
-                <exclusion>
-                	<artifactId>ebean</artifactId>
-                	<groupId>org.avaje</groupId>
-                </exclusion>
-                <exclusion>
-                	<artifactId>commons-lang</artifactId>
-                	<groupId>commons-lang</groupId>
-                </exclusion>
+            	<exclusion>
+            		<artifactId>commons-lang</artifactId>
+            		<groupId>commons-lang</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>json-simple</artifactId>
+            		<groupId>com.googlecode.json-simple</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>guava</artifactId>
+            		<groupId>com.google.guava</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>gson</artifactId>
+            		<groupId>com.google.code.gson</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>ebean</artifactId>
+            		<groupId>org.avaje</groupId>
+            	</exclusion>
             </exclusions>
         </dependency>
 
