@@ -196,16 +196,8 @@
             <scope>provided</scope>
             <exclusions>
             	<exclusion>
-            		<artifactId>commons-lang</artifactId>
-            		<groupId>commons-lang</groupId>
-            	</exclusion>
-            	<exclusion>
             		<artifactId>json-simple</artifactId>
             		<groupId>com.googlecode.json-simple</groupId>
-            	</exclusion>
-            	<exclusion>
-            		<artifactId>guava</artifactId>
-            		<groupId>com.google.guava</groupId>
             	</exclusion>
             	<exclusion>
             		<artifactId>gson</artifactId>

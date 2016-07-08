@@ -4,7 +4,6 @@ import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.propertymap.PropertyMap;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
-import com.google.common.collect.ImmutableMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.Rule;
@@ -129,21 +128,21 @@ public class SettingsManagerIntegrationTest {
         assertThat(unusedFile.exists(), equalTo(false));
         assertThat(configuration.contains(TestConfiguration.DUST_LEVEL.getPath()), equalTo(true));
 
-        Map<Property<?>, Object> expectedValues = ImmutableMap.<Property<?>, Object>builder()
-            .put(TestConfiguration.DURATION_IN_SECONDS, 20)
-            .put(TestConfiguration.SYSTEM_NAME, "A 'test' name")
-            .put(TestConfiguration.RATIO_ORDER, TestEnum.FOURTH)
-            .put(TestConfiguration.RATIO_FIELDS, Arrays.asList("Australia\\", "\tBurundi'", "Colombia?\n''"))
-            .put(TestConfiguration.VERSION_NUMBER, -1337)
-            .put(TestConfiguration.SKIP_BORING_FEATURES, false)
-            .put(TestConfiguration.BORING_COLORS, Arrays.asList("it's a difficult string!", "gray\nwith new lines\n"))
-            .put(TestConfiguration.DUST_LEVEL, -1)
-            .put(TestConfiguration.USE_COOL_FEATURES, true)
-            .put(TestConfiguration.COOL_OPTIONS, Collections.EMPTY_LIST)
-            .put(additionalProperties.get(0), additionalProperties.get(0).getDefaultValue())
-            .put(additionalProperties.get(1), additionalProperties.get(1).getDefaultValue())
-            .build();
-        for (Map.Entry<Property<?>, Object> entry : expectedValues.entrySet()) {
+        Map<Property<?>, Object> expected = new HashMap<>();
+        expected.put(TestConfiguration.DURATION_IN_SECONDS, 20);
+        expected.put(TestConfiguration.SYSTEM_NAME, "A 'test' name");
+        expected.put(TestConfiguration.RATIO_ORDER, TestEnum.FOURTH);
+        expected.put(TestConfiguration.RATIO_FIELDS, Arrays.asList("Australia\\", "\tBurundi'", "Colombia?\n''"));
+        expected.put(TestConfiguration.VERSION_NUMBER, -1337);
+        expected.put(TestConfiguration.SKIP_BORING_FEATURES, false);
+        expected.put(TestConfiguration.BORING_COLORS, Arrays.asList("it's a difficult string!", "gray\nwith new lines\n"));
+        expected.put(TestConfiguration.DUST_LEVEL, -1);
+        expected.put(TestConfiguration.USE_COOL_FEATURES, true);
+        expected.put(TestConfiguration.COOL_OPTIONS, Collections.EMPTY_LIST);
+        expected.put(additionalProperties.get(0), additionalProperties.get(0).getDefaultValue());
+        expected.put(additionalProperties.get(1), additionalProperties.get(1).getDefaultValue());
+
+        for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
             assertThat("Property '" + entry.getKey().getPath() + "' has expected value"
                     + entry.getValue() + " but found " + settings.getProperty(entry.getKey()),
                 settings.getProperty(entry.getKey()), equalTo(entry.getValue()));
