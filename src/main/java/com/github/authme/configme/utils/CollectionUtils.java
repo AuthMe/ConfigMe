@@ -13,43 +13,29 @@ public final class CollectionUtils {
     }
 
     /**
-     * Get a range from a list based on start and count parameters in a safe way.
+     * Gets all elements from a list starting from the given index.
      *
-     * @param <T> element
-     * @param list The List
-     * @param start The start index
-     * @param count The number of elements to add
-     *
-     * @return The sublist consisting at most of {@code count} elements (less if the parameters
-     * exceed the size of the list)
-     */
-    public static <T> List<T> getRange(List<T> list, int start, int count) {
-        if (start >= list.size() || count <= 0) {
-            return new ArrayList<>();
-        } else if (start < 0) {
-            start = 0;
-        }
-        int end = Math.min(list.size(), start + count);
-        return list.subList(start, end);
-    }
-
-    /**
-     * Get all elements from a list starting from the given index.
-     *
-     * @param <T> element
-     * @param list The List
-     * @param start The start index
-     *
-     * @return The sublist of all elements from index {@code start} and on; empty list
+     * @param list the List
+     * @param start the start index
+     * @param <T> the list type
+     * @return the sublist of all elements from index {@code start} and on; empty list
      * if the start index exceeds the list's size
      */
     public static <T> List<T> getRange(List<T> list, int start) {
         if (start >= list.size()) {
             return new ArrayList<>();
         }
-        return getRange(list, start, list.size() - start);
+        return list.subList(start, list.size());
     }
 
+    /**
+     * Returns all entries that are the same at the beginning of both given lists.
+     *
+     * @param list1 first list
+     * @param list2 second list
+     * @param <T> type of the lists
+     * @return list of all equal entries at the start of both lists
+     */
     public static <T> List<T> filterCommonStart(List<T> list1, List<T> list2) {
         List<T> commonStart = new ArrayList<>();
         int minSize = Math.min(list1.size(), list2.size());
