@@ -183,10 +183,10 @@
     <dependencies>
         <!-- SnakeYAML library -->
         <dependency>
-		    <groupId>org.yaml</groupId>
-		    <artifactId>snakeyaml</artifactId>
-		    <version>1.17</version>
-		</dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.17</version>
+        </dependency>
 
         <!-- Bukkit API, http://www.spigotmc.org/ or http://bukkit.org/ -->
         <dependency>
@@ -195,42 +195,42 @@
             <version>1.10.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
-            	<exclusion>
-            		<artifactId>json-simple</artifactId>
-            		<groupId>com.googlecode.json-simple</groupId>
-            	</exclusion>
-            	<exclusion>
-            		<artifactId>gson</artifactId>
-            		<groupId>com.google.code.gson</groupId>
-            	</exclusion>
-            	<exclusion>
-            		<artifactId>ebean</artifactId>
-            		<groupId>org.avaje</groupId>
-            	</exclusion>
-            	<exclusion>
-            		<artifactId>guava</artifactId>
-            		<groupId>com.google.guava</groupId>
-            	</exclusion>
-            	<exclusion>
-            		<artifactId>commons-lang</artifactId>
-            		<groupId>commons-lang</groupId>
-            	</exclusion>
+                <exclusion>
+                    <artifactId>json-simple</artifactId>
+                    <groupId>com.googlecode.json-simple</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>gson</artifactId>
+                    <groupId>com.google.code.gson</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>ebean</artifactId>
+                    <groupId>org.avaje</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-lang</artifactId>
+                    <groupId>commons-lang</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
         <!-- Unit testing -->
         <dependency>
-		    <groupId>com.google.guava</groupId>
-		    <artifactId>guava</artifactId>
-		    <version>19.0</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>19.0</version>
             <scope>test</scope>
-		</dependency>
+        </dependency>
         <dependency>
-		    <groupId>commons-lang</groupId>
-		    <artifactId>commons-lang</artifactId>
-		    <version>2.6</version>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
             <scope>test</scope>
-		</dependency>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
