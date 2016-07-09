@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.authme.configme.properties.Property.newProperty;
+import static com.github.authme.configme.properties.PropertyInitializer.newProperty;
 import static com.github.authme.configme.samples.TestSettingsMigrationServices.alwaysFulfilled;
 import static com.github.authme.configme.samples.TestSettingsMigrationServices.checkAllPropertiesPresent;
 import static org.hamcrest.Matchers.equalTo;

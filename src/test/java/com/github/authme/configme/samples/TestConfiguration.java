@@ -4,12 +4,11 @@ import com.github.authme.configme.SettingsHolder;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.propertymap.PropertyMap;
 
-
 import java.lang.reflect.Field;
 import java.util.List;
 
-import static com.github.authme.configme.properties.Property.newListProperty;
-import static com.github.authme.configme.properties.Property.newProperty;
+import static com.github.authme.configme.properties.PropertyInitializer.newListProperty;
+import static com.github.authme.configme.properties.PropertyInitializer.newProperty;
 
 
 /**

@@ -16,7 +16,7 @@ public class EnumPropertyTest {
     @Test
     public void shouldReturnCorrectEnumValue() {
         // given
-        Property<TestEnum> property = Property.newProperty(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
+        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
         YamlConfiguration configuration = mock(YamlConfiguration.class);
         given(configuration.getString(property.getPath())).willReturn("Entry_B");
 
@@ -30,7 +30,7 @@ public class EnumPropertyTest {
     @Test
     public void shouldFallBackToDefaultForInvalidValue() {
         // given
-        Property<TestEnum> property = Property.newProperty(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
+        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
         YamlConfiguration configuration = mock(YamlConfiguration.class);
         given(configuration.getString(property.getPath())).willReturn("Bogus");
 
@@ -44,7 +44,7 @@ public class EnumPropertyTest {
     @Test
     public void shouldFallBackToDefaultForNonExistentValue() {
         // given
-        Property<TestEnum> property = Property.newProperty(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
+        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
         YamlConfiguration configuration = mock(YamlConfiguration.class);
         given(configuration.getString(property.getPath())).willReturn(null);
 
@@ -58,7 +58,7 @@ public class EnumPropertyTest {
     @Test
     public void shouldReturnTrueForContainsCheck() {
         // given
-        Property<TestEnum> property = Property.newProperty(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
+        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
         YamlConfiguration configuration = mock(YamlConfiguration.class);
         given(configuration.contains(property.getPath())).willReturn(true);
         given(configuration.getString(property.getPath())).willReturn("ENTRY_B");
@@ -73,7 +73,7 @@ public class EnumPropertyTest {
     @Test
     public void shouldReturnFalseForFileWithoutConfig() {
         // given
-        Property<TestEnum> property = Property.newProperty(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
+        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
         YamlConfiguration configuration = mock(YamlConfiguration.class);
         given(configuration.contains(property.getPath())).willReturn(false);
 
@@ -87,7 +87,7 @@ public class EnumPropertyTest {
     @Test
     public void shouldReturnFalseForUnknownValue() {
         // given
-        Property<TestEnum> property = Property.newProperty(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
+        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_A);
         YamlConfiguration configuration = mock(YamlConfiguration.class);
         given(configuration.contains(property.getPath())).willReturn(true);
         given(configuration.getString(property.getPath())).willReturn("wrong value");
