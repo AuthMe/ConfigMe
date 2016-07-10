@@ -1,7 +1,6 @@
 package com.github.authme.configme.properties;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.yaml.snakeyaml.Yaml;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,9 +28,9 @@ public class StringListProperty extends Property<List<String>> {
     }
 
     @Override
-    public String toYaml(FileConfiguration configuration, Yaml simpleYaml, Yaml singleQuoteYaml) {
+    public String toYaml(FileConfiguration configuration) {
         List<String> value = getFromFile(configuration);
-        String yaml = singleQuoteYaml.dump(value);
+        String yaml = getSingleQuoteYaml().dump(value);
         // If the property is a non-empty list we need to append a new line because it will be
         // something like the following, which requires a new line:
         // - 'item 1'

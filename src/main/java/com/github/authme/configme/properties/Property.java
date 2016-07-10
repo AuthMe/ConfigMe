@@ -1,6 +1,7 @@
 package com.github.authme.configme.properties;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.Objects;
@@ -9,6 +10,9 @@ import java.util.Objects;
  * A setting, i.e. a configuration that is read from the config.yml file.
  */
 public abstract class Property<T> {
+
+    private static Yaml simpleYaml;
+    private static Yaml singleQuoteYaml;
 
     private final String path;
     private final T defaultValue;
@@ -41,12 +45,10 @@ public abstract class Property<T> {
      * Formats the property's value as YAML.
      *
      * @param configuration the file configuration
-     * @param simpleYaml YAML object (default)
-     * @param singleQuoteYaml YAML object using single quotes
      * @return the generated YAML
      */
-    public String toYaml(FileConfiguration configuration, Yaml simpleYaml, Yaml singleQuoteYaml) {
-        return simpleYaml.dump(getFromFile(configuration));
+    public String toYaml(FileConfiguration configuration) {
+        return getSimpleYaml().dump(getFromFile(configuration));
     }
 
     /**
@@ -65,6 +67,40 @@ public abstract class Property<T> {
      */
     public String getPath() {
         return path;
+    }
+
+    /**
+     * Returns a YAML instance set to export values with the default style.
+     *
+     * @return YAML instance
+     */
+    protected Yaml getSimpleYaml() {
+        if (simpleYaml == null) {
+            simpleYaml = newYaml(false);
+        }
+        return simpleYaml;
+    }
+
+    /**
+     * Returns a YAML instance set to export values with single quotes.
+     *
+     * @return YAML instance
+     */
+    protected Yaml getSingleQuoteYaml() {
+        if (singleQuoteYaml == null) {
+            singleQuoteYaml = newYaml(true);
+        }
+        return singleQuoteYaml;
+    }
+
+    private static Yaml newYaml(boolean useSingleQuotes) {
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setAllowUnicode(true);
+        if (useSingleQuotes) {
+            options.setDefaultScalarStyle(DumperOptions.ScalarStyle.SINGLE_QUOTED);
+        }
+        return new Yaml(options);
     }
 
     @Override

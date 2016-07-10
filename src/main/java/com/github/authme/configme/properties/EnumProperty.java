@@ -2,7 +2,6 @@ package com.github.authme.configme.properties;
 
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.yaml.snakeyaml.Yaml;
 
 /**
  * Enum property.
@@ -34,9 +33,9 @@ public class EnumProperty<E extends Enum<E>> extends Property<E> {
     }
 
     @Override
-    public String toYaml(FileConfiguration configuration, Yaml simpleYaml, Yaml singleQuoteYaml) {
+    public String toYaml(FileConfiguration configuration) {
         E value = getFromFile(configuration);
-        return singleQuoteYaml.dump(value.name());
+        return getSingleQuoteYaml().dump(value.name());
     }
 
     private E mapToEnum(String value) {

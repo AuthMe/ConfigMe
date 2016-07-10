@@ -1,13 +1,12 @@
 package com.github.authme.configme;
 
+import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.propertymap.PropertyMap;
 import com.github.authme.configme.utils.CollectionUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -53,7 +52,7 @@ public class SettingsManager {
      * @param migrationService Migration service, or null to skip migration checks
      */
     protected SettingsManager(FileConfiguration configuration, File configFile,
-                    PropertyMap propertyMap, MigrationService migrationService) {
+                              PropertyMap propertyMap, MigrationService migrationService) {
         this.configuration = configuration;
         this.configFile = configFile;
         this.propertyMap = propertyMap;
@@ -99,10 +98,8 @@ public class SettingsManager {
      */
     public void save() {
         try (FileWriter writer = new FileWriter(configFile)) {
-            Yaml simpleYaml = newYaml(false);
-            Yaml singleQuoteYaml = newYaml(true);
-
             writer.write("");
+
             // Contains all but the last node of the setting, e.g. [DataSource, mysql] for "DataSource.mysql.username"
             List<String> currentPath = new ArrayList<>();
             for (Map.Entry<Property<?>, String[]> entry : propertyMap.entrySet()) {
@@ -138,14 +135,14 @@ public class SettingsManager {
                     .append(indent(indentationLevel))
                     .append(CollectionUtils.getRange(newPathParts, newPathParts.size() - 1).get(0))
                     .append(": ")
-                    .append(toYaml(property, indentationLevel, simpleYaml, singleQuoteYaml));
+                    .append(toYaml(property, indentationLevel));
 
                 currentPath = propertyPath.subList(0, propertyPath.size() - 1);
             }
             writer.flush();
             writer.close();
         } catch (IOException e) {
-            throw new IllegalStateException(e);
+            throw new ConfigMeException("Could not save config to '" + configFile.getName() + "'", e);
         }
     }
 
@@ -155,8 +152,8 @@ public class SettingsManager {
         }
     }
 
-    private <T> String toYaml(Property<T> property, int indent, Yaml simpleYaml, Yaml singleQuoteYaml) {
-        String representation = property.toYaml(configuration, simpleYaml, singleQuoteYaml);
+    private <T> String toYaml(Property<T> property, int indent) {
+        String representation = property.toYaml(configuration);
         String result = "";
         String[] lines = representation.split("\\n");
         for (int i = 0; i < lines.length; ++i) {
@@ -167,16 +164,6 @@ public class SettingsManager {
             }
         }
         return result;
-    }
-
-    private static Yaml newYaml(boolean useSingleQuotes) {
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        options.setAllowUnicode(true);
-        if (useSingleQuotes) {
-            options.setDefaultScalarStyle(DumperOptions.ScalarStyle.SINGLE_QUOTED);
-        }
-        return new Yaml(options);
     }
 
     private static String indent(int level) {

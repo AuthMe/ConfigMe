@@ -1,7 +1,6 @@
 package com.github.authme.configme.properties;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.yaml.snakeyaml.Yaml;
 
 /**
  * String property.
@@ -18,7 +17,7 @@ public class StringProperty extends Property<String> {
     }
 
     @Override
-    public String toYaml(FileConfiguration configuration, Yaml simpleYaml, Yaml singleQuoteYaml) {
-        return singleQuoteYaml.dump(getFromFile(configuration));
+    public String toYaml(FileConfiguration configuration) {
+        return getSingleQuoteYaml().dump(getFromFile(configuration));
     }
 }

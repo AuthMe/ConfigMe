@@ -2,6 +2,7 @@ package com.github.authme.configme.propertymap;
 
 import com.github.authme.configme.Comment;
 import com.github.authme.configme.SettingsHolder;
+import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.properties.Property;
 
 import java.lang.reflect.Field;
@@ -62,7 +63,7 @@ public class SettingsFieldRetriever {
             try {
                 return (Property<?>) field.get(null);
             } catch (IllegalAccessException e) {
-                throw new IllegalStateException("Could not fetch field '" + field.getName() + "' from class '"
+                throw new ConfigMeException("Could not fetch field '" + field.getName() + "' from class '"
                     + field.getDeclaringClass().getSimpleName() + "'", e);
             }
         }
