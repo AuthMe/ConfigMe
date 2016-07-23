@@ -1,7 +1,7 @@
 package com.github.authme.configme.migration;
 
 import com.github.authme.configme.propertymap.PropertyMap;
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 
 /**
  * The migration service is called when the settings manager is instantiated. It allows to
@@ -13,10 +13,10 @@ public interface MigrationService {
     /**
      * Checks the settings and perform any necessary migrations.
      *
-     * @param fileConfiguration the file configuration
+     * @param resource the property resource
      * @param propertyMap the property map
      * @return {@code true} if a migration has been performed, {@code false} if the settings are up-to-date
      */
-    boolean checkAndMigrate(FileConfiguration fileConfiguration, PropertyMap propertyMap);
+    boolean checkAndMigrate(PropertyResource resource, PropertyMap propertyMap);
 
 }

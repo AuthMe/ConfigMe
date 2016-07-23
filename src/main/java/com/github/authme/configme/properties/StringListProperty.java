@@ -1,6 +1,6 @@
 package com.github.authme.configme.properties;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,26 +15,18 @@ public class StringListProperty extends Property<List<String>> {
     }
 
     @Override
-    public List<String> getFromFile(FileConfiguration configuration) {
-        if (!configuration.isList(getPath())) {
-            return getDefaultValue();
+    @SuppressWarnings("unchecked")
+    public List<String> getFromReader(PropertyResource resource) {
+        List<?> rawList = resource.getList(getPath());
+        if (rawList != null) {
+            for (Object o : rawList) {
+                if (!(o instanceof String)) {
+                    return null;
+                }
+            }
+            // We checked that every entry is a String
+            return (List<String>) rawList;
         }
-        return configuration.getStringList(getPath());
-    }
-
-    @Override
-    public boolean isPresent(FileConfiguration configuration) {
-        return configuration.isList(getPath());
-    }
-
-    @Override
-    public String toYaml(FileConfiguration configuration) {
-        List<String> value = getFromFile(configuration);
-        String yaml = getSingleQuoteYaml().dump(value);
-        // If the property is a non-empty list we need to append a new line because it will be
-        // something like the following, which requires a new line:
-        // - 'item 1'
-        // - 'second item in list'
-        return value.isEmpty() ? yaml : "\n" + yaml;
+        return null;
     }
 }

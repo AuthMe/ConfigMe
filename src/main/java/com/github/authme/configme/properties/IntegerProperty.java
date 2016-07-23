@@ -1,6 +1,6 @@
 package com.github.authme.configme.properties;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 
 /**
  * Integer property.
@@ -12,7 +12,7 @@ public class IntegerProperty extends Property<Integer> {
     }
 
     @Override
-    public Integer getFromFile(FileConfiguration configuration) {
-        return configuration.getInt(getPath(), getDefaultValue());
+    public Integer getFromReader(PropertyResource resource) {
+        return resource.getInt(getPath());
     }
 }

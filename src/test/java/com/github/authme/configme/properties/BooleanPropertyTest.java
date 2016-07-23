@@ -1,14 +1,11 @@
 package com.github.authme.configme.properties;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.internal.stubbing.answers.ReturnsArgumentAt;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -17,13 +14,13 @@ import static org.mockito.Mockito.when;
  */
 public class BooleanPropertyTest {
 
-    private static FileConfiguration configuration;
+    private static PropertyResource resource;
 
     @BeforeClass
     public static void setUpConfiguration() {
-        configuration = mock(FileConfiguration.class);
-        when(configuration.getBoolean(eq("bool.path.test"), anyBoolean())).thenReturn(true);
-        when(configuration.getBoolean(eq("bool.path.wrong"), anyBoolean())).thenAnswer(new ReturnsArgumentAt(1));
+        resource = mock(PropertyResource.class);
+        when(resource.getBoolean("bool.path.test")).thenReturn(true);
+        when(resource.getBoolean("bool.path.wrong")).thenReturn(null);
     }
 
     @Test
@@ -32,7 +29,7 @@ public class BooleanPropertyTest {
         Property<Boolean> property = new BooleanProperty("bool.path.test", false);
 
         // when
-        boolean result = property.getFromFile(configuration);
+        boolean result = property.getValue(resource);
 
         // then
         assertThat(result, equalTo(true));
@@ -44,7 +41,7 @@ public class BooleanPropertyTest {
         Property<Boolean> property = new BooleanProperty("bool.path.wrong", true);
 
         // when
-        boolean result = property.getFromFile(configuration);
+        boolean result = property.getValue(resource);
 
         // then
         assertThat(result, equalTo(true));

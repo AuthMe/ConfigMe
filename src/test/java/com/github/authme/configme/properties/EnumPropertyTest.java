@@ -1,6 +1,6 @@
 package com.github.authme.configme.properties;
 
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -17,11 +17,11 @@ public class EnumPropertyTest {
     public void shouldReturnCorrectEnumValue() {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
-        YamlConfiguration configuration = mock(YamlConfiguration.class);
-        given(configuration.getString(property.getPath())).willReturn("Entry_B");
+        PropertyResource resource = mock(PropertyResource.class);
+        given(resource.getString(property.getPath())).willReturn("Entry_B");
 
         // when
-        TestEnum result = property.getFromFile(configuration);
+        TestEnum result = property.getValue(resource);
 
         // then
         assertThat(result, equalTo(TestEnum.ENTRY_B));
@@ -31,11 +31,11 @@ public class EnumPropertyTest {
     public void shouldFallBackToDefaultForInvalidValue() {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
-        YamlConfiguration configuration = mock(YamlConfiguration.class);
-        given(configuration.getString(property.getPath())).willReturn("Bogus");
+        PropertyResource resource = mock(PropertyResource.class);
+        given(resource.getString(property.getPath())).willReturn("Bogus");
 
         // when
-        TestEnum result = property.getFromFile(configuration);
+        TestEnum result = property.getValue(resource);
 
         // then
         assertThat(result, equalTo(TestEnum.ENTRY_C));
@@ -45,11 +45,11 @@ public class EnumPropertyTest {
     public void shouldFallBackToDefaultForNonExistentValue() {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
-        YamlConfiguration configuration = mock(YamlConfiguration.class);
-        given(configuration.getString(property.getPath())).willReturn(null);
+        PropertyResource resource = mock(PropertyResource.class);
+        given(resource.getString(property.getPath())).willReturn(null);
 
         // when
-        TestEnum result = property.getFromFile(configuration);
+        TestEnum result = property.getValue(resource);
 
         // then
         assertThat(result, equalTo(TestEnum.ENTRY_C));
@@ -59,12 +59,12 @@ public class EnumPropertyTest {
     public void shouldReturnTrueForContainsCheck() {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
-        YamlConfiguration configuration = mock(YamlConfiguration.class);
-        given(configuration.contains(property.getPath())).willReturn(true);
-        given(configuration.getString(property.getPath())).willReturn("ENTRY_B");
+        PropertyResource resource = mock(PropertyResource.class);
+        given(resource.contains(property.getPath())).willReturn(true);
+        given(resource.getString(property.getPath())).willReturn("ENTRY_B");
 
         // when
-        boolean result = property.isPresent(configuration);
+        boolean result = property.isPresent(resource);
 
         // then
         assertThat(result, equalTo(true));
@@ -74,11 +74,11 @@ public class EnumPropertyTest {
     public void shouldReturnFalseForFileWithoutConfig() {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
-        YamlConfiguration configuration = mock(YamlConfiguration.class);
-        given(configuration.contains(property.getPath())).willReturn(false);
+        PropertyResource resource = mock(PropertyResource.class);
+        given(resource.contains(property.getPath())).willReturn(false);
 
         // when
-        boolean result = property.isPresent(configuration);
+        boolean result = property.isPresent(resource);
 
         // then
         assertThat(result, equalTo(false));
@@ -88,12 +88,12 @@ public class EnumPropertyTest {
     public void shouldReturnFalseForUnknownValue() {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_A);
-        YamlConfiguration configuration = mock(YamlConfiguration.class);
-        given(configuration.contains(property.getPath())).willReturn(true);
-        given(configuration.getString(property.getPath())).willReturn("wrong value");
+        PropertyResource resource = mock(PropertyResource.class);
+        given(resource.contains(property.getPath())).willReturn(true);
+        given(resource.getString(property.getPath())).willReturn("wrong value");
 
         // when
-        boolean result = property.isPresent(configuration);
+        boolean result = property.isPresent(resource);
 
         // then
         assertThat(result, equalTo(false));

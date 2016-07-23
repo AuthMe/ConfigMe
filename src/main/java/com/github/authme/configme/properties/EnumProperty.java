@@ -1,7 +1,7 @@
 package com.github.authme.configme.properties;
 
 
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 
 /**
  * Enum property.
@@ -18,24 +18,17 @@ public class EnumProperty<E extends Enum<E>> extends Property<E> {
     }
 
     @Override
-    public E getFromFile(FileConfiguration configuration) {
-        String textValue = configuration.getString(getPath());
-        if (textValue == null) {
-            return getDefaultValue();
+    public E getFromReader(PropertyResource resource) {
+        String textValue = resource.getString(getPath());
+        if (textValue != null) {
+            return mapToEnum(textValue);
         }
-        E mappedValue = mapToEnum(textValue);
-        return mappedValue == null ? getDefaultValue() : mappedValue;
+        return null;
     }
 
     @Override
-    public boolean isPresent(FileConfiguration configuration) {
-        return super.isPresent(configuration) && mapToEnum(configuration.getString(getPath())) != null;
-    }
-
-    @Override
-    public String toYaml(FileConfiguration configuration) {
-        E value = getFromFile(configuration);
-        return getSingleQuoteYaml().dump(value.name());
+    public boolean isPresent(PropertyResource resource) {
+        return super.isPresent(resource) && mapToEnum(resource.getString(getPath())) != null;
     }
 
     private E mapToEnum(String value) {

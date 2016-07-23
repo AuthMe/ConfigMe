@@ -1,6 +1,6 @@
 package com.github.authme.configme.properties;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,17 +15,15 @@ public class LowercaseStringListProperty extends StringListProperty {
     }
 
     @Override
-    public List<String> getFromFile(FileConfiguration configuration) {
-        if (!configuration.isList(getPath())) {
-            return getDefaultValue();
+    public List<String> getFromReader(PropertyResource resource) {
+        List<String> list = super.getFromReader(resource);
+        if (list != null) {
+            List<String> lowercaseList = new ArrayList<>(list.size());
+            for (String element : list) {
+                lowercaseList.add(element.toLowerCase());
+            }
+            return lowercaseList;
         }
-
-        // make sure all elements are lowercase
-        List<String> lowercaseList = new ArrayList<>();
-        for (String element : configuration.getStringList(getPath())) {
-            lowercaseList.add(element.toLowerCase());
-        }
-
-        return lowercaseList;
+        return null;
     }
 }

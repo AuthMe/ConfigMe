@@ -1,66 +1,32 @@
 package com.github.authme.configme;
 
-import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.propertymap.PropertyMap;
-import com.github.authme.configme.utils.CollectionUtils;
+import com.github.authme.configme.resource.PropertyResource;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The new settings manager.
  */
 public class SettingsManager {
 
-    private static final String INDENTATION = "    ";
-
-    private final File configFile;
     private final PropertyMap propertyMap;
+    private final PropertyResource resource;
     private final MigrationService migrationService;
-    private FileConfiguration configuration;
 
     /**
      * Constructor. Checks the given {@link FileConfiguration} object for completeness.
      *
-     * @param configFile The configuration file
-     * @param propertyMap Collection of all available settings
-     * @param migrationService Migration service to check the settings file with
+     * @param propertyMap collection of all available settings
+     * @param resource the property resource to read and write properties to
+     * @param migrationService migration service to check the settings file with
      */
-    public SettingsManager(File configFile, PropertyMap propertyMap, MigrationService migrationService) {
-        this.configuration = YamlConfiguration.loadConfiguration(configFile);
-        this.configFile = configFile;
+    public SettingsManager(PropertyMap propertyMap, PropertyResource resource, MigrationService migrationService) {
         this.propertyMap = propertyMap;
+        this.resource = resource;
         this.migrationService = migrationService;
         validateAndLoadOptions();
-    }
-
-    /**
-     * Constructor for testing purposes, allowing more options.
-     *
-     * @param configuration The FileConfiguration object to use
-     * @param configFile The file to write to
-     * @param propertyMap The property map whose properties should be verified for presence, or null to skip this
-     * @param migrationService Migration service, or null to skip migration checks
-     */
-    protected SettingsManager(FileConfiguration configuration, File configFile,
-                              PropertyMap propertyMap, MigrationService migrationService) {
-        this.configuration = configuration;
-        this.configFile = configFile;
-        this.propertyMap = propertyMap;
-        this.migrationService = migrationService;
-
-        if (propertyMap != null && migrationService != null) {
-            validateAndLoadOptions();
-        }
     }
 
     /**
@@ -71,7 +37,7 @@ public class SettingsManager {
      * @return The property's value
      */
     public <T> T getProperty(Property<T> property) {
-        return property.getFromFile(configuration);
+        return property.getValue(resource);
     }
 
     /**
@@ -82,14 +48,14 @@ public class SettingsManager {
      * @param <T> The property's type
      */
     public <T> void setProperty(Property<T> property, T value) {
-        configuration.set(property.getPath(), value);
+        resource.setValue(property.getPath(), value);
     }
 
     /**
      * Reloads the configuration.
      */
     public void reload() {
-        configuration = YamlConfiguration.loadConfiguration(configFile);
+        resource.reload();
         validateAndLoadOptions();
     }
 
@@ -97,81 +63,13 @@ public class SettingsManager {
      * Saves the config file. Use after migrating one or more settings.
      */
     public void save() {
-        try (FileWriter writer = new FileWriter(configFile)) {
-            writer.write("");
-
-            // Contains all but the last node of the setting, e.g. [DataSource, mysql] for "DataSource.mysql.username"
-            List<String> currentPath = new ArrayList<>();
-            for (Map.Entry<Property<?>, String[]> entry : propertyMap.entrySet()) {
-                Property<?> property = entry.getKey();
-
-                // Handle properties
-                List<String> propertyPath = Arrays.asList(property.getPath().split("\\."));
-                List<String> commonPathParts = CollectionUtils.filterCommonStart(
-                    currentPath, propertyPath.subList(0, propertyPath.size() - 1));
-                List<String> newPathParts = CollectionUtils.getRange(propertyPath, commonPathParts.size());
-
-                if (commonPathParts.isEmpty()) {
-                    writer.append("\n");
-                }
-
-                int indentationLevel = commonPathParts.size();
-                if (newPathParts.size() > 1) {
-                    for (String path : newPathParts.subList(0, newPathParts.size() - 1)) {
-                        writer.append("\n")
-                            .append(indent(indentationLevel))
-                            .append(path)
-                            .append(": ");
-                        ++indentationLevel;
-                    }
-                }
-                for (String comment : entry.getValue()) {
-                    writer.append("\n")
-                        .append(indent(indentationLevel))
-                        .append("# ")
-                        .append(comment);
-                }
-                writer.append("\n")
-                    .append(indent(indentationLevel))
-                    .append(CollectionUtils.getRange(newPathParts, newPathParts.size() - 1).get(0))
-                    .append(": ")
-                    .append(toYaml(property, indentationLevel));
-
-                currentPath = propertyPath.subList(0, propertyPath.size() - 1);
-            }
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            throw new ConfigMeException("Could not save config to '" + configFile.getName() + "'", e);
-        }
+        resource.exportProperties(propertyMap);
     }
 
     private void validateAndLoadOptions() {
-        if (migrationService.checkAndMigrate(configuration, propertyMap)) {
+        if (migrationService.checkAndMigrate(resource, propertyMap)) {
             save();
         }
-    }
-
-    private <T> String toYaml(Property<T> property, int indent) {
-        String representation = property.toYaml(configuration);
-        String result = "";
-        String[] lines = representation.split("\\n");
-        for (int i = 0; i < lines.length; ++i) {
-            if (i == 0) {
-                result = lines[0];
-            } else {
-                result += "\n" + indent(indent) + lines[i];
-            }
-        }
-        return result;
-    }
-
-    private static String indent(int level) {
-        String result = "";
-        for (int i = 0; i < level; i++) {
-            result += INDENTATION;
-        }
-        return result;
     }
 
 }

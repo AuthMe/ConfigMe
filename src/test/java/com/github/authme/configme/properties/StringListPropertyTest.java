@@ -1,6 +1,6 @@
 package com.github.authme.configme.properties;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -17,14 +17,17 @@ import static org.mockito.Mockito.when;
  */
 public class StringListPropertyTest {
 
-    private static FileConfiguration configuration;
+    private static PropertyResource resource;
 
     @BeforeClass
     public static void setUpConfiguration() {
-        configuration = mock(FileConfiguration.class);
-        when(configuration.isList("list.path.test")).thenReturn(true);
-        when(configuration.getStringList("list.path.test")).thenReturn(Arrays.asList("test1", "Test2", "3rd test"));
-        when(configuration.isList("list.path.wrong")).thenReturn(false);
+        resource = mock(PropertyResource.class);
+        // need to have the List objects unchecked so we satisfy the List<?> signature
+        List stringList = Arrays.asList("test1", "Test2", "3rd test");
+        when(resource.getList("list.path.test")).thenReturn(stringList);
+        when(resource.getList("list.path.wrong")).thenReturn(null);
+        List mixedList = Arrays.asList("test1", "toast", 1);
+        when(resource.getList("list.path.mixed")).thenReturn(mixedList);
     }
 
     @Test
@@ -33,7 +36,7 @@ public class StringListPropertyTest {
         Property<List<String>> property = new StringListProperty("list.path.test", "1", "b");
 
         // when
-        List<String> result = property.getFromFile(configuration);
+        List<String> result = property.getValue(resource);
 
         // then
         assertThat(result, contains("test1", "Test2", "3rd test"));
@@ -45,9 +48,21 @@ public class StringListPropertyTest {
         Property<List<String>> property = new StringListProperty("list.path.wrong", "default", "list", "elements");
 
         // when
-        List<String> result = property.getFromFile(configuration);
+        List<String> result = property.getValue(resource);
 
         // then
         assertThat(result, contains("default", "list", "elements"));
+    }
+
+    @Test
+    public void shouldGetStringListDefaultForMixedListFromResource() {
+        // given
+        Property<List<String>> property = new StringListProperty("list.path.mixed", "My", "default", "values");
+
+        // when
+        List<String> result = property.getValue(resource);
+
+        // then
+        assertThat(result, contains("My", "default", "values"));
     }
 }

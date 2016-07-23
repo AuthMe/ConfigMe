@@ -1,6 +1,6 @@
 package com.github.authme.configme.properties;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -17,15 +17,17 @@ import static org.mockito.Mockito.when;
  */
 public class LowercaseStringListPropertyTest {
 
-    private static FileConfiguration configuration;
+    private static PropertyResource resource;
 
     @BeforeClass
     public static void setUpConfiguration() {
-        configuration = mock(FileConfiguration.class);
-        when(configuration.isList("lowercaselist.path.test")).thenReturn(true);
-        when(configuration.getStringList("lowercaselist.path.test"))
-            .thenReturn(Arrays.asList("test1", "Test2", "3rd test"));
-        when(configuration.isList("lowercaselist.path.wrong")).thenReturn(false);
+        resource = mock(PropertyResource.class);
+        // need to have the List objects unchecked so we satisfy the List<?> signature
+        List stringList = Arrays.asList("test1", "Test2", "3rd TEST");
+        when(resource.getList("lowercaselist.path.test")).thenReturn(stringList);
+        when(resource.getList("lowercaselist.path.wrong")).thenReturn(null);
+        List mixedList = Arrays.asList("test1", "toast", 1);
+        when(resource.getList("lowercaselist.path.mixed")).thenReturn(mixedList);
     }
 
     @Test
@@ -34,7 +36,7 @@ public class LowercaseStringListPropertyTest {
         Property<List<String>> property = new LowercaseStringListProperty("lowercaselist.path.test", "1", "b");
 
         // when
-        List<String> result = property.getFromFile(configuration);
+        List<String> result = property.getValue(resource);
 
         // then
         assertThat(result, contains("test1", "test2", "3rd test"));
@@ -47,9 +49,22 @@ public class LowercaseStringListPropertyTest {
             new LowercaseStringListProperty("lowercaselist.path.wrong", "default", "list", "elements");
 
         // when
-        List<String> result = property.getFromFile(configuration);
+        List<String> result = property.getValue(resource);
 
         // then
         assertThat(result, contains("default", "list", "elements"));
+    }
+
+    @Test
+    public void shouldGetStringListDefaultForMixedListFromResource() {
+        // given
+        Property<List<String>> property =
+            new LowercaseStringListProperty("lowercaselist.path.mixed", "my", "default", "values");
+
+        // when
+        List<String> result = property.getValue(resource);
+
+        // then
+        assertThat(result, contains("my", "default", "values"));
     }
 }

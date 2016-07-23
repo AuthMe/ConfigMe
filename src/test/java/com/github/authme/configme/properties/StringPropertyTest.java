@@ -1,14 +1,11 @@
 package com.github.authme.configme.properties;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.internal.stubbing.answers.ReturnsArgumentAt;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -17,13 +14,13 @@ import static org.mockito.Mockito.when;
  */
 public class StringPropertyTest {
 
-    private static FileConfiguration configuration;
+    private static PropertyResource resource;
 
     @BeforeClass
     public static void setUpConfiguration() {
-        configuration = mock(FileConfiguration.class);
-        when(configuration.getString(eq("str.path.test"), anyString())).thenReturn("Test value");
-        when(configuration.getString(eq("str.path.wrong"), anyString())).thenAnswer(new ReturnsArgumentAt(1));
+        resource = mock(PropertyResource.class);
+        when(resource.getString("str.path.test")).thenReturn("Test value");
+        when(resource.getString("str.path.wrong")).thenReturn(null);
     }
 
     @Test
@@ -32,7 +29,7 @@ public class StringPropertyTest {
         Property<String> property = new StringProperty("str.path.test", "unused default");
 
         // when
-        String result = property.getFromFile(configuration);
+        String result = property.getValue(resource);
 
         // then
         assertThat(result, equalTo("Test value"));
@@ -44,7 +41,7 @@ public class StringPropertyTest {
         Property<String> property = new StringProperty("str.path.wrong", "given default value");
 
         // when
-        String result = property.getFromFile(configuration);
+        String result = property.getValue(resource);
 
         // then
         assertThat(result, equalTo("given default value"));

@@ -2,13 +2,14 @@ package com.github.authme.configme;
 
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.propertymap.PropertyMap;
+import com.github.authme.configme.resource.PropertyResource;
+import com.github.authme.configme.resource.YamlFileWriter;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,9 +27,12 @@ import static com.github.authme.configme.samples.TestSettingsMigrationServices.a
 import static com.github.authme.configme.samples.TestSettingsMigrationServices.checkAllPropertiesPresent;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /**
- * Integration test for {@link SettingsManager}.
+ * Integration test for {@link SettingsManager} and {@link com.github.authme.configme.resource.YamlFileWriter}.
  */
 public class SettingsManagerIntegrationTest {
 
@@ -44,12 +48,16 @@ public class SettingsManagerIntegrationTest {
     @Test
     public void shouldReadAllProperties() throws IOException {
         // given
-        FileConfiguration configuration = YamlConfiguration.loadConfiguration(copyFileFromResources(COMPLETE_FILE));
-        // Pass another, non-existent file to check if the settings had to be rewritten
-        File newFile = temporaryFolder.newFile();
+        File config = copyFileFromResources(COMPLETE_FILE);
+        PropertyResource resource = new YamlFileWriter(config);
+        // keep track of the initial length / last modified and make sure it's the same at the end
+        // simple way to check that the file wasn't written to again
+        long initialLength = config.length();
+        long lastModified = config.lastModified();
+
 
         // when / then
-        SettingsManager settings = new SettingsManager(configuration, newFile, propertyMap, checkAllPropertiesPresent());
+        SettingsManager settings = new SettingsManager(propertyMap, resource, checkAllPropertiesPresent());
         Map<Property<?>, Object> expected = new HashMap<>();
         expected.put(TestConfiguration.DURATION_IN_SECONDS, 22);
         expected.put(TestConfiguration.SYSTEM_NAME, "Custom sys name");
@@ -66,23 +74,24 @@ public class SettingsManagerIntegrationTest {
             assertThat("Property '" + entry.getKey().getPath() + "' has expected value",
                 settings.getProperty(entry.getKey()), equalTo(entry.getValue()));
         }
-        assertThat(newFile.length(), equalTo(0L));
 
+        assertThat(initialLength, equalTo(config.length()));
+        assertThat(lastModified, equalTo(config.lastModified()));
     }
 
     @Test
     public void shouldWriteMissingProperties() {
         // given/when
         File file = copyFileFromResources(INCOMPLETE_FILE);
-        FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        YamlFileWriter resource = new YamlFileWriter(file);
         // Expectation: File is rewritten to since it does not have all configurations
-        new SettingsManager(configuration, file, propertyMap, checkAllPropertiesPresent());
+        new SettingsManager(propertyMap, resource, checkAllPropertiesPresent());
 
         // Load the settings again -> checks that what we wrote can be loaded again
-        configuration = YamlConfiguration.loadConfiguration(file);
+        resource.reload();
 
         // then
-        SettingsManager settings = new SettingsManager(configuration, file, propertyMap, checkAllPropertiesPresent());
+        SettingsManager settings = new SettingsManager(propertyMap, resource, checkAllPropertiesPresent());
         Map<Property<?>, Object> expected = new HashMap<>();
         expected.put(TestConfiguration.DURATION_IN_SECONDS, 22);
         expected.put(TestConfiguration.SYSTEM_NAME, "[TestDefaultValue]");
@@ -105,7 +114,7 @@ public class SettingsManagerIntegrationTest {
     public void shouldProperlyExportAnyValues() {
         // given
         File file = copyFileFromResources(DIFFICULT_FILE);
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        YamlFileWriter resource = new YamlFileWriter(file);
 
         // Additional string properties
         List<Property<String>> additionalProperties = Arrays.asList(
@@ -117,16 +126,13 @@ public class SettingsManagerIntegrationTest {
         }
 
         // when
-        new SettingsManager(configuration, file, propertyMap, checkAllPropertiesPresent());
+        new SettingsManager(propertyMap, resource, checkAllPropertiesPresent());
         // reload the file as settings should have been rewritten
-        configuration = YamlConfiguration.loadConfiguration(file);
+        resource = Mockito.spy(new YamlFileWriter(file));
 
         // then
-        // assert that we won't rewrite the settings again! One rewrite should produce a valid, complete configuration
-        File unusedFile = new File("config-difficult-values.unused.yml");
-        SettingsManager settings = new SettingsManager(configuration, unusedFile, propertyMap, checkAllPropertiesPresent());
-        assertThat(unusedFile.exists(), equalTo(false));
-        assertThat(configuration.contains(TestConfiguration.DUST_LEVEL.getPath()), equalTo(true));
+        SettingsManager settings = new SettingsManager(propertyMap, resource, checkAllPropertiesPresent());
+        assertThat(resource.contains(TestConfiguration.DUST_LEVEL.getPath()), equalTo(true));
 
         Map<Property<?>, Object> expected = new HashMap<>();
         expected.put(TestConfiguration.DURATION_IN_SECONDS, 20);
@@ -143,18 +149,19 @@ public class SettingsManagerIntegrationTest {
         expected.put(additionalProperties.get(1), additionalProperties.get(1).getDefaultValue());
 
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
-            assertThat("Property '" + entry.getKey().getPath() + "' has expected value"
-                    + entry.getValue() + " but found " + settings.getProperty(entry.getKey()),
+            assertThat("Property '" + entry.getKey().getPath() + "' has expected value",
                 settings.getProperty(entry.getKey()), equalTo(entry.getValue()));
         }
+        verify(resource, never()).exportProperties(any(PropertyMap.class));
     }
 
     @Test
     public void shouldReloadSettings() throws IOException {
         // given
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(temporaryFolder.newFile());
-        File fullConfigFile = copyFileFromResources(COMPLETE_FILE);
-        SettingsManager settings = new SettingsManager(configuration, fullConfigFile, propertyMap, alwaysFulfilled());
+        File file = temporaryFolder.newFile();
+        YamlFileWriter resource = new YamlFileWriter(file);
+        Files.copy(TestUtils.getJarPath(COMPLETE_FILE), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        SettingsManager settings = new SettingsManager(propertyMap, resource, alwaysFulfilled());
 
         // when
         assertThat(settings.getProperty(TestConfiguration.RATIO_ORDER),

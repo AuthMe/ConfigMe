@@ -1,6 +1,6 @@
 package com.github.authme.configme.properties;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 
 /**
  * Boolean property.
@@ -12,7 +12,7 @@ public class BooleanProperty extends Property<Boolean> {
     }
 
     @Override
-    public Boolean getFromFile(FileConfiguration configuration) {
-        return configuration.getBoolean(getPath(), getDefaultValue());
+    public Boolean getFromReader(PropertyResource resource) {
+        return resource.getBoolean(getPath());
     }
 }

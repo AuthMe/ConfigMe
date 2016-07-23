@@ -1,14 +1,11 @@
 package com.github.authme.configme.properties;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.internal.stubbing.answers.ReturnsArgumentAt;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -17,13 +14,13 @@ import static org.mockito.Mockito.when;
  */
 public class IntegerPropertyTest {
 
-    private static FileConfiguration configuration;
+    private static PropertyResource resource;
 
     @BeforeClass
     public static void setUpConfiguration() {
-        configuration = mock(FileConfiguration.class);
-        when(configuration.getInt(eq("int.path.test"), anyInt())).thenReturn(27);
-        when(configuration.getInt(eq("int.path.wrong"), anyInt())).thenAnswer(new ReturnsArgumentAt(1));
+        resource = mock(PropertyResource.class);
+        when(resource.getInt("int.path.test")).thenReturn(27);
+        when(resource.getInt("int.path.wrong")).thenReturn(null);
     }
 
     @Test
@@ -32,7 +29,7 @@ public class IntegerPropertyTest {
         Property<Integer> property = new IntegerProperty("int.path.test", 3);
 
         // when
-        int result = property.getFromFile(configuration);
+        int result = property.getValue(resource);
 
         // then
         assertThat(result, equalTo(27));
@@ -44,7 +41,7 @@ public class IntegerPropertyTest {
         Property<Integer> property = new IntegerProperty("int.path.wrong", -10);
 
         // when
-        int result = property.getFromFile(configuration);
+        int result = property.getValue(resource);
 
         // then
         assertThat(result, equalTo(-10));

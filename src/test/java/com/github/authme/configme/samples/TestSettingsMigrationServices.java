@@ -3,7 +3,7 @@ package com.github.authme.configme.samples;
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.propertymap.PropertyMap;
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.authme.configme.resource.PropertyResource;
 
 /**
  * Provides {@link MigrationService} implementations for testing.
@@ -21,7 +21,7 @@ public final class TestSettingsMigrationServices {
     public static MigrationService alwaysFulfilled() {
         return new MigrationService() {
             @Override
-            public boolean checkAndMigrate(FileConfiguration configuration, PropertyMap propertyMap) {
+            public boolean checkAndMigrate(PropertyResource resource, PropertyMap propertyMap) {
                 return false;
             }
         };
@@ -35,9 +35,9 @@ public final class TestSettingsMigrationServices {
     public static MigrationService checkAllPropertiesPresent() {
         return new MigrationService() {
             @Override
-            public boolean checkAndMigrate(FileConfiguration configuration, PropertyMap propertyMap) {
+            public boolean checkAndMigrate(PropertyResource resource, PropertyMap propertyMap) {
                 for (Property<?> property : propertyMap.keySet()) {
-                    if (!property.isPresent(configuration)) {
+                    if (!property.isPresent(resource)) {
                         return true;
                     }
                 }
