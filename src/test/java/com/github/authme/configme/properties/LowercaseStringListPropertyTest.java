@@ -20,6 +20,7 @@ public class LowercaseStringListPropertyTest {
     private static PropertyResource resource;
 
     @BeforeClass
+    @SuppressWarnings("unchecked")
     public static void setUpConfiguration() {
         resource = mock(PropertyResource.class);
         // need to have the List objects unchecked so we satisfy the List<?> signature

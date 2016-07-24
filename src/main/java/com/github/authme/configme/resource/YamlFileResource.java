@@ -5,8 +5,6 @@ import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.properties.StringListProperty;
 import com.github.authme.configme.propertymap.PropertyMap;
 import com.github.authme.configme.utils.CollectionUtils;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -20,76 +18,71 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Writes properties as YAML to a file.
+ * Property resource based on a YAML file.
  */
-public class YamlFileWriter implements PropertyResource {
+public class YamlFileResource implements PropertyResource {
 
     private static final String INDENTATION = "    ";
     private static Yaml simpleYaml;
     private static Yaml singleQuoteYaml;
 
     private final File file;
-    private FileConfiguration configuration;
+    private YamlFileReader reader;
 
-    public YamlFileWriter(File file) {
+    public YamlFileResource(File file) {
         this.file = file;
-        this.configuration = YamlConfiguration.loadConfiguration(file);
+        this.reader = new YamlFileReader(file);
     }
 
     @Override
     public boolean contains(String path) {
-        return configuration.contains(path);
+        return reader.contains(path);
     }
 
     @Override
     public Object getObject(String path) {
-        return configuration.get(path);
+        return reader.getObject(path);
     }
 
     @Override
     public String getString(String path) {
-        return configuration.getString(path);
+        return reader.getTypedObject(path, String.class);
     }
 
     @Override
     public Integer getInt(String path) {
-        // We need to roll out our own getInt() because YamlConfiguration defaults to 0 if no int is found...
-        Object o = configuration.get(path);
-        if (o instanceof Number) {
-            return ((Number) o).intValue();
-        }
-        return null;
+        Number n = reader.getTypedObject(path, Number.class);
+        return (n == null)
+            ? null
+            : n.intValue();
     }
 
     @Override
     public Double getDouble(String path) {
-        // We need to roll out our own getDouble() because YamlConfiguration defaults to 0 if no int is found...
-        Object o = configuration.get(path);
-        if (o instanceof Number) {
-            return ((Number) o).doubleValue();
-        }
-        return null;
+        Number n = reader.getTypedObject(path, Number.class);
+        return (n == null)
+            ? null
+            : n.doubleValue();
     }
 
     @Override
     public Boolean getBoolean(String path) {
-        // Need to check that value is boolean, otherwise
-        return configuration.isBoolean(path) ? configuration.getBoolean(path) : null;
+        return reader.getTypedObject(path, Boolean.class);
     }
 
     @Override
     public List<?> getList(String path) {
-        return configuration.getList(path);
+        return reader.getTypedObject(path, List.class);
     }
 
     @Override
     public void setValue(String path, Object value) {
-        configuration.set(path, value);
+        reader.set(path, value);
     }
 
     @Override
     public void reload() {
-        configuration = YamlConfiguration.loadConfiguration(file);
+        reader = new YamlFileReader(file);
     }
 
     @Override

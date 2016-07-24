@@ -9,7 +9,7 @@
     <version>0.1-SNAPSHOT</version>
 
     <name>ConfigMe</name>
-    <description>A simple configuration management library for Bukkit plugins!</description>
+    <description>A simple configuration management library</description>
     <inceptionYear>2016</inceptionYear>
     <url>https://github.com/AuthMe/ConfigMe</url>
 
@@ -186,28 +186,6 @@
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>1.17</version>
-        </dependency>
-
-        <!-- Bukkit API, http://www.spigotmc.org/ or http://bukkit.org/ -->
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.10.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>json-simple</artifactId>
-                    <groupId>com.googlecode.json-simple</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>gson</artifactId>
-                    <groupId>com.google.code.gson</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>ebean</artifactId>
-                    <groupId>org.avaje</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Unit testing -->

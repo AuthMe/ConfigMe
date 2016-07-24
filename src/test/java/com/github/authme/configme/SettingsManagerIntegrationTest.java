@@ -3,7 +3,7 @@ package com.github.authme.configme;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.propertymap.PropertyMap;
 import com.github.authme.configme.resource.PropertyResource;
-import com.github.authme.configme.resource.YamlFileWriter;
+import com.github.authme.configme.resource.YamlFileResource;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
 import org.junit.Rule;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 /**
- * Integration test for {@link SettingsManager} and {@link com.github.authme.configme.resource.YamlFileWriter}.
+ * Integration test for {@link SettingsManager} and {@link YamlFileResource}.
  */
 public class SettingsManagerIntegrationTest {
 
@@ -49,7 +49,7 @@ public class SettingsManagerIntegrationTest {
     public void shouldReadAllProperties() throws IOException {
         // given
         File config = copyFileFromResources(COMPLETE_FILE);
-        PropertyResource resource = new YamlFileWriter(config);
+        PropertyResource resource = new YamlFileResource(config);
         // keep track of the initial length / last modified and make sure it's the same at the end
         // simple way to check that the file wasn't written to again
         long initialLength = config.length();
@@ -83,7 +83,7 @@ public class SettingsManagerIntegrationTest {
     public void shouldWriteMissingProperties() {
         // given/when
         File file = copyFileFromResources(INCOMPLETE_FILE);
-        YamlFileWriter resource = new YamlFileWriter(file);
+        YamlFileResource resource = new YamlFileResource(file);
         // Expectation: File is rewritten to since it does not have all configurations
         new SettingsManager(propertyMap, resource, checkAllPropertiesPresent());
 
@@ -114,7 +114,7 @@ public class SettingsManagerIntegrationTest {
     public void shouldProperlyExportAnyValues() {
         // given
         File file = copyFileFromResources(DIFFICULT_FILE);
-        YamlFileWriter resource = new YamlFileWriter(file);
+        YamlFileResource resource = new YamlFileResource(file);
 
         // Additional string properties
         List<Property<String>> additionalProperties = Arrays.asList(
@@ -128,7 +128,7 @@ public class SettingsManagerIntegrationTest {
         // when
         new SettingsManager(propertyMap, resource, checkAllPropertiesPresent());
         // reload the file as settings should have been rewritten
-        resource = Mockito.spy(new YamlFileWriter(file));
+        resource = Mockito.spy(new YamlFileResource(file));
 
         // then
         SettingsManager settings = new SettingsManager(propertyMap, resource, checkAllPropertiesPresent());
@@ -159,7 +159,7 @@ public class SettingsManagerIntegrationTest {
     public void shouldReloadSettings() throws IOException {
         // given
         File file = temporaryFolder.newFile();
-        YamlFileWriter resource = new YamlFileWriter(file);
+        YamlFileResource resource = new YamlFileResource(file);
         Files.copy(TestUtils.getJarPath(COMPLETE_FILE), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         SettingsManager settings = new SettingsManager(propertyMap, resource, alwaysFulfilled());
 

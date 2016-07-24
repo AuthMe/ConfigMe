@@ -4,7 +4,6 @@ import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.propertymap.PropertyMap;
 import com.github.authme.configme.resource.PropertyResource;
-import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  * The new settings manager.
@@ -16,7 +15,7 @@ public class SettingsManager {
     private final MigrationService migrationService;
 
     /**
-     * Constructor. Checks the given {@link FileConfiguration} object for completeness.
+     * Constructor.
      *
      * @param propertyMap collection of all available settings
      * @param resource the property resource to read and write properties to
