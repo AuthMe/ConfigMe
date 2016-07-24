@@ -2,6 +2,7 @@ package com.github.authme.configme.properties;
 
 import com.github.authme.configme.resource.PropertyResource;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -20,9 +21,10 @@ public abstract class Property<T> {
     }
 
     /**
-     * Gets the property value from the given configuration &ndash; guaranteed to never return null.
+     * Gets the property value from the given resource and falls back to the default value if not present.
+     * Guaranteed to never return null.
      *
-     * @param resource the property source
+     * @param resource the property resource
      * @return the value, or default if not present
      */
     public T getValue(PropertyResource resource) {
@@ -30,12 +32,13 @@ public abstract class Property<T> {
         return value == null ? defaultValue : value;
     }
 
+    @Nullable
     protected abstract T getFromReader(PropertyResource resource);
 
     /**
-     * Returns whether or not the given source contains the property.
+     * Returns whether or not the given resource contains the property.
      *
-     * @param resource the property source to verify with
+     * @param resource the property resource to check
      * @return true if the property is present, false otherwise
      */
     public boolean isPresent(PropertyResource resource) {
@@ -58,10 +61,6 @@ public abstract class Property<T> {
      */
     public String getPath() {
         return path;
-    }
-
-    protected T nullToDefault(T readValue) {
-        return readValue == null ? defaultValue : readValue;
     }
 
     @Override

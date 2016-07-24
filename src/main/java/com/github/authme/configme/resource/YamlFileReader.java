@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * YAML file reader.
@@ -86,6 +87,9 @@ public class YamlFileReader {
      */
     @SuppressWarnings("unchecked")
     public void set(String path, Object value) {
+        Objects.requireNonNull(path);
+        Objects.requireNonNull(value);
+
         Map<String, Object> node = root;
         String[] keys = path.split("\\.");
         for (int i = 0; i < keys.length - 1; ++i) {

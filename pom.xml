@@ -172,20 +172,20 @@
         </plugins>
     </build>
 
-    <repositories>
-        <!-- SpigotAPI Repo -->
-        <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <!-- SnakeYAML library -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>1.17</version>
+        </dependency>
+
+        <!-- FindBugs, has implementation for @Nullable -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <scope>provided</scope>
+            <version>3.0.1</version>
         </dependency>
 
         <!-- Unit testing -->

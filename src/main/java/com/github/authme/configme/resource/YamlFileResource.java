@@ -136,6 +136,17 @@ public class YamlFileResource implements PropertyResource {
         }
     }
 
+    /**
+     * Returns the YAML representation for the given value (belonging to the given value).
+     * This method returns the YAML representation of the value only (does not include the key)
+     * with no indentation (will be applied afterwards with the appropriate level).
+     *
+     * @param property the associated property
+     * @param value the value to transform as YAML
+     * @return the YAML representation of the value
+     */
+    // For more custom types, you can override this method and implement your custom behavior
+    // and call super.transformValue() at the end to handle all types already handled here
     protected String transformValue(Property<?> property, Object value) {
         if (property instanceof StringListProperty) {
             // If the property is a non-empty list we need to append a new line because it will be
