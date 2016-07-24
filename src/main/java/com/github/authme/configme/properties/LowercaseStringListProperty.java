@@ -15,8 +15,8 @@ public class LowercaseStringListProperty extends StringListProperty {
     }
 
     @Override
-    public List<String> getFromReader(PropertyResource resource) {
-        List<String> list = super.getFromReader(resource);
+    public List<String> getFromResource(PropertyResource resource) {
+        List<String> list = super.getFromResource(resource);
         if (list != null) {
             List<String> lowercaseList = new ArrayList<>(list.size());
             for (String element : list) {

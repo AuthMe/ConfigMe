@@ -18,18 +18,18 @@ public class EnumProperty<E extends Enum<E>> extends Property<E> {
     }
 
     @Override
-    public E getFromReader(PropertyResource resource) {
-        String textValue = resource.getString(getPath());
-        if (textValue != null) {
+    public E getFromResource(PropertyResource resource) {
+        // Value is read from file as a String, but when it is set later on it is an enum
+        Object value = resource.getObject(getPath());
+        if (clazz.isInstance(value)) {
+            return clazz.cast(value);
+        }
+
+        if (value instanceof String) {
+            String textValue = (String) value;
             return mapToEnum(textValue);
         }
         return null;
-    }
-
-    @Override
-    public boolean isPresent(PropertyResource resource) {
-        String value = resource.getString(getPath());
-        return value != null && mapToEnum(resource.getString(getPath())) != null;
     }
 
     private E mapToEnum(String value) {

@@ -28,12 +28,12 @@ public abstract class Property<T> {
      * @return the value, or default if not present
      */
     public T getValue(PropertyResource resource) {
-        T value = getFromReader(resource);
+        T value = getFromResource(resource);
         return value == null ? defaultValue : value;
     }
 
     @Nullable
-    protected abstract T getFromReader(PropertyResource resource);
+    protected abstract T getFromResource(PropertyResource resource);
 
     /**
      * Returns whether or not the given resource contains the property.
@@ -42,7 +42,7 @@ public abstract class Property<T> {
      * @return true if the property is present, false otherwise
      */
     public boolean isPresent(PropertyResource resource) {
-        return getFromReader(resource) != null;
+        return getFromResource(resource) != null;
     }
 
     /**
