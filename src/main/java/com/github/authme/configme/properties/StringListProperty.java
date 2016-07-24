@@ -29,4 +29,9 @@ public class StringListProperty extends Property<List<String>> {
         }
         return null;
     }
+
+    @Override
+    public boolean isPresent(PropertyResource resource) {
+        return resource.getList(getPath()) != null;
+    }
 }

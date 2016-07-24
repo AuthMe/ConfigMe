@@ -35,11 +35,6 @@ public class YamlFileResource implements PropertyResource {
     }
 
     @Override
-    public boolean contains(String path) {
-        return reader.contains(path);
-    }
-
-    @Override
     public Object getObject(String path) {
         return reader.getObject(path);
     }

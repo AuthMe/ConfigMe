@@ -11,6 +11,7 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -44,6 +45,7 @@ public class PropertyMapTest {
         assertThat(resultPaths, contains("japan", "japan.tokyo", "japan.tokyo.taito", "japan.nagoya",
             "indonesia.jakarta", "indonesia.jakarta.tugu", "china", "china.shanghai", "china.shenzhen",
             "egypt", "egypt.cairo"));
+        assertThat(map.keySet(), hasSize(resultPaths.size()));
     }
 
     private static Property<?> createPropertyWithPath(String path) {

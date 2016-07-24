@@ -42,7 +42,7 @@ public abstract class Property<T> {
      * @return true if the property is present, false otherwise
      */
     public boolean isPresent(PropertyResource resource) {
-        return resource.contains(path);
+        return getFromReader(resource) != null;
     }
 
     /**

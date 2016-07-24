@@ -35,16 +35,6 @@ public class YamlFileReader {
     }
 
     /**
-     * Returns whether there is a value for the given path.
-     *
-     * @param path the path to process
-     * @return true if the path exists, false otherwise
-     */
-    public boolean contains(String path) {
-        return getObject(path) != null;
-    }
-
-    /**
      * Returns the value for the given path, or null if not present.
      *
      * @param path the path to retrieve the value for

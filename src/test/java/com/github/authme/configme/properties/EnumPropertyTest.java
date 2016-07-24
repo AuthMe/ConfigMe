@@ -60,7 +60,6 @@ public class EnumPropertyTest {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
         PropertyResource resource = mock(PropertyResource.class);
-        given(resource.contains(property.getPath())).willReturn(true);
         given(resource.getString(property.getPath())).willReturn("ENTRY_B");
 
         // when
@@ -75,7 +74,7 @@ public class EnumPropertyTest {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
         PropertyResource resource = mock(PropertyResource.class);
-        given(resource.contains(property.getPath())).willReturn(false);
+        given(resource.getString(property.getPath())).willReturn(null);
 
         // when
         boolean result = property.isPresent(resource);
@@ -89,7 +88,6 @@ public class EnumPropertyTest {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_A);
         PropertyResource resource = mock(PropertyResource.class);
-        given(resource.contains(property.getPath())).willReturn(true);
         given(resource.getString(property.getPath())).willReturn("wrong value");
 
         // when

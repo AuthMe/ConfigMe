@@ -10,7 +10,7 @@ import com.github.authme.configme.resource.PropertyResource;
  */
 public class EnumProperty<E extends Enum<E>> extends Property<E> {
 
-    private Class<E> clazz;
+    private final Class<E> clazz;
 
     public EnumProperty(Class<E> clazz, String path, E defaultValue) {
         super(path, defaultValue);
@@ -28,7 +28,8 @@ public class EnumProperty<E extends Enum<E>> extends Property<E> {
 
     @Override
     public boolean isPresent(PropertyResource resource) {
-        return super.isPresent(resource) && mapToEnum(resource.getString(getPath())) != null;
+        String value = resource.getString(getPath());
+        return value != null && mapToEnum(resource.getString(getPath())) != null;
     }
 
     private E mapToEnum(String value) {

@@ -15,14 +15,6 @@ public interface PropertyResource {
     // -------
 
     /**
-     * Returns whether the path is available.
-     *
-     * @param path the path to process
-     * @return true if the path has a value associated to it, false otherwise
-     */
-    boolean contains(String path);
-
-    /**
      * Returns the object at the given path, or null if absent.
      *
      * @param path the path to retrieve the value for

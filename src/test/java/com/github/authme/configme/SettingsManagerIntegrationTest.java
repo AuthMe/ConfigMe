@@ -26,6 +26,8 @@ import static com.github.authme.configme.properties.PropertyInitializer.newPrope
 import static com.github.authme.configme.samples.TestSettingsMigrationServices.alwaysFulfilled;
 import static com.github.authme.configme.samples.TestSettingsMigrationServices.checkAllPropertiesPresent;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
@@ -132,7 +134,7 @@ public class SettingsManagerIntegrationTest {
 
         // then
         SettingsManager settings = new SettingsManager(propertyMap, resource, checkAllPropertiesPresent());
-        assertThat(resource.contains(TestConfiguration.DUST_LEVEL.getPath()), equalTo(true));
+        assertThat(resource.getObject(TestConfiguration.DUST_LEVEL.getPath()), not(nullValue()));
 
         Map<Property<?>, Object> expected = new HashMap<>();
         expected.put(TestConfiguration.DURATION_IN_SECONDS, 20);

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -65,5 +66,20 @@ public class StringListPropertyTest {
 
         // then
         assertThat(result, contains("My", "default", "values"));
+    }
+
+    @Test
+    public void shouldCheckIfValueIsListForPresenceCheck() {
+        // given
+        Property<List<String>> property1 = new StringListProperty("list.path.wrong");
+        Property<List<String>> property2 = new StringListProperty("list.path.mixed");
+
+        // when
+        boolean result1 = property1.isPresent(resource);
+        boolean result2 = property2.isPresent(resource);
+
+        // then
+        assertThat(result1, equalTo(false));
+        assertThat(result2, equalTo(true));
     }
 }
