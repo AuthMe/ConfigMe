@@ -20,12 +20,12 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
 /**
- * Test for {@link BaseMigrationService}.
+ * Test for {@link PlainMigrationService}.
  */
-public class BaseMigrationServiceTest {
+public class PlainMigrationServiceTest {
 
     private static final PropertyMap PROPERTY_MAP = TestConfiguration.generatePropertyMap();
-    private BaseMigrationService service = Mockito.spy(new BaseMigrationServiceTestImpl());
+    private PlainMigrationService service = Mockito.spy(new PlainMigrationServiceTestImpl());
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -66,7 +66,7 @@ public class BaseMigrationServiceTest {
         return Mockito.spy(new YamlFileResource(tempFile.toFile()));
     }
 
-    private static class BaseMigrationServiceTestImpl extends BaseMigrationService {
+    private static class PlainMigrationServiceTestImpl extends PlainMigrationService {
         @Override
         protected boolean performMigrations(PropertyResource resource, PropertyMap propertyMap) {
             return false;
