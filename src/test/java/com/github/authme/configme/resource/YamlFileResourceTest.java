@@ -4,8 +4,8 @@ import com.github.authme.configme.SettingsManager;
 import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.properties.Property;
+import com.github.authme.configme.propertymap.KnownProperties;
 import com.github.authme.configme.propertymap.PropertyEntry;
-import com.github.authme.configme.propertymap.PropertyMap;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
 import org.junit.Rule;
@@ -108,10 +108,10 @@ public class YamlFileResourceTest {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
         YamlFileResource resource = new YamlFileResource(file);
-        PropertyMap propertyMap = TestConfiguration.generatePropertyMap();
+        KnownProperties knownProperties = TestConfiguration.generatePropertyMap();
 
         // when
-        resource.exportProperties(propertyMap);
+        resource.exportProperties(knownProperties);
 
         // then
         // Load file again to make sure what we wrote can be read again
@@ -151,13 +151,13 @@ public class YamlFileResourceTest {
         for (Property<?> property : additionalProperties) {
             entries.add(new PropertyEntry(property));
         }
-        PropertyMap propertyMap = mock(PropertyMap.class);
-        given(propertyMap.getEntries()).willReturn(entries);
+        KnownProperties knownProperties = mock(KnownProperties.class);
+        given(knownProperties.getEntries()).willReturn(entries);
 
         // when
-        new SettingsManager(propertyMap, resource, checkAllPropertiesPresent());
+        new SettingsManager(knownProperties, resource, checkAllPropertiesPresent());
         // Save and load again
-        resource.exportProperties(propertyMap);
+        resource.exportProperties(knownProperties);
         resource.reload();
 
         // then

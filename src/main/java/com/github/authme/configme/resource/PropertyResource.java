@@ -1,6 +1,6 @@
 package com.github.authme.configme.resource;
 
-import com.github.authme.configme.propertymap.PropertyMap;
+import com.github.authme.configme.propertymap.KnownProperties;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -75,7 +75,7 @@ public interface PropertyResource {
 
     /**
      * Sets the value for the given path. Only modifies the in-memory collection of loaded values.
-     * New values are only persisted after {@link #exportProperties(PropertyMap)} has been called.
+     * New values are only persisted after {@link #exportProperties(KnownProperties)} has been called.
      *
      * @param path the path to set a new value for
      * @param value the value to set
@@ -95,8 +95,8 @@ public interface PropertyResource {
     /**
      * Exports the properties (e.g. writes to a file).
      *
-     * @param propertyMap the property map for all properties to consider
+     * @param knownProperties the property map for all properties to consider
      */
-    void exportProperties(PropertyMap propertyMap);
+    void exportProperties(KnownProperties knownProperties);
 
 }

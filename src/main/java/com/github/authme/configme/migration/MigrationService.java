@@ -1,6 +1,6 @@
 package com.github.authme.configme.migration;
 
-import com.github.authme.configme.propertymap.PropertyMap;
+import com.github.authme.configme.propertymap.KnownProperties;
 import com.github.authme.configme.resource.PropertyResource;
 
 /**
@@ -14,9 +14,9 @@ public interface MigrationService {
      * Checks the settings and perform any necessary migrations.
      *
      * @param resource the property resource
-     * @param propertyMap the property map
+     * @param knownProperties the property map
      * @return {@code true} if a migration has been performed, {@code false} if the settings are up-to-date
      */
-    boolean checkAndMigrate(PropertyResource resource, PropertyMap propertyMap);
+    boolean checkAndMigrate(PropertyResource resource, KnownProperties knownProperties);
 
 }

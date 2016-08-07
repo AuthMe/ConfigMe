@@ -1,7 +1,7 @@
 package com.github.authme.configme.migration;
 
 import com.github.authme.configme.TestUtils;
-import com.github.authme.configme.propertymap.PropertyMap;
+import com.github.authme.configme.propertymap.KnownProperties;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
 import com.github.authme.configme.samples.TestConfiguration;
@@ -24,14 +24,14 @@ import static org.mockito.Mockito.verify;
  */
 public class PlainMigrationServiceTest {
 
-    private static final PropertyMap PROPERTY_MAP = TestConfiguration.generatePropertyMap();
-    private PlainMigrationService service = Mockito.spy(new PlainMigrationServiceTestImpl());
+    private static final KnownProperties PROPERTY_MAP = TestConfiguration.generatePropertyMap();
+    private PlainMigrationService service = Mockito.spy(new PlainMigrationService());
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    public void shouldReturnTrueForAllPropertiesPresent() throws IOException {
+    public void shouldReturnNoSaveNecessaryForAllPropertiesPresent() throws IOException {
         // given
         PropertyResource resource = createResourceSpy("/config-sample.yml");
 
@@ -44,7 +44,7 @@ public class PlainMigrationServiceTest {
     }
 
     @Test
-    public void shouldReturnFalseForMissingProperty() throws IOException {
+    public void shouldReturnTrueForMissingProperty() throws IOException {
         // given
         PropertyResource resource = createResourceSpy("/config-incomplete-sample.yml");
 
@@ -58,19 +58,12 @@ public class PlainMigrationServiceTest {
     }
 
     private PropertyResource createResourceSpy(String file) throws IOException {
-        // It's a little difficult to set up mock behavior for all cases, so use config-sample.yml
+        // It's a little difficult to set up mock behavior for all cases, so use a YML file from test/resources
         Path sampleJarFile = TestUtils.getJarPath(file);
         File tempFolder = temporaryFolder.newFolder();
         Path tempFile = new File(tempFolder, "sample.yml").toPath();
         Files.copy(sampleJarFile, tempFile);
         return Mockito.spy(new YamlFileResource(tempFile.toFile()));
-    }
-
-    private static class PlainMigrationServiceTestImpl extends PlainMigrationService {
-        @Override
-        protected boolean performMigrations(PropertyResource resource, PropertyMap propertyMap) {
-            return false;
-        }
     }
 
 }

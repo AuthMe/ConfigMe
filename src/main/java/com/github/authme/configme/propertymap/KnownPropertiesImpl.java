@@ -1,9 +1,7 @@
-package com.github.authme.configme.propertymap.list;
+package com.github.authme.configme.propertymap;
 
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.propertymap.PropertyEntry;
-import com.github.authme.configme.propertymap.PropertyMap;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -11,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Implementation of {@link PropertyMap}.
+ * Implementation of {@link KnownProperties}.
  *
  * It guarantees that the added entries:
  * <ul>
@@ -21,11 +19,11 @@ import java.util.Map;
  *   property, then "DataSource" properties will come before the "security" ones.</li>
  * </ul>
  */
-public class OrderedPropertiesList implements PropertyMap {
+public class KnownPropertiesImpl implements KnownProperties {
 
     private LinkedHashMap<String, Object> rootEntries;
 
-    public OrderedPropertiesList() {
+    public KnownPropertiesImpl() {
         rootEntries = new LinkedHashMap<>();
     }
 
@@ -38,7 +36,7 @@ public class OrderedPropertiesList implements PropertyMap {
 
         final String end = paths[paths.length - 1];
         if (map.containsKey(end)) {
-            throw new IllegalStateException("Path at '" + property.getPath() + "' already exists");
+            throw new ConfigMeException("Path at '" + property.getPath() + "' already exists");
         }
         map.put(end, new PropertyEntry(property, comments));
     }

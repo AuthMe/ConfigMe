@@ -2,7 +2,7 @@ package com.github.authme.configme;
 
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.propertymap.PropertyMap;
+import com.github.authme.configme.propertymap.KnownProperties;
 import com.github.authme.configme.resource.PropertyResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 public class SettingsManagerTest {
 
     @Mock
-    private PropertyMap propertyMap;
+    private KnownProperties knownProperties;
 
     @Mock
     private PropertyResource resource;
@@ -36,27 +36,27 @@ public class SettingsManagerTest {
     @Test
     public void shouldCheckMigrationServiceOnStartup() {
         // given
-        given(migrationService.checkAndMigrate(resource, propertyMap)).willReturn(false);
+        given(migrationService.checkAndMigrate(resource, knownProperties)).willReturn(false);
 
         // when
-        new SettingsManager(propertyMap, resource, migrationService);
+        new SettingsManager(knownProperties, resource, migrationService);
 
         // then
-        verify(migrationService, only()).checkAndMigrate(resource, propertyMap);
+        verify(migrationService, only()).checkAndMigrate(resource, knownProperties);
         verifyZeroInteractions(resource);
     }
 
     @Test
     public void shouldSaveAfterPerformingMigrations() {
         // given
-        given(migrationService.checkAndMigrate(resource, propertyMap)).willReturn(true);
+        given(migrationService.checkAndMigrate(resource, knownProperties)).willReturn(true);
 
         // when
-        new SettingsManager(propertyMap, resource, migrationService);
+        new SettingsManager(knownProperties, resource, migrationService);
 
         // then
-        verify(migrationService, only()).checkAndMigrate(resource, propertyMap);
-        verify(resource).exportProperties(propertyMap);
+        verify(migrationService, only()).checkAndMigrate(resource, knownProperties);
+        verify(resource).exportProperties(knownProperties);
     }
 
     @Test
@@ -95,19 +95,19 @@ public class SettingsManagerTest {
     public void shouldPerformReload() {
         // given
         SettingsManager manager = createManager();
-        given(migrationService.checkAndMigrate(resource, propertyMap)).willReturn(false);
+        given(migrationService.checkAndMigrate(resource, knownProperties)).willReturn(false);
 
         // when
         manager.reload();
 
         // then
         verify(resource).reload();
-        verify(migrationService).checkAndMigrate(resource, propertyMap);
+        verify(migrationService).checkAndMigrate(resource, knownProperties);
     }
 
     private SettingsManager createManager() {
-        given(migrationService.checkAndMigrate(resource, propertyMap)).willReturn(false);
-        SettingsManager manager = new SettingsManager(propertyMap, resource, migrationService);
+        given(migrationService.checkAndMigrate(resource, knownProperties)).willReturn(false);
+        SettingsManager manager = new SettingsManager(knownProperties, resource, migrationService);
         reset(migrationService);
         return manager;
     }

@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Provides all known properties for a given resource.
  */
-public interface PropertyMap {
+public interface KnownProperties {
 
     /**
      * Returns all existing properties for the property resource.

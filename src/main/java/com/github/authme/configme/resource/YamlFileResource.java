@@ -4,7 +4,7 @@ import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.properties.StringListProperty;
 import com.github.authme.configme.propertymap.PropertyEntry;
-import com.github.authme.configme.propertymap.PropertyMap;
+import com.github.authme.configme.propertymap.KnownProperties;
 import com.github.authme.configme.utils.CollectionUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -81,13 +81,13 @@ public class YamlFileResource implements PropertyResource {
     }
 
     @Override
-    public void exportProperties(PropertyMap propertyMap) {
+    public void exportProperties(KnownProperties knownProperties) {
         try (FileWriter writer = new FileWriter(file)) {
             writer.write("");
 
             // Contains all but the last node of the setting, e.g. [DataSource, mysql] for "DataSource.mysql.username"
             List<String> currentPath = new ArrayList<>();
-            for (PropertyEntry entry : propertyMap.getEntries()) {
+            for (PropertyEntry entry : knownProperties.getEntries()) {
                 Property<?> property = entry.getProperty();
 
                 // Handle properties

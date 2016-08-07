@@ -21,23 +21,23 @@ public class SettingsFieldRetrieverTest {
             new SettingsFieldRetriever(TestConfiguration.class, AdditionalTestConfiguration.class);
 
         // when
-        PropertyMap propertyMap = retriever.getAllPropertyFields();
+        KnownProperties knownProperties = retriever.getAllPropertyFields();
 
         // then
         // 3 properties in AdditionalTestConfiguration, 10 properties in TestConfiguration
-        assertThat(propertyMap.getEntries(), hasSize(13));
+        assertThat(knownProperties.getEntries(), hasSize(13));
         // Take some samples, check for presence & expected comments
-        assertHasPropertyWithComments(propertyMap, TestConfiguration.SKIP_BORING_FEATURES, "Skip boring features?");
-        assertHasPropertyWithComments(propertyMap, TestConfiguration.DUST_LEVEL);
-        assertHasPropertyWithComments(propertyMap, TestConfiguration.VERSION_NUMBER,
+        assertHasPropertyWithComments(knownProperties, TestConfiguration.SKIP_BORING_FEATURES, "Skip boring features?");
+        assertHasPropertyWithComments(knownProperties, TestConfiguration.DUST_LEVEL);
+        assertHasPropertyWithComments(knownProperties, TestConfiguration.VERSION_NUMBER,
             "The version number", "This is just a random number");
-        assertHasPropertyWithComments(propertyMap, AdditionalTestConfiguration.NAME, "Additional name");
-        assertHasPropertyWithComments(propertyMap, AdditionalTestConfiguration.SLEEP, "Seconds to sleep");
+        assertHasPropertyWithComments(knownProperties, AdditionalTestConfiguration.NAME, "Additional name");
+        assertHasPropertyWithComments(knownProperties, AdditionalTestConfiguration.SLEEP, "Seconds to sleep");
     }
 
-    private static void assertHasPropertyWithComments(PropertyMap propertyMap, Property<?> property,
+    private static void assertHasPropertyWithComments(KnownProperties knownProperties, Property<?> property,
                                                       String... comments) {
-        for (PropertyEntry entry : propertyMap.getEntries()) {
+        for (PropertyEntry entry : knownProperties.getEntries()) {
             if (entry.getProperty().equals(property)) {
                 assertThat(entry.getComments(), equalTo(comments));
                 return;

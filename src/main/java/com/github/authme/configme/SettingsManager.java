@@ -2,7 +2,7 @@ package com.github.authme.configme;
 
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.propertymap.PropertyMap;
+import com.github.authme.configme.propertymap.KnownProperties;
 import com.github.authme.configme.resource.PropertyResource;
 
 /**
@@ -10,19 +10,19 @@ import com.github.authme.configme.resource.PropertyResource;
  */
 public class SettingsManager {
 
-    private final PropertyMap propertyMap;
+    private final KnownProperties knownProperties;
     private final PropertyResource resource;
     private final MigrationService migrationService;
 
     /**
      * Constructor.
      *
-     * @param propertyMap collection of all available settings
+     * @param knownProperties collection of all available settings
      * @param resource the property resource to read and write properties to
      * @param migrationService migration service to check the settings file with
      */
-    public SettingsManager(PropertyMap propertyMap, PropertyResource resource, MigrationService migrationService) {
-        this.propertyMap = propertyMap;
+    public SettingsManager(KnownProperties knownProperties, PropertyResource resource, MigrationService migrationService) {
+        this.knownProperties = knownProperties;
         this.resource = resource;
         this.migrationService = migrationService;
         validateAndLoadOptions();
@@ -62,11 +62,11 @@ public class SettingsManager {
      * Saves the config file. Use after migrating one or more settings.
      */
     public void save() {
-        resource.exportProperties(propertyMap);
+        resource.exportProperties(knownProperties);
     }
 
     private void validateAndLoadOptions() {
-        if (migrationService.checkAndMigrate(resource, propertyMap)) {
+        if (migrationService.checkAndMigrate(resource, knownProperties)) {
             save();
         }
     }
