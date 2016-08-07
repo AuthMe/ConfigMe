@@ -4,6 +4,7 @@ import com.github.authme.configme.Comment;
 import com.github.authme.configme.SettingsHolder;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.properties.Property;
+import com.github.authme.configme.propertymap.list.OrderedPropertiesList;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -31,13 +32,13 @@ public class SettingsFieldRetriever {
      * @see #classes
      */
     public PropertyMap getAllPropertyFields() {
-        PropertyMap properties = new PropertyMap();
+        OrderedPropertiesList properties = new OrderedPropertiesList();
         for (Class<?> clazz : classes) {
             Field[] declaredFields = clazz.getDeclaredFields();
             for (Field field : declaredFields) {
                 Property<?> property = getPropertyField(field);
                 if (property != null) {
-                    properties.put(property, getCommentsForField(field));
+                    properties.add(property, getCommentsForField(field));
                 }
             }
         }

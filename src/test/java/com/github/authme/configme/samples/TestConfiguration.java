@@ -4,6 +4,7 @@ import com.github.authme.configme.Comment;
 import com.github.authme.configme.SettingsHolder;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.propertymap.PropertyMap;
+import com.github.authme.configme.propertymap.list.OrderedPropertiesList;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -69,13 +70,13 @@ public final class TestConfiguration implements SettingsHolder {
      * @return The generated property map
      */
     public static PropertyMap generatePropertyMap() {
-        PropertyMap propertyMap = new PropertyMap();
+        OrderedPropertiesList propertyMap = new OrderedPropertiesList();
         for (Field field : TestConfiguration.class.getDeclaredFields()) {
             Object fieldValue = getStaticFieldValue(field);
             if (fieldValue instanceof Property<?>) {
                 Property<?> property = (Property<?>) fieldValue;
                 String[] comments = new String[]{"Comment for '" + property.getPath() + "'"};
-                propertyMap.put(property, comments);
+                propertyMap.add(property, comments);
             }
         }
         return propertyMap;

@@ -4,9 +4,8 @@ import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.samples.TestConfiguration;
 import org.junit.Test;
 
-import java.util.Map;
-
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -26,7 +25,7 @@ public class SettingsFieldRetrieverTest {
 
         // then
         // 3 properties in AdditionalTestConfiguration, 10 properties in TestConfiguration
-        assertThat(propertyMap.size(), equalTo(13));
+        assertThat(propertyMap.getEntries(), hasSize(13));
         // Take some samples, check for presence & expected comments
         assertHasPropertyWithComments(propertyMap, TestConfiguration.SKIP_BORING_FEATURES, "Skip boring features?");
         assertHasPropertyWithComments(propertyMap, TestConfiguration.DUST_LEVEL);
@@ -38,9 +37,9 @@ public class SettingsFieldRetrieverTest {
 
     private static void assertHasPropertyWithComments(PropertyMap propertyMap, Property<?> property,
                                                       String... comments) {
-        for (Map.Entry<Property<?>, String[]> entry : propertyMap.entrySet()) {
-            if (entry.getKey().equals(property)) {
-                assertThat(entry.getValue(), equalTo(comments));
+        for (PropertyEntry entry : propertyMap.getEntries()) {
+            if (entry.getProperty().equals(property)) {
+                assertThat(entry.getComments(), equalTo(comments));
                 return;
             }
         }

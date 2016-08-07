@@ -1,6 +1,6 @@
 package com.github.authme.configme.migration;
 
-import com.github.authme.configme.properties.Property;
+import com.github.authme.configme.propertymap.PropertyEntry;
 import com.github.authme.configme.propertymap.PropertyMap;
 import com.github.authme.configme.resource.PropertyResource;
 
@@ -32,8 +32,8 @@ public class PlainMigrationService implements MigrationService {
     }
 
     private static boolean containsAllSettings(PropertyResource resource, PropertyMap propertyMap) {
-        for (Property<?> property : propertyMap.keySet()) {
-            if (!property.isPresent(resource)) {
+        for (PropertyEntry entry : propertyMap.getEntries()) {
+            if (!entry.getProperty().isPresent(resource)) {
                 return false;
             }
         }

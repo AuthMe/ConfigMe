@@ -3,6 +3,7 @@ package com.github.authme.configme.resource;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.properties.StringListProperty;
+import com.github.authme.configme.propertymap.PropertyEntry;
 import com.github.authme.configme.propertymap.PropertyMap;
 import com.github.authme.configme.utils.CollectionUtils;
 import org.yaml.snakeyaml.DumperOptions;
@@ -15,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Property resource based on a YAML file.
@@ -87,8 +87,8 @@ public class YamlFileResource implements PropertyResource {
 
             // Contains all but the last node of the setting, e.g. [DataSource, mysql] for "DataSource.mysql.username"
             List<String> currentPath = new ArrayList<>();
-            for (Map.Entry<Property<?>, String[]> entry : propertyMap.entrySet()) {
-                Property<?> property = entry.getKey();
+            for (PropertyEntry entry : propertyMap.getEntries()) {
+                Property<?> property = entry.getProperty();
 
                 // Handle properties
                 List<String> propertyPath = Arrays.asList(property.getPath().split("\\."));
@@ -110,7 +110,7 @@ public class YamlFileResource implements PropertyResource {
                         ++indentationLevel;
                     }
                 }
-                for (String comment : entry.getValue()) {
+                for (String comment : entry.getComments()) {
                     writer.append("\n")
                         .append(indent(indentationLevel))
                         .append("# ")

@@ -1,7 +1,7 @@
 package com.github.authme.configme.samples;
 
 import com.github.authme.configme.migration.MigrationService;
-import com.github.authme.configme.properties.Property;
+import com.github.authme.configme.propertymap.PropertyEntry;
 import com.github.authme.configme.propertymap.PropertyMap;
 import com.github.authme.configme.resource.PropertyResource;
 
@@ -36,8 +36,8 @@ public final class TestSettingsMigrationServices {
         return new MigrationService() {
             @Override
             public boolean checkAndMigrate(PropertyResource resource, PropertyMap propertyMap) {
-                for (Property<?> property : propertyMap.keySet()) {
-                    if (!property.isPresent(resource)) {
+                for (PropertyEntry entry : propertyMap.getEntries()) {
+                    if (!entry.getProperty().isPresent(resource)) {
                         return true;
                     }
                 }

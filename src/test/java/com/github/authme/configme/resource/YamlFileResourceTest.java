@@ -4,6 +4,7 @@ import com.github.authme.configme.SettingsManager;
 import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.properties.Property;
+import com.github.authme.configme.propertymap.PropertyEntry;
 import com.github.authme.configme.propertymap.PropertyMap;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
@@ -30,6 +31,8 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link YamlFileResource} and {@link YamlFileReader}.
@@ -144,10 +147,12 @@ public class YamlFileResourceTest {
         List<Property<String>> additionalProperties = Arrays.asList(
             newProperty("more.string1", "it's a text with some \\'apostrophes'"),
             newProperty("more.string2", "\tthis one\nhas some\nnew '' lines-test"));
-        PropertyMap propertyMap = TestConfiguration.generatePropertyMap();
+        List<PropertyEntry> entries = TestConfiguration.generatePropertyMap().getEntries();
         for (Property<?> property : additionalProperties) {
-            propertyMap.put(property, new String[0]);
+            entries.add(new PropertyEntry(property));
         }
+        PropertyMap propertyMap = mock(PropertyMap.class);
+        given(propertyMap.getEntries()).willReturn(entries);
 
         // when
         new SettingsManager(propertyMap, resource, checkAllPropertiesPresent());
