@@ -1,7 +1,9 @@
 package com.github.authme.configme.migration;
 
-import com.github.authme.configme.propertymap.KnownProperties;
+import com.github.authme.configme.propertymap.PropertyEntry;
 import com.github.authme.configme.resource.PropertyResource;
+
+import java.util.List;
 
 /**
  * The migration service is called when the settings manager is instantiated. It allows to
@@ -17,6 +19,6 @@ public interface MigrationService {
      * @param knownProperties the property map
      * @return {@code true} if a migration has been performed, {@code false} if the settings are up-to-date
      */
-    boolean checkAndMigrate(PropertyResource resource, KnownProperties knownProperties);
+    boolean checkAndMigrate(PropertyResource resource, List<PropertyEntry> knownProperties);
 
 }

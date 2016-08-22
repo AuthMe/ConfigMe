@@ -4,7 +4,6 @@ import com.github.authme.configme.SettingsManager;
 import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.propertymap.KnownProperties;
 import com.github.authme.configme.propertymap.PropertyEntry;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
@@ -17,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,8 +31,6 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link YamlFileResource} and {@link YamlFileReader}.
@@ -108,7 +106,7 @@ public class YamlFileResourceTest {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
         YamlFileResource resource = new YamlFileResource(file);
-        KnownProperties knownProperties = TestConfiguration.generatePropertyMap();
+        List<PropertyEntry> knownProperties = TestConfiguration.generatePropertyMap();
 
         // when
         resource.exportProperties(knownProperties);
@@ -147,17 +145,15 @@ public class YamlFileResourceTest {
         List<Property<String>> additionalProperties = Arrays.asList(
             newProperty("more.string1", "it's a text with some \\'apostrophes'"),
             newProperty("more.string2", "\tthis one\nhas some\nnew '' lines-test"));
-        List<PropertyEntry> entries = TestConfiguration.generatePropertyMap().getEntries();
+        List<PropertyEntry> entries = new ArrayList<>(TestConfiguration.generatePropertyMap());
         for (Property<?> property : additionalProperties) {
             entries.add(new PropertyEntry(property));
         }
-        KnownProperties knownProperties = mock(KnownProperties.class);
-        given(knownProperties.getEntries()).willReturn(entries);
 
         // when
-        new SettingsManager(knownProperties, resource, checkAllPropertiesPresent());
+        new SettingsManager(entries, resource, checkAllPropertiesPresent());
         // Save and load again
-        resource.exportProperties(knownProperties);
+        resource.exportProperties(entries);
         resource.reload();
 
         // then

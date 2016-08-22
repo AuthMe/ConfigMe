@@ -1,8 +1,9 @@
 package com.github.authme.configme.migration;
 
-import com.github.authme.configme.propertymap.KnownProperties;
 import com.github.authme.configme.propertymap.PropertyEntry;
 import com.github.authme.configme.resource.PropertyResource;
+
+import java.util.List;
 
 /**
  * Simple migration service that can be extended.
@@ -10,7 +11,7 @@ import com.github.authme.configme.resource.PropertyResource;
 public class PlainMigrationService implements MigrationService {
 
     @Override
-    public boolean checkAndMigrate(PropertyResource resource, KnownProperties knownProperties) {
+    public boolean checkAndMigrate(PropertyResource resource, List<PropertyEntry> knownProperties) {
         return performMigrations(resource, knownProperties) || !containsAllSettings(resource, knownProperties);
     }
 
@@ -23,16 +24,16 @@ public class PlainMigrationService implements MigrationService {
      * does this if the migration service returns an according result.
      *
      * @param resource the property resource to check
-     * @param knownProperties the property map
+     * @param knownProperties list of known properties
      * @return true if a migration was performed and the config should be saved,
      * false if no migration was performed
      */
-    protected boolean performMigrations(PropertyResource resource, KnownProperties knownProperties) {
+    protected boolean performMigrations(PropertyResource resource, List<PropertyEntry> knownProperties) {
         return false;
     }
 
-    private static boolean containsAllSettings(PropertyResource resource, KnownProperties knownProperties) {
-        for (PropertyEntry entry : knownProperties.getEntries()) {
+    private static boolean containsAllSettings(PropertyResource resource, List<PropertyEntry> knownProperties) {
+        for (PropertyEntry entry : knownProperties) {
             if (!entry.getProperty().isPresent(resource)) {
                 return false;
             }

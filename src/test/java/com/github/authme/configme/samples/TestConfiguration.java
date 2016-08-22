@@ -3,8 +3,8 @@ package com.github.authme.configme.samples;
 import com.github.authme.configme.Comment;
 import com.github.authme.configme.SettingsHolder;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.propertymap.KnownProperties;
-import com.github.authme.configme.propertymap.KnownPropertiesImpl;
+import com.github.authme.configme.propertymap.KnownPropertiesBuilder;
+import com.github.authme.configme.propertymap.PropertyEntry;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -69,17 +69,17 @@ public final class TestConfiguration implements SettingsHolder {
      *
      * @return The generated property map
      */
-    public static KnownProperties generatePropertyMap() {
-        KnownPropertiesImpl propertyMap = new KnownPropertiesImpl();
+    public static List<PropertyEntry> generatePropertyMap() {
+        KnownPropertiesBuilder propertyListBuilder = new KnownPropertiesBuilder();
         for (Field field : TestConfiguration.class.getDeclaredFields()) {
             Object fieldValue = getStaticFieldValue(field);
             if (fieldValue instanceof Property<?>) {
                 Property<?> property = (Property<?>) fieldValue;
                 String[] comments = new String[]{"Comment for '" + property.getPath() + "'"};
-                propertyMap.add(property, comments);
+                propertyListBuilder.add(property, comments);
             }
         }
-        return propertyMap;
+        return propertyListBuilder.create();
     }
 
     private static Object getStaticFieldValue(Field field) {

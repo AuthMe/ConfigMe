@@ -4,6 +4,8 @@ import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.samples.TestConfiguration;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
@@ -21,11 +23,11 @@ public class SettingsFieldRetrieverTest {
             new SettingsFieldRetriever(TestConfiguration.class, AdditionalTestConfiguration.class);
 
         // when
-        KnownProperties knownProperties = retriever.getAllPropertyFields();
+        List<PropertyEntry> knownProperties = retriever.getAllPropertyFields();
 
         // then
         // 3 properties in AdditionalTestConfiguration, 10 properties in TestConfiguration
-        assertThat(knownProperties.getEntries(), hasSize(13));
+        assertThat(knownProperties, hasSize(13));
         // Take some samples, check for presence & expected comments
         assertHasPropertyWithComments(knownProperties, TestConfiguration.SKIP_BORING_FEATURES, "Skip boring features?");
         assertHasPropertyWithComments(knownProperties, TestConfiguration.DUST_LEVEL);
@@ -35,9 +37,9 @@ public class SettingsFieldRetrieverTest {
         assertHasPropertyWithComments(knownProperties, AdditionalTestConfiguration.SLEEP, "Seconds to sleep");
     }
 
-    private static void assertHasPropertyWithComments(KnownProperties knownProperties, Property<?> property,
+    private static void assertHasPropertyWithComments(List<PropertyEntry> knownProperties, Property<?> property,
                                                       String... comments) {
-        for (PropertyEntry entry : knownProperties.getEntries()) {
+        for (PropertyEntry entry : knownProperties) {
             if (entry.getProperty().equals(property)) {
                 assertThat(entry.getComments(), equalTo(comments));
                 return;

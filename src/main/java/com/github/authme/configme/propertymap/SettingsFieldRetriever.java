@@ -25,13 +25,13 @@ public class SettingsFieldRetriever {
     }
 
     /**
-     * Scans all given classes for their properties and return the generated {@link KnownProperties}.
+     * Scans all given classes for their properties and return the generated list of property entries.
      *
      * @return KnownProperties containing all found properties and their associated comments
      * @see #classes
      */
-    public KnownProperties getAllPropertyFields() {
-        KnownPropertiesImpl properties = new KnownPropertiesImpl();
+    public List<PropertyEntry> getAllPropertyFields() {
+        KnownPropertiesBuilder properties = new KnownPropertiesBuilder();
         for (Class<?> clazz : classes) {
             Field[] declaredFields = clazz.getDeclaredFields();
             for (Field field : declaredFields) {
@@ -41,7 +41,7 @@ public class SettingsFieldRetriever {
                 }
             }
         }
-        return properties;
+        return properties.create();
     }
 
     private static String[] getCommentsForField(Field field) {

@@ -19,9 +19,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for {@link KnownPropertiesImpl}.
+ * Test for {@link KnownPropertiesBuilder}.
  */
-public class KnownPropertiesImplTest {
+public class KnownPropertiesBuilderTest {
 
     @Test
     public void shouldKeepEntriesByInsertionAndGroup() {
@@ -29,22 +29,23 @@ public class KnownPropertiesImplTest {
         List<String> paths = Arrays.asList("japan.toyota", "indonesia.jakarta.koja", "japan.tokyo.sumida",
             "china.shanghai", "egypt.cairo", "china.shenzhen", "china.tianjin", "indonesia.jakarta.tugu",
             "egypt.luxor", "japan.nagoya", "japan.tokyo.taito");
-        KnownPropertiesImpl properties = new KnownPropertiesImpl();
+        KnownPropertiesBuilder builder = new KnownPropertiesBuilder();
 
         // when
         for (String path : paths) {
             Property<?> property = createPropertyWithPath(path);
-            properties.add(property);
+            builder.add(property);
         }
 
         // then
+        List<PropertyEntry> knownProperties = builder.create();
         List<String> resultPaths = new ArrayList<>();
-        for (PropertyEntry entry : properties.getEntries()) {
+        for (PropertyEntry entry : knownProperties) {
             resultPaths.add(entry.getProperty().getPath());
         }
 
-        assertThat(properties.getEntries(), hasSize(paths.size()));
-        assertThat(properties.getEntries(), hasSize(resultPaths.size()));
+        assertThat(knownProperties, hasSize(paths.size()));
+        assertThat(knownProperties, hasSize(resultPaths.size()));
         assertThat(resultPaths, contains("japan.toyota", "japan.tokyo.sumida", "japan.tokyo.taito", "japan.nagoya",
             "indonesia.jakarta.koja", "indonesia.jakarta.tugu", "china.shanghai", "china.shenzhen", "china.tianjin",
             "egypt.cairo", "egypt.luxor"));
@@ -53,7 +54,7 @@ public class KnownPropertiesImplTest {
     @Test
     public void shouldThrowForSamePropertyAdded() {
         // given
-        KnownPropertiesImpl properties = new KnownPropertiesImpl();
+        KnownPropertiesBuilder properties = new KnownPropertiesBuilder();
         properties.add(createPropertyWithPath("test.version"));
         properties.add(createPropertyWithPath("test.name"));
 
@@ -65,7 +66,7 @@ public class KnownPropertiesImplTest {
             assertThat(e.getMessage(), containsString("already exists"));
         }
 
-        assertThat(properties.getEntries(), hasSize(2));
+        assertThat(properties.create(), hasSize(2));
     }
 
     /**
@@ -75,7 +76,7 @@ public class KnownPropertiesImplTest {
     @Test
     public void shouldThrowForPropertyHavingIllegalChild() {
         // given
-        KnownPropertiesImpl properties = new KnownPropertiesImpl();
+        KnownPropertiesBuilder properties = new KnownPropertiesBuilder();
         properties.add(createPropertyWithPath("test.version"));
 
         // when / then
@@ -86,14 +87,14 @@ public class KnownPropertiesImplTest {
             assertThat(e.getMessage(), containsString("Unexpected entry found"));
         }
 
-        assertThat(properties.getEntries(), hasSize(1));
+        assertThat(properties.create(), hasSize(1));
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void shouldThrowForUnknownInternalEntry() throws ReflectiveOperationException {
         // given
-        KnownPropertiesImpl properties = new KnownPropertiesImpl();
+        KnownPropertiesBuilder properties = new KnownPropertiesBuilder();
         properties.add(createPropertyWithPath("test.name"));
 
         Map<String, Object> internalMap = getInternalMap(properties);
@@ -115,9 +116,9 @@ public class KnownPropertiesImplTest {
         return property;
     }
 
-    private static Map<String, Object> getInternalMap(KnownPropertiesImpl properties)
+    private static Map<String, Object> getInternalMap(KnownPropertiesBuilder properties)
                                                       throws ReflectiveOperationException {
-        Field field = KnownPropertiesImpl.class.getDeclaredField("rootEntries");
+        Field field = KnownPropertiesBuilder.class.getDeclaredField("rootEntries");
         field.setAccessible(true);
         return (Map<String, Object>) field.get(properties);
     }

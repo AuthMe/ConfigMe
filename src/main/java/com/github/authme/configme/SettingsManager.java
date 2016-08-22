@@ -2,15 +2,18 @@ package com.github.authme.configme;
 
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.propertymap.KnownProperties;
+import com.github.authme.configme.propertymap.PropertyEntry;
 import com.github.authme.configme.resource.PropertyResource;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The new settings manager.
  */
 public class SettingsManager {
 
-    private final KnownProperties knownProperties;
+    private final List<PropertyEntry> knownProperties;
     private final PropertyResource resource;
     private final MigrationService migrationService;
 
@@ -21,8 +24,9 @@ public class SettingsManager {
      * @param resource the property resource to read and write properties to
      * @param migrationService migration service to check the settings file with
      */
-    public SettingsManager(KnownProperties knownProperties, PropertyResource resource, MigrationService migrationService) {
-        this.knownProperties = knownProperties;
+    public SettingsManager(List<? extends PropertyEntry> knownProperties, PropertyResource resource,
+                           MigrationService migrationService) {
+        this.knownProperties = Collections.unmodifiableList(knownProperties);
         this.resource = resource;
         this.migrationService = migrationService;
         validateAndLoadOptions();

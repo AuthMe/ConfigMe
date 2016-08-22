@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Implementation of {@link KnownProperties}.
+ * Builds a list of known properties in an ordered and grouped manner.
  *
  * It guarantees that the added entries:
  * <ul>
@@ -19,11 +19,11 @@ import java.util.Map;
  *   property, then "DataSource" properties will come before the "security" ones.</li>
  * </ul>
  */
-public class KnownPropertiesImpl implements KnownProperties {
+public class KnownPropertiesBuilder {
 
     private LinkedHashMap<String, Object> rootEntries;
 
-    public KnownPropertiesImpl() {
+    public KnownPropertiesBuilder() {
         rootEntries = new LinkedHashMap<>();
     }
 
@@ -42,8 +42,7 @@ public class KnownPropertiesImpl implements KnownProperties {
     }
 
 
-    @Override
-    public List<PropertyEntry> getEntries() {
+    public List<PropertyEntry> create() {
         List<PropertyEntry> result = new ArrayList<>();
         collectEntries(rootEntries, result);
         return result;
