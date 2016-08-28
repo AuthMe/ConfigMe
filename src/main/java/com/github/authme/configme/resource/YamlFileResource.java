@@ -70,6 +70,11 @@ public class YamlFileResource implements PropertyResource {
     }
 
     @Override
+    public boolean contains(String path) {
+        return reader.getObject(path) != null;
+    }
+
+    @Override
     public void setValue(String path, Object value) {
         reader.set(path, value);
     }

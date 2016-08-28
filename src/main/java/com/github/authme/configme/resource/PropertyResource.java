@@ -68,6 +68,17 @@ public interface PropertyResource {
     @Nullable
     List<?> getList(String path);
 
+    /**
+     * Returns whether a value is present for the given path. When applicable,
+     * {@link com.github.authme.configme.properties.Property#isPresent(PropertyResource)} should be favored over
+     * calling this method as it may make more type-aware checks. This method simply returns whether <i>some value</i>
+     * exists under the given path.
+     *
+     * @param path the path to check
+     * @return true if there is a value, false otherwise
+     */
+    boolean contains(String path);
+
 
     // -------
     // Reload / Modification
