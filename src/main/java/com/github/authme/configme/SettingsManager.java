@@ -13,9 +13,9 @@ import java.util.List;
  */
 public class SettingsManager {
 
-    private final List<PropertyEntry> knownProperties;
-    private final PropertyResource resource;
-    private final MigrationService migrationService;
+    protected final List<PropertyEntry> knownProperties;
+    protected final PropertyResource resource;
+    protected final MigrationService migrationService;
 
     /**
      * Constructor.
@@ -69,7 +69,7 @@ public class SettingsManager {
         resource.exportProperties(knownProperties);
     }
 
-    private void validateAndLoadOptions() {
+    protected void validateAndLoadOptions() {
         if (migrationService.checkAndMigrate(resource, knownProperties)) {
             save();
         }
