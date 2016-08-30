@@ -1,5 +1,6 @@
 package com.github.authme.configme.propertymap;
 
+import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.samples.TestConfiguration;
 import org.junit.Test;
@@ -18,12 +19,9 @@ public class SettingsFieldRetrieverTest {
 
     @Test
     public void shouldGetAllProperties() {
-        // given
-        SettingsFieldRetriever retriever =
-            new SettingsFieldRetriever(TestConfiguration.class, AdditionalTestConfiguration.class);
-
-        // when
-        List<PropertyEntry> knownProperties = retriever.getAllPropertyFields();
+        // given / when
+        List<PropertyEntry> knownProperties = SettingsFieldRetriever.getAllProperties(
+            TestConfiguration.class, AdditionalTestConfiguration.class);
 
         // then
         // 3 properties in AdditionalTestConfiguration, 10 properties in TestConfiguration
@@ -35,6 +33,11 @@ public class SettingsFieldRetrieverTest {
             "The version number", "This is just a random number");
         assertHasPropertyWithComments(knownProperties, AdditionalTestConfiguration.NAME, "Additional name");
         assertHasPropertyWithComments(knownProperties, AdditionalTestConfiguration.SLEEP, "Seconds to sleep");
+    }
+
+    @Test
+    public void shouldHavePrivateConstructor() {
+        TestUtils.validateHasOnlyPrivateEmptyConstructor(SettingsFieldRetriever.class);
     }
 
     private static void assertHasPropertyWithComments(List<PropertyEntry> knownProperties, Property<?> property,

@@ -7,30 +7,27 @@ import com.github.authme.configme.properties.Property;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Utility class responsible for retrieving all {@link Property} fields
  * from {@link SettingsHolder} implementations via reflection.
+ * <p>
+ * Properties must be declared as {@code public static} fields or they are ignored.
  */
 public class SettingsFieldRetriever {
 
-    /** The classes to scan for properties. */
-    private final List<Class<? extends SettingsHolder>> classes;
-
-    @SafeVarargs
-    public SettingsFieldRetriever(Class<? extends SettingsHolder>... classes) {
-        this.classes = Arrays.asList(classes);
+    private SettingsFieldRetriever() {
     }
 
     /**
      * Scans all given classes for their properties and return the generated list of property entries.
      *
-     * @return KnownProperties containing all found properties and their associated comments
-     * @see #classes
+     * @param classes the classes to scan for their property fields
+     * @return list with  all found properties and their associated comments
      */
-    public List<PropertyEntry> getAllPropertyFields() {
+    @SafeVarargs
+    public static List<PropertyEntry> getAllProperties(Class<? extends SettingsHolder>... classes) {
         KnownPropertiesBuilder properties = new KnownPropertiesBuilder();
         for (Class<?> clazz : classes) {
             Field[] declaredFields = clazz.getDeclaredFields();
