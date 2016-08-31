@@ -43,7 +43,7 @@ public class SettingsManagerTest {
         given(migrationService.checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class))).willReturn(false);
 
         // when
-        new SettingsManager(knownProperties, resource, migrationService);
+        new SettingsManager(resource, migrationService, knownProperties);
 
         // then
         verify(migrationService, only()).checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class));
@@ -56,7 +56,7 @@ public class SettingsManagerTest {
         given(migrationService.checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class))).willReturn(true);
 
         // when
-        new SettingsManager(knownProperties, resource, migrationService);
+        new SettingsManager(resource, migrationService, knownProperties);
 
         // then
         verify(migrationService, only()).checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class));
@@ -111,7 +111,7 @@ public class SettingsManagerTest {
 
     private SettingsManager createManager() {
         given(migrationService.checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class))).willReturn(false);
-        SettingsManager manager = new SettingsManager(knownProperties, resource, migrationService);
+        SettingsManager manager = new SettingsManager(resource, migrationService, knownProperties);
         reset(migrationService);
         return manager;
     }

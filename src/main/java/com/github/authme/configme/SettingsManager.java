@@ -3,6 +3,7 @@ package com.github.authme.configme;
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.propertymap.PropertyEntry;
+import com.github.authme.configme.propertymap.SettingsFieldRetriever;
 import com.github.authme.configme.resource.PropertyResource;
 
 import java.util.Collections;
@@ -20,12 +21,25 @@ public class SettingsManager {
     /**
      * Constructor.
      *
-     * @param knownProperties collection of all available settings
      * @param resource the property resource to read and write properties to
-     * @param migrationService migration service to check the settings file with
+     * @param migrationService migration service to check the property resource with
+     * @param settingsClasses classes whose Property fields make up all known properties
      */
-    public SettingsManager(List<? extends PropertyEntry> knownProperties, PropertyResource resource,
-                           MigrationService migrationService) {
+    @SafeVarargs
+    public SettingsManager(PropertyResource resource, MigrationService migrationService,
+                           Class<? extends SettingsHolder>... settingsClasses) {
+        this(resource, migrationService, SettingsFieldRetriever.getAllProperties(settingsClasses));
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param resource the property resource to read and write properties to
+     * @param migrationService migration service to check the property resource with
+     * @param knownProperties collection of all available settings
+     */
+    public SettingsManager(PropertyResource resource, MigrationService migrationService,
+                           List<? extends PropertyEntry> knownProperties) {
         this.knownProperties = Collections.unmodifiableList(knownProperties);
         this.resource = resource;
         this.migrationService = migrationService;

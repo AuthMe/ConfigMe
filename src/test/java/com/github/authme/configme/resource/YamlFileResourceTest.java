@@ -151,7 +151,7 @@ public class YamlFileResourceTest {
         }
 
         // when
-        new SettingsManager(entries, resource, checkAllPropertiesPresent());
+        new SettingsManager(resource, checkAllPropertiesPresent(), entries);
         // Save and load again
         resource.exportProperties(entries);
         resource.reload();

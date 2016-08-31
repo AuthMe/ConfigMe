@@ -3,15 +3,12 @@ package com.github.authme.configme.demo;
 import com.github.authme.configme.SettingsManager;
 import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.migration.PlainMigrationService;
-import com.github.authme.configme.propertymap.PropertyEntry;
-import com.github.authme.configme.propertymap.SettingsFieldRetriever;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -61,11 +58,10 @@ public class WelcomeWriter {
      * @return the settings manager
      */
     private SettingsManager initSettings() {
-        List<PropertyEntry> knownProperties = SettingsFieldRetriever.getAllProperties(TitleConfig.class);
         // Copy the demo/config.yml instead of using it directly so it doesn't get overridden
         configFile = copyFileFromJar("/demo/config.yml");
         PropertyResource resource = new YamlFileResource(configFile);
-        return new SettingsManager(knownProperties, resource, new PlainMigrationService());
+        return new SettingsManager(resource, new PlainMigrationService(), TitleConfig.class);
     }
 
     /**
