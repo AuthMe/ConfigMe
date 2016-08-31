@@ -59,18 +59,14 @@ public class WelcomeWriter {
     }
   
     private SettingsManager initSettings() {
-        // Generate list of all properties in SettingsHolder classes
-        List<PropertyEntry> knownProperties = 
-            SettingsFieldRetriever.getAllProperties(TitleConfig.java);
-
         // Create property resource
         PropertyResource resource = new YamlFileResource("config.yml");
 
-        // Generate migration service
+        // Create migration service
         MigrationService migrationService = new PlainMigrationService();
 
         // Create settings manager
-        return new SettingsManager(knownProperties, resource, migrationService);
+        return new SettingsManager(resource, migrationService, TitleConfig.class);
     }
 }
 ```
