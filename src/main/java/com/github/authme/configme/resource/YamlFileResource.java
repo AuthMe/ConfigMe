@@ -22,11 +22,11 @@ import java.util.List;
 public class YamlFileResource implements PropertyResource {
 
     private static final String INDENTATION = "    ";
-    private static Yaml simpleYaml;
-    private static Yaml singleQuoteYaml;
 
     private final File file;
     private YamlFileReader reader;
+    private Yaml simpleYaml;
+    private Yaml singleQuoteYaml;
 
     public YamlFileResource(File file) {
         this.file = file;
@@ -132,6 +132,9 @@ public class YamlFileResource implements PropertyResource {
             writer.close();
         } catch (IOException e) {
             throw new ConfigMeException("Could not save config to '" + file.getPath() + "'", e);
+        } finally {
+            simpleYaml = null;
+            singleQuoteYaml = null;
         }
     }
 
@@ -153,7 +156,7 @@ public class YamlFileResource implements PropertyResource {
             // - 'item 1'
             // - 'second item in list'
             String representation = getSingleQuoteYaml().dump(value);
-            return (((Collection<?>) value).isEmpty())
+            return ((Collection<?>) value).isEmpty()
                 ? representation
                 : "\n" + representation;
         }

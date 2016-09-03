@@ -6,12 +6,14 @@ import java.util.List;
  * Convenience class for instantiating {@link Property} objects. You can use
  * a static import for the methods for a short, convenient way to declare properties.
  * <p>
- * It may make the most sense to write your own class similar to this one if you
- * want to use custom property types.
+ * If you use additional property types, it may make the most sense to write your own
+ * property initializer class similar to this one, or extend this class to keep the
+ * default methods.
  */
-public final class PropertyInitializer {
+public class PropertyInitializer {
 
-    private PropertyInitializer() {
+    protected PropertyInitializer() {
+        // Protected constructor to allow inheritance
     }
 
     /**

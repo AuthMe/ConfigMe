@@ -19,7 +19,7 @@ import java.util.Map;
  *   property, then "DataSource" properties will come before the "security" ones.</li>
  * </ul>
  */
-public class KnownPropertiesBuilder {
+class KnownPropertiesBuilder {
 
     private Map<String, Object> rootEntries;
 
@@ -40,7 +40,6 @@ public class KnownPropertiesBuilder {
         }
         map.put(end, new PropertyEntry(property, comments));
     }
-
 
     public List<PropertyEntry> create() {
         List<PropertyEntry> result = new ArrayList<>();

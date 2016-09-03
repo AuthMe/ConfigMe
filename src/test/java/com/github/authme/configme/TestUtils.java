@@ -57,20 +57,36 @@ public final class TestUtils {
     }
 
     /**
-     * Checks that a class only has a hidden, zero-argument constructor, preventing the
+     * Checks that a class only has a private, zero-argument constructor, preventing the
      * instantiation of such classes (utility classes). Invokes the hidden constructor
      * as to register the code coverage.
      *
-     * @param clazz The class to validate
+     * @param clazz the class to validate
      */
     public static void validateHasOnlyPrivateEmptyConstructor(Class<?> clazz) {
+        validateHasOnlyEmptyConstructorWithVisibility(clazz, Modifier.PRIVATE);
+    }
+
+    /**
+     * Checks that a class only has a protected, zero-argument constructor, preventing the
+     * instantiation of such classes (utility classes). Invokes the hidden constructor
+     * as to register the code coverage.
+     *
+     * @param clazz the class to validate
+     */
+    public static void validateHasOnlyProtectedEmptyConstructor(Class<?> clazz) {
+        validateHasOnlyEmptyConstructorWithVisibility(clazz, Modifier.PROTECTED);
+    }
+
+    private static void validateHasOnlyEmptyConstructorWithVisibility(Class<?> clazz,
+                                                                     int visibilityModifierFlag) {
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
         if (constructors.length > 1) {
             throw new IllegalStateException("Class " + clazz.getSimpleName() + " has more than one constructor");
         } else if (constructors[0].getParameterTypes().length != 0) {
             throw new IllegalStateException("Constructor of " + clazz + " does not have empty parameter list");
-        } else if (!Modifier.isPrivate(constructors[0].getModifiers())) {
-            throw new IllegalStateException("Constructor of " + clazz + " is not private");
+        } else if ((constructors[0].getModifiers() & visibilityModifierFlag) != visibilityModifierFlag) {
+            throw new IllegalStateException("Constructor of " + clazz + " does not have the desired visibility");
         }
 
         // Ugly hack to get coverage on the private constructors

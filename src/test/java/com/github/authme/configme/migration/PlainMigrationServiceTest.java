@@ -2,13 +2,17 @@ package com.github.authme.configme.migration;
 
 import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.propertymap.PropertyEntry;
+import com.github.authme.configme.propertymap.SettingsFieldRetriever;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
 import com.github.authme.configme.samples.TestConfiguration;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,10 +27,14 @@ import static org.mockito.Mockito.verify;
 /**
  * Test for {@link PlainMigrationService}.
  */
+@RunWith(MockitoJUnitRunner.class)
 public class PlainMigrationServiceTest {
 
-    private static final List<PropertyEntry> PROPERTY_ENTRIES = TestConfiguration.generatePropertyMap();
-    private PlainMigrationService service = Mockito.spy(new PlainMigrationService());
+    private static final List<PropertyEntry> PROPERTY_ENTRIES =
+        SettingsFieldRetriever.getAllProperties(TestConfiguration.class);
+
+    @Spy
+    private PlainMigrationService service;
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();

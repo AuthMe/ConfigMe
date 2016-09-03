@@ -10,7 +10,21 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The new settings manager.
+ * Settings manager.
+ * <p>
+ * The settings manager unites a {@link PropertyResource property resource},
+ * a {@link MigrationService migration service} and the list of known properties
+ * (typically gathered from {@link SettingsHolder} classes).
+ * <p>
+ * The settings manager allows to look up and modify properties. Thus, the settings
+ * manager fulfills the most typical operations on a configuration in an application.
+ * After initializing the settings manager, it is usually the only class from ConfigMe
+ * you interact with.
+ *
+ * @see <a href="https://github.com/AuthMe/ConfigMe">ConfigMe on Github</a>
+ * @see PropertyResource
+ * @see MigrationService
+ * @see SettingsHolder
  */
 public class SettingsManager {
 
@@ -83,6 +97,10 @@ public class SettingsManager {
         resource.exportProperties(knownProperties);
     }
 
+    /**
+     * Checks with the migration service if the configuration is up to date.
+     * If not, saves the config.
+     */
     protected void validateAndLoadOptions() {
         if (migrationService.checkAndMigrate(resource, knownProperties)) {
             save();

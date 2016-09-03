@@ -12,6 +12,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Comment {
 
+    /**
+     * @return the comment to associate with the property
+     */
     String[] value();
 
 }

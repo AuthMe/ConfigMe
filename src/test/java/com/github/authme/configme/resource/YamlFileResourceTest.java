@@ -5,6 +5,7 @@ import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.propertymap.PropertyEntry;
+import com.github.authme.configme.propertymap.SettingsFieldRetriever;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
 import org.junit.Rule;
@@ -16,7 +17,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -107,7 +107,7 @@ public class YamlFileResourceTest {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
         YamlFileResource resource = new YamlFileResource(file);
-        List<PropertyEntry> knownProperties = TestConfiguration.generatePropertyMap();
+        List<PropertyEntry> knownProperties = SettingsFieldRetriever.getAllProperties(TestConfiguration.class);
 
         // when
         resource.exportProperties(knownProperties);
@@ -146,7 +146,7 @@ public class YamlFileResourceTest {
         List<Property<String>> additionalProperties = Arrays.asList(
             newProperty("more.string1", "it's a text with some \\'apostrophes'"),
             newProperty("more.string2", "\tthis one\nhas some\nnew '' lines-test"));
-        List<PropertyEntry> entries = new ArrayList<>(TestConfiguration.generatePropertyMap());
+        List<PropertyEntry> entries = SettingsFieldRetriever.getAllProperties(TestConfiguration.class);
         for (Property<?> property : additionalProperties) {
             entries.add(new PropertyEntry(property));
         }
@@ -205,6 +205,7 @@ public class YamlFileResourceTest {
         assertThat(resource.getBoolean(TestConfiguration.DURATION_IN_SECONDS.getPath()), nullValue());
         assertThat(resource.getString(TestConfiguration.DURATION_IN_SECONDS.getPath()), nullValue());
         assertThat(resource.getDouble(TestConfiguration.DURATION_IN_SECONDS.getPath()), equalTo(22.0));
+        assertThat(resource.getDouble(TestConfiguration.SKIP_BORING_FEATURES.getPath()), nullValue());
     }
 
     @Test
@@ -257,7 +258,7 @@ public class YamlFileResourceTest {
 
         // when / then
         try {
-            resource.exportProperties(TestConfiguration.generatePropertyMap());
+            resource.exportProperties(SettingsFieldRetriever.getAllProperties(TestConfiguration.class));
             fail("Expected ConfigMeException to be thrown");
         } catch (ConfigMeException e) {
             assertThat(e.getCause(), instanceOf(IOException.class));

@@ -26,7 +26,7 @@ public class PropertyInitializerTest {
     }
 
     @Test
-    public void shouldHaveHiddenConstructor() {
-        TestUtils.validateHasOnlyPrivateEmptyConstructor(PropertyInitializer.class);
+    public void shouldHaveProtectedConstructor() {
+        TestUtils.validateHasOnlyProtectedEmptyConstructor(PropertyInitializer.class);
     }
 }
