@@ -4,8 +4,8 @@ import com.github.authme.configme.Comment;
 import com.github.authme.configme.SettingsHolder;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.properties.Property;
-import com.sun.istack.internal.Nullable;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
