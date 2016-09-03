@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class KnownPropertiesBuilder {
 
-    private LinkedHashMap<String, Object> rootEntries;
+    private Map<String, Object> rootEntries;
 
     public KnownPropertiesBuilder() {
         rootEntries = new LinkedHashMap<>();

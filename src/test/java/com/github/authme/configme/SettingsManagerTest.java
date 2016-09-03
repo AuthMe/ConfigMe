@@ -6,11 +6,16 @@ import com.github.authme.configme.propertymap.PropertyEntry;
 import com.github.authme.configme.resource.PropertyResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Arrays;
 import java.util.List;
 
+import static com.github.authme.configme.properties.PropertyInitializer.newProperty;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -28,8 +33,11 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsManagerTest {
 
-    @Mock
-    private List<PropertyEntry> knownProperties;
+    private final PropertyEntry[] propertyEntries = {
+        new PropertyEntry(newProperty("demo.prop", 3)),
+        new PropertyEntry(newProperty("demo.prop2", "test")),
+        new PropertyEntry(newProperty("demo.prop3", 0))
+    };
 
     @Mock
     private PropertyResource resource;
@@ -37,29 +45,34 @@ public class SettingsManagerTest {
     @Mock
     private MigrationService migrationService;
 
+    @Captor
+    private ArgumentCaptor<List<PropertyEntry>> knownPropertiesCaptor;
+
     @Test
     public void shouldCheckMigrationServiceOnStartup() {
         // given
+        List<PropertyEntry> knownProperties = Arrays.asList(propertyEntries);
         given(migrationService.checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class))).willReturn(false);
 
         // when
         new SettingsManager(resource, migrationService, knownProperties);
 
         // then
-        verify(migrationService, only()).checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class));
+        verifyWasMigrationServiceChecked();
         verifyZeroInteractions(resource);
     }
 
     @Test
     public void shouldSaveAfterPerformingMigrations() {
         // given
+        List<PropertyEntry> knownProperties = Arrays.asList(propertyEntries);
         given(migrationService.checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class))).willReturn(true);
 
         // when
         new SettingsManager(resource, migrationService, knownProperties);
 
         // then
-        verify(migrationService, only()).checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class));
+        verifyWasMigrationServiceChecked();
         verify(resource).exportProperties(anyListOf(PropertyEntry.class));
     }
 
@@ -106,12 +119,17 @@ public class SettingsManagerTest {
 
         // then
         verify(resource).reload();
-        verify(migrationService).checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class));
+        verifyWasMigrationServiceChecked();
+    }
+
+    private void verifyWasMigrationServiceChecked() {
+        verify(migrationService, only()).checkAndMigrate(eq(resource), knownPropertiesCaptor.capture());
+        assertThat(knownPropertiesCaptor.getValue(), contains(propertyEntries));
     }
 
     private SettingsManager createManager() {
         given(migrationService.checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class))).willReturn(false);
-        SettingsManager manager = new SettingsManager(resource, migrationService, knownProperties);
+        SettingsManager manager = new SettingsManager(resource, migrationService, Arrays.asList(propertyEntries));
         reset(migrationService);
         return manager;
     }

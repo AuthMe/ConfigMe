@@ -27,6 +27,7 @@ import static com.github.authme.configme.properties.PropertyInitializer.newPrope
 import static com.github.authme.configme.samples.TestSettingsMigrationServices.checkAllPropertiesPresent;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -227,6 +228,40 @@ public class YamlFileResourceTest {
         // then
         assertThat(TestConfiguration.RATIO_ORDER.getValue(resource), equalTo(TestEnum.SECOND));
         assertThat(TestConfiguration.SKIP_BORING_FEATURES.getValue(resource), equalTo(false));
+    }
+
+    @Test
+    public void shouldReturnIfResourceContainsValue() {
+        // given
+        File file = copyFileFromResources(INCOMPLETE_FILE);
+        YamlFileResource resource = new YamlFileResource(file);
+
+        // when
+        boolean presentPropertyResult = resource.contains(TestConfiguration.DURATION_IN_SECONDS.getPath());
+        boolean absentPropertyResult = resource.contains(TestConfiguration.SKIP_BORING_FEATURES.getPath());
+
+        // then
+        assertThat(presentPropertyResult, equalTo(true));
+        assertThat(absentPropertyResult, equalTo(false));
+    }
+
+    @Test
+    public void shouldWrapIoExceptionInConfigMeException() throws IOException {
+        // given
+        File file = copyFileFromResources(INCOMPLETE_FILE);
+        YamlFileResource resource = new YamlFileResource(file);
+        file.delete();
+        // Hacky: the only way we can easily provoke an IOException is by deleting the file and creating a folder
+        // with the same name...
+        temporaryFolder.newFolder(file.getName());
+
+        // when / then
+        try {
+            resource.exportProperties(TestConfiguration.generatePropertyMap());
+            fail("Expected ConfigMeException to be thrown");
+        } catch (ConfigMeException e) {
+            assertThat(e.getCause(), instanceOf(IOException.class));
+        }
     }
 
     private File copyFileFromResources(String path) {
