@@ -3,6 +3,7 @@ package com.github.authme.configme.migration;
 import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.knownproperties.PropertyFieldsCollector;
+import com.github.authme.configme.properties.IntegerProperty;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
 import com.github.authme.configme.samples.TestConfiguration;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -30,7 +32,10 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class PlainMigrationServiceTest {
 
-    private static final List<PropertyEntry> PROPERTY_ENTRIES =
+    private static final String COMPLETE_CONFIG = "/config-sample.yml";
+    private static final String INCOMPLETE_CONFIG = "/config-incomplete-sample.yml";
+
+    private static final List<PropertyEntry> KNOWN_PROPERTIES =
         PropertyFieldsCollector.getAllProperties(TestConfiguration.class);
 
     @Spy
@@ -42,28 +47,59 @@ public class PlainMigrationServiceTest {
     @Test
     public void shouldReturnNoSaveNecessaryForAllPropertiesPresent() throws IOException {
         // given
-        PropertyResource resource = createResourceSpy("/config-sample.yml");
+        PropertyResource resource = createResourceSpy(COMPLETE_CONFIG);
 
         // when
-        boolean result = service.checkAndMigrate(resource, PROPERTY_ENTRIES);
+        boolean result = service.checkAndMigrate(resource, KNOWN_PROPERTIES);
 
         // then
         assertThat(result, equalTo(false));
-        verify(service).performMigrations(resource, PROPERTY_ENTRIES);
+        verify(service).performMigrations(resource, KNOWN_PROPERTIES);
     }
 
     @Test
     public void shouldReturnTrueForMissingProperty() throws IOException {
         // given
-        PropertyResource resource = createResourceSpy("/config-incomplete-sample.yml");
+        PropertyResource resource = createResourceSpy(INCOMPLETE_CONFIG);
 
         // when
-        boolean result = service.checkAndMigrate(resource, PROPERTY_ENTRIES);
+        boolean result = service.checkAndMigrate(resource, KNOWN_PROPERTIES);
 
         // then
         assertThat(result, equalTo(true));
         // Verify that performMigrations was called; it should be called before our generic property check
-        verify(service).performMigrations(resource, PROPERTY_ENTRIES);
+        verify(service).performMigrations(resource, KNOWN_PROPERTIES);
+    }
+
+    @Test
+    public void shouldPassResourceToExtendedMethod() throws IOException {
+        // given
+        PropertyResource resource = createResourceSpy(COMPLETE_CONFIG);
+        given(resource.contains("old.property")).willReturn(true);
+        PlainMigrationServiceTestExtension service = Mockito.spy(new PlainMigrationServiceTestExtension());
+
+        // when
+        boolean result = service.checkAndMigrate(resource, KNOWN_PROPERTIES);
+
+        // then
+        assertThat(result, equalTo(true));
+        verify(service).performMigrations(resource, KNOWN_PROPERTIES);
+        verify(resource).contains("old.property");
+    }
+
+    @Test
+    public void shouldResetNegativeIntegerProperties() throws IOException {
+        // given
+        PropertyResource resource = createResourceSpy(COMPLETE_CONFIG);
+        PlainMigrationServiceTestExtension service = new PlainMigrationServiceTestExtension();
+
+        // when
+        boolean result = service.checkAndMigrate(resource, KNOWN_PROPERTIES);
+
+        // then
+        assertThat(result, equalTo(true));
+        assertThat(resource.getInt(TestConfiguration.DURATION_IN_SECONDS.getPath()), equalTo(0));
+        verify(resource).setValue(TestConfiguration.DURATION_IN_SECONDS.getPath(), 0);
     }
 
     private PropertyResource createResourceSpy(String file) throws IOException {
@@ -73,6 +109,30 @@ public class PlainMigrationServiceTest {
         Path tempFile = new File(tempFolder, "sample.yml").toPath();
         Files.copy(sampleJarFile, tempFile);
         return Mockito.spy(new YamlFileResource(tempFile.toFile()));
+    }
+
+    private static class PlainMigrationServiceTestExtension extends PlainMigrationService {
+
+        @Override
+        protected boolean performMigrations(PropertyResource resource, List<PropertyEntry> knownProperties) {
+            // If contains -> return true = migration is necessary
+            if (resource.contains("old.property")) {
+                return true;
+            }
+
+            // Set any int property to 0 if its value is above 20
+            boolean hasChange = false;
+            for (PropertyEntry entry : knownProperties) {
+                if (entry.getProperty() instanceof IntegerProperty) {
+                    IntegerProperty property = (IntegerProperty) entry.getProperty();
+                    if (property.getValue(resource) > 20) {
+                        resource.setValue(property.getPath(), 0);
+                        hasChange = true;
+                    }
+                }
+            }
+            return hasChange;
+        }
     }
 
 }
