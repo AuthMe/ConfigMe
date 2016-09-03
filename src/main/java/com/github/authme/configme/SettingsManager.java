@@ -2,8 +2,8 @@ package com.github.authme.configme;
 
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.propertymap.PropertyEntry;
-import com.github.authme.configme.propertymap.SettingsFieldRetriever;
+import com.github.authme.configme.knownproperties.PropertyEntry;
+import com.github.authme.configme.knownproperties.PropertyFieldsCollector;
 import com.github.authme.configme.resource.PropertyResource;
 
 import java.util.Collections;
@@ -42,7 +42,7 @@ public class SettingsManager {
     @SafeVarargs
     public SettingsManager(PropertyResource resource, MigrationService migrationService,
                            Class<? extends SettingsHolder>... settingsClasses) {
-        this(resource, migrationService, SettingsFieldRetriever.getAllProperties(settingsClasses));
+        this(resource, migrationService, PropertyFieldsCollector.getAllProperties(settingsClasses));
     }
 
     /**

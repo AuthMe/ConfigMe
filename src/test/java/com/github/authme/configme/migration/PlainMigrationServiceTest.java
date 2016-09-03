@@ -1,8 +1,8 @@
 package com.github.authme.configme.migration;
 
 import com.github.authme.configme.TestUtils;
-import com.github.authme.configme.propertymap.PropertyEntry;
-import com.github.authme.configme.propertymap.SettingsFieldRetriever;
+import com.github.authme.configme.knownproperties.PropertyEntry;
+import com.github.authme.configme.knownproperties.PropertyFieldsCollector;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
 import com.github.authme.configme.samples.TestConfiguration;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.verify;
 public class PlainMigrationServiceTest {
 
     private static final List<PropertyEntry> PROPERTY_ENTRIES =
-        SettingsFieldRetriever.getAllProperties(TestConfiguration.class);
+        PropertyFieldsCollector.getAllProperties(TestConfiguration.class);
 
     @Spy
     private PlainMigrationService service;

@@ -1,4 +1,4 @@
-package com.github.authme.configme.propertymap;
+package com.github.authme.configme.knownproperties;
 
 import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.properties.Property;
@@ -13,14 +13,14 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 /**
- * Test for {@link SettingsFieldRetriever}.
+ * Test for {@link PropertyFieldsCollector}.
  */
-public class SettingsFieldRetrieverTest {
+public class PropertyFieldsCollectorTest {
 
     @Test
     public void shouldGetAllProperties() {
         // given / when
-        List<PropertyEntry> knownProperties = SettingsFieldRetriever.getAllProperties(
+        List<PropertyEntry> knownProperties = PropertyFieldsCollector.getAllProperties(
             TestConfiguration.class, AdditionalTestConfiguration.class);
 
         // then
@@ -37,7 +37,7 @@ public class SettingsFieldRetrieverTest {
 
     @Test
     public void shouldHavePrivateConstructor() {
-        TestUtils.validateHasOnlyPrivateEmptyConstructor(SettingsFieldRetriever.class);
+        TestUtils.validateHasOnlyPrivateEmptyConstructor(PropertyFieldsCollector.class);
     }
 
     private static void assertHasPropertyWithComments(List<PropertyEntry> knownProperties, Property<?> property,

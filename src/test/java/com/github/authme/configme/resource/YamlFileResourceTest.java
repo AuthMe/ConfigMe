@@ -4,8 +4,8 @@ import com.github.authme.configme.SettingsManager;
 import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.propertymap.PropertyEntry;
-import com.github.authme.configme.propertymap.SettingsFieldRetriever;
+import com.github.authme.configme.knownproperties.PropertyEntry;
+import com.github.authme.configme.knownproperties.PropertyFieldsCollector;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
 import org.junit.Rule;
@@ -107,7 +107,7 @@ public class YamlFileResourceTest {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
         YamlFileResource resource = new YamlFileResource(file);
-        List<PropertyEntry> knownProperties = SettingsFieldRetriever.getAllProperties(TestConfiguration.class);
+        List<PropertyEntry> knownProperties = PropertyFieldsCollector.getAllProperties(TestConfiguration.class);
 
         // when
         resource.exportProperties(knownProperties);
@@ -146,7 +146,7 @@ public class YamlFileResourceTest {
         List<Property<String>> additionalProperties = Arrays.asList(
             newProperty("more.string1", "it's a text with some \\'apostrophes'"),
             newProperty("more.string2", "\tthis one\nhas some\nnew '' lines-test"));
-        List<PropertyEntry> entries = SettingsFieldRetriever.getAllProperties(TestConfiguration.class);
+        List<PropertyEntry> entries = PropertyFieldsCollector.getAllProperties(TestConfiguration.class);
         for (Property<?> property : additionalProperties) {
             entries.add(new PropertyEntry(property));
         }
@@ -258,7 +258,7 @@ public class YamlFileResourceTest {
 
         // when / then
         try {
-            resource.exportProperties(SettingsFieldRetriever.getAllProperties(TestConfiguration.class));
+            resource.exportProperties(PropertyFieldsCollector.getAllProperties(TestConfiguration.class));
             fail("Expected ConfigMeException to be thrown");
         } catch (ConfigMeException e) {
             assertThat(e.getCause(), instanceOf(IOException.class));

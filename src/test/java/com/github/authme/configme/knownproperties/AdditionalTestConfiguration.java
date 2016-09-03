@@ -1,4 +1,4 @@
-package com.github.authme.configme.propertymap;
+package com.github.authme.configme.knownproperties;
 
 import com.github.authme.configme.Comment;
 import com.github.authme.configme.SettingsHolder;

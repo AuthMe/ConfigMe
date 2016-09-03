@@ -1,6 +1,6 @@
 package com.github.authme.configme.resource;
 
-import com.github.authme.configme.propertymap.PropertyEntry;
+import com.github.authme.configme.knownproperties.PropertyEntry;
 
 import javax.annotation.Nullable;
 import java.util.List;

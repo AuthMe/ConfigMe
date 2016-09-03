@@ -2,7 +2,7 @@ package com.github.authme.configme;
 
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.propertymap.PropertyEntry;
+import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.resource.PropertyResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;

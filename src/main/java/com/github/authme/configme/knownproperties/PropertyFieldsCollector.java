@@ -1,4 +1,4 @@
-package com.github.authme.configme.propertymap;
+package com.github.authme.configme.knownproperties;
 
 import com.github.authme.configme.Comment;
 import com.github.authme.configme.SettingsHolder;
@@ -16,9 +16,9 @@ import java.util.List;
  * <p>
  * Properties must be declared as {@code public static} fields or they are ignored.
  */
-public class SettingsFieldRetriever {
+public class PropertyFieldsCollector {
 
-    private SettingsFieldRetriever() {
+    private PropertyFieldsCollector() {
     }
 
     /**

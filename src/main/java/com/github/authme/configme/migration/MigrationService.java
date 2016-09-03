@@ -1,6 +1,6 @@
 package com.github.authme.configme.migration;
 
-import com.github.authme.configme.propertymap.PropertyEntry;
+import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.resource.PropertyResource;
 
 import java.util.List;
