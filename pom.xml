@@ -6,7 +6,7 @@
 
     <groupId>com.github.authme</groupId>
     <artifactId>configme</artifactId>
-    <version>0.1</version>
+    <version>0.2-SNAPSHOT</version>
 
     <name>ConfigMe</name>
     <description>A simple configuration management library</description>
