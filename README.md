@@ -20,7 +20,25 @@ A simple configuration management library, initially for but no longer limited t
   renamed properties or to remove obsolete ones.
 - The `SettingsManager` unifies the members above. On creation, it provokes a check by the migration service and
   allows the user to get property values from.
-  
+
+### Integration
+Start using ConfigMe by adding this to your pom.xml:
+```xml
+<repositories>
+    <repository>
+        <id>xephi-repo</id>
+        <url>http://ci.xephi.fr/plugin/repository/everything/</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>com.github.authme</groupId>
+        <artifactId>configme</artifactId>
+        <version>0.1</version>
+    </dependency>
+</dependencies>
+```
   
 ### Example
 **config.yml**
