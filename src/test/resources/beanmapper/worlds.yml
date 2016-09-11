@@ -1,0 +1,11 @@
+groups:
+  default:
+    worlds:
+    - world
+    - world_nether
+    - world_the_end
+    defaultGamemode: SURVIVAL
+  creative:
+    worlds:
+    - creative
+    defaultGamemode: CREATIVE
