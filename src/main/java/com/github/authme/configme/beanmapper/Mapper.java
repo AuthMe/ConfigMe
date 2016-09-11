@@ -1,5 +1,6 @@
 package com.github.authme.configme.beanmapper;
 
+import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.resource.PropertyResource;
 
 import java.beans.IntrospectionException;
@@ -15,6 +16,16 @@ import java.util.Map;
  * Mapper to a bean.
  */
 public class Mapper {
+
+    private final Transformer[] transformers;
+
+    public Mapper() {
+        this(Transformers.getDefaultTransformers());
+    }
+
+    public Mapper(Transformer... transformers) {
+        this.transformers = transformers;
+    }
 
     public <T> Map<String, T> createMap(String path, PropertyResource resource, Class<T> clazz) {
         Object object = resource.getObject(path);
@@ -33,45 +44,36 @@ public class Mapper {
         List<PropertyDescriptor> properties = getWritableProperties(clazz);
         T bean = invokeDefaultConstructor(clazz);
         for (PropertyDescriptor propertyDescriptor : properties) {
-            final String propertyName = propertyDescriptor.getName();
-            final Class<?> propertyType = propertyDescriptor.getPropertyType();
-            final Object configValue = entries.get(propertyName);
-
-            if (propertyType.isInstance(configValue)) {
-                setProperty(propertyDescriptor, configValue, bean);
-            } else {
-                Object mappedValue = handleDefaultTypes(propertyType, configValue);
-                if (mappedValue != null) {
-                    setProperty(propertyDescriptor, mappedValue, bean);
-                } else if (getProperty(propertyDescriptor, bean) == null) {
-                    throw new IllegalStateException("No value found for mandatory property '"
-                        + propertyDescriptor.getName() + "' in '" + clazz + "'");
-                }
+            Object result = getPropertyValue(
+                propertyDescriptor.getPropertyType(), entries.get(propertyDescriptor.getName()));
+            if (result != null) {
+                setProperty(propertyDescriptor, result, bean);
+            } else if (getProperty(propertyDescriptor, bean) == null) {
+                throw new IllegalStateException("No value found for mandatory property '"
+                    + propertyDescriptor.getName() + "' in '" + clazz + "'");
             }
         }
         return bean;
+    }
+
+    private Object getPropertyValue(Class<?> propertyType, Object configValue) {
+        Object result = null;
+        for (Transformer transformer : transformers) {
+            result = transformer.transform(propertyType, configValue);
+            if (result != null) {
+                break;
+            }
+        }
+        return result;
     }
 
     private static <T> T invokeDefaultConstructor(Class<T> clazz) {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
+            throw new ConfigMeException("Could not create object of type '" + clazz.getName()
+                + "'. It is required to have a default constructor.", e);
         }
-    }
-
-    private static Object handleDefaultTypes(Class<?> propertyType, Object configValue) {
-        if (propertyType.isEnum() && configValue instanceof String) {
-            Class<? extends Enum<?>> enumClass = (Class<? extends Enum<?>>) propertyType;
-            for (Enum<?> e : enumClass.getEnumConstants()) {
-                if (e.name().equals(configValue)) {
-                    return e;
-                }
-            }
-            return null;
-        }
-
-        return null;
     }
 
     private static List<PropertyDescriptor> getWritableProperties(Class<?> clazz) {
