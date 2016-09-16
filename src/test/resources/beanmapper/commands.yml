@@ -1,0 +1,29 @@
+commandconfig:
+  duration: 13
+  commands:
+    save:
+      command: save
+      execution:
+        executor: CONSOLE
+        importance: 1.0
+    refresh:
+      command: refresh
+      arguments:
+        - force
+        - async
+      execution:
+        executor: CONSOLE
+        importance: 0.4
+        optional: true
+    open:
+      command: open
+      arguments:
+        - f
+        - x
+        - z
+      execution:
+        executor: USER
+        importance: 0.7
+othersection:
+  a: 1
+  b: 'test'

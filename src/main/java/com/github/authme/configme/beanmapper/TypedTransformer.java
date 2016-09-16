@@ -4,26 +4,29 @@ import javax.annotation.Nullable;
 
 /**
  * Typed implementation of {@link Transformer} for convenient extension.
+ *
+ * @param <S> the source type
+ * @param <R> the result type
  */
-public abstract class TypedTransformer<T, R> implements Transformer {
+public abstract class TypedTransformer<S, R> implements Transformer {
 
-    private final Class<T> inputType;
+    private final Class<S> sourceType;
     private final Class<R> resultType;
 
-    public TypedTransformer(Class<T> inputType, Class<R> resultType) {
-        this.inputType = inputType;
+    public TypedTransformer(Class<S> sourceType, Class<R> resultType) {
+        this.sourceType = sourceType;
         this.resultType = resultType;
     }
 
     @Override
     public Object transform(Class<?> type, Object value) {
-        if (resultType.isAssignableFrom(type) && inputType.isInstance(value)) {
-            return safeTransform((Class) type, (T) value);
+        if (resultType.isAssignableFrom(type) && sourceType.isInstance(value)) {
+            return safeTransform((Class) type, (S) value);
         }
         return null;
     }
 
     @Nullable
-    protected abstract R safeTransform(Class<? extends R> type, T value);
+    protected abstract R safeTransform(Class<? extends R> type, S value);
 
 }

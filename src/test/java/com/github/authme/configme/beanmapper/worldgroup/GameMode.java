@@ -1,4 +1,4 @@
-package com.github.authme.configme.beanmapper.sample;
+package com.github.authme.configme.beanmapper.worldgroup;
 
 /**
  * Gamemode enum.
