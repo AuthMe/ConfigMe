@@ -2,8 +2,8 @@ package com.github.authme.configme.beanmapper;
 
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.resource.PropertyResource;
-import com.sun.istack.internal.Nullable;
 
+import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Collection;
