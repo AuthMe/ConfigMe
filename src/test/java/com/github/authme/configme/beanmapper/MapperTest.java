@@ -66,17 +66,20 @@ public class MapperTest {
         assertThat(saveCommand.getCommand(), equalTo("save"));
         assertThat(saveCommand.getArguments(), empty());
         assertThat(saveCommand, hasExecution(Executor.CONSOLE, false, 1.0));
+        assertThat(saveCommand.getExecution().getPrivileges(), contains("action.save"));
 
         Command refreshCommand = config.getCommands().get(1);
         assertThat(refreshCommand.getCommand(), equalTo("refresh"));
         assertThat(refreshCommand.getArguments(), contains("force", "async"));
         assertThat(refreshCommand, hasExecution(Executor.CONSOLE, false, 0.4));
+        assertThat(refreshCommand.getExecution().getPrivileges(), containsInAnyOrder("page.view", "action.refresh"));
 
         Command openCommand = config.getCommands().get(2);
         assertThat(openCommand.getCommand(), equalTo("open"));
         assertThat(openCommand.getArguments(), contains("f", "x", "z"));
         // TODO: optional should = true; implement support for boolean values
         // assertThat(openCommand, hasExecution(Executor.USER, true, 0.7));
+        assertThat(openCommand.getExecution().getPrivileges(), contains("page.view"));
     }
 
     private static Matcher<Command> hasExecution(final Executor executor, final boolean optional,

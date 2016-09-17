@@ -6,6 +6,8 @@ commandconfig:
       execution:
         executor: CONSOLE
         importance: 1.0
+        privileges:
+        - 'action.save'
     refresh:
       command: refresh
       arguments:
@@ -15,6 +17,9 @@ commandconfig:
         executor: CONSOLE
         importance: 0.4
         optional: true
+        privileges:
+        - 'page.view'
+        - 'action.refresh'
     open:
       command: open
       arguments:
@@ -24,6 +29,8 @@ commandconfig:
       execution:
         executor: USER
         importance: 0.7
+        privileges:
+        - 'page.view'
 othersection:
   a: 1
   b: 'test'

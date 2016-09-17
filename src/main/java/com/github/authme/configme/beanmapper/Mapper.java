@@ -2,11 +2,9 @@ package com.github.authme.configme.beanmapper;
 
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.resource.PropertyResource;
+import com.sun.istack.internal.Nullable;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,6 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.github.authme.configme.beanmapper.MapperUtils.getBeanProperty;
+import static com.github.authme.configme.beanmapper.MapperUtils.getWritableProperties;
+import static com.github.authme.configme.beanmapper.MapperUtils.invokeDefaultConstructor;
+import static com.github.authme.configme.beanmapper.MapperUtils.setBeanProperty;
 import static java.lang.String.format;
 
 /**
@@ -32,13 +34,15 @@ public class Mapper {
         this.transformers = transformers;
     }
 
+    @Nullable
     public <T> Map<String, T> createMap(String path, PropertyResource resource, Class<T> clazz) {
         Object object = resource.getObject(path);
         if (object instanceof Map<?, ?>) {
+            final List<PropertyDescriptor> properties = getWritableProperties(clazz);
             Map<String, ?> section = (Map<String, ?>) object;
             Map<String, T> result = new HashMap<>();
             for (Map.Entry<String, ?> entry : section.entrySet()) {
-                result.put(entry.getKey(), convert((Map<String, ?>) entry.getValue(), clazz));
+                result.put(entry.getKey(), convertToBean(entry.getValue(), clazz, properties));
             }
             return result;
         }
@@ -46,27 +50,13 @@ public class Mapper {
     }
 
     public <T> T createBean(String path, PropertyResource resource, Class<T> clazz) {
-        return convert((Map<String, ?>) resource.getObject(path), clazz);
-    }
-
-    private <T> T convert(Map<String, ?> entries, Class<T> clazz) {
-        List<PropertyDescriptor> properties = getWritableProperties(clazz);
-        return convertToBean(entries, clazz, properties);
+        return convertToBean(resource.getObject(path), clazz, getWritableProperties(clazz));
     }
 
     private <T> T convertToBean(Object value, Class<T> clazz, List<PropertyDescriptor> properties) {
         if (properties.isEmpty()) {
-            // TODO: Harmonize with existing looping -> Replace PropertyDescriptor argument with more generic args
-            Object o;
-            for (Transformer transformer : transformers) {
-                o = transformer.transform(clazz, value);
-                if (o != null) {
-                    return (T) o;
-                }
-            }
-            return null;
+            return (T) getValueFromTransformers(clazz, value);
         }
-
 
         if (!(value instanceof Map<?, ?>)) {
             return null;
@@ -79,6 +69,7 @@ public class Mapper {
             if (result != null) {
                 setBeanProperty(propertyDescriptor, bean, result);
             } else if (getBeanProperty(propertyDescriptor, bean) == null) {
+                // TODO: Allow to set exception mode
                 throw new IllegalStateException("No value found for mandatory property '"
                     + propertyDescriptor.getName() + "' in '" + clazz + "'");
             }
@@ -92,6 +83,7 @@ public class Mapper {
             Class<?> collectionType = MapperUtils.getGenericClassSafely(descriptor);
             if (collectionType != null) {
                 if (value instanceof Map<?, ?>) {
+                    // TODO: Need different handling for map
                     value = ((Map<?,?>) value).values();
                 }
                 List<PropertyDescriptor> propertiesInType = getWritableProperties(collectionType);
@@ -105,7 +97,7 @@ public class Mapper {
                 } else if (descriptor.getPropertyType().isAssignableFrom(Set.class)) {
                     return new HashSet<>(list);
                 } else {
-                    throw new IllegalStateException(format("Unsupported collection type '%s' for property name '%s'",
+                    throw new ConfigMeException(format("Unsupported collection type '%s' for property name '%s'",
                         descriptor.getPropertyType(), descriptor.getName()));
                 }
             }
@@ -113,64 +105,30 @@ public class Mapper {
         return null;
     }
 
-    protected Object getPropertyValue(PropertyDescriptor descriptor, Object configValue) {
-        Object result = processCollection(descriptor, configValue);
-        if (result != null) {
-            return result;
-        }
-
-        final Class<?> propertyType = descriptor.getPropertyType();
+    private Object getValueFromTransformers(Class<?> type, Object value) {
+        Object result;
         for (Transformer transformer : transformers) {
-            result = transformer.transform(propertyType, configValue);
+            result = transformer.transform(type, value);
             if (result != null) {
                 return result;
             }
         }
-        List<PropertyDescriptor> properties = getWritableProperties(propertyType);
-        return properties.isEmpty() ? null : convertToBean(configValue, propertyType, properties);
+        return null;
     }
 
-    private static <T> T invokeDefaultConstructor(Class<T> clazz) {
-        try {
-            return clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new ConfigMeException("Could not create object of type '" + clazz.getName()
-                + "'. It is required to have a default constructor.", e);
+    protected Object getPropertyValue(PropertyDescriptor descriptor, Object value) {
+        Object result = processCollection(descriptor, value);
+        if (result != null) {
+            return result;
         }
-    }
 
-    static List<PropertyDescriptor> getWritableProperties(Class<?> clazz) {
-        PropertyDescriptor[] descriptors;
-        try {
-            descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
-        } catch (IntrospectionException e) {
-            throw new IllegalStateException(e);
+        Class<?> type = descriptor.getPropertyType();
+        result = getValueFromTransformers(type, value);
+        if (result != null) {
+            return result;
         }
-        List<PropertyDescriptor> writableProperties = new ArrayList<>(descriptors.length);
-        for (PropertyDescriptor descriptor : descriptors) {
-            if (descriptor.getWriteMethod() != null) {
-                writableProperties.add(descriptor);
-            }
-        }
-        return writableProperties;
-    }
 
-    private static void setBeanProperty(PropertyDescriptor property, Object bean, Object value) {
-        try {
-            property.getWriteMethod().invoke(bean, value);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private static Object getBeanProperty(PropertyDescriptor property, Object bean) {
-        if (property.getReadMethod() == null) {
-            return null;
-        }
-        try {
-            return property.getReadMethod().invoke(bean);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException(e);
-        }
+        List<PropertyDescriptor> properties = getWritableProperties(type);
+        return properties.isEmpty() ? null : convertToBean(value, type, properties);
     }
 }
