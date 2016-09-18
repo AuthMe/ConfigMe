@@ -1,20 +1,20 @@
 package com.github.authme.configme.beanmapper.command;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * Command configuration.
  */
 public class CommandConfig {
 
-    private List<Command> commands;
+    private Map<String, Command> commands;
     private int duration;
 
-    public List<Command> getCommands() {
+    public Map<String, Command> getCommands() {
         return commands;
     }
 
-    public void setCommands(List<Command> commands) {
+    public void setCommands(Map<String, Command> commands) {
         this.commands = commands;
     }
 

@@ -21,7 +21,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -60,21 +59,21 @@ public class MapperTest {
 
         // then
         assertThat(config.getDuration(), equalTo(13));
-        assertThat(config.getCommands(), hasSize(3));
+        assertThat(config.getCommands().keySet(), containsInAnyOrder("save", "refresh", "open"));
 
-        Command saveCommand = config.getCommands().get(0);
+        Command saveCommand = config.getCommands().get("save");
         assertThat(saveCommand.getCommand(), equalTo("save"));
         assertThat(saveCommand.getArguments(), empty());
         assertThat(saveCommand, hasExecution(Executor.CONSOLE, false, 1.0));
         assertThat(saveCommand.getExecution().getPrivileges(), contains("action.save"));
 
-        Command refreshCommand = config.getCommands().get(1);
+        Command refreshCommand = config.getCommands().get("refresh");
         assertThat(refreshCommand.getCommand(), equalTo("refresh"));
         assertThat(refreshCommand.getArguments(), contains("force", "async"));
         assertThat(refreshCommand, hasExecution(Executor.CONSOLE, false, 0.4));
         assertThat(refreshCommand.getExecution().getPrivileges(), containsInAnyOrder("page.view", "action.refresh"));
 
-        Command openCommand = config.getCommands().get(2);
+        Command openCommand = config.getCommands().get("open");
         assertThat(openCommand.getCommand(), equalTo("open"));
         assertThat(openCommand.getArguments(), contains("f", "x", "z"));
         // TODO: optional should = true; implement support for boolean values
