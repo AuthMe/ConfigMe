@@ -20,23 +20,25 @@ public final class Transformers {
         return DEFAULT_TRANSFORMERS;
     }
 
-    private static final class ReturnerForMatchingType implements Transformer {
+    static final class ReturnerForMatchingType implements Transformer {
         @Override
         public Object transform(Class<?> type, Type genericType, Object value) {
             if (type.isInstance(value)) {
+                return value;
+            } else if (type == boolean.class && value instanceof Boolean) {
+                // Primitive number types are handled in NumberProducer
                 return value;
             }
             return null;
         }
     }
 
-    private static final class NumberProducer implements Transformer {
+    static final class NumberProducer implements Transformer {
 
         private static final Map<Class<?>, Class<?>> primitiveTypes = buildPrimitiveNumberMap();
 
         @Override
         public Number transform(Class<?> type, Type genericType, Object value) {
-            value = asReferenceType(value);
             if (!(value instanceof Number)) {
                 return null;
             }
@@ -61,16 +63,6 @@ public final class Transformers {
             return null;
         }
 
-        private Object asReferenceType(Object value) {
-            if (value != null) {
-                Class<?> referenceType = primitiveTypes.get(value.getClass());
-                if (referenceType != null) {
-                    return referenceType.cast(value);
-                }
-            }
-            return value;
-        }
-
         private Class<?> asReferenceClass(Class<?> clazz) {
             Class<?> referenceClass = primitiveTypes.get(clazz);
             return referenceClass == null ? clazz : referenceClass;
@@ -88,7 +80,7 @@ public final class Transformers {
         }
     }
 
-    private static final class StringProducer extends TypedTransformer<Object, String> {
+    static final class StringProducer extends TypedTransformer<Object, String> {
         StringProducer() {
             super(Object.class, String.class);
         }
@@ -99,7 +91,7 @@ public final class Transformers {
         }
     }
 
-    private static final class EnumProducer extends TypedTransformer<String, Enum<?>> {
+    static final class EnumProducer extends TypedTransformer<String, Enum<?>> {
         EnumProducer() {
             super(String.class, (Class) Enum.class);
         }
