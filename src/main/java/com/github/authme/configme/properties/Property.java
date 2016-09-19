@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
- * A setting, i.e. a configuration value that is read from a property resource.
+ * A property, i.e. a configuration value that is read from a property resource.
  */
 public abstract class Property<T> {
 

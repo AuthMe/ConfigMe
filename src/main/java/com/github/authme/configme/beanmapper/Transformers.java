@@ -1,5 +1,6 @@
 package com.github.authme.configme.beanmapper;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public final class Transformers {
 
     private static final class ReturnerForMatchingType implements Transformer {
         @Override
-        public Object transform(Class<?> type, Object value) {
+        public Object transform(Class<?> type, Type genericType, Object value) {
             if (type.isInstance(value)) {
                 return value;
             }
@@ -34,7 +35,7 @@ public final class Transformers {
         private static final Map<Class<?>, Class<?>> primitiveTypes = buildPrimitiveNumberMap();
 
         @Override
-        public Number transform(Class<?> type, Object value) {
+        public Number transform(Class<?> type, Type genericType, Object value) {
             value = asReferenceType(value);
             if (!(value instanceof Number)) {
                 return null;

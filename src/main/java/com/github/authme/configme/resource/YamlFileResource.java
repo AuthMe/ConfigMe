@@ -1,12 +1,14 @@
 package com.github.authme.configme.resource;
 
+import com.github.authme.configme.beanmapper.BeanProperty;
 import com.github.authme.configme.exception.ConfigMeException;
+import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.properties.StringListProperty;
-import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.utils.CollectionUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.Tag;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -160,8 +162,11 @@ public class YamlFileResource implements PropertyResource {
                 ? representation
                 : "\n" + representation;
         }
-        if (value instanceof Enum) {
-            return getSingleQuoteYaml().dump(((Enum) value).name());
+        if (property instanceof BeanProperty<?>) {
+            return getSimpleYaml().dumpAs(value, Tag.MAP, DumperOptions.FlowStyle.AUTO);
+        }
+        if (value instanceof Enum<?>) {
+            return getSingleQuoteYaml().dump(((Enum<?>) value).name());
         }
         if (value instanceof String) {
             return getSingleQuoteYaml().dump(value);

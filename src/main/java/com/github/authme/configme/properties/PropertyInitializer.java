@@ -1,5 +1,7 @@
 package com.github.authme.configme.properties;
 
+import com.github.authme.configme.beanmapper.BeanProperty;
+
 import java.util.List;
 
 /**
@@ -85,4 +87,16 @@ public class PropertyInitializer {
         return new LowercaseStringListProperty(path, defaultValues);
     }
 
+    /**
+     * Creates a new bean property.
+     *
+     * @param beanClass the JavaBean class
+     * @param path the property's path
+     * @param defaultValue default value
+     * @param <B> the bean type
+     * @return the created bean property
+     */
+    public static <B> Property<B> newBeanProperty(Class<B> beanClass, String path, B defaultValue) {
+        return new BeanProperty<>(beanClass, path, defaultValue);
+    }
 }

@@ -7,6 +7,7 @@ import com.github.authme.configme.beanmapper.command.ExecutionDetails;
 import com.github.authme.configme.beanmapper.command.Executor;
 import com.github.authme.configme.beanmapper.worldgroup.GameMode;
 import com.github.authme.configme.beanmapper.worldgroup.Group;
+import com.github.authme.configme.beanmapper.worldgroup.WorldGroupConfig;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
 import org.hamcrest.Description;
@@ -21,6 +22,8 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -49,17 +52,38 @@ public class MapperTest {
     }
 
     @Test
+    public void shouldCreateWorldGroups() {
+        // given
+        PropertyResource resource = new YamlFileResource(TestUtils.getJarFile("/beanmapper/worlds.yml"));
+        Mapper mapper = new Mapper();
+        String path = "";
+
+        // when
+        WorldGroupConfig result = mapper.convertToBean(path, resource, WorldGroupConfig.class);
+
+        // then
+        assertThat(result, not(nullValue()));
+        assertThat(result.getGroups().keySet(), contains("default", "creative"));
+        Group survival = result.getGroups().get("default");
+        assertThat(survival.getWorlds(), contains("world", "world_nether", "world_the_end"));
+        assertThat(survival.getDefaultGamemode(), equalTo(GameMode.SURVIVAL));
+        Group creative = result.getGroups().get("creative");
+        assertThat(creative.getWorlds(), contains("creative"));
+        assertThat(creative.getDefaultGamemode(), equalTo(GameMode.CREATIVE));
+    }
+
+    @Test
     public void shouldCreateCommands() {
         // given
         PropertyResource resource = new YamlFileResource(TestUtils.getJarFile("/beanmapper/commands.yml"));
         Mapper mapper = new Mapper();
 
         // when
-        CommandConfig config = mapper.createBean("commandconfig", resource, CommandConfig.class);
+        CommandConfig config = mapper.convertToBean("commandconfig", resource, CommandConfig.class);
 
         // then
         assertThat(config.getDuration(), equalTo(13));
-        assertThat(config.getCommands().keySet(), containsInAnyOrder("save", "refresh", "open"));
+        assertThat(config.getCommands().keySet(), contains("save", "refresh", "open"));
 
         Command saveCommand = config.getCommands().get("save");
         assertThat(saveCommand.getCommand(), equalTo("save"));

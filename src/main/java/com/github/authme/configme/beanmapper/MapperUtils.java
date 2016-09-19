@@ -22,29 +22,29 @@ final class MapperUtils {
     /**
      * Gets the generic type of the property type. Throws an exception if it is not a concrete class.
      *
-     * @param descriptor the descriptor to get the generic value from
+     * @param type the type declaration
      * @return the generic type
      * @throws ConfigMeMapperException if there is no generic type or it is not a concrete class
      */
-    static Class<?> getGenericClassSafely(PropertyDescriptor descriptor) {
-        Type type = getGenericTypes(descriptor, 1)[0];
-        if (type instanceof Class<?>) {
-            return (Class<?>) type;
+    static Class<?> getGenericClassSafely(Type type) {
+        Type genericType = getGenericTypes(type, 1)[0];
+        if (genericType instanceof Class<?>) {
+            return (Class<?>) genericType;
         }
-        throw new ConfigMeMapperException("Type '" + type + "' does not have a concrete generic type,"
-            + " found '" + type + "'");
+        throw new ConfigMeMapperException("Type '" + genericType + "' does not have a concrete generic type,"
+            + " found '" + genericType + "'");
     }
 
     /**
      * Returns the first two generic types of a class. Throws an exception if any generic type is not a concrete
      * class or if the base class does not have at least two generic types.
      *
-     * @param descriptor the descriptor to get the generic value from
+     * @param type the type declaration
      * @return the (first) two generic types
      * @throws ConfigMeMapperException if there aren't two generic types or if one is not a concrete class
      */
-    static Class<?>[] getGenericClassesSafely(PropertyDescriptor descriptor) {
-        Type[] types = getGenericTypes(descriptor, 2);
+    static Class<?>[] getGenericClassesSafely(Type type) {
+        Type[] types = getGenericTypes(type, 2);
 
         if (!(types[0] instanceof Class<?>)) {
             throw new ConfigMeMapperException("Type '" + types[0] + "' does not have a concrete generic type,"
@@ -57,9 +57,8 @@ final class MapperUtils {
         return new Class<?>[]{ (Class<?>) types[0], (Class<?>) types[1] };
     }
 
-    // http://stackoverflow.com/questions/5640058/how-to-use-a-lis-of-parameterized-property-names-and-type-for-a-java-bean
-    private static Type[] getGenericTypes(PropertyDescriptor descriptor, int numberOfGenericTypes) {
-        Type type = descriptor.getWriteMethod().getGenericParameterTypes()[0];
+    private static Type[] getGenericTypes(Type type, int numberOfGenericTypes) {
+        // Type type = descriptor.getWriteMethod().getGenericParameterTypes()[0];
         if (type instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) type;
             Type[] genericTypes = pt.getActualTypeArguments();

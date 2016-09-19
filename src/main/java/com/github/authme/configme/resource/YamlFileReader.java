@@ -41,6 +41,9 @@ public class YamlFileReader {
      * @return the value, or null if not available
      */
     public Object getObject(String path) {
+        if (path.isEmpty()) {
+            return root;
+        }
         Object node = root;
         String[] keys = path.split("\\.");
         for (String key : keys) {

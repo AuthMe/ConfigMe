@@ -25,6 +25,7 @@ import java.util.Map;
 
 import static com.github.authme.configme.properties.PropertyInitializer.newProperty;
 import static com.github.authme.configme.samples.TestSettingsMigrationServices.checkAllPropertiesPresent;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -263,6 +264,21 @@ public class YamlFileResourceTest {
         } catch (ConfigMeException e) {
             assertThat(e.getCause(), instanceOf(IOException.class));
         }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldReturnRootForEmptyString() throws IOException {
+        // given
+        File file = copyFileFromResources(COMPLETE_FILE);
+        YamlFileResource resource = new YamlFileResource(file);
+
+        // when
+        Object result = resource.getObject("");
+
+        // then
+        assertThat(result, instanceOf(Map.class));
+        assertThat(((Map<String, ?>) result).keySet(), containsInAnyOrder("test", "sample", "version", "features"));
     }
 
     private File copyFileFromResources(String path) {

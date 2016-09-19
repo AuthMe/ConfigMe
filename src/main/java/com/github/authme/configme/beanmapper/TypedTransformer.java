@@ -1,6 +1,7 @@
 package com.github.authme.configme.beanmapper;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Type;
 
 /**
  * Typed implementation of {@link Transformer} for convenient extension.
@@ -19,7 +20,7 @@ public abstract class TypedTransformer<S, R> implements Transformer {
     }
 
     @Override
-    public Object transform(Class<?> type, Object value) {
+    public Object transform(Class<?> type, Type genericType, Object value) {
         if (resultType.isAssignableFrom(type) && sourceType.isInstance(value)) {
             return safeTransform((Class) type, (S) value);
         }
