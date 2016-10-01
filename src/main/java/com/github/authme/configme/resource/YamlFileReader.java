@@ -13,8 +13,9 @@ import java.util.Objects;
 /**
  * YAML file reader.
  */
-public class YamlFileReader {
+public class YamlFileReader implements PropertyReader {
 
+    private final File file;
     private Map<String, Object> root;
 
     /**
@@ -24,22 +25,11 @@ public class YamlFileReader {
      */
     @SuppressWarnings("unchecked")
     public YamlFileReader(File file) {
-        try (FileInputStream fis = new FileInputStream(file)) {
-            Object obj = new Yaml().load(fis);
-            root = (Map<String, Object>) obj;
-        } catch (IOException e) {
-            throw new ConfigMeException("Could not read file '" + file + "'", e);
-        } catch (ClassCastException e) {
-            throw new ConfigMeException("Top-level is not a map in '" + file + "'", e);
-        }
+        this.file = file;
+        reload();
     }
 
-    /**
-     * Returns the value for the given path, or null if not present.
-     *
-     * @param path the path to retrieve the value for
-     * @return the value, or null if not available
-     */
+    @Override
     public Object getObject(String path) {
         if (path.isEmpty()) {
             return root;
@@ -55,15 +45,7 @@ public class YamlFileReader {
         return node;
     }
 
-    /**
-     * Returns the value for the given path in a typed manner. Returns null if no value is
-     * present or if the value does not match the requested type.
-     *
-     * @param path the path to retrieve the value for
-     * @param clazz the class to cast the value to if possible
-     * @param <T> the class' type
-     * @return the typed value, or null if unavailable or not applicable
-     */
+    @Override
     public <T> T getTypedObject(String path, Class<T> clazz) {
         Object value = getObject(path);
         if (clazz.isInstance(value)) {
@@ -72,12 +54,7 @@ public class YamlFileReader {
         return null;
     }
 
-    /**
-     * Sets the value at the given path. This method does not persist any values to the read file.
-     *
-     * @param path the path to set a value for
-     * @param value the value to set
-     */
+    @Override
     @SuppressWarnings("unchecked")
     public void set(String path, Object value) {
         Objects.requireNonNull(path);
@@ -97,6 +74,18 @@ public class YamlFileReader {
         }
         // node now contains the parent map (existing or newly created)
         node.put(keys[keys.length - 1], value);
+    }
+
+    @Override
+    public void reload() {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            Object obj = new Yaml().load(fis);
+            root = (Map<String, Object>) obj;
+        } catch (IOException e) {
+            throw new ConfigMeException("Could not read file '" + file + "'", e);
+        } catch (ClassCastException e) {
+            throw new ConfigMeException("Top-level is not a map in '" + file + "'", e);
+        }
     }
 
     private static Object getIfIsMap(String key, Object value) {

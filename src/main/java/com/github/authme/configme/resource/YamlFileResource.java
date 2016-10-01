@@ -27,13 +27,32 @@ public class YamlFileResource implements PropertyResource {
     private static final String INDENTATION = "    ";
 
     private final File file;
-    private YamlFileReader reader;
+    private final PropertyReader reader;
+    private final PropertyEntryGenerator propertyEntryGenerator;
     private Yaml simpleYaml;
     private Yaml singleQuoteYaml;
 
+    /**
+     * Constructor.
+     *
+     * @param file the config file
+     */
     public YamlFileResource(File file) {
+        this(file, new YamlFileReader(file), new PropertyEntryGenerator());
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param file the config file (the YAML file properties get exported to)
+     * @param reader the reader from which the properties' values are read
+     * @param propertyEntryGenerator generate of property entries to export bean properties. Can be null
+     *                               if you do not use bean properties.
+     */
+    public YamlFileResource(File file, PropertyReader reader, PropertyEntryGenerator propertyEntryGenerator) {
         this.file = file;
-        this.reader = new YamlFileReader(file);
+        this.reader = reader;
+        this.propertyEntryGenerator = propertyEntryGenerator;
     }
 
     @Override
@@ -84,7 +103,7 @@ public class YamlFileResource implements PropertyResource {
 
     @Override
     public void reload() {
-        reader = new YamlFileReader(file);
+        reader.reload();
     }
 
     @Override
@@ -141,12 +160,21 @@ public class YamlFileResource implements PropertyResource {
         }
     }
 
+    /**
+     * Converts property entries of type {@link BeanProperty} to multiple {@link PropertyEntry} objects
+     * that reflect all concrete values that need to be stored to properly, losslessly export the bean.
+     * The property entries are essentially the "leaf nodes" of the bean if viewed as a tree.
+     *
+     * @param originalList the list of property entries to convert
+     * @return list of property entries with converted property entries
+     */
+    @SuppressWarnings("unchecked")
     private List<PropertyEntry> replaceBeanPropertiesToLeafValues(List<PropertyEntry> originalList) {
         List<PropertyEntry> result = new LinkedList<>();
         for (PropertyEntry entry : originalList) {
             if (entry.getProperty() instanceof BeanProperty<?>) {
                 BeanProperty beanProperty = (BeanProperty<?>) entry.getProperty();
-                result.addAll(PropertyEntryGenerator.generatePropertyEntries(
+                result.addAll(propertyEntryGenerator.generate(
                     beanProperty, beanProperty.getValue(this)));
             } else {
                 result.add(entry);
