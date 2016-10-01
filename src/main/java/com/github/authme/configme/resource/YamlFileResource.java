@@ -1,6 +1,7 @@
 package com.github.authme.configme.resource;
 
 import com.github.authme.configme.beanmapper.BeanProperty;
+import com.github.authme.configme.beanmapper.PropertyEntryGenerator;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.properties.Property;
@@ -8,7 +9,6 @@ import com.github.authme.configme.properties.StringListProperty;
 import com.github.authme.configme.utils.CollectionUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.nodes.Tag;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -93,7 +94,7 @@ public class YamlFileResource implements PropertyResource {
 
             // Contains all but the last node of the setting, e.g. [DataSource, mysql] for "DataSource.mysql.username"
             List<String> currentPath = new ArrayList<>();
-            for (PropertyEntry entry : knownProperties) {
+            for (PropertyEntry entry : replaceBeanPropertiesToLeafValues(knownProperties)) {
                 Property<?> property = entry.getProperty();
 
                 // Handle properties
@@ -140,6 +141,20 @@ public class YamlFileResource implements PropertyResource {
         }
     }
 
+    private List<PropertyEntry> replaceBeanPropertiesToLeafValues(List<PropertyEntry> originalList) {
+        List<PropertyEntry> result = new LinkedList<>();
+        for (PropertyEntry entry : originalList) {
+            if (entry.getProperty() instanceof BeanProperty<?>) {
+                BeanProperty beanProperty = (BeanProperty<?>) entry.getProperty();
+                result.addAll(PropertyEntryGenerator.generatePropertyEntries(
+                    beanProperty, beanProperty.getValue(this)));
+            } else {
+                result.add(entry);
+            }
+        }
+        return result;
+    }
+
     /**
      * Returns the YAML representation for the given value (belonging to the given value).
      * This method returns the YAML representation of the value only (does not include the key)
@@ -161,9 +176,6 @@ public class YamlFileResource implements PropertyResource {
             return ((Collection<?>) value).isEmpty()
                 ? representation
                 : "\n" + representation;
-        }
-        if (property instanceof BeanProperty<?>) {
-            return getSimpleYaml().dumpAs(value, Tag.MAP, DumperOptions.FlowStyle.AUTO);
         }
         if (value instanceof Enum<?>) {
             return getSingleQuoteYaml().dump(((Enum<?>) value).name());

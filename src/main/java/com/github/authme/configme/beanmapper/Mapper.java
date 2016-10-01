@@ -8,8 +8,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -119,7 +119,7 @@ public class Mapper {
             if (clazz.isAssignableFrom(List.class)) {
                 return list;
             } else if (clazz.isAssignableFrom(Set.class)) {
-                return new HashSet<>(list);
+                return new LinkedHashSet<>(list);
             } else {
                 throw new ConfigMeMapperException("Unsupported collection type '" + clazz + "' encountered");
             }

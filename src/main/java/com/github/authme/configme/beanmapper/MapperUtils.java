@@ -1,6 +1,7 @@
 package com.github.authme.configme.beanmapper;
 
 import com.github.authme.configme.exception.ConfigMeException;
+import com.sun.istack.internal.Nullable;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -58,7 +59,6 @@ final class MapperUtils {
     }
 
     private static Type[] getGenericTypes(Type type, int numberOfGenericTypes) {
-        // Type type = descriptor.getWriteMethod().getGenericParameterTypes()[0];
         if (type instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) type;
             Type[] genericTypes = pt.getActualTypeArguments();
@@ -72,6 +72,13 @@ final class MapperUtils {
         throw new ConfigMeMapperException("Type '" + type + "' is not a parameterized type");
     }
 
+    /**
+     * Returns all properties of the given class that are writable
+     * (all bean properties with an associated write method).
+     *
+     * @param clazz the class to process
+     * @return all writable properties of the bean class
+     */
     static List<PropertyDescriptor> getWritableProperties(Class<?> clazz) {
         PropertyDescriptor[] descriptors;
         try {
@@ -88,6 +95,13 @@ final class MapperUtils {
         return writableProperties;
     }
 
+    /**
+     * Sets the given property to the given value on the provided bean.
+     *
+     * @param property the property
+     * @param bean the bean to write to
+     * @param value the value to write
+     */
     static void setBeanProperty(PropertyDescriptor property, Object bean, Object value) {
         try {
             property.getWriteMethod().invoke(bean, value);
@@ -96,6 +110,14 @@ final class MapperUtils {
         }
     }
 
+    /**
+     * Retrieves the value of the property on the provided bean.
+     *
+     * @param property the property to read
+     * @param bean the bean to read from
+     * @return the property value
+     */
+    @Nullable
     static Object getBeanProperty(PropertyDescriptor property, Object bean) {
         if (property.getReadMethod() == null) {
             return null;
@@ -107,6 +129,14 @@ final class MapperUtils {
         }
     }
 
+    /**
+     * Invokes the default constructor on a class. If the constructor does not exist or
+     * is not accessible an exception is thrown.
+     *
+     * @param clazz the class to instantiate
+     * @param <T> the class' type
+     * @return instance of the class
+     */
     static <T> T invokeDefaultConstructor(Class<T> clazz) {
         try {
             return clazz.newInstance();

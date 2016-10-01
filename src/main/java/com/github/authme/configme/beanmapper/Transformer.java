@@ -16,7 +16,7 @@ public interface Transformer {
      * <p>
      * The contract is that a transformer <i>must</i> return an object of type {@code T}
      * for a given {@code type} of {@code Class&lt;T>}. This is not forced in the signature
-     * for flexible handling of primitive types, as well as to avoid casting nightmares.
+     * to allow handling primitive types, as well as to avoid casting nightmares.
      *
      * @param type the type to map to
      * @param genericType the generic type, if applicable
