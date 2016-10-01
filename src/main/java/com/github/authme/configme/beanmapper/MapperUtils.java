@@ -1,7 +1,5 @@
 package com.github.authme.configme.beanmapper;
 
-import com.github.authme.configme.exception.ConfigMeException;
-
 import javax.annotation.Nullable;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -106,7 +104,8 @@ final class MapperUtils {
         try {
             property.getWriteMethod().invoke(bean, value);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException(e);
+            throw new ConfigMeMapperException("Could not set value for property '"
+                + property.getName() + "' to bean '" + bean + "'", e);
         }
     }
 
@@ -125,7 +124,8 @@ final class MapperUtils {
         try {
             return property.getReadMethod().invoke(bean);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException(e);
+            throw new ConfigMeMapperException("Could not read property '" + property.getName()
+                + "' from bean '" + bean + "'", e);
         }
     }
 
@@ -141,7 +141,7 @@ final class MapperUtils {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new ConfigMeException("Could not create object of type '" + clazz.getName()
+            throw new ConfigMeMapperException("Could not create object of type '" + clazz.getName()
                 + "'. It is required to have a default constructor.", e);
         }
     }

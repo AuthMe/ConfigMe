@@ -1,11 +1,11 @@
 package com.github.authme.configme.beanmapper;
 
-import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.properties.StringListProperty;
+import com.github.authme.configme.properties.StringProperty;
 import com.github.authme.configme.resource.PropertyResource;
 
+import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,7 +44,7 @@ public class PropertyEntryGenerator {
     protected void collectPropertiesFromBean(Object bean, String path, List<PropertyEntry> properties) {
         List<PropertyDescriptor> writableProperties = MapperUtils.getWritableProperties(bean.getClass());
         if (writableProperties.isEmpty()) {
-            throw new ConfigMeException("Class '" + bean.getClass() + "' has no writable properties");
+            throw new ConfigMeMapperException("Class '" + bean.getClass() + "' has no writable properties");
         }
         for (PropertyDescriptor property : writableProperties) {
             collectPropertyEntries(
@@ -62,9 +62,9 @@ public class PropertyEntryGenerator {
      * @param properties list of properties to add to
      */
     protected void collectPropertyEntries(Object value, String path, List<PropertyEntry> properties) {
-        if (value instanceof String || value instanceof Enum<?>
-            || value instanceof Number || value instanceof Boolean) {
-            addEntry(properties, new ConstantValueProperty<>(path, value));
+        Property<?> property = createConstantProperty(value, path);
+        if (property != null) {
+            properties.add(new PropertyEntry(property));
         } else if (value instanceof Collection<?>) {
             handleCollection((Collection<?>) value, path, properties);
         } else if (value instanceof Map<?, ?>) {
@@ -79,6 +79,15 @@ public class PropertyEntryGenerator {
         }
     }
 
+    @Nullable
+    protected ConstantValueProperty<?> createConstantProperty(Object value, String path) {
+        if (value instanceof String || value instanceof Enum<?>
+            || value instanceof Number || value instanceof Boolean) {
+            return new ConstantValueProperty<>(path, value);
+        }
+        return null;
+    }
+
     /**
      * Handles a value that is of {@link Collection} type.
      *
@@ -87,19 +96,17 @@ public class PropertyEntryGenerator {
      * @param properties list of properties to add to
      */
     protected void handleCollection(Collection<?> value, String path, List<PropertyEntry> properties) {
-        // TODO: how to loosely couple a Collection<T> value with a property resource?
-        // For now we just create a String array... (best effort)
-        String[] strings = new String[value.size()];
-        int i = 0;
+        List<Property<?>> entries = new ArrayList<>(value.size());
         for (Object o : value) {
-            strings[i] = String.valueOf(o);
-            ++i;
+            Property<?> property = createConstantProperty(o, path);
+            if (property == null) {
+                // Fallback to String if the value isn't "simple"
+                property = new StringProperty(path, String.valueOf(o));
+            }
+            entries.add(property);
         }
-        addEntry(properties, new ConstantValueListProperty(path, strings));
-    }
-
-    private static void addEntry(List<PropertyEntry> properties, Property<?> property) {
-        properties.add(new PropertyEntry(property));
+        ConstantCollectionProperty collectionProperty = new ConstantCollectionProperty(path, entries);
+        properties.add(new PropertyEntry(collectionProperty));
     }
 
 
@@ -108,8 +115,6 @@ public class PropertyEntryGenerator {
 
     /**
      * Property implementation that always returns the provided value.
-     * Use {@link ConstantValueListProperty} for string lists so it is properly detected to be a string list
-     * in the property resource.
      *
      * @param <T> the property type
      */
@@ -127,30 +132,6 @@ public class PropertyEntryGenerator {
 
         @Override
         protected T getFromResource(PropertyResource resource) {
-            // default value is the actual value we need (see constructor)
-            return getDefaultValue();
-        }
-    }
-
-    /**
-     * Property that always returns the provided string list.
-     */
-    // We need to use this class here instead of the more generic ConstantValueProperty class
-    // because YamlFileResource checks if the property type is of type StringListProperty
-    private static final class ConstantValueListProperty extends StringListProperty {
-
-        /**
-         * Constructor.
-         *
-         * @param path the path of the property
-         * @param entries the entries of the list that will always be returned
-         */
-        ConstantValueListProperty(String path, String[] entries) {
-            super(path, entries);
-        }
-
-        @Override
-        public List<String> getValue(PropertyResource resource) {
             // default value is the actual value we need (see constructor)
             return getDefaultValue();
         }

@@ -1,6 +1,7 @@
 package com.github.authme.configme.resource;
 
 import com.github.authme.configme.beanmapper.BeanProperty;
+import com.github.authme.configme.beanmapper.ConstantCollectionProperty;
 import com.github.authme.configme.beanmapper.PropertyEntryGenerator;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.knownproperties.PropertyEntry;
@@ -204,6 +205,17 @@ public class YamlFileResource implements PropertyResource {
             return ((Collection<?>) value).isEmpty()
                 ? representation
                 : "\n" + representation;
+        }
+        if (property instanceof ConstantCollectionProperty) {
+            Property<?>[] properties = (Property<?>[]) value;
+            if (properties.length == 0) {
+                return "[]";
+            }
+            String result = "\n";
+            for (Property<?> entry : (Property<?>[]) value) {
+                result += "\n- " + toYaml(entry, 0);
+            }
+            return result;
         }
         if (value instanceof Enum<?>) {
             return getSingleQuoteYaml().dump(((Enum<?>) value).name());

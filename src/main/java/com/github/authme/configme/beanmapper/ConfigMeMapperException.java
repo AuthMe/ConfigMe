@@ -7,7 +7,7 @@ import com.github.authme.configme.exception.ConfigMeException;
  */
 public class ConfigMeMapperException extends ConfigMeException {
 
-    private static final long serialVersionUID = 6358740683858182591L;
+    private static final long serialVersionUID = 5439842847683269906L;
 
     /**
      * Constructor.
@@ -18,4 +18,13 @@ public class ConfigMeMapperException extends ConfigMeException {
         super(message);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param message the exception message
+     * @param cause the cause
+     */
+    public ConfigMeMapperException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

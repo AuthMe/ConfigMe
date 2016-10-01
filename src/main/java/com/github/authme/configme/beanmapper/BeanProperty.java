@@ -14,9 +14,13 @@ public class BeanProperty<B> extends Property<B> {
     private final Mapper mapper;
 
     public BeanProperty(Class<B> beanClass, String path, B defaultValue) {
+        this(beanClass, path, defaultValue, new Mapper());
+    }
+
+    public BeanProperty(Class<B> beanClass, String path, B defaultValue, Mapper mapper) {
         super(path, defaultValue);
         this.beanClass = beanClass;
-        this.mapper = new Mapper();
+        this.mapper = mapper;
     }
 
     @Override

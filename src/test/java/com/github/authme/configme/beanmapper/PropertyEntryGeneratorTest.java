@@ -5,6 +5,7 @@ import com.github.authme.configme.beanmapper.command.CommandConfig;
 import com.github.authme.configme.beanmapper.command.ExecutionDetails;
 import com.github.authme.configme.beanmapper.command.Executor;
 import com.github.authme.configme.knownproperties.PropertyEntry;
+import com.github.authme.configme.properties.Property;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.github.authme.configme.beanmapper.command.Executor.CONSOLE;
 import static com.github.authme.configme.beanmapper.command.Executor.USER;
@@ -37,7 +39,7 @@ public class PropertyEntryGeneratorTest {
 
         CommandConfig config = new CommandConfig();
         config.setDuration(11);
-        config.setCommands(new LinkedHashMap<String, Command>());
+        config.setCommands(new LinkedHashMap<>());
         config.getCommands().put("kick", kickCommand);
         config.getCommands().put("msg", msgCommand);
         config.getCommands().put("vanish", vanishCommand);
@@ -54,6 +56,16 @@ public class PropertyEntryGeneratorTest {
         checkExecutionDetails(entries, "msg", msgExecution);
         checkExecutionDetails(entries, "vanish", vanishExecution);
         assertEquals(getPropertyValue(entries, "cmd.duration"), 11);
+    }
+
+    @Test(expected = ConfigMeMapperException.class)
+    public void shouldThrowForBeanWithoutProperties() {
+        // given
+        BeanProperty<Object> property = new BeanProperty<>(Object.class, "path", new Object());
+        Object bean = new Object();
+
+        // when
+        new PropertyEntryGenerator().generate(property, bean);
     }
 
     private static List<String> toPaths(List<PropertyEntry> entries) {
@@ -84,8 +96,11 @@ public class PropertyEntryGeneratorTest {
         assertEquals(getPropertyValue(entries, root + "executor"), details.getExecutor());
         assertEquals(getPropertyValue(entries, root + "optional"), details.isOptional());
         assertEquals(getPropertyValue(entries, root + "importance"), details.getImportance());
-        assertThat((List<String>) getPropertyValue(entries, root + "privileges"),
-            contains(details.getPrivileges().toArray()));
+
+        List<Object> privileges = Arrays.stream((Property<Object>[]) getPropertyValue(entries, root + "privileges"))
+            .map(Property::getDefaultValue)
+            .collect(Collectors.toList());
+        assertThat(privileges, contains(details.getPrivileges().toArray()));
     }
 
     private static Object getPropertyValue(List<PropertyEntry> entries, String path) {
@@ -94,7 +109,7 @@ public class PropertyEntryGeneratorTest {
                 return entry.getProperty().getValue(null);
             }
         }
-        throw new IllegalArgumentException(path);
+        throw new IllegalArgumentException("No entry for path '" + path + "'");
     }
 
     private static Command createCommand(String name, ExecutionDetails executionDetails, String... arguments) {

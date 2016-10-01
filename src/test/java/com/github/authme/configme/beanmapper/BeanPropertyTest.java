@@ -4,6 +4,7 @@ import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.beanmapper.command.Command;
 import com.github.authme.configme.beanmapper.command.CommandConfig;
 import com.github.authme.configme.beanmapper.command.Executor;
+import com.github.authme.configme.beanmapper.worldgroup.WorldGroupConfig;
 import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
@@ -21,6 +22,9 @@ import java.util.Collections;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Test for {@link BeanProperty} and its integration in {@link YamlFileResource}.
@@ -54,6 +58,27 @@ public class BeanPropertyTest {
         assertThat(openCommand.getArguments(), contains("f", "x", "z"));
         assertThat(openCommand.getExecution().isOptional(), equalTo(false));
         assertThat(config.getDuration(), equalTo(13));
+    }
+
+    @Test
+    public void shouldUseCustomMapper() {
+        // given
+        Mapper mapper = mock(Mapper.class);
+        String path = "cnf";
+        BeanProperty<WorldGroupConfig> property =
+            new BeanProperty<>(WorldGroupConfig.class, path, new WorldGroupConfig(), mapper);
+        PropertyResource resource = mock(PropertyResource.class);
+        Object value = new Object();
+        given(resource.getObject(path)).willReturn(value);
+        WorldGroupConfig groupConfig = new WorldGroupConfig();
+        given(mapper.convertToBean(path, resource, WorldGroupConfig.class)).willReturn(groupConfig);
+
+        // when
+        WorldGroupConfig result = property.getValue(resource);
+
+        // then
+        assertThat(result, equalTo(groupConfig));
+        verify(mapper).convertToBean(path, resource, WorldGroupConfig.class);
     }
 
     private File copyFileToTemporaryFolder(String path) {
