@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Generates {@link PropertyEntry} objects for all "leaf" values of a bean to
@@ -28,9 +29,11 @@ public class PropertyEntryGenerator {
      * @return list of all property entries necessary to export the bean
      */
     public <B> List<PropertyEntry> generate(BeanProperty<B> beanProperty, B value) {
-        List<PropertyEntry> properties = new ArrayList<>();
+        List<Property<?>> properties = new ArrayList<>();
         collectPropertiesFromBean(value, beanProperty.getPath(), properties);
-        return properties;
+        return properties.stream()
+            .map(p -> new PropertyEntry(p))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -41,7 +44,7 @@ public class PropertyEntryGenerator {
      * @param path the path of the bean in the config structure
      * @param properties list of properties to add to
      */
-    protected void collectPropertiesFromBean(Object bean, String path, List<PropertyEntry> properties) {
+    protected void collectPropertiesFromBean(Object bean, String path, List<Property<?>> properties) {
         List<PropertyDescriptor> writableProperties = MapperUtils.getWritableProperties(bean.getClass());
         if (writableProperties.isEmpty()) {
             throw new ConfigMeMapperException("Class '" + bean.getClass() + "' has no writable properties");
@@ -61,10 +64,10 @@ public class PropertyEntryGenerator {
      * @param path the path of the value in the config structure
      * @param properties list of properties to add to
      */
-    protected void collectPropertyEntries(Object value, String path, List<PropertyEntry> properties) {
+    protected void collectPropertyEntries(Object value, String path, List<Property<?>> properties) {
         Property<?> property = createConstantProperty(value, path);
         if (property != null) {
-            properties.add(new PropertyEntry(property));
+            properties.add(property);
         } else if (value instanceof Collection<?>) {
             handleCollection((Collection<?>) value, path, properties);
         } else if (value instanceof Map<?, ?>) {
@@ -95,7 +98,7 @@ public class PropertyEntryGenerator {
      * @param path the path of the collection in the config structure
      * @param properties list of properties to add to
      */
-    protected void handleCollection(Collection<?> value, String path, List<PropertyEntry> properties) {
+    protected void handleCollection(Collection<?> value, String path, List<Property<?>> properties) {
         List<Property<?>> entries = new ArrayList<>(value.size());
         for (Object o : value) {
             Property<?> property = createConstantProperty(o, path);
@@ -105,13 +108,9 @@ public class PropertyEntryGenerator {
             }
             entries.add(property);
         }
-        ConstantCollectionProperty collectionProperty = new ConstantCollectionProperty(path, entries);
-        properties.add(new PropertyEntry(collectionProperty));
+        properties.add(new ConstantCollectionProperty(path, entries));
     }
 
-
-    // -----------------------------------------
-    // Property implementations
 
     /**
      * Property implementation that always returns the provided value.

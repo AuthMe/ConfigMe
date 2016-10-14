@@ -110,8 +110,6 @@ public class YamlFileResource implements PropertyResource {
     @Override
     public void exportProperties(List<PropertyEntry> knownProperties) {
         try (FileWriter writer = new FileWriter(file)) {
-            writer.write("");
-
             // Contains all but the last node of the setting, e.g. [DataSource, mysql] for "DataSource.mysql.username"
             List<String> currentPath = new ArrayList<>();
             for (PropertyEntry entry : replaceBeanPropertiesToLeafValues(knownProperties)) {

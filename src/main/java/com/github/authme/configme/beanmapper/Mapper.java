@@ -46,29 +46,34 @@ import static com.github.authme.configme.beanmapper.MapperUtils.setBeanProperty;
  */
 public class Mapper {
 
+    private final MappingErrorHandler errorHandler;
     private final Transformer[] transformers;
 
     /**
      * Creates a new JavaBean mapper with the default type transformers.
      */
     public Mapper() {
-        this(Transformers.getDefaultTransformers());
+        this(MappingErrorHandler.Impl.SILENT, Transformers.getDefaultTransformers());
     }
 
     /**
      * Creates a new JavaBean mapper with the given transformers.
      *
+     * @param mappingErrorHandler handler to use for mapping errors
      * @param transformers the transformers to use for mapping values
      * @see Transformers#getDefaultTransformers
      */
-    public Mapper(Transformer... transformers) {
+    public Mapper(MappingErrorHandler mappingErrorHandler, Transformer... transformers) {
+        this.errorHandler = mappingErrorHandler;
         this.transformers = transformers;
     }
 
     @Nullable
+    @SuppressWarnings("unchecked")
     public <T> Map<String, T> createMap(String path, PropertyResource resource, Class<T> clazz) {
         Object value = resource.getObject(path);
-        return (Map<String, T>) processMap(Map.class, new GenericMapType(String.class, clazz), value);
+        return (Map<String, T>) processMap(
+            Map.class, new GenericMapType(String.class, clazz), value, MappingContext.root(Map.class));
     }
 
     /**
@@ -81,8 +86,9 @@ public class Mapper {
      * @return the converted bean, or null if not possible
      */
     @Nullable
+    @SuppressWarnings("unchecked")
     public <T> T convertToBean(String path, PropertyResource resource, Class<T> clazz) {
-        return (T) getPropertyValue(clazz, null, resource.getObject(path));
+        return (T) getPropertyValue(clazz, null, resource.getObject(path), MappingContext.root(null));
     }
 
     /**
@@ -91,29 +97,34 @@ public class Mapper {
      * @param clazz the desired type to return
      * @param genericType the generic type if applicable
      * @param value the value to convert from
-     * @return the converted value, or {@code null} if not possible
+     * @param context the mapping context
+     * @return the converted value, or null if not possible
      */
     @Nullable
-    protected Object getPropertyValue(Class<?> clazz, @Nullable Type genericType, @Nullable Object value) {
+    protected Object getPropertyValue(Class<?> clazz, @Nullable Type genericType, @Nullable Object value,
+                                      MappingContext context) {
         Object result;
-        if ((result = processCollection(clazz, genericType, value)) != null) {
+        if ((result = processCollection(clazz, genericType, value, context)) != null) {
             return result;
-        } else if ((result = processMap(clazz, genericType, value)) != null) {
+        } else if ((result = processMap(clazz, genericType, value, context)) != null) {
             return result;
         } else if ((result = processTransformers(clazz, genericType, value)) != null) {
             return result;
         }
-        return convertToBean(clazz, value);
+        return convertToBean(clazz, value, context);
     }
 
     // Handles List and Set fields
     @Nullable
-    protected Collection<?> processCollection(Class<?> clazz, Type genericType, Object value) {
+    protected Collection<?> processCollection(Class<?> clazz, Type genericType, Object value, MappingContext context) {
         if (Iterable.class.isAssignableFrom(clazz) && value instanceof Iterable<?>) {
             Class<?> collectionType = MapperUtils.getGenericClassSafely(genericType);
-            List list = new ArrayList<>();
+            List<Object> list = new ArrayList<>();
             for (Object o : (Iterable<?>) value) {
-                list.add(getPropertyValue(collectionType, null, o));
+                Object mappedValue = getPropertyValue(collectionType, null, o, context.createChild(clazz));
+                if (mappedValue != null) {
+                    list.add(mappedValue);
+                }
             }
 
             if (clazz.isAssignableFrom(List.class)) {
@@ -121,7 +132,8 @@ public class Mapper {
             } else if (clazz.isAssignableFrom(Set.class)) {
                 return new LinkedHashSet<>(list);
             } else {
-                throw new ConfigMeMapperException("Unsupported collection type '" + clazz + "' encountered");
+                throw new ConfigMeMapperException("Unsupported collection type '" + clazz
+                    + "' encountered. Only List and Set are supported by default");
             }
         }
         return null;
@@ -129,17 +141,19 @@ public class Mapper {
 
     // Handles Map fields
     @Nullable
-    protected Map<?, ?> processMap(Class<?> clazz, Type genericType, Object value) {
+    protected Map<?, ?> processMap(Class<?> clazz, Type genericType, Object value, MappingContext context) {
         if (Map.class.isAssignableFrom(clazz) && value instanceof Map<?, ?>) {
             Map<String, ?> entries = (Map<String, ?>) value;
             Class<?>[] mapTypes = getGenericClassesSafely(genericType);
             if (mapTypes[0] != String.class) {
-                // TODO: For now the key can only be a String
-                throw new ConfigMeMapperException("Map key type can only be String for now");
+                throw new ConfigMeMapperException("The key type of maps may only be of String type");
             }
             Map result = new LinkedHashMap<>();
             for (Map.Entry<?, ?> entry : entries.entrySet()) {
-                result.put(entry.getKey(), getPropertyValue(mapTypes[1], null, entry.getValue()));
+                Object mappedValue = getPropertyValue(mapTypes[1], null, entry.getValue(), context.createChild(clazz));
+                if (mappedValue != null) {
+                    result.put(entry.getKey(), mappedValue);
+                }
             }
             return result;
         }
@@ -168,7 +182,7 @@ public class Mapper {
      * @return the converted value, or null if not possible
      */
     @Nullable
-    protected <T> T convertToBean(Class<T> clazz, Object value) {
+    protected <T> T convertToBean(Class<T> clazz, Object value, MappingContext context) {
         List<PropertyDescriptor> properties = getWritableProperties(clazz);
         // Check that we have properties (or else we don't have a bean) and that the provided value is a Map
         // so we can execute the mapping process.
@@ -182,13 +196,13 @@ public class Mapper {
             Object result = getPropertyValue(
                 propertyDescriptor.getPropertyType(),
                 propertyDescriptor.getWriteMethod().getGenericParameterTypes()[0],
-                entries.get(propertyDescriptor.getName()));
+                entries.get(propertyDescriptor.getName()),
+                context.createChild(clazz));
             if (result != null) {
                 setBeanProperty(propertyDescriptor, bean, result);
             } else if (getBeanProperty(propertyDescriptor, bean) == null) {
-                // TODO: Allow to set exception mode
-                throw new ConfigMeMapperException("No suitable value found for mandatory property '"
-                    + propertyDescriptor.getName() + "' in '" + clazz + "'");
+                errorHandler.handleError(clazz, context);
+                return null;
             }
         }
         return bean;

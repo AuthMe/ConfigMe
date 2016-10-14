@@ -1,0 +1,12 @@
+groups:
+  default:
+    worlds: 2
+    defaultGamemode: SURVIVAL
+  creative:
+    worlds:
+    - creative
+    defaultGamemode: CREATIVE
+  adventure:
+    worlds:
+    - adventure
+    defaultGamemode: INVALID_ENTRY

@@ -104,6 +104,20 @@ public class MapperTest {
         assertThat(openCommand.getExecution().getPrivileges(), contains("page.view"));
     }
 
+    @Test
+    public void shouldSkipInvalidEntry() {
+        // given
+        PropertyResource resource = new YamlFileResource(TestUtils.getJarFile("/beanmapper/worlds_invalid.yml"));
+        Mapper mapper = new Mapper();
+
+        // when
+        WorldGroupConfig config = mapper.convertToBean("", resource, WorldGroupConfig.class);
+
+        // then
+        assertThat(config, not(nullValue()));
+        assertThat(config.getGroups().keySet(), contains("creative"));
+    }
+
     private static Matcher<Command> hasExecution(final Executor executor, final boolean optional,
                                                  final Double importance) {
         return new TypeSafeMatcher<Command>() {
