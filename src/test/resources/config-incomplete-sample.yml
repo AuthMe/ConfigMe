@@ -1,5 +1,4 @@
 # Test config file with missing options from TestConfiguration
-# Notice the commented out lines!
 
 test:
     duration: 22

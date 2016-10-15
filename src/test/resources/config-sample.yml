@@ -1,5 +1,4 @@
-# Test config file with all options
-# defined in the TestConfiguration class
+# Test config file with all options defined in the TestConfiguration class
 
 test:
     duration: 22

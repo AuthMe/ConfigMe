@@ -7,15 +7,13 @@ import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.properties.StringListProperty;
-import com.github.authme.configme.utils.CollectionUtils;
+import com.github.authme.configme.resource.PropertyPathTraverser.PathElement;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +28,7 @@ public class YamlFileResource implements PropertyResource {
     private final File file;
     private final PropertyReader reader;
     private final PropertyEntryGenerator propertyEntryGenerator;
+    private final PropertyPathTraverser pathTraverser = new PropertyPathTraverser();
     private Yaml simpleYaml;
     private Yaml singleQuoteYaml;
 
@@ -111,43 +110,32 @@ public class YamlFileResource implements PropertyResource {
     public void exportProperties(List<PropertyEntry> knownProperties) {
         try (FileWriter writer = new FileWriter(file)) {
             // Contains all but the last node of the setting, e.g. [DataSource, mysql] for "DataSource.mysql.username"
-            List<String> currentPath = new ArrayList<>();
             for (PropertyEntry entry : replaceBeanPropertiesToLeafValues(knownProperties)) {
-                Property<?> property = entry.getProperty();
+                final Property<?> property = entry.getProperty();
 
                 // Handle properties
-                List<String> propertyPath = Arrays.asList(property.getPath().split("\\."));
-                List<String> commonPathParts = CollectionUtils.filterCommonStart(
-                    currentPath, propertyPath.subList(0, propertyPath.size() - 1));
-                List<String> newPathParts = CollectionUtils.getRange(propertyPath, commonPathParts.size());
+                List<PathElement> pathElements = pathTraverser.getPathElements(property);
 
-                if (commonPathParts.isEmpty()) {
-                    writer.append("\n");
-                }
-
-                int indentationLevel = commonPathParts.size();
-                if (newPathParts.size() > 1) {
-                    for (String path : newPathParts.subList(0, newPathParts.size() - 1)) {
+                if (pathElements.size() > 1) {
+                    for (PathElement path : pathElements.subList(0, pathElements.size() - 1)) {
                         writer.append("\n")
-                            .append(indent(indentationLevel))
-                            .append(path)
+                            .append(indent(path.indentationLevel))
+                            .append(path.name)
                             .append(": ");
-                        ++indentationLevel;
                     }
                 }
+                final PathElement propertyPathElement = pathElements.get(pathElements.size() - 1);
                 for (String comment : entry.getComments()) {
                     writer.append("\n")
-                        .append(indent(indentationLevel))
+                        .append(indent(propertyPathElement.indentationLevel))
                         .append("# ")
                         .append(comment);
                 }
                 writer.append("\n")
-                    .append(indent(indentationLevel))
-                    .append(CollectionUtils.getRange(newPathParts, newPathParts.size() - 1).get(0))
+                    .append(indent(propertyPathElement.indentationLevel))
+                    .append(propertyPathElement.name)
                     .append(": ")
-                    .append(toYaml(property, indentationLevel));
-
-                currentPath = propertyPath.subList(0, propertyPath.size() - 1);
+                    .append(toYaml(property, propertyPathElement.indentationLevel));
             }
             writer.flush();
             writer.close();

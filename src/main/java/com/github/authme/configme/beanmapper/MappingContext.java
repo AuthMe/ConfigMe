@@ -8,7 +8,7 @@ public class MappingContext {
     private final int level;
     private final Class<?> parentType;
 
-    public MappingContext(int level, Class<?> parentType) {
+    private MappingContext(int level, Class<?> parentType) {
         this.level = level;
         this.parentType = parentType;
     }
