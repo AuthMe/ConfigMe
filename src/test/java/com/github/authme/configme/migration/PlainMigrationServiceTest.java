@@ -2,7 +2,7 @@ package com.github.authme.configme.migration;
 
 import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.knownproperties.PropertyEntry;
-import com.github.authme.configme.knownproperties.PropertyFieldsCollector;
+import com.github.authme.configme.knownproperties.ConfigurationDataBuilder;
 import com.github.authme.configme.properties.IntegerProperty;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
@@ -36,7 +36,7 @@ public class PlainMigrationServiceTest {
     private static final String INCOMPLETE_CONFIG = "/config-incomplete-sample.yml";
 
     private static final List<PropertyEntry> KNOWN_PROPERTIES =
-        PropertyFieldsCollector.getAllProperties(TestConfiguration.class);
+        ConfigurationDataBuilder.getAllProperties(TestConfiguration.class).getPropertyEntries();
 
     @Spy
     private PlainMigrationService service;

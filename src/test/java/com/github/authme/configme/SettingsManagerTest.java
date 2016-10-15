@@ -1,5 +1,6 @@
 package com.github.authme.configme;
 
+import com.github.authme.configme.knownproperties.ConfigurationData;
 import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
@@ -37,10 +38,10 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsManagerTest {
 
-    private final List<PropertyEntry> propertyEntries = Arrays.asList(
+    private final ConfigurationData configurationData = new ConfigurationData(Arrays.asList(
         new PropertyEntry(newProperty("demo.prop", 3)),
         new PropertyEntry(newProperty("demo.prop2", "test")),
-        new PropertyEntry(newProperty("demo.prop3", 0)));
+        new PropertyEntry(newProperty("demo.prop3", 0))));
 
     @Mock
     private PropertyResource resource;
@@ -57,7 +58,7 @@ public class SettingsManagerTest {
         given(migrationService.checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class))).willReturn(false);
 
         // when
-        new SettingsManager(resource, migrationService, propertyEntries);
+        new SettingsManager(resource, migrationService, configurationData);
 
         // then
         verifyWasMigrationServiceChecked();
@@ -70,11 +71,11 @@ public class SettingsManagerTest {
         given(migrationService.checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class))).willReturn(true);
 
         // when
-        new SettingsManager(resource, migrationService, propertyEntries);
+        new SettingsManager(resource, migrationService, configurationData);
 
         // then
         verifyWasMigrationServiceChecked();
-        verify(resource).exportProperties(anyListOf(PropertyEntry.class));
+        verify(resource).exportProperties(configurationData);
     }
 
     @Test
@@ -126,7 +127,7 @@ public class SettingsManagerTest {
     @Test
     public void shouldHandleNullMigrationService() {
         // given
-        List<Property<?>> properties = propertyEntries.stream()
+        List<Property<?>> properties = configurationData.getPropertyEntries().stream()
             .map(PropertyEntry::getProperty).collect(Collectors.toList());
 
         // when
@@ -134,17 +135,17 @@ public class SettingsManagerTest {
 
         // then
         assertThat(manager, not(nullValue()));
-        assertThat(manager.knownProperties, hasSize(properties.size()));
+        assertThat(manager.configurationData.getPropertyEntries(), hasSize(configurationData.getPropertyEntries().size()));
     }
 
     private void verifyWasMigrationServiceChecked() {
         verify(migrationService, only()).checkAndMigrate(eq(resource), knownPropertiesCaptor.capture());
-        assertThat(knownPropertiesCaptor.getValue(), containsAll(propertyEntries));
+        assertThat(knownPropertiesCaptor.getValue(), containsAll(configurationData.getPropertyEntries()));
     }
 
     private SettingsManager createManager() {
-        given(migrationService.checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class))).willReturn(false);
-        SettingsManager manager = new SettingsManager(resource, migrationService, propertyEntries);
+        given(migrationService.checkAndMigrate(resource, configurationData.getPropertyEntries())).willReturn(false);
+        SettingsManager manager = new SettingsManager(resource, migrationService, configurationData);
         reset(migrationService);
         return manager;
     }

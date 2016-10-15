@@ -5,6 +5,7 @@ import com.github.authme.configme.beanmapper.command.Command;
 import com.github.authme.configme.beanmapper.command.CommandConfig;
 import com.github.authme.configme.beanmapper.command.Executor;
 import com.github.authme.configme.beanmapper.worldgroup.WorldGroupConfig;
+import com.github.authme.configme.knownproperties.ConfigurationData;
 import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
@@ -17,8 +18,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Collections;
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -44,7 +45,7 @@ public class BeanPropertyTest {
         PropertyResource resource = new YamlFileResource(configFile);
 
         // when
-        resource.exportProperties(Collections.singletonList(entry));
+        resource.exportProperties(new ConfigurationData(singletonList(entry)));
         resource = new YamlFileResource(configFile);
 
         // then

@@ -4,6 +4,7 @@ import com.github.authme.configme.beanmapper.BeanProperty;
 import com.github.authme.configme.beanmapper.ConstantCollectionProperty;
 import com.github.authme.configme.beanmapper.PropertyEntryGenerator;
 import com.github.authme.configme.exception.ConfigMeException;
+import com.github.authme.configme.knownproperties.ConfigurationData;
 import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.properties.StringListProperty;
@@ -107,13 +108,14 @@ public class YamlFileResource implements PropertyResource {
     }
 
     @Override
-    public void exportProperties(List<PropertyEntry> knownProperties) {
+    public void exportProperties(ConfigurationData configurationData) {
         try (FileWriter writer = new FileWriter(file)) {
             // Contains all but the last node of the setting, e.g. [DataSource, mysql] for "DataSource.mysql.username"
-            for (PropertyEntry entry : replaceBeanPropertiesToLeafValues(knownProperties)) {
+            for (PropertyEntry entry : replaceBeanPropertiesToLeafValues(configurationData.getPropertyEntries())) {
                 final Property<?> property = entry.getProperty();
 
                 // Handle properties
+                // TODO #6: Write section comments to file
                 List<PathElement> pathElements = pathTraverser.getPathElements(property);
 
                 if (pathElements.size() > 1) {

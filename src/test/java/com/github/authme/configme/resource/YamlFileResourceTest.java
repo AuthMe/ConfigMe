@@ -3,9 +3,10 @@ package com.github.authme.configme.resource;
 import com.github.authme.configme.SettingsManager;
 import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.exception.ConfigMeException;
+import com.github.authme.configme.knownproperties.ConfigurationData;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.knownproperties.PropertyEntry;
-import com.github.authme.configme.knownproperties.PropertyFieldsCollector;
+import com.github.authme.configme.knownproperties.ConfigurationDataBuilder;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
 import org.junit.Rule;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -108,10 +110,10 @@ public class YamlFileResourceTest {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
         YamlFileResource resource = new YamlFileResource(file);
-        List<PropertyEntry> knownProperties = PropertyFieldsCollector.getAllProperties(TestConfiguration.class);
+        ConfigurationData configurationData = ConfigurationDataBuilder.getAllProperties(TestConfiguration.class);
 
         // when
-        resource.exportProperties(knownProperties);
+        resource.exportProperties(configurationData);
 
         // then
         // Load file again to make sure what we wrote can be read again
@@ -147,15 +149,17 @@ public class YamlFileResourceTest {
         List<Property<String>> additionalProperties = Arrays.asList(
             newProperty("more.string1", "it's a text with some \\'apostrophes'"),
             newProperty("more.string2", "\tthis one\nhas some\nnew '' lines-test"));
-        List<PropertyEntry> entries = PropertyFieldsCollector.getAllProperties(TestConfiguration.class);
+        List<PropertyEntry> entries = new ArrayList<>(
+            ConfigurationDataBuilder.getAllProperties(TestConfiguration.class).getPropertyEntries());
         for (Property<?> property : additionalProperties) {
             entries.add(new PropertyEntry(property));
         }
+        ConfigurationData configData = new ConfigurationData(entries);
 
         // when
-        new SettingsManager(resource, checkAllPropertiesPresent(), entries);
+        new SettingsManager(resource, checkAllPropertiesPresent(), configData);
         // Save and load again
-        resource.exportProperties(entries);
+        resource.exportProperties(configData);
         resource.reload();
 
         // then
@@ -259,7 +263,7 @@ public class YamlFileResourceTest {
 
         // when / then
         try {
-            resource.exportProperties(PropertyFieldsCollector.getAllProperties(TestConfiguration.class));
+            resource.exportProperties(ConfigurationDataBuilder.getAllProperties(TestConfiguration.class));
             fail("Expected ConfigMeException to be thrown");
         } catch (ConfigMeException e) {
             assertThat(e.getCause(), instanceOf(IOException.class));

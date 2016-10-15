@@ -1,9 +1,10 @@
 package com.github.authme.configme;
 
+import com.github.authme.configme.knownproperties.ConfigurationData;
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.knownproperties.PropertyEntry;
-import com.github.authme.configme.knownproperties.PropertyFieldsCollector;
+import com.github.authme.configme.knownproperties.ConfigurationDataBuilder;
 import com.github.authme.configme.resource.PropertyResource;
 
 import javax.annotation.Nullable;
@@ -31,7 +32,7 @@ import java.util.stream.StreamSupport;
  */
 public class SettingsManager {
 
-    protected final List<PropertyEntry> knownProperties;
+    protected final ConfigurationData configurationData;
     protected final PropertyResource resource;
     protected final MigrationService migrationService;
 
@@ -45,7 +46,7 @@ public class SettingsManager {
     @SafeVarargs
     public SettingsManager(PropertyResource resource, @Nullable MigrationService migrationService,
                            Class<? extends SettingsHolder>... settingsClasses) {
-        this(resource, migrationService, PropertyFieldsCollector.getAllProperties(settingsClasses));
+        this(resource, migrationService, ConfigurationDataBuilder.getAllProperties(settingsClasses));
     }
 
     /**
@@ -53,11 +54,11 @@ public class SettingsManager {
      *
      * @param resource the property resource to read and write properties to
      * @param migrationService migration service to check the property resource with
-     * @param knownProperties collection of all available settings
+     * @param configurationData the configuration data
      */
     public SettingsManager(PropertyResource resource, @Nullable MigrationService migrationService,
-                           List<? extends PropertyEntry> knownProperties) {
-        this.knownProperties = Collections.unmodifiableList(knownProperties);
+                           ConfigurationData configurationData) {
+        this.configurationData = configurationData;
         this.resource = resource;
         this.migrationService = migrationService;
         validateAndLoadOptions();
@@ -76,7 +77,8 @@ public class SettingsManager {
                                                        Iterable<? extends Property<?>> properties) {
         List<PropertyEntry> propertyEntries = StreamSupport.stream(properties.spliterator(), false)
             .map(PropertyEntry::new).collect(Collectors.toList());
-        return new SettingsManager(resource, migrationService, propertyEntries);
+        return new SettingsManager(resource, migrationService,
+            new ConfigurationData(propertyEntries, Collections.emptyMap()));
     }
 
     /**
@@ -113,7 +115,7 @@ public class SettingsManager {
      * Saves the config file. Use after migrating one or more settings.
      */
     public void save() {
-        resource.exportProperties(knownProperties);
+        resource.exportProperties(configurationData);
     }
 
     /**
@@ -121,7 +123,8 @@ public class SettingsManager {
      * If not, saves the config.
      */
     protected void validateAndLoadOptions() {
-        if (migrationService != null && migrationService.checkAndMigrate(resource, knownProperties)) {
+        if (migrationService != null
+                && migrationService.checkAndMigrate(resource, configurationData.getPropertyEntries())) {
             save();
         }
     }
