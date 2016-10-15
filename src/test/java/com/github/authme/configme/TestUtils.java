@@ -1,5 +1,7 @@
 package com.github.authme.configme;
 
+import org.hamcrest.Matcher;
+
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -9,6 +11,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Utilities for testing.
@@ -99,4 +106,18 @@ public final class TestUtils {
         }
     }
 
+    /**
+     * Creates a matcher equivalent to {@link org.hamcrest.Matchers#contains(Object[])} with an iterable as input.
+     *
+     * @param elements the elements that need to be present in order
+     * @param <E> the element's type
+     * @return the created matcher
+     */
+    public static <E> Matcher<Iterable<? extends E>> containsAll(Iterable<E> elements) {
+        List<Matcher<? super E>> matchers = new ArrayList<>();
+        for (E elem : elements) {
+            matchers.add(equalTo(elem));
+        }
+        return contains(matchers);
+    }
 }

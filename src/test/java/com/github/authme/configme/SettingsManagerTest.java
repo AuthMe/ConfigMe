@@ -1,8 +1,8 @@
 package com.github.authme.configme;
 
+import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.resource.PropertyResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,10 +13,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.github.authme.configme.TestUtils.containsAll;
 import static com.github.authme.configme.properties.PropertyInitializer.newProperty;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyListOf;
@@ -33,11 +37,10 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsManagerTest {
 
-    private final PropertyEntry[] propertyEntries = {
+    private final List<PropertyEntry> propertyEntries = Arrays.asList(
         new PropertyEntry(newProperty("demo.prop", 3)),
         new PropertyEntry(newProperty("demo.prop2", "test")),
-        new PropertyEntry(newProperty("demo.prop3", 0))
-    };
+        new PropertyEntry(newProperty("demo.prop3", 0)));
 
     @Mock
     private PropertyResource resource;
@@ -51,11 +54,10 @@ public class SettingsManagerTest {
     @Test
     public void shouldCheckMigrationServiceOnStartup() {
         // given
-        List<PropertyEntry> knownProperties = Arrays.asList(propertyEntries);
         given(migrationService.checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class))).willReturn(false);
 
         // when
-        new SettingsManager(resource, migrationService, knownProperties);
+        new SettingsManager(resource, migrationService, propertyEntries);
 
         // then
         verifyWasMigrationServiceChecked();
@@ -65,11 +67,10 @@ public class SettingsManagerTest {
     @Test
     public void shouldSaveAfterPerformingMigrations() {
         // given
-        List<PropertyEntry> knownProperties = Arrays.asList(propertyEntries);
         given(migrationService.checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class))).willReturn(true);
 
         // when
-        new SettingsManager(resource, migrationService, knownProperties);
+        new SettingsManager(resource, migrationService, propertyEntries);
 
         // then
         verifyWasMigrationServiceChecked();
@@ -122,14 +123,28 @@ public class SettingsManagerTest {
         verifyWasMigrationServiceChecked();
     }
 
+    @Test
+    public void shouldHandleNullMigrationService() {
+        // given
+        List<Property<?>> properties = propertyEntries.stream()
+            .map(PropertyEntry::getProperty).collect(Collectors.toList());
+
+        // when
+        SettingsManager manager = SettingsManager.createWithProperties(resource, null, properties);
+
+        // then
+        assertThat(manager, not(nullValue()));
+        assertThat(manager.knownProperties, hasSize(properties.size()));
+    }
+
     private void verifyWasMigrationServiceChecked() {
         verify(migrationService, only()).checkAndMigrate(eq(resource), knownPropertiesCaptor.capture());
-        assertThat(knownPropertiesCaptor.getValue(), contains(propertyEntries));
+        assertThat(knownPropertiesCaptor.getValue(), containsAll(propertyEntries));
     }
 
     private SettingsManager createManager() {
         given(migrationService.checkAndMigrate(eq(resource), anyListOf(PropertyEntry.class))).willReturn(false);
-        SettingsManager manager = new SettingsManager(resource, migrationService, Arrays.asList(propertyEntries));
+        SettingsManager manager = new SettingsManager(resource, migrationService, propertyEntries);
         reset(migrationService);
         return manager;
     }

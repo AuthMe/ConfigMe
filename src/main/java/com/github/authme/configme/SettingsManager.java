@@ -6,8 +6,11 @@ import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.knownproperties.PropertyFieldsCollector;
 import com.github.authme.configme.resource.PropertyResource;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Settings manager.
@@ -40,7 +43,7 @@ public class SettingsManager {
      * @param settingsClasses classes whose Property fields make up all known properties
      */
     @SafeVarargs
-    public SettingsManager(PropertyResource resource, MigrationService migrationService,
+    public SettingsManager(PropertyResource resource, @Nullable MigrationService migrationService,
                            Class<? extends SettingsHolder>... settingsClasses) {
         this(resource, migrationService, PropertyFieldsCollector.getAllProperties(settingsClasses));
     }
@@ -52,12 +55,28 @@ public class SettingsManager {
      * @param migrationService migration service to check the property resource with
      * @param knownProperties collection of all available settings
      */
-    public SettingsManager(PropertyResource resource, MigrationService migrationService,
+    public SettingsManager(PropertyResource resource, @Nullable MigrationService migrationService,
                            List<? extends PropertyEntry> knownProperties) {
         this.knownProperties = Collections.unmodifiableList(knownProperties);
         this.resource = resource;
         this.migrationService = migrationService;
         validateAndLoadOptions();
+    }
+
+    /**
+     * Convenience method for creating a settings manager for the given collection of properties.
+     *
+     * @param resource the property resource to read and write from
+     * @param migrationService migration service or null to skip migration check
+     * @param properties the properties
+     * @return the created settings manager
+     */
+    public static SettingsManager createWithProperties(PropertyResource resource,
+                                                       @Nullable MigrationService migrationService,
+                                                       Iterable<? extends Property<?>> properties) {
+        List<PropertyEntry> propertyEntries = StreamSupport.stream(properties.spliterator(), false)
+            .map(PropertyEntry::new).collect(Collectors.toList());
+        return new SettingsManager(resource, migrationService, propertyEntries);
     }
 
     /**
@@ -102,7 +121,7 @@ public class SettingsManager {
      * If not, saves the config.
      */
     protected void validateAndLoadOptions() {
-        if (migrationService.checkAndMigrate(resource, knownProperties)) {
+        if (migrationService != null && migrationService.checkAndMigrate(resource, knownProperties)) {
             save();
         }
     }
