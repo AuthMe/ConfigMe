@@ -1,10 +1,14 @@
 package com.github.authme.configme.beanmapper;
 
-import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.beanmapper.command.Command;
 import com.github.authme.configme.beanmapper.command.CommandConfig;
 import com.github.authme.configme.beanmapper.command.ExecutionDetails;
 import com.github.authme.configme.beanmapper.command.Executor;
+import com.github.authme.configme.beanmapper.typeissues.GenericCollection;
+import com.github.authme.configme.beanmapper.typeissues.MapWithNonStringKeys;
+import com.github.authme.configme.beanmapper.typeissues.UnsupportedCollection;
+import com.github.authme.configme.beanmapper.typeissues.UntypedCollection;
+import com.github.authme.configme.beanmapper.typeissues.UntypedMap;
 import com.github.authme.configme.beanmapper.worldgroup.GameMode;
 import com.github.authme.configme.beanmapper.worldgroup.Group;
 import com.github.authme.configme.beanmapper.worldgroup.WorldGroupConfig;
@@ -18,13 +22,16 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.github.authme.configme.TestUtils.getJarFile;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Test for {@link Mapper}.
@@ -34,7 +41,7 @@ public class MapperTest {
     @Test
     public void shouldCreateMap() {
         // given
-        PropertyResource resource = new YamlFileResource(TestUtils.getJarFile("/beanmapper/worlds.yml"));
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/worlds.yml"));
         Mapper mapper = new Mapper();
         String path = "groups";
 
@@ -42,7 +49,7 @@ public class MapperTest {
         Map<String, Group> result = mapper.createMap(path, resource, Group.class);
 
         // then
-        assertThat(result.keySet(), containsInAnyOrder("default", "creative"));
+        assertThat(result.keySet(), contains("default", "creative"));
         Group survival = result.get("default");
         assertThat(survival.getWorlds(), contains("world", "world_nether", "world_the_end"));
         assertThat(survival.getDefaultGamemode(), equalTo(GameMode.SURVIVAL));
@@ -54,7 +61,7 @@ public class MapperTest {
     @Test
     public void shouldCreateWorldGroups() {
         // given
-        PropertyResource resource = new YamlFileResource(TestUtils.getJarFile("/beanmapper/worlds.yml"));
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/worlds.yml"));
         Mapper mapper = new Mapper();
         String path = "";
 
@@ -75,7 +82,7 @@ public class MapperTest {
     @Test
     public void shouldCreateCommands() {
         // given
-        PropertyResource resource = new YamlFileResource(TestUtils.getJarFile("/beanmapper/commands.yml"));
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/commands.yml"));
         Mapper mapper = new Mapper();
 
         // when
@@ -95,7 +102,7 @@ public class MapperTest {
         assertThat(refreshCommand.getCommand(), equalTo("refresh"));
         assertThat(refreshCommand.getArguments(), contains("force", "async"));
         assertThat(refreshCommand, hasExecution(Executor.CONSOLE, true, 0.4));
-        assertThat(refreshCommand.getExecution().getPrivileges(), containsInAnyOrder("page.view", "action.refresh"));
+        assertThat(refreshCommand.getExecution().getPrivileges(), contains("page.view", "action.refresh"));
 
         Command openCommand = config.getCommands().get("open");
         assertThat(openCommand.getCommand(), equalTo("open"));
@@ -107,7 +114,7 @@ public class MapperTest {
     @Test
     public void shouldSkipInvalidEntry() {
         // given
-        PropertyResource resource = new YamlFileResource(TestUtils.getJarFile("/beanmapper/worlds_invalid.yml"));
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/worlds_invalid.yml"));
         Mapper mapper = new Mapper();
 
         // when
@@ -116,6 +123,117 @@ public class MapperTest {
         // then
         assertThat(config, not(nullValue()));
         assertThat(config.getGroups().keySet(), contains("creative"));
+    }
+
+    @Test(expected = ConfigMeMapperException.class)
+    public void shouldThrowForInvalidValue() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/worlds_invalid.yml"));
+        Mapper mapper = new Mapper(MappingErrorHandler.Impl.THROWING, Transformers.getDefaultTransformers());
+
+        // when
+        mapper.convertToBean("", resource, WorldGroupConfig.class);
+
+        // then - expect exception to be thrown
+    }
+
+    @Test
+    public void shouldHandleInvalidErrors() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/commands_invalid.yml"));
+        Mapper mapper = new Mapper();
+
+        // when
+        CommandConfig config = mapper.convertToBean("commandconfig", resource, CommandConfig.class);
+
+        // then
+        assertThat(config, not(nullValue()));
+        assertThat(config.getCommands().keySet(), contains("refresh", "open", "cancel"));
+        Command cancelCommand = config.getCommands().get("cancel");
+        assertThat(cancelCommand.getArguments(), empty());
+        assertThat(cancelCommand.getExecution().getPrivileges(), hasSize(4));
+    }
+
+    @Test
+    public void shouldReturnNullForUnavailableSection() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/commands.yml"));
+        Mapper mapper = new Mapper();
+
+        // when
+        CommandConfig result = mapper.convertToBean("does-not-exist", resource, CommandConfig.class);
+
+        // then
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void shouldThrowForMapWithNonStringKeyType() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/typeissues/mapconfig.yml"));
+        Mapper mapper = new Mapper();
+
+        // when / then
+        assertMapperException(
+            () -> mapper.convertToBean("", resource, MapWithNonStringKeys.class),
+            "The key type of maps may only be of String type");
+    }
+
+    @Test
+    public void shouldThrowForUnsupportedCollectionType() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/typeissues/collectionconfig.yml"));
+        Mapper mapper = new Mapper();
+
+        // when / then
+        assertMapperException(
+            () -> mapper.convertToBean("", resource, UnsupportedCollection.class),
+            "Unsupported collection type");
+    }
+
+    @Test
+    public void shouldThrowForUntypedCollection() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/typeissues/collectionconfig.yml"));
+        Mapper mapper = new Mapper();
+
+        // when / then
+        assertMapperException(
+            () -> mapper.convertToBean("", resource, UntypedCollection.class),
+            "has no generic type");
+    }
+
+    @Test
+    public void shouldThrowForUntypedMap() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/typeissues/mapconfig.yml"));
+        Mapper mapper = new Mapper();
+
+        // when / then
+        assertMapperException(
+            () -> mapper.convertToBean("", resource, UntypedMap.class),
+            "does not have a concrete generic type");
+    }
+
+    @Test
+    public void shouldThrowForCollectionWithGenerics() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/typeissues/collectionconfig.yml"));
+        Mapper mapper = new Mapper();
+
+        // when / then
+        assertMapperException(
+            () -> mapper.convertToBean("", resource, GenericCollection.class),
+            "does not have a concrete generic type");
+    }
+
+    private static void assertMapperException(Runnable runnable, String exceptionExcerpt) {
+        try {
+            runnable.run();
+            fail("Expected exception to be thrown");
+        } catch (ConfigMeMapperException e) {
+            assertThat(e.getMessage(), containsString(exceptionExcerpt));
+        }
     }
 
     private static Matcher<Command> hasExecution(final Executor executor, final boolean optional,

@@ -1,0 +1,57 @@
+commandconfig:
+  duration: 13
+  commands:
+    save:
+      # missing command, which is mandatory
+      execution:
+        executor: CONSOLE
+        importance: 1.0
+        privileges:
+        - 'action.save'
+    refresh:
+      command: refresh
+      arguments:
+        - force
+        - async
+      execution:
+        executor: console
+        importance: 0.4
+        optional: true
+        privileges:
+        - 'page.view'
+        - 'action.refresh'
+    open:
+      command: open
+      arguments:
+        - f
+        - x
+        - z
+      execution:
+        executor: USER
+        importance: 0.7
+        privileges:
+        - 'page.view'
+    cancel:
+      command: cancel
+      arguments: 'wrong type'  # optional argument with wrong type -> fall back to default
+      execution:
+        executor: USER
+        importance: 0.7
+        privileges:            # Weird values here, but our mapping to string is quite flexible
+        - 'action.cancel'
+        - true
+        - 1.23
+        -
+          - nested
+          - list
+          - uh oh!
+    broadcast:
+      command: broadcast
+      execution:
+        executor: USER
+        importance: 'high'     # wrong value for mandatory property
+        privileges:
+        - 'action.cancel'
+othersection:
+  a: 1
+  b: 'test'

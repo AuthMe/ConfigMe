@@ -1,9 +1,12 @@
 package com.github.authme.configme.properties;
 
 import com.github.authme.configme.TestUtils;
+import com.github.authme.configme.beanmapper.BeanProperty;
+import com.github.authme.configme.beanmapper.worldgroup.WorldGroupConfig;
 import com.github.authme.configme.samples.TestEnum;
 import org.junit.Test;
 
+import static com.github.authme.configme.properties.PropertyInitializer.newBeanProperty;
 import static com.github.authme.configme.properties.PropertyInitializer.newListProperty;
 import static com.github.authme.configme.properties.PropertyInitializer.newLowercaseListProperty;
 import static com.github.authme.configme.properties.PropertyInitializer.newProperty;
@@ -23,6 +26,7 @@ public class PropertyInitializerTest {
         assertThat(newProperty(TestEnum.class, "my.path", TestEnum.FIRST), instanceOf(EnumProperty.class));
         assertThat(newListProperty("path", "default", "entries"), instanceOf(StringListProperty.class));
         assertThat(newLowercaseListProperty("path", "a", "b", "c"), instanceOf(LowercaseStringListProperty.class));
+        assertThat(newBeanProperty(WorldGroupConfig.class, "worlds", new WorldGroupConfig()), instanceOf(BeanProperty.class));
     }
 
     @Test

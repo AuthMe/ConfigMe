@@ -1,0 +1,4 @@
+name: 'config with map'
+map:
+  12: 14
+  14: 12

@@ -67,7 +67,7 @@ final class MapperUtils {
                     + numberOfGenericTypes + " generic types");
             }
         }
-        throw new ConfigMeMapperException("Type '" + type + "' is not a parameterized type");
+        throw new ConfigMeMapperException("Type '" + type + "' has no generic type");
     }
 
     /**
