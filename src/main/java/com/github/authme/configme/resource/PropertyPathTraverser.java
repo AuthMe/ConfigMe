@@ -41,7 +41,7 @@ public class PropertyPathTraverser {
         parentPathElements = propertyPath.subList(0, propertyPath.size() - 1);
 
         int indentationLevel = commonPathParts.size();
-        String prefix = String.join(".", commonPathParts) + ".";
+        String prefix = commonPathParts.isEmpty() ? "" : String.join(".", commonPathParts) + ".";
         return convertToPathElements(indentationLevel, prefix, newPathParts);
     }
 

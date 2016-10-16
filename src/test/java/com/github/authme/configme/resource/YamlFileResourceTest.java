@@ -1,7 +1,6 @@
 package com.github.authme.configme.resource;
 
 import com.github.authme.configme.SettingsManager;
-import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.knownproperties.ConfigurationData;
 import com.github.authme.configme.knownproperties.ConfigurationDataBuilder;
@@ -23,7 +22,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
+import static com.github.authme.configme.TestUtils.getJarPath;
 import static com.github.authme.configme.properties.PropertyInitializer.newProperty;
 import static com.github.authme.configme.samples.TestSettingsMigrationServices.checkAllPropertiesPresent;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -185,7 +186,7 @@ public class YamlFileResourceTest {
         // given
         File file = temporaryFolder.newFile();
         YamlFileResource resource = new YamlFileResource(file);
-        Files.copy(TestUtils.getJarPath(COMPLETE_FILE), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(getJarPath(COMPLETE_FILE), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         // when
         assertThat(TestConfiguration.RATIO_ORDER.getValue(resource), equalTo(TestEnum.SECOND)); // default value
@@ -235,7 +236,7 @@ public class YamlFileResourceTest {
     public void shouldReturnIfResourceContainsValue() {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
-        YamlFileResource resource = new YamlFileResource(file);
+        PropertyResource resource = new YamlFileResource(file);
 
         // when
         boolean presentPropertyResult = resource.contains(TestConfiguration.DURATION_IN_SECONDS.getPath());
@@ -250,7 +251,7 @@ public class YamlFileResourceTest {
     public void shouldWrapIoExceptionInConfigMeException() throws IOException {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
-        YamlFileResource resource = new YamlFileResource(file);
+        PropertyResource resource = new YamlFileResource(file);
         file.delete();
         // Hacky: the only way we can easily provoke an IOException is by deleting the file and creating a folder
         // with the same name...
@@ -270,7 +271,7 @@ public class YamlFileResourceTest {
     public void shouldReturnRootForEmptyString() throws IOException {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
-        YamlFileResource resource = new YamlFileResource(file);
+        PropertyResource resource = new YamlFileResource(file);
 
         // when
         Object result = resource.getObject("");
@@ -280,9 +281,29 @@ public class YamlFileResourceTest {
         assertThat(((Map<String, ?>) result).keySet(), containsInAnyOrder("test", "sample", "version", "features"));
     }
 
+    @Test
+    public void shouldExportConfigurationWithExpectedComments() throws IOException {
+        // given
+        File file = copyFileFromResources(COMPLETE_FILE);
+        PropertyResource resource = new YamlFileResource(file);
+        ConfigurationData configurationData = ConfigurationDataBuilder.getAllProperties(TestConfiguration.class);
+
+        // when
+        resource.exportProperties(configurationData);
+
+        // then
+        // In some cases we have a space before a new line. The IDE strips ending whitespace automatically and so there
+        // is a mismatch because of those spaces; this pattern will remove any ending space to fix this.
+        // Similarly, we add a new line because IntelliJ keeps adding a new line to the saved file.
+        Pattern pattern = Pattern.compile("( )$", Pattern.MULTILINE);
+        String writtenFileContents = new String(Files.readAllBytes(file.toPath())) + "\n";
+        assertThat(pattern.matcher(writtenFileContents).replaceAll(""),
+            equalTo(new String(Files.readAllBytes(getJarPath("/config-expected-export.yml")))));
+    }
+
     private File copyFileFromResources(String path) {
         try {
-            Path source = TestUtils.getJarPath(path);
+            Path source = getJarPath(path);
             File destination = temporaryFolder.newFile();
             Files.copy(source, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
             return destination;

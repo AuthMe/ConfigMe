@@ -118,10 +118,11 @@ public class YamlFileResource implements PropertyResource {
                     writer.append("\n")
                         .append(indent(pathElement.indentationLevel))
                         .append(pathElement.name)
-                        .append(": ");
+                        .append(":");
                 }
 
-                writer.append(toYaml(property, pathElements.get(pathElements.size() - 1).indentationLevel));
+                writer.append(" ")
+                    .append(toYaml(property, pathElements.get(pathElements.size() - 1).indentationLevel));
             }
             writer.flush();
             writer.close();

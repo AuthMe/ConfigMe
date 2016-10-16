@@ -1,10 +1,13 @@
 package com.github.authme.configme.samples;
 
 import com.github.authme.configme.Comment;
+import com.github.authme.configme.SectionComments;
 import com.github.authme.configme.SettingsHolder;
 import com.github.authme.configme.properties.Property;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.github.authme.configme.properties.PropertyInitializer.newListProperty;
 import static com.github.authme.configme.properties.PropertyInitializer.newProperty;
@@ -61,4 +64,13 @@ public final class TestConfiguration implements SettingsHolder {
     private TestConfiguration() {
     }
 
+    @SectionComments
+    public static Map<String, String[]> getComments() {
+        Map<String, String[]> comments = new HashMap<>();
+        comments.put("sample", new String[]{"Sample section"});
+        comments.put("features.cool", new String[]{"Cool features", "Contains cool settings"});
+        comments.put("features.boring", new String[]{"Plain boring features"});
+        comments.put("test", new String[]{"Test section"});
+        return comments;
+    }
 }
