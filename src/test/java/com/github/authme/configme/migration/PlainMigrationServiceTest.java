@@ -1,9 +1,9 @@
 package com.github.authme.configme.migration;
 
 import com.github.authme.configme.TestUtils;
-import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.knownproperties.ConfigurationDataBuilder;
 import com.github.authme.configme.properties.IntegerProperty;
+import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
 import com.github.authme.configme.samples.TestConfiguration;
@@ -35,8 +35,8 @@ public class PlainMigrationServiceTest {
     private static final String COMPLETE_CONFIG = "/config-sample.yml";
     private static final String INCOMPLETE_CONFIG = "/config-incomplete-sample.yml";
 
-    private static final List<PropertyEntry> KNOWN_PROPERTIES =
-        ConfigurationDataBuilder.getAllProperties(TestConfiguration.class).getPropertyEntries();
+    private static final List<Property<?>> KNOWN_PROPERTIES =
+        ConfigurationDataBuilder.getAllProperties(TestConfiguration.class).getProperties();
 
     @Spy
     private PlainMigrationService service;
@@ -114,7 +114,7 @@ public class PlainMigrationServiceTest {
     private static class PlainMigrationServiceTestExtension extends PlainMigrationService {
 
         @Override
-        protected boolean performMigrations(PropertyResource resource, List<PropertyEntry> knownProperties) {
+        protected boolean performMigrations(PropertyResource resource, List<Property<?>> properties) {
             // If contains -> return true = migration is necessary
             if (resource.contains("old.property")) {
                 return true;
@@ -122,11 +122,11 @@ public class PlainMigrationServiceTest {
 
             // Set any int property to 0 if its value is above 20
             boolean hasChange = false;
-            for (PropertyEntry entry : knownProperties) {
-                if (entry.getProperty() instanceof IntegerProperty) {
-                    IntegerProperty property = (IntegerProperty) entry.getProperty();
-                    if (property.getValue(resource) > 20) {
-                        resource.setValue(property.getPath(), 0);
+            for (Property<?> property : properties) {
+                if (property instanceof IntegerProperty) {
+                    IntegerProperty intProperty = (IntegerProperty) property;
+                    if (intProperty.getValue(resource) > 20) {
+                        resource.setValue(intProperty.getPath(), 0);
                         hasChange = true;
                     }
                 }

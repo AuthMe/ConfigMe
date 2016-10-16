@@ -4,9 +4,8 @@ import com.github.authme.configme.SettingsManager;
 import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.knownproperties.ConfigurationData;
-import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.knownproperties.ConfigurationDataBuilder;
+import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
 import org.junit.Rule;
@@ -145,16 +144,12 @@ public class YamlFileResourceTest {
         File file = copyFileFromResources(DIFFICULT_FILE);
         YamlFileResource resource = new YamlFileResource(file);
 
-        // Additional string properties
-        List<Property<String>> additionalProperties = Arrays.asList(
+        // Properties
+        List<Property<?>> properties = new ArrayList<>(Arrays.asList(
             newProperty("more.string1", "it's a text with some \\'apostrophes'"),
-            newProperty("more.string2", "\tthis one\nhas some\nnew '' lines-test"));
-        List<PropertyEntry> entries = new ArrayList<>(
-            ConfigurationDataBuilder.getAllProperties(TestConfiguration.class).getPropertyEntries());
-        for (Property<?> property : additionalProperties) {
-            entries.add(new PropertyEntry(property));
-        }
-        ConfigurationData configData = new ConfigurationData(entries);
+            newProperty("more.string2", "\tthis one\nhas some\nnew '' lines-test")));
+        properties.addAll(ConfigurationDataBuilder.getAllProperties(TestConfiguration.class).getProperties());
+        ConfigurationData configData = new ConfigurationData(properties);
 
         // when
         new SettingsManager(resource, checkAllPropertiesPresent(), configData);
@@ -176,8 +171,8 @@ public class YamlFileResourceTest {
         expected.put(TestConfiguration.DUST_LEVEL, -1);
         expected.put(TestConfiguration.USE_COOL_FEATURES, true);
         expected.put(TestConfiguration.COOL_OPTIONS, Collections.EMPTY_LIST);
-        expected.put(additionalProperties.get(0), additionalProperties.get(0).getDefaultValue());
-        expected.put(additionalProperties.get(1), additionalProperties.get(1).getDefaultValue());
+        expected.put(properties.get(0), properties.get(0).getDefaultValue());
+        expected.put(properties.get(1), properties.get(1).getDefaultValue());
 
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
             assertThat("Property '" + entry.getKey().getPath() + "' has expected value",

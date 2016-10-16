@@ -8,8 +8,6 @@ import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.samples.TestConfiguration;
 import org.junit.Test;
 
-import java.util.List;
-
 import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.emptyArray;
@@ -35,16 +33,15 @@ public class ConfigurationDataBuilderTest {
         assertThat(configurationData.getCommentsForSection("other.section"), emptyArray());
         assertThat(configurationData.getCommentsForSection("notDefinedAnywhere"), emptyArray());
 
-        List<PropertyEntry> knownProperties = configurationData.getPropertyEntries();
         // 3 properties in AdditionalTestConfiguration, 10 properties in TestConfiguration
-        assertThat(knownProperties, hasSize(13));
+        assertThat(configurationData.getProperties(), hasSize(13));
         // Take some samples, check for presence & expected comments
-        assertHasPropertyWithComments(knownProperties, TestConfiguration.SKIP_BORING_FEATURES, "Skip boring features?");
-        assertHasPropertyWithComments(knownProperties, TestConfiguration.DUST_LEVEL);
-        assertHasPropertyWithComments(knownProperties, TestConfiguration.VERSION_NUMBER,
+        assertHasPropertyWithComments(configurationData, TestConfiguration.SKIP_BORING_FEATURES, "Skip boring features?");
+        assertHasPropertyWithComments(configurationData, TestConfiguration.DUST_LEVEL);
+        assertHasPropertyWithComments(configurationData, TestConfiguration.VERSION_NUMBER,
             "The version number", "This is just a random number");
-        assertHasPropertyWithComments(knownProperties, AdditionalTestConfiguration.NAME, "Additional name");
-        assertHasPropertyWithComments(knownProperties, AdditionalTestConfiguration.SLEEP, "Seconds to sleep");
+        assertHasPropertyWithComments(configurationData, AdditionalTestConfiguration.NAME, "Additional name");
+        assertHasPropertyWithComments(configurationData, AdditionalTestConfiguration.SLEEP, "Seconds to sleep");
     }
 
     @Test
@@ -84,11 +81,11 @@ public class ConfigurationDataBuilderTest {
         }
     }
 
-    private static void assertHasPropertyWithComments(List<PropertyEntry> knownProperties, Property<?> property,
+    private static void assertHasPropertyWithComments(ConfigurationData configurationData, Property<?> property,
                                                       String... comments) {
-        for (PropertyEntry entry : knownProperties) {
-            if (entry.getProperty().equals(property)) {
-                assertThat(entry.getComments(), equalTo(comments));
+        for (Property<?> knownProperty : configurationData.getProperties()) {
+            if (knownProperty.equals(property)) {
+                assertThat(configurationData.getCommentsForSection(property.getPath()), equalTo(comments));
                 return;
             }
         }

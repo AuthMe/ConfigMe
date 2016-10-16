@@ -5,10 +5,10 @@ import com.github.authme.configme.properties.Property;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
@@ -19,9 +19,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for {@link KnownPropertiesBuilder}.
+ * Test for {@link PropertyListBuilder}.
  */
-public class KnownPropertiesBuilderTest {
+public class PropertyListBuilderTest {
 
     @Test
     public void shouldKeepEntriesByInsertionAndGroup() {
@@ -29,7 +29,7 @@ public class KnownPropertiesBuilderTest {
         List<String> paths = Arrays.asList("japan.toyota", "indonesia.jakarta.koja", "japan.tokyo.sumida",
             "china.shanghai", "egypt.cairo", "china.shenzhen", "china.tianjin", "indonesia.jakarta.tugu",
             "egypt.luxor", "japan.nagoya", "japan.tokyo.taito");
-        KnownPropertiesBuilder builder = new KnownPropertiesBuilder();
+        PropertyListBuilder builder = new PropertyListBuilder();
 
         // when
         for (String path : paths) {
@@ -38,11 +38,8 @@ public class KnownPropertiesBuilderTest {
         }
 
         // then
-        List<PropertyEntry> knownProperties = builder.create();
-        List<String> resultPaths = new ArrayList<>();
-        for (PropertyEntry entry : knownProperties) {
-            resultPaths.add(entry.getProperty().getPath());
-        }
+        List<Property<?>> knownProperties = builder.create();
+        List<String> resultPaths = knownProperties.stream().map(Property::getPath).collect(Collectors.toList());
 
         assertThat(knownProperties, hasSize(paths.size()));
         assertThat(knownProperties, hasSize(resultPaths.size()));
@@ -54,7 +51,7 @@ public class KnownPropertiesBuilderTest {
     @Test
     public void shouldThrowForSamePropertyAdded() {
         // given
-        KnownPropertiesBuilder properties = new KnownPropertiesBuilder();
+        PropertyListBuilder properties = new PropertyListBuilder();
         properties.add(createPropertyWithPath("test.version"));
         properties.add(createPropertyWithPath("test.name"));
 
@@ -76,7 +73,7 @@ public class KnownPropertiesBuilderTest {
     @Test
     public void shouldThrowForPropertyHavingIllegalChild() {
         // given
-        KnownPropertiesBuilder properties = new KnownPropertiesBuilder();
+        PropertyListBuilder properties = new PropertyListBuilder();
         properties.add(createPropertyWithPath("test.version"));
 
         // when / then
@@ -94,7 +91,7 @@ public class KnownPropertiesBuilderTest {
     @SuppressWarnings("unchecked")
     public void shouldThrowForUnknownInternalEntry() throws ReflectiveOperationException {
         // given
-        KnownPropertiesBuilder properties = new KnownPropertiesBuilder();
+        PropertyListBuilder properties = new PropertyListBuilder();
         properties.add(createPropertyWithPath("test.name"));
 
         Map<String, Object> internalMap = getInternalMap(properties);
@@ -116,9 +113,9 @@ public class KnownPropertiesBuilderTest {
         return property;
     }
 
-    private static Map<String, Object> getInternalMap(KnownPropertiesBuilder properties)
+    private static Map<String, Object> getInternalMap(PropertyListBuilder properties)
                                                       throws ReflectiveOperationException {
-        Field field = KnownPropertiesBuilder.class.getDeclaredField("rootEntries");
+        Field field = PropertyListBuilder.class.getDeclaredField("rootEntries");
         field.setAccessible(true);
         return (Map<String, Object>) field.get(properties);
     }

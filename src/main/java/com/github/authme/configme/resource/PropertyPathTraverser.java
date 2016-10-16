@@ -1,5 +1,6 @@
 package com.github.authme.configme.resource;
 
+import com.github.authme.configme.knownproperties.ConfigurationData;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.utils.CollectionUtils;
 
@@ -17,8 +18,13 @@ import java.util.List;
  */
 public class PropertyPathTraverser {
 
+    private final ConfigurationData configurationData;
     /** Contains all path elements besides the last, e.g. {datasource, mysql} for "datasource.mysql.table". */
     private List<String> parentPathElements = new ArrayList<>();
+
+    public PropertyPathTraverser(ConfigurationData configurationData) {
+        this.configurationData = configurationData;
+    }
 
     /**
      * Returns all path elements for the given property that have not been traversed yet.
@@ -32,16 +38,19 @@ public class PropertyPathTraverser {
             parentPathElements, propertyPath.subList(0, propertyPath.size() - 1));
         List<String> newPathParts = CollectionUtils.getRange(propertyPath, commonPathParts.size());
 
-        parentPathElements = propertyPath.subList(0, propertyPath.size());
+        parentPathElements = propertyPath.subList(0, propertyPath.size() - 1);
 
         int indentationLevel = commonPathParts.size();
-        return convertToPathElements(indentationLevel, newPathParts);
+        String prefix = String.join(".", commonPathParts) + ".";
+        return convertToPathElements(indentationLevel, prefix, newPathParts);
     }
 
-    private List<PathElement> convertToPathElements(int indentation, List<String> elements) {
+    private List<PathElement> convertToPathElements(int indentation, String prefix, List<String> elements) {
         List<PathElement> pathElements = new ArrayList<>(elements.size());
         for (String element : elements) {
-            pathElements.add(new PathElement(indentation, element));
+            String[] comments = configurationData.getCommentsForSection(prefix + element);
+            pathElements.add(new PathElement(indentation, element, comments));
+            prefix += element + ".";
             ++indentation;
         }
         return pathElements;
@@ -50,10 +59,12 @@ public class PropertyPathTraverser {
     public static final class PathElement {
         public final int indentationLevel;
         public final String name;
+        public final String[] comments;
 
-        public PathElement(int indentationLevel, String name) {
+        public PathElement(int indentationLevel, String name, String[] comments) {
             this.indentationLevel = indentationLevel;
             this.name = name;
+            this.comments = comments;
         }
     }
 

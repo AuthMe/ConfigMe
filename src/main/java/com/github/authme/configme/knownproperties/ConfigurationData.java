@@ -1,5 +1,7 @@
 package com.github.authme.configme.knownproperties;
 
+import com.github.authme.configme.properties.Property;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,20 +13,20 @@ import java.util.Map;
  */
 public class ConfigurationData {
 
-    private final List<PropertyEntry> propertyEntries;
+    private final List<Property<?>> properties;
     private final Map<String, String[]> sectionComments;
 
-    public ConfigurationData(List<PropertyEntry> propertyEntries) {
-        this(propertyEntries, Collections.emptyMap());
+    public ConfigurationData(List<Property<?>> properties) {
+        this(properties, Collections.emptyMap());
     }
 
-    public ConfigurationData(List<PropertyEntry> propertyEntries, Map<String, String[]> sectionComments) {
-        this.propertyEntries = Collections.unmodifiableList(propertyEntries);
+    public ConfigurationData(List<Property<?>> properties, Map<String, String[]> sectionComments) {
+        this.properties = Collections.unmodifiableList(properties);
         this.sectionComments = Collections.unmodifiableMap(sectionComments);
     }
 
-    public List<PropertyEntry> getPropertyEntries() {
-        return propertyEntries;
+    public List<Property<?>> getProperties() {
+        return properties;
     }
 
     public String[] getCommentsForSection(String path) {

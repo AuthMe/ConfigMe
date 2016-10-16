@@ -6,7 +6,6 @@ import com.github.authme.configme.beanmapper.command.CommandConfig;
 import com.github.authme.configme.beanmapper.command.Executor;
 import com.github.authme.configme.beanmapper.worldgroup.WorldGroupConfig;
 import com.github.authme.configme.knownproperties.ConfigurationData;
-import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
 import org.junit.Rule;
@@ -40,12 +39,11 @@ public class BeanPropertyTest {
         // given
         BeanProperty<CommandConfig> property =
             new BeanProperty<>(CommandConfig.class, "commandconfig", new CommandConfig());
-        PropertyEntry entry = new PropertyEntry(property);
         File configFile = copyFileToTemporaryFolder("/beanmapper/commands.yml");
         PropertyResource resource = new YamlFileResource(configFile);
 
         // when
-        resource.exportProperties(new ConfigurationData(singletonList(entry)));
+        resource.exportProperties(new ConfigurationData(singletonList(property)));
         resource = new YamlFileResource(configFile);
 
         // then

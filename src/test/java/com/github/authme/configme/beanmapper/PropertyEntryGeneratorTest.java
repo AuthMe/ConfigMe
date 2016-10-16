@@ -4,7 +4,6 @@ import com.github.authme.configme.beanmapper.command.Command;
 import com.github.authme.configme.beanmapper.command.CommandConfig;
 import com.github.authme.configme.beanmapper.command.ExecutionDetails;
 import com.github.authme.configme.beanmapper.command.Executor;
-import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.properties.Property;
 import org.junit.Test;
 
@@ -46,12 +45,13 @@ public class PropertyEntryGeneratorTest {
         BeanProperty<CommandConfig> property = new BeanProperty<>(CommandConfig.class, "cmd", new CommandConfig());
 
         // when
-        List<PropertyEntry> entries = new PropertyEntryGenerator().generate(property, config);
+        List<Property<?>> entries = new PropertyEntryGenerator().generate(property, config);
 
         // then
         List<String> expectedPaths = expectedCommandPaths("kick", "msg", "vanish");
         expectedPaths.add("cmd.duration");
-        assertThat(toPaths(entries), containsInAnyOrder(expectedPaths.toArray()));
+        List<String> paths = entries.stream().map(Property::getPath).collect(Collectors.toList());
+        assertThat(paths, containsInAnyOrder(expectedPaths.toArray()));
         checkExecutionDetails(entries, "kick", kickExecution);
         checkExecutionDetails(entries, "msg", msgExecution);
         checkExecutionDetails(entries, "vanish", vanishExecution);
@@ -66,14 +66,6 @@ public class PropertyEntryGeneratorTest {
 
         // when
         new PropertyEntryGenerator().generate(property, bean);
-    }
-
-    private static List<String> toPaths(List<PropertyEntry> entries) {
-        List<String> paths = new ArrayList<>(entries.size());
-        for (PropertyEntry entry : entries) {
-            paths.add(entry.getProperty().getPath());
-        }
-        return paths;
     }
 
     private static List<String> expectedCommandPaths(String... commands) {
@@ -91,22 +83,22 @@ public class PropertyEntryGeneratorTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static void checkExecutionDetails(List<PropertyEntry> entries, String name, ExecutionDetails details) {
+    private static void checkExecutionDetails(List<Property<?>> properties, String name, ExecutionDetails details) {
         String root = "cmd.commands." + name + ".execution.";
-        assertEquals(getPropertyValue(entries, root + "executor"), details.getExecutor());
-        assertEquals(getPropertyValue(entries, root + "optional"), details.isOptional());
-        assertEquals(getPropertyValue(entries, root + "importance"), details.getImportance());
+        assertEquals(getPropertyValue(properties, root + "executor"), details.getExecutor());
+        assertEquals(getPropertyValue(properties, root + "optional"), details.isOptional());
+        assertEquals(getPropertyValue(properties, root + "importance"), details.getImportance());
 
-        List<Object> privileges = Arrays.stream((Property<Object>[]) getPropertyValue(entries, root + "privileges"))
+        List<Object> privileges = Arrays.stream((Property<Object>[]) getPropertyValue(properties, root + "privileges"))
             .map(Property::getDefaultValue)
             .collect(Collectors.toList());
         assertThat(privileges, contains(details.getPrivileges().toArray()));
     }
 
-    private static Object getPropertyValue(List<PropertyEntry> entries, String path) {
-        for (PropertyEntry entry : entries) {
-            if (entry.getProperty().getPath().equals(path)) {
-                return entry.getProperty().getValue(null);
+    private static Object getPropertyValue(List<Property<?>> properties, String path) {
+        for (Property<?> property : properties) {
+            if (property.getPath().equals(path)) {
+                return property.getValue(null);
             }
         }
         throw new IllegalArgumentException("No entry for path '" + path + "'");

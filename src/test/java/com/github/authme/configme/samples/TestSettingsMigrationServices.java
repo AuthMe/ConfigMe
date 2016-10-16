@@ -1,7 +1,7 @@
 package com.github.authme.configme.samples;
 
 import com.github.authme.configme.migration.MigrationService;
-import com.github.authme.configme.knownproperties.PropertyEntry;
+import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.resource.PropertyResource;
 
 import java.util.List;
@@ -20,12 +20,7 @@ public final class TestSettingsMigrationServices {
      * @return test settings migration service
      */
     public static MigrationService alwaysFulfilled() {
-        return new MigrationService() {
-            @Override
-            public boolean checkAndMigrate(PropertyResource resource, List<PropertyEntry> knownProperties) {
-                return false;
-            }
-        };
+        return (resource, properties) -> false;
     }
 
     /**
@@ -36,9 +31,9 @@ public final class TestSettingsMigrationServices {
     public static MigrationService checkAllPropertiesPresent() {
         return new MigrationService() {
             @Override
-            public boolean checkAndMigrate(PropertyResource resource, List<PropertyEntry> knownProperties) {
-                for (PropertyEntry entry : knownProperties) {
-                    if (!entry.getProperty().isPresent(resource)) {
+            public boolean checkAndMigrate(PropertyResource resource, List<Property<?>> properties) {
+                for (Property<?> property : properties) {
+                    if (!property.isPresent(resource)) {
                         return true;
                     }
                 }

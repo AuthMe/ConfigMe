@@ -1,17 +1,16 @@
 package com.github.authme.configme;
 
 import com.github.authme.configme.knownproperties.ConfigurationData;
+import com.github.authme.configme.knownproperties.ConfigurationDataBuilder;
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.knownproperties.PropertyEntry;
-import com.github.authme.configme.knownproperties.ConfigurationDataBuilder;
 import com.github.authme.configme.resource.PropertyResource;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Settings manager.
@@ -72,13 +71,15 @@ public class SettingsManager {
      * @param properties the properties
      * @return the created settings manager
      */
+    @SuppressWarnings("unchecked")
     public static SettingsManager createWithProperties(PropertyResource resource,
                                                        @Nullable MigrationService migrationService,
-                                                       Iterable<? extends Property<?>> properties) {
-        List<PropertyEntry> propertyEntries = StreamSupport.stream(properties.spliterator(), false)
-            .map(PropertyEntry::new).collect(Collectors.toList());
+                                                       Collection<? extends Property<?>> properties) {
+        List<Property<?>> propertyList = (properties instanceof List<?>)
+            ? (List<Property<?>>) properties
+            : new ArrayList<>(properties);
         return new SettingsManager(resource, migrationService,
-            new ConfigurationData(propertyEntries, Collections.emptyMap()));
+            new ConfigurationData(propertyList, Collections.emptyMap()));
     }
 
     /**
@@ -124,7 +125,7 @@ public class SettingsManager {
      */
     protected void validateAndLoadOptions() {
         if (migrationService != null
-                && migrationService.checkAndMigrate(resource, configurationData.getPropertyEntries())) {
+                && migrationService.checkAndMigrate(resource, configurationData.getProperties())) {
             save();
         }
     }

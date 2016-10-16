@@ -19,15 +19,15 @@ import java.util.Map;
  *   property, then "DataSource" properties will come before the "security" ones.</li>
  * </ul>
  */
-class KnownPropertiesBuilder {
+public class PropertyListBuilder {
 
     private Map<String, Object> rootEntries;
 
-    public KnownPropertiesBuilder() {
+    public PropertyListBuilder() {
         rootEntries = new LinkedHashMap<>();
     }
 
-    public void add(Property<?> property, String... comments) {
+    public void add(Property<?> property) {
         String[] paths = property.getPath().split("\\.");
         Map<String, Object> map = rootEntries;
         for (int i = 0; i < paths.length - 1; ++i) {
@@ -38,11 +38,11 @@ class KnownPropertiesBuilder {
         if (map.containsKey(end)) {
             throw new ConfigMeException("Path at '" + property.getPath() + "' already exists");
         }
-        map.put(end, new PropertyEntry(property, comments));
+        map.put(end, property);
     }
 
-    public List<PropertyEntry> create() {
-        List<PropertyEntry> result = new ArrayList<>();
+    public List<Property<?>> create() {
+        List<Property<?>> result = new ArrayList<>();
         collectEntries(rootEntries, result);
         return result;
     }
@@ -56,7 +56,7 @@ class KnownPropertiesBuilder {
             parent.put(path, map);
             return map;
         } else { // uh oh
-            if (o instanceof PropertyEntry) {
+            if (o instanceof Property<?>) {
                 throw new ConfigMeException("Unexpected entry found at path '" + path + "'");
             } else {
                 throw new ConfigMeException("Value of unknown type found at '" + path + "': " + o);
@@ -64,12 +64,12 @@ class KnownPropertiesBuilder {
         }
     }
 
-    private static void collectEntries(Map<String, Object> map, List<PropertyEntry> results) {
+    private static void collectEntries(Map<String, Object> map, List<Property<?>> results) {
         for (Object o : map.values()) {
             if (o instanceof Map<?, ?>) {
                 collectEntries(asTypedMap(o), results);
-            } else if (o instanceof PropertyEntry) {
-                results.add((PropertyEntry) o);
+            } else if (o instanceof Property<?>) {
+                results.add((Property<?>) o);
             }
         }
     }

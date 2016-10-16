@@ -24,6 +24,9 @@ import java.util.Map;
  */
 public class ConfigurationDataBuilder {
 
+    private final PropertyListBuilder propertyListBuilder = new PropertyListBuilder();
+    private final CommentsGatherer commentsGatherer = new CommentsGatherer();
+
     private ConfigurationDataBuilder() {
     }
 
@@ -36,30 +39,39 @@ public class ConfigurationDataBuilder {
      */
     @SafeVarargs
     public static ConfigurationData getAllProperties(Class<? extends SettingsHolder>... classes) {
-        KnownPropertiesBuilder propertyListBuilder = new KnownPropertiesBuilder();
-        SectionCommentsGatherer sectionCommentsGatherer = new SectionCommentsGatherer();
-        for (Class<?> clazz : classes) {
-            collectProperties(propertyListBuilder, clazz);
-            sectionCommentsGatherer.collectAllSectionComments(clazz);
-        }
-        return new ConfigurationData(propertyListBuilder.create(), sectionCommentsGatherer.sectionComments);
+        return new ConfigurationDataBuilder().getAllProperties0(classes);
     }
 
-    private static void collectProperties(KnownPropertiesBuilder propertyListBuilder, Class<?> clazz) {
+    /**
+     * Collects all properties and comment data from the provided classes.
+     * Properties are sorted by their group, and each group is by insertion order.
+     *
+     * @param classes the classes to scan for their property data
+     * @return collected configuration data
+     */
+    private ConfigurationData getAllProperties0(Class<? extends SettingsHolder>[] classes) {
+        for (Class<?> clazz : classes) {
+            collectProperties(clazz);
+            commentsGatherer.collectAllSectionComments(clazz);
+        }
+        return new ConfigurationData(propertyListBuilder.create(), commentsGatherer.comments);
+    }
+
+    private void collectProperties(Class<?> clazz) {
         Field[] declaredFields = clazz.getDeclaredFields();
         for (Field field : declaredFields) {
             Property<?> property = getPropertyField(field);
             if (property != null) {
-                propertyListBuilder.add(property, getCommentsForField(field));
+                propertyListBuilder.add(property);
+                saveComment(field, property.getPath());
             }
         }
     }
 
-    private static String[] getCommentsForField(Field field) {
+    private void saveComment(Field field, String path) {
         if (field.isAnnotationPresent(Comment.class)) {
-            return field.getAnnotation(Comment.class).value();
+            commentsGatherer.comments.put(path, field.getAnnotation(Comment.class).value());
         }
-        return new String[0];
     }
 
     /**
@@ -83,17 +95,18 @@ public class ConfigurationDataBuilder {
     }
 
     /**
-     * Collects all section comments via {@link SectionComments} methods from the provided classes.
+     * Collects all section comments via {@link SectionComments} methods and {@link Comment} annotations
+     * from the provided classes.
      */
-    private static final class SectionCommentsGatherer {
-        final Map<String, String[]> sectionComments = new HashMap<>();
+    private static final class CommentsGatherer {
+        final Map<String, String[]> comments = new HashMap<>();
 
         void collectAllSectionComments(Class<?> clazz) {
             Arrays.stream(clazz.getMethods())
                 .filter(method -> method.isAnnotationPresent(SectionComments.class))
                 .map(method -> callSectionCommentsMethod(method))
                 .filter(map -> map != null)
-                .forEach(sectionComments::putAll);
+                .forEach(comments::putAll);
         }
 
         private static Map<String, String[]> callSectionCommentsMethod(Method method) {

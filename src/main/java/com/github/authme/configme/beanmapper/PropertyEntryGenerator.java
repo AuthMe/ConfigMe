@@ -1,6 +1,5 @@
 package com.github.authme.configme.beanmapper;
 
-import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.properties.StringProperty;
 import com.github.authme.configme.resource.PropertyResource;
@@ -12,28 +11,25 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
- * Generates {@link PropertyEntry} objects for all "leaf" values of a bean to
+ * Generates {@link Property} objects for all "leaf" values of a bean to
  * properly export the values.
  */
 public class PropertyEntryGenerator {
 
     /**
-     * Generates a list of property entries for the given bean's data.
+     * Generates a list of regular property objects for the given bean's data.
      *
      * @param beanProperty the bean property
      * @param value the value of the bean property
      * @param <B> the bean type
-     * @return list of all property entries necessary to export the bean
+     * @return list of all properties necessary to export the bean
      */
-    public <B> List<PropertyEntry> generate(BeanProperty<B> beanProperty, B value) {
+    public <B> List<Property<?>> generate(BeanProperty<B> beanProperty, B value) {
         List<Property<?>> properties = new ArrayList<>();
         collectPropertiesFromBean(value, beanProperty.getPath(), properties);
-        return properties.stream()
-            .map(p -> new PropertyEntry(p))
-            .collect(Collectors.toList());
+        return properties;
     }
 
     /**

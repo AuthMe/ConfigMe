@@ -5,7 +5,6 @@ import com.github.authme.configme.beanmapper.ConstantCollectionProperty;
 import com.github.authme.configme.beanmapper.PropertyEntryGenerator;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.knownproperties.ConfigurationData;
-import com.github.authme.configme.knownproperties.PropertyEntry;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.properties.StringListProperty;
 import com.github.authme.configme.resource.PropertyPathTraverser.PathElement;
@@ -15,6 +14,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +29,6 @@ public class YamlFileResource implements PropertyResource {
     private final File file;
     private final PropertyReader reader;
     private final PropertyEntryGenerator propertyEntryGenerator;
-    private final PropertyPathTraverser pathTraverser = new PropertyPathTraverser();
     private Yaml simpleYaml;
     private Yaml singleQuoteYaml;
 
@@ -109,35 +108,20 @@ public class YamlFileResource implements PropertyResource {
 
     @Override
     public void exportProperties(ConfigurationData configurationData) {
-        try (FileWriter writer = new FileWriter(file)) {
-            // Contains all but the last node of the setting, e.g. [DataSource, mysql] for "DataSource.mysql.username"
-            for (PropertyEntry entry : replaceBeanPropertiesToLeafValues(configurationData.getPropertyEntries())) {
-                final Property<?> property = entry.getProperty();
+        try (Writer writer = new FileWriter(file)) {
+            PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
+            for (Property<?> property : replaceBeanPropertiesToLeafValues(configurationData.getProperties())) {
 
-                // Handle properties
-                // TODO #6: Write section comments to file
                 List<PathElement> pathElements = pathTraverser.getPathElements(property);
-
-                if (pathElements.size() > 1) {
-                    for (PathElement path : pathElements.subList(0, pathElements.size() - 1)) {
-                        writer.append("\n")
-                            .append(indent(path.indentationLevel))
-                            .append(path.name)
-                            .append(": ");
-                    }
-                }
-                final PathElement propertyPathElement = pathElements.get(pathElements.size() - 1);
-                for (String comment : entry.getComments()) {
+                for (PathElement pathElement : pathElements) {
+                    writeComments(writer, pathElement.indentationLevel, pathElement.comments);
                     writer.append("\n")
-                        .append(indent(propertyPathElement.indentationLevel))
-                        .append("# ")
-                        .append(comment);
+                        .append(indent(pathElement.indentationLevel))
+                        .append(pathElement.name)
+                        .append(": ");
                 }
-                writer.append("\n")
-                    .append(indent(propertyPathElement.indentationLevel))
-                    .append(propertyPathElement.name)
-                    .append(": ")
-                    .append(toYaml(property, propertyPathElement.indentationLevel));
+
+                writer.append(toYaml(property, pathElements.get(pathElements.size() - 1).indentationLevel));
             }
             writer.flush();
             writer.close();
@@ -149,20 +133,30 @@ public class YamlFileResource implements PropertyResource {
         }
     }
 
+    private void writeComments(Writer writer, int indentation, String[] comments) throws IOException {
+        if (comments.length == 0) {
+            return;
+        }
+        String commentStart = "\n" + indent(indentation) + "# ";
+        for (String comment : comments) {
+            writer.append(commentStart).append(comment);
+        }
+    }
+
     /**
-     * Converts property entries of type {@link BeanProperty} to multiple {@link PropertyEntry} objects
+     * Converts property entries of type {@link BeanProperty} to multiple {@link Property} objects
      * that reflect all concrete values that need to be stored to properly, losslessly export the bean.
      * The property entries are essentially the "leaf nodes" of the bean if viewed as a tree.
      *
      * @param originalList the list of property entries to convert
-     * @return list of property entries with converted property entries
+     * @return list of properties with converted property entries
      */
     @SuppressWarnings("unchecked")
-    private List<PropertyEntry> replaceBeanPropertiesToLeafValues(List<PropertyEntry> originalList) {
-        List<PropertyEntry> result = new LinkedList<>();
-        for (PropertyEntry entry : originalList) {
-            if (entry.getProperty() instanceof BeanProperty<?>) {
-                BeanProperty beanProperty = (BeanProperty<?>) entry.getProperty();
+    private List<Property<?>> replaceBeanPropertiesToLeafValues(List<Property<?>> originalList) {
+        List<Property<?>> result = new LinkedList<>();
+        for (Property<?> entry : originalList) {
+            if (entry instanceof BeanProperty<?>) {
+                BeanProperty beanProperty = (BeanProperty<?>) entry;
                 result.addAll(propertyEntryGenerator.generate(
                     beanProperty, beanProperty.getValue(this)));
             } else {
