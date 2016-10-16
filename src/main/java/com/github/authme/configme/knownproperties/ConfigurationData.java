@@ -16,11 +16,11 @@ public class ConfigurationData {
     private final List<Property<?>> properties;
     private final Map<String, String[]> sectionComments;
 
-    public ConfigurationData(List<Property<?>> properties) {
+    public ConfigurationData(List<? extends Property<?>> properties) {
         this(properties, Collections.emptyMap());
     }
 
-    public ConfigurationData(List<Property<?>> properties, Map<String, String[]> sectionComments) {
+    public ConfigurationData(List<? extends Property<?>> properties, Map<String, String[]> sectionComments) {
         this.properties = Collections.unmodifiableList(properties);
         this.sectionComments = Collections.unmodifiableMap(sectionComments);
     }

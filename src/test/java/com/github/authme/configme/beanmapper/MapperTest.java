@@ -23,15 +23,14 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.github.authme.configme.TestUtils.getJarFile;
+import static com.github.authme.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 /**
  * Test for {@link Mapper}.
@@ -174,8 +173,9 @@ public class MapperTest {
         Mapper mapper = new Mapper();
 
         // when / then
-        assertMapperException(
+        verifyException(
             () -> mapper.convertToBean("", resource, MapWithNonStringKeys.class),
+            ConfigMeMapperException.class,
             "The key type of maps may only be of String type");
     }
 
@@ -186,8 +186,9 @@ public class MapperTest {
         Mapper mapper = new Mapper();
 
         // when / then
-        assertMapperException(
+        verifyException(
             () -> mapper.convertToBean("", resource, UnsupportedCollection.class),
+            ConfigMeMapperException.class,
             "Unsupported collection type");
     }
 
@@ -198,8 +199,9 @@ public class MapperTest {
         Mapper mapper = new Mapper();
 
         // when / then
-        assertMapperException(
+        verifyException(
             () -> mapper.convertToBean("", resource, UntypedCollection.class),
+            ConfigMeMapperException.class,
             "has no generic type");
     }
 
@@ -210,8 +212,9 @@ public class MapperTest {
         Mapper mapper = new Mapper();
 
         // when / then
-        assertMapperException(
+        verifyException(
             () -> mapper.convertToBean("", resource, UntypedMap.class),
+            ConfigMeMapperException.class,
             "does not have a concrete generic type");
     }
 
@@ -222,18 +225,10 @@ public class MapperTest {
         Mapper mapper = new Mapper();
 
         // when / then
-        assertMapperException(
+        verifyException(
             () -> mapper.convertToBean("", resource, GenericCollection.class),
+            ConfigMeMapperException.class,
             "does not have a concrete generic type");
-    }
-
-    private static void assertMapperException(Runnable runnable, String exceptionExcerpt) {
-        try {
-            runnable.run();
-            fail("Expected exception to be thrown");
-        } catch (ConfigMeMapperException e) {
-            assertThat(e.getMessage(), containsString(exceptionExcerpt));
-        }
     }
 
     private static Matcher<Command> hasExecution(final Executor executor, final boolean optional,

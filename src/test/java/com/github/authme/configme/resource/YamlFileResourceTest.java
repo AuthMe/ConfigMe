@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.github.authme.configme.TestUtils.getJarPath;
+import static com.github.authme.configme.TestUtils.verifyException;
 import static com.github.authme.configme.properties.PropertyInitializer.newProperty;
 import static com.github.authme.configme.samples.TestSettingsMigrationServices.checkAllPropertiesPresent;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
@@ -55,12 +55,8 @@ public class YamlFileResourceTest {
         Files.write(file.toPath(), "123".getBytes());
 
         // when / then
-        try {
-            new YamlFileResource(file);
-            fail("Expected exception to be thrown");
-        } catch (ConfigMeException e) {
-            assertThat(e.getMessage(), containsString("Top-level is not a map"));
-        }
+        verifyException(() -> new YamlFileResource(file),
+            ConfigMeException.class, "Top-level is not a map");
     }
 
     @Test
@@ -70,12 +66,8 @@ public class YamlFileResourceTest {
         File file = new File(folder, "test");
 
         // when / then
-        try {
-            new YamlFileResource(file);
-            fail("Expected exception to be thrown");
-        } catch (ConfigMeException e) {
-            assertThat(e.getMessage(), containsString("Could not read file"));
-        }
+        verifyException(() -> new YamlFileResource(file),
+            ConfigMeException.class, "Could not read file");
     }
 
     @Test

@@ -15,7 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Utilities for testing.
@@ -119,5 +122,39 @@ public final class TestUtils {
             matchers.add(equalTo(elem));
         }
         return contains(matchers);
+    }
+
+    /**
+     * Verifies that the provided runnable throws an exception of the given type.
+     *
+     * @param runnable the runnable to check
+     * @param exceptionType the expected type of the exception
+     */
+    public static void verifyException(Runnable runnable, Class<? extends Exception> exceptionType) {
+        verifyException(runnable, exceptionType, "");
+    }
+
+    /**
+     * Verifies that the provided runnable throws an exception of the given type whose message contains
+     * the provided message excerpt.
+     *
+     * @param runnable the runnable to check
+     * @param exceptionType the expected type of the exception
+     * @param messageExcerpt the text the exception message should contain
+     */
+    public static void verifyException(Runnable runnable, Class<? extends Exception> exceptionType,
+                                       String messageExcerpt) {
+        try {
+            runnable.run();
+            fail("Expected exception of type '" + exceptionType.getName() + "' to be thrown");
+        } catch (Exception e) {
+            if (!exceptionType.isInstance(e)) {
+                fail("Expected exception of type '" + exceptionType.getName() + "' but got '"
+                    + e.getClass().getName() + "': " + e.getMessage());
+            }
+            if (!messageExcerpt.isEmpty()) {
+                assertThat(e.getMessage(), containsString(messageExcerpt));
+            }
+        }
     }
 }

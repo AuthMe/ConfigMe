@@ -10,11 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.github.authme.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -56,13 +55,8 @@ public class PropertyListBuilderTest {
         properties.add(createPropertyWithPath("test.name"));
 
         // when / then
-        try {
-            properties.add(createPropertyWithPath("test.version"));
-            fail("Expected exception to be thrown");
-        } catch (ConfigMeException e) {
-            assertThat(e.getMessage(), containsString("already exists"));
-        }
-
+        verifyException(() -> properties.add(createPropertyWithPath("test.version")),
+            ConfigMeException.class, "already exists");
         assertThat(properties.create(), hasSize(2));
     }
 
@@ -77,13 +71,8 @@ public class PropertyListBuilderTest {
         properties.add(createPropertyWithPath("test.version"));
 
         // when / then
-        try {
-            properties.add(createPropertyWithPath("test.version.major"));
-            fail("Expected exception to be thrown");
-        } catch (ConfigMeException e) {
-            assertThat(e.getMessage(), containsString("Unexpected entry found"));
-        }
-
+        verifyException(() -> properties.add(createPropertyWithPath("test.version.major")),
+            ConfigMeException.class, "Unexpected entry found");
         assertThat(properties.create(), hasSize(1));
     }
 
@@ -98,13 +87,9 @@ public class PropertyListBuilderTest {
         // Put an unknown object in test.version
         ((Map<String, Object>) internalMap.get("test")).put("version", new Object());
 
-        // when
-        try {
-            properties.add(createPropertyWithPath("test.version.minor"));
-            fail("Expected exception to be thrown");
-        } catch (ConfigMeException e) {
-            assertThat(e.getMessage(), containsString("Value of unknown type found"));
-        }
+        // when / then
+        verifyException(() -> properties.add(createPropertyWithPath("test.version.minor")),
+            ConfigMeException.class, "Value of unknown type found");
     }
 
     private static Property<?> createPropertyWithPath(String path) {

@@ -8,8 +8,8 @@ import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.samples.TestConfiguration;
 import org.junit.Test;
 
+import static com.github.authme.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.arrayContaining;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.emptyArray;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -52,33 +52,28 @@ public class ConfigurationDataBuilderTest {
     @Test
     public void shouldHandleMalformedSectionCommentClasses() {
         // Wrong return type
-        assertHasException(
+        verifyException(
             () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.WrongReturnType.class),
+            ConfigMeException.class,
             "Return value must be Map<String, String>");
 
         // Non-static method
-        assertHasException(
+        verifyException(
             () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.NonStaticMethod.class),
+            ConfigMeException.class,
             "must be static");
 
         // Method with parameters
-        assertHasException(
+        verifyException(
             () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.MethodWithParameters.class),
+            ConfigMeException.class,
             "may not have any parameters");
 
         // Throwing method
-        assertHasException(
+        verifyException(
             () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.ThrowingMethod.class),
+            ConfigMeException.class,
             "Could not get section comments");
-    }
-
-    private void assertHasException(Runnable runnable, String messageExcerpt) {
-        try {
-            runnable.run();
-            fail("Expected exception to be thrown");
-        } catch (ConfigMeException e) {
-            assertThat(e.getMessage(), containsString(messageExcerpt));
-        }
     }
 
     private static void assertHasPropertyWithComments(ConfigurationData configurationData, Property<?> property,

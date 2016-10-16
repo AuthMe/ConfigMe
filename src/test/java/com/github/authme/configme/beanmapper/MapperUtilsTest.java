@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.github.authme.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -16,7 +17,6 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Test for {@link MapperUtils}.
@@ -45,12 +45,7 @@ public class MapperUtilsTest {
         // when / then
         for (String field : fieldNames) {
             Type type = getFieldType(field);
-            try {
-                MapperUtils.getGenericClassSafely(type);
-                fail("Expected exception to be thrown for type of field '" + field + "'");
-            } catch (ConfigMeMapperException e) {
-                // all good
-            }
+            verifyException(() -> MapperUtils.getGenericClassSafely(type), ConfigMeMapperException.class);
         }
     }
 
@@ -76,12 +71,7 @@ public class MapperUtilsTest {
         // when / then
         for (String field : fieldNames) {
             Type type = getFieldType(field);
-            try {
-                MapperUtils.getGenericClassesSafely(type);
-                fail("Expected exception to be thrown for type of field '" + field + "'");
-            } catch (ConfigMeMapperException e) {
-                // all good
-            }
+            verifyException(() -> MapperUtils.getGenericClassesSafely(type), ConfigMeMapperException.class);
         }
     }
 
