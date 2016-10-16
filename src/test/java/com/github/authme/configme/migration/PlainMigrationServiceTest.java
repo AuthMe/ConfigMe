@@ -36,7 +36,7 @@ public class PlainMigrationServiceTest {
     private static final String INCOMPLETE_CONFIG = "/config-incomplete-sample.yml";
 
     private static final List<Property<?>> KNOWN_PROPERTIES =
-        ConfigurationDataBuilder.getAllProperties(TestConfiguration.class).getProperties();
+        ConfigurationDataBuilder.collectData(TestConfiguration.class).getProperties();
 
     @Spy
     private PlainMigrationService service;

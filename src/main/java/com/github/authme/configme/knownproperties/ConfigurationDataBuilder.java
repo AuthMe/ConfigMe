@@ -32,29 +32,19 @@ public class ConfigurationDataBuilder {
 
     /**
      * Collects all properties and comment data from the provided classes.
-     * Properties are sorted by their group, and each group is by insertion order.
+     * Properties are sorted by their group, and each group is sorted by order of encounter.
      *
      * @param classes the classes to scan for their property data
      * @return collected configuration data
      */
     @SafeVarargs
-    public static ConfigurationData getAllProperties(Class<? extends SettingsHolder>... classes) {
-        return new ConfigurationDataBuilder().getAllProperties0(classes);
-    }
-
-    /**
-     * Collects all properties and comment data from the provided classes.
-     * Properties are sorted by their group, and each group is by insertion order.
-     *
-     * @param classes the classes to scan for their property data
-     * @return collected configuration data
-     */
-    private ConfigurationData getAllProperties0(Class<? extends SettingsHolder>[] classes) {
-        for (Class<?> clazz : classes) {
-            collectProperties(clazz);
-            commentsGatherer.collectAllSectionComments(clazz);
+    public static ConfigurationData collectData(Class<? extends SettingsHolder>... classes) {
+        ConfigurationDataBuilder builder = new ConfigurationDataBuilder();
+        for (Class<? extends SettingsHolder> clazz : classes) {
+            builder.collectProperties(clazz);
+            builder.commentsGatherer.collectAllSectionComments(clazz);
         }
-        return new ConfigurationData(propertyListBuilder.create(), commentsGatherer.comments);
+        return new ConfigurationData(builder.propertyListBuilder.create(), builder.commentsGatherer.getComments());
     }
 
     private void collectProperties(Class<?> clazz) {
@@ -99,7 +89,7 @@ public class ConfigurationDataBuilder {
      * from the provided classes.
      */
     private static final class CommentsGatherer {
-        final Map<String, String[]> comments = new HashMap<>();
+        private final Map<String, String[]> comments = new HashMap<>();
 
         void collectAllSectionComments(Class<?> clazz) {
             Arrays.stream(clazz.getMethods())
@@ -107,6 +97,10 @@ public class ConfigurationDataBuilder {
                 .map(method -> callSectionCommentsMethod(method))
                 .filter(map -> map != null)
                 .forEach(comments::putAll);
+        }
+
+        Map<String, String[]> getComments() {
+            return comments;
         }
 
         private static Map<String, String[]> callSectionCommentsMethod(Method method) {

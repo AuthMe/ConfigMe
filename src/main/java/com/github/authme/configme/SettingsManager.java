@@ -9,7 +9,6 @@ import com.github.authme.configme.resource.PropertyResource;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,7 +44,7 @@ public class SettingsManager {
     @SafeVarargs
     public SettingsManager(PropertyResource resource, @Nullable MigrationService migrationService,
                            Class<? extends SettingsHolder>... settingsClasses) {
-        this(resource, migrationService, ConfigurationDataBuilder.getAllProperties(settingsClasses));
+        this(resource, migrationService, ConfigurationDataBuilder.collectData(settingsClasses));
     }
 
     /**
@@ -78,8 +77,7 @@ public class SettingsManager {
         List<Property<?>> propertyList = (properties instanceof List<?>)
             ? (List<Property<?>>) properties
             : new ArrayList<>(properties);
-        return new SettingsManager(resource, migrationService,
-            new ConfigurationData(propertyList, Collections.emptyMap()));
+        return new SettingsManager(resource, migrationService, new ConfigurationData(propertyList));
     }
 
     /**

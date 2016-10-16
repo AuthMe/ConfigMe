@@ -110,7 +110,7 @@ public class YamlFileResourceTest {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
         YamlFileResource resource = new YamlFileResource(file);
-        ConfigurationData configurationData = ConfigurationDataBuilder.getAllProperties(TestConfiguration.class);
+        ConfigurationData configurationData = ConfigurationDataBuilder.collectData(TestConfiguration.class);
 
         // when
         resource.exportProperties(configurationData);
@@ -149,7 +149,7 @@ public class YamlFileResourceTest {
         List<Property<?>> properties = new ArrayList<>(Arrays.asList(
             newProperty("more.string1", "it's a text with some \\'apostrophes'"),
             newProperty("more.string2", "\tthis one\nhas some\nnew '' lines-test")));
-        properties.addAll(ConfigurationDataBuilder.getAllProperties(TestConfiguration.class).getProperties());
+        properties.addAll(ConfigurationDataBuilder.collectData(TestConfiguration.class).getProperties());
         ConfigurationData configData = new ConfigurationData(properties);
 
         // when
@@ -259,7 +259,7 @@ public class YamlFileResourceTest {
 
         // when / then
         try {
-            resource.exportProperties(ConfigurationDataBuilder.getAllProperties(TestConfiguration.class));
+            resource.exportProperties(ConfigurationDataBuilder.collectData(TestConfiguration.class));
             fail("Expected ConfigMeException to be thrown");
         } catch (ConfigMeException e) {
             assertThat(e.getCause(), instanceOf(IOException.class));
@@ -286,7 +286,7 @@ public class YamlFileResourceTest {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
-        ConfigurationData configurationData = ConfigurationDataBuilder.getAllProperties(TestConfiguration.class);
+        ConfigurationData configurationData = ConfigurationDataBuilder.collectData(TestConfiguration.class);
 
         // when
         resource.exportProperties(configurationData);

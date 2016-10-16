@@ -24,7 +24,7 @@ public class ConfigurationDataBuilderTest {
     @Test
     public void shouldGetAllProperties() {
         // given / when
-        ConfigurationData configurationData = ConfigurationDataBuilder.getAllProperties(
+        ConfigurationData configurationData = ConfigurationDataBuilder.collectData(
             TestConfiguration.class, AdditionalTestConfiguration.class);
 
         // then
@@ -53,22 +53,22 @@ public class ConfigurationDataBuilderTest {
     public void shouldHandleMalformedSectionCommentClasses() {
         // Wrong return type
         assertHasException(
-            () -> ConfigurationDataBuilder.getAllProperties(SectionCommentsFailClasses.WrongReturnType.class),
+            () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.WrongReturnType.class),
             "Return value must be Map<String, String>");
 
         // Non-static method
         assertHasException(
-            () -> ConfigurationDataBuilder.getAllProperties(SectionCommentsFailClasses.NonStaticMethod.class),
+            () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.NonStaticMethod.class),
             "must be static");
 
         // Method with parameters
         assertHasException(
-            () -> ConfigurationDataBuilder.getAllProperties(SectionCommentsFailClasses.MethodWithParameters.class),
+            () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.MethodWithParameters.class),
             "may not have any parameters");
 
         // Throwing method
         assertHasException(
-            () -> ConfigurationDataBuilder.getAllProperties(SectionCommentsFailClasses.ThrowingMethod.class),
+            () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.ThrowingMethod.class),
             "Could not get section comments");
     }
 

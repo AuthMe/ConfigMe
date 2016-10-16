@@ -14,10 +14,10 @@ import java.lang.annotation.Target;
  * {@code Map&lt;String, String[]>}. Null may be returned. There may be multiple methods with this
  * annotation.
  * <p>
- * Comments over properties must be declared on property fields with {@link Comment}. Any keys in
- * the returned map that does not exist as map will simply be ignored. The value of a map entry may
- * be null. Multiple {@link SectionComments} methods may return a comment for the same path;
- * however, no guarantee is given as to which comment will be used.
+ * Comments for properties can be declared on property fields with {@link Comment} but can also be
+ * provided in a section comments method. The value of a map entry may be null. Multiple
+ * {@link SectionComments} methods may return a comment for the same path; however, no guarantee is
+ * given as to which comment will be used.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
