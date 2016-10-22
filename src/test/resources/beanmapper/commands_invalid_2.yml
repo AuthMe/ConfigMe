@@ -1,0 +1,9 @@
+commandconfig:
+  duration: 13
+  commands:
+    - 'Hello'
+    - 'I should be a map'
+    - 'but I''m a list!'
+othersection:
+  a: 1
+  b: 'test'

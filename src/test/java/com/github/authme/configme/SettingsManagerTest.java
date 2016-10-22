@@ -170,7 +170,7 @@ public class SettingsManagerTest {
     @Test
     public void shouldProperlySaveBeanPropertyValueSetAfterwards() {
         // given
-        BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>(WorldGroupConfig.class, "worlds", new WorldGroupConfig());
+        BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>(WorldGroupConfig.class, "groups", new WorldGroupConfig());
         File file = copyFromResources("/beanmapper/worlds.yml");
         SettingsManager manager =
             SettingsManager.createWithProperties(new YamlFileResource(file), null, Collections.singletonList(worldGroups));

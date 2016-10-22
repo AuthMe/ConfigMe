@@ -231,6 +231,32 @@ public class MapperTest {
             "does not have a concrete generic type");
     }
 
+    @Test
+    public void shouldReturnNullForUnmappableMandatoryField() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/commands_invalid_2.yml"));
+        Mapper mapper = new Mapper();
+
+        // when
+        CommandConfig result = mapper.convertToBean("commandconfig", resource, CommandConfig.class);
+
+        // then
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void shouldReturnNullForMissingSection() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/empty_file.yml"));
+        Mapper mapper = new Mapper();
+
+        // when
+        CommandConfig result = mapper.convertToBean("commands", resource, CommandConfig.class);
+
+        // then
+        assertThat(result, nullValue());
+    }
+
     private static Matcher<Command> hasExecution(final Executor executor, final boolean optional,
                                                  final Double importance) {
         return new TypeSafeMatcher<Command>() {
