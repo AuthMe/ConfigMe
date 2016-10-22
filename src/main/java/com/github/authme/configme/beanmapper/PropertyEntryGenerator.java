@@ -45,10 +45,11 @@ public class PropertyEntryGenerator {
         if (writableProperties.isEmpty()) {
             throw new ConfigMeMapperException("Class '" + bean.getClass() + "' has no writable properties");
         }
+        String prefix = path.isEmpty() ? "" : (path + ".");
         for (PropertyDescriptor property : writableProperties) {
             collectPropertyEntries(
                 MapperUtils.getBeanProperty(property, bean),
-                path + "." + property.getName(),
+                prefix + property.getName(),
                 properties);
         }
     }

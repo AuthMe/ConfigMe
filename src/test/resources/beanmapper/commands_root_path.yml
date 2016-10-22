@@ -1,0 +1,10 @@
+duration: 13
+commands:
+  save:
+    command: save
+    execution:
+      executor: CONSOLE
+      importance: 1.0
+      privileges:
+      - 'action.open'
+      - 'action.save'

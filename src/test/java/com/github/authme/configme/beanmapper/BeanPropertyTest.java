@@ -35,7 +35,7 @@ public class BeanPropertyTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    public void shouldExportPropertyAndReimport() throws IOException {
+    public void shouldExportPropertyAndReimport() {
         // given
         BeanProperty<CommandConfig> property =
             new BeanProperty<>(CommandConfig.class, "commandconfig", new CommandConfig());
@@ -57,6 +57,26 @@ public class BeanPropertyTest {
         assertThat(openCommand.getArguments(), contains("f", "x", "z"));
         assertThat(openCommand.getExecution().isOptional(), equalTo(false));
         assertThat(config.getDuration(), equalTo(13));
+    }
+
+    @Test
+    public void shouldExportBeanPropertyAtRootProperly() {
+        // given
+        BeanProperty<CommandConfig> property =
+            new BeanProperty<>(CommandConfig.class, "", new CommandConfig());
+        File configFile = copyFileToTemporaryFolder("/beanmapper/commands_root_path.yml");
+        PropertyResource resource = new YamlFileResource(configFile);
+
+        // when
+        resource.exportProperties(new ConfigurationData(singletonList(property)));
+        resource = new YamlFileResource(configFile);
+
+        // then
+        CommandConfig config = property.getFromResource(resource);
+        assertThat(config.getCommands().keySet(), contains("save"));
+        Command saveCommand = config.getCommands().get("save");
+        assertThat(saveCommand.getExecution().getPrivileges(), contains("action.open", "action.save"));
+        assertThat(saveCommand.getExecution().getExecutor(), equalTo(Executor.CONSOLE));
     }
 
     @Test
