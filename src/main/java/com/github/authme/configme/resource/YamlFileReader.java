@@ -17,6 +17,19 @@ public class YamlFileReader implements PropertyReader {
 
     private final File file;
     private Map<String, Object> root;
+    /**
+     * It is possible to map an entire configuration file to one bean property, in which
+     * case the bean property path is "" (empty string). In such a case, the root is not
+     * a map if the bean property's value gets {@link #set(String, Object)} at a later
+     * point ({@code set("", newBeanValue)}.
+     * <p>
+     * To handle this, we track with this field whether the root is an object. If so, we
+     * no longer accept setting values to any subpath. For consistent behavior, we may
+     * want to disallow setting values in any subpath of any bean property in the future.
+     * <p>
+     * @see <a href="https://github.com/AuthMe/ConfigMe/issues/22">Issue #22</a>
+     */
+    private boolean hasObjectAsRoot = false;
 
     /**
      * Constructor.
@@ -32,7 +45,7 @@ public class YamlFileReader implements PropertyReader {
     @Override
     public Object getObject(String path) {
         if (path.isEmpty()) {
-            return root;
+            return hasObjectAsRoot ? root.get("") : root;
         }
         Object node = root;
         String[] keys = path.split("\\.");
@@ -55,11 +68,23 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void set(String path, Object value) {
         Objects.requireNonNull(path);
         Objects.requireNonNull(value);
 
+        if (path.isEmpty()) {
+            root.put("", value);
+            hasObjectAsRoot = true;
+        } else if (hasObjectAsRoot) {
+            throw new ConfigMeException("The root path is a bean property; you cannot set values to any subpath. "
+                + "Modify the bean at the root or set a new one instead.");
+        } else {
+            setValueInChildPath(path, value);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setValueInChildPath(String path, Object value) {
         Map<String, Object> node = root;
         String[] keys = path.split("\\.");
         for (int i = 0; i < keys.length - 1; ++i) {

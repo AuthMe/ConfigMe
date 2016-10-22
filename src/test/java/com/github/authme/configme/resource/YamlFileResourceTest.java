@@ -10,7 +10,6 @@ import com.github.authme.configme.knownproperties.ConfigurationDataBuilder;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -318,7 +317,6 @@ public class YamlFileResourceTest {
     }
 
     @Test
-    @Ignore // TODO #22: Test should pass
     public void shouldSetBeanPropertyValueAtRoot() {
         // given
         // Custom WorldGroupConfig
@@ -344,6 +342,19 @@ public class YamlFileResourceTest {
 
         // then
         assertThat(resource.getObject(""), equalTo(worldGroupConfig));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenSettingSubpathOfRootBean() {
+        // given
+        PropertyResource resource = new YamlFileResource(copyFileFromResources("/empty_file.yml"));
+        resource.setValue("", new WorldGroupConfig());
+
+        // when / then
+        verifyException(
+            () -> resource.setValue("some.path", 14),
+            ConfigMeException.class,
+            "The root path is a bean property");
     }
 
     private File copyFileFromResources(String path) {
