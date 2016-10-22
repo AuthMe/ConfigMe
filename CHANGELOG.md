@@ -3,6 +3,8 @@
 #### 0.2.1 (2016-10-22)
 Bugfix release:
 - Fix YAML export of a beans property at root path
+- Allow values of bean properties to be set via SettingsManager
+- Fix null pointer exception after an empty YML file is loaded
 
 :blue_book: [All changes in 0.2.1](https://github.com/AuthMe/ConfigMe/milestone/5?closed=1)
 
