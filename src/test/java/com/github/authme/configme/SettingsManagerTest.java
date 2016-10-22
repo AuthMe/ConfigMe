@@ -9,7 +9,6 @@ import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -26,12 +25,13 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.github.authme.configme.TestUtils.containsAll;
 import static com.github.authme.configme.properties.PropertyInitializer.newProperty;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
@@ -153,33 +153,39 @@ public class SettingsManagerTest {
     }
 
     @Test
-    @Ignore // TODO #22: Test should pass
     public void shouldAllowToSetBeanPropertyValue() {
         // given
-        // Custom WorldGroupConfig
-        Group easyGroup = new Group();
-        easyGroup.setDefaultGamemode(GameMode.CREATIVE);
-        easyGroup.setWorlds(Arrays.asList("easy1", "easy2"));
-        Group hardGroup = new Group();
-        hardGroup.setDefaultGamemode(GameMode.SURVIVAL);
-        hardGroup.setWorlds(Arrays.asList("hard1", "hard2"));
-
-        Map<String, Group> groups = new HashMap<>();
-        groups.put("easy", easyGroup);
-        groups.put("hard", hardGroup);
-        WorldGroupConfig worldGroupConfig = new WorldGroupConfig();
-        worldGroupConfig.setGroups(groups);
-
-        // SettingsManager loading beanmapper/worlds.yml
         BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>(WorldGroupConfig.class, "worlds", new WorldGroupConfig());
         PropertyResource resource = new YamlFileResource(copyFromResources("/beanmapper/worlds.yml"));
         SettingsManager manager = SettingsManager.createWithProperties(resource, null, Collections.singletonList(worldGroups));
+        WorldGroupConfig worldGroupConfig = createTestWorldConfig();
 
         // when
-        manager.setProperty(worldGroups, new WorldGroupConfig());
+        manager.setProperty(worldGroups, worldGroupConfig);
 
         // then
         assertThat(manager.getProperty(worldGroups), equalTo(worldGroupConfig));
+    }
+
+    @Test
+    public void shouldProperlySaveBeanPropertyValueSetAfterwards() {
+        // given
+        BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>(WorldGroupConfig.class, "worlds", new WorldGroupConfig());
+        File file = copyFromResources("/beanmapper/worlds.yml");
+        SettingsManager manager =
+            SettingsManager.createWithProperties(new YamlFileResource(file), null, Collections.singletonList(worldGroups));
+        WorldGroupConfig worldGroupConfig = createTestWorldConfig();
+        manager.setProperty(worldGroups, worldGroupConfig);
+
+        // when
+        manager.save();
+        manager = SettingsManager.createWithProperties(new YamlFileResource(file), null, Collections.singletonList(worldGroups));
+
+        // then
+        WorldGroupConfig loadedValue = manager.getProperty(worldGroups);
+        assertThat(loadedValue.getGroups().keySet(), contains("easy", "hard"));
+        assertThat(loadedValue.getGroups().get("easy").getDefaultGamemode(), equalTo(GameMode.CREATIVE));
+        assertThat(loadedValue.getGroups().get("easy").getWorlds(), contains("easy1", "easy2"));
     }
 
     private void verifyWasMigrationServiceChecked() {
@@ -204,6 +210,22 @@ public class SettingsManagerTest {
             throw new IllegalStateException("Could not copy file from JAR", e);
         }
         return destination;
+    }
+
+    private static WorldGroupConfig createTestWorldConfig() {
+        Group easyGroup = new Group();
+        easyGroup.setDefaultGamemode(GameMode.CREATIVE);
+        easyGroup.setWorlds(Arrays.asList("easy1", "easy2"));
+        Group hardGroup = new Group();
+        hardGroup.setDefaultGamemode(GameMode.SURVIVAL);
+        hardGroup.setWorlds(Arrays.asList("hard1", "hard2"));
+
+        Map<String, Group> groups = new LinkedHashMap<>();
+        groups.put("easy", easyGroup);
+        groups.put("hard", hardGroup);
+        WorldGroupConfig worldGroupConfig = new WorldGroupConfig();
+        worldGroupConfig.setGroups(groups);
+        return worldGroupConfig;
     }
 
     @SuppressWarnings("unchecked")

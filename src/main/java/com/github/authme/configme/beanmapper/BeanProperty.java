@@ -25,6 +25,12 @@ public class BeanProperty<B> extends Property<B> {
 
     @Override
     protected B getFromResource(PropertyResource resource) {
+        // Note #22: the property resource contains a bean object if the property's value was set
+        // via the settings manager
+        Object object = resource.getObject(getPath());
+        if (beanClass.isInstance(object)) {
+            return (B) object;
+        }
         return mapper.convertToBean(getPath(), resource, beanClass);
     }
 }
