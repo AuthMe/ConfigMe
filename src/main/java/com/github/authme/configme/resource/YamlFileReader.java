@@ -73,6 +73,7 @@ public class YamlFileReader implements PropertyReader {
         Objects.requireNonNull(value);
 
         if (path.isEmpty()) {
+            root.clear();
             root.put("", value);
             hasObjectAsRoot = true;
         } else if (hasObjectAsRoot) {

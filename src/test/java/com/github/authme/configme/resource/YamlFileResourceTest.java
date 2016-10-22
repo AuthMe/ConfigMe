@@ -1,6 +1,7 @@
 package com.github.authme.configme.resource;
 
 import com.github.authme.configme.SettingsManager;
+import com.github.authme.configme.beanmapper.command.CommandConfig;
 import com.github.authme.configme.beanmapper.worldgroup.GameMode;
 import com.github.authme.configme.beanmapper.worldgroup.Group;
 import com.github.authme.configme.beanmapper.worldgroup.WorldGroupConfig;
@@ -31,6 +32,7 @@ import static com.github.authme.configme.TestUtils.getJarPath;
 import static com.github.authme.configme.TestUtils.verifyException;
 import static com.github.authme.configme.properties.PropertyInitializer.newProperty;
 import static com.github.authme.configme.samples.TestSettingsMigrationServices.checkAllPropertiesPresent;
+import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -355,6 +357,25 @@ public class YamlFileResourceTest {
             () -> resource.setValue("some.path", 14),
             ConfigMeException.class,
             "The root path is a bean property");
+    }
+
+    @Test
+    public void shouldClearOtherValuesWhenBeanAtRootIsSet() {
+        // given
+        PropertyResource resource = new YamlFileResource(copyFileFromResources("/beanmapper/commands_root_path.yml"));
+        // assumption
+        assertThat((Map<?, ?>) resource.getObject("commands.save"), aMapWithSize(2));
+
+        CommandConfig newConfig = new CommandConfig();
+        newConfig.setDuration(14);
+        newConfig.setCommands(Collections.emptyMap());
+
+        // when
+        resource.setValue("", newConfig);
+
+        // then
+        assertThat(resource.getObject(""), equalTo(newConfig));
+        assertThat(resource.getObject("commands.save"), nullValue());
     }
 
     private File copyFileFromResources(String path) {
