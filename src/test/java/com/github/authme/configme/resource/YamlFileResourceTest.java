@@ -1,12 +1,16 @@
 package com.github.authme.configme.resource;
 
 import com.github.authme.configme.SettingsManager;
+import com.github.authme.configme.beanmapper.worldgroup.GameMode;
+import com.github.authme.configme.beanmapper.worldgroup.Group;
+import com.github.authme.configme.beanmapper.worldgroup.WorldGroupConfig;
 import com.github.authme.configme.exception.ConfigMeException;
 import com.github.authme.configme.knownproperties.ConfigurationData;
 import com.github.authme.configme.knownproperties.ConfigurationDataBuilder;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -291,6 +295,64 @@ public class YamlFileResourceTest {
         String writtenFileContents = new String(Files.readAllBytes(file.toPath())) + "\n";
         assertThat(pattern.matcher(writtenFileContents).replaceAll(""),
             equalTo(new String(Files.readAllBytes(getJarPath("/config-expected-export.yml")))));
+    }
+
+    @Test
+    @Ignore // TODO #21: Test should pass
+    public void shouldSetValueAfterLoadingEmptyFile() {
+        // given
+        // Custom WorldGroupConfig
+        Group easyGroup = new Group();
+        easyGroup.setDefaultGamemode(GameMode.CREATIVE);
+        easyGroup.setWorlds(Arrays.asList("easy1", "easy2"));
+        Group hardGroup = new Group();
+        hardGroup.setDefaultGamemode(GameMode.SURVIVAL);
+        hardGroup.setWorlds(Arrays.asList("hard1", "hard2"));
+
+        Map<String, Group> groups = new HashMap<>();
+        groups.put("easy", easyGroup);
+        groups.put("hard", hardGroup);
+        WorldGroupConfig worldGroupConfig = new WorldGroupConfig();
+        worldGroupConfig.setGroups(groups);
+
+        // Load resource with empty file
+        File file = copyFileFromResources("/empty_file.yml");
+        PropertyResource resource = new YamlFileResource(file);
+
+        // when
+        resource.setValue("worlds", worldGroupConfig);
+
+        // then
+        assertThat(resource.getObject("worlds"), equalTo(worldGroupConfig));
+    }
+
+    @Test
+    @Ignore // TODO #22: Test should pass
+    public void shouldSetBeanPropertyValueAtRoot() {
+        // given
+        // Custom WorldGroupConfig
+        Group easyGroup = new Group();
+        easyGroup.setDefaultGamemode(GameMode.CREATIVE);
+        easyGroup.setWorlds(Arrays.asList("easy1", "easy2"));
+        Group hardGroup = new Group();
+        hardGroup.setDefaultGamemode(GameMode.SURVIVAL);
+        hardGroup.setWorlds(Arrays.asList("hard1", "hard2"));
+
+        Map<String, Group> groups = new HashMap<>();
+        groups.put("easy", easyGroup);
+        groups.put("hard", hardGroup);
+        WorldGroupConfig worldGroupConfig = new WorldGroupConfig();
+        worldGroupConfig.setGroups(groups);
+
+        // Load resource with empty file
+        File file = copyFileFromResources("/beanmapper/worlds.yml");
+        PropertyResource resource = new YamlFileResource(file);
+
+        // when
+        resource.setValue("", worldGroupConfig);
+
+        // then
+        assertThat(resource.getObject(""), equalTo(worldGroupConfig));
     }
 
     private File copyFileFromResources(String path) {
