@@ -298,32 +298,23 @@ public class YamlFileResourceTest {
     }
 
     @Test
-    @Ignore // TODO #21: Test should pass
     public void shouldSetValueAfterLoadingEmptyFile() {
         // given
-        // Custom WorldGroupConfig
-        Group easyGroup = new Group();
-        easyGroup.setDefaultGamemode(GameMode.CREATIVE);
-        easyGroup.setWorlds(Arrays.asList("easy1", "easy2"));
-        Group hardGroup = new Group();
-        hardGroup.setDefaultGamemode(GameMode.SURVIVAL);
-        hardGroup.setWorlds(Arrays.asList("hard1", "hard2"));
+        String durationPath = "duration";
+        int duration = 13;
+        String headerPath = "text.sample.titles.header";
+        String header = "Test header";
 
-        Map<String, Group> groups = new HashMap<>();
-        groups.put("easy", easyGroup);
-        groups.put("hard", hardGroup);
-        WorldGroupConfig worldGroupConfig = new WorldGroupConfig();
-        worldGroupConfig.setGroups(groups);
-
-        // Load resource with empty file
         File file = copyFileFromResources("/empty_file.yml");
         PropertyResource resource = new YamlFileResource(file);
 
         // when
-        resource.setValue("worlds", worldGroupConfig);
+        resource.setValue(durationPath, duration);
+        resource.setValue(headerPath, header);
 
         // then
-        assertThat(resource.getObject("worlds"), equalTo(worldGroupConfig));
+        assertThat(resource.getObject(durationPath), equalTo(duration));
+        assertThat(resource.getObject(headerPath), equalTo(header));
     }
 
     @Test

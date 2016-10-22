@@ -80,7 +80,7 @@ public class YamlFileReader implements PropertyReader {
     public void reload() {
         try (FileInputStream fis = new FileInputStream(file)) {
             Object obj = new Yaml().load(fis);
-            root = (Map<String, Object>) obj;
+            root = obj == null ? new HashMap<>() : (Map<String, Object>) obj;
         } catch (IOException e) {
             throw new ConfigMeException("Could not read file '" + file + "'", e);
         } catch (ClassCastException e) {
