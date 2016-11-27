@@ -39,6 +39,17 @@ public class ConfigurationDataBuilder {
      */
     @SafeVarargs
     public static ConfigurationData collectData(Class<? extends SettingsHolder>... classes) {
+        return collectData(Arrays.asList(classes));
+    }
+
+    /**
+     * Collects all properties and comment data from the provided classes.
+     * Properties are sorted by their group, and each group is sorted by order of encounter.
+     *
+     * @param classes the classes to scan for their property data
+     * @return collected configuration data
+     */
+    public static ConfigurationData collectData(Iterable<Class<? extends SettingsHolder>> classes) {
         ConfigurationDataBuilder builder = new ConfigurationDataBuilder();
         for (Class<? extends SettingsHolder> clazz : classes) {
             builder.collectProperties(clazz);
