@@ -3,6 +3,7 @@ package com.github.authme.configme.samples;
 import com.github.authme.configme.Comment;
 import com.github.authme.configme.SectionComments;
 import com.github.authme.configme.SettingsHolder;
+import com.github.authme.configme.properties.IntegerProperty;
 import com.github.authme.configme.properties.Property;
 
 import java.util.HashMap;
@@ -37,8 +38,8 @@ public final class TestConfiguration implements SettingsHolder {
     @Comment({
         "The version number",
         "This is just a random number" })
-    public static final Property<Integer> VERSION_NUMBER =
-        newProperty("version", 32046);
+    public static final IntegerProperty VERSION_NUMBER =
+        new IntegerProperty("version", 32046);
 
     @Comment("Skip boring features?")
     public static final Property<Boolean> SKIP_BORING_FEATURES =

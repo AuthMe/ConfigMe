@@ -72,13 +72,12 @@ public class ConfigurationDataBuilder {
      */
     @Nullable
     private static Property<?> getPropertyField(Field field) {
-        field.setAccessible(true);
-        if (field.isAccessible() && Property.class.equals(field.getType()) && Modifier.isStatic(field.getModifiers())) {
+        if (Property.class.isAssignableFrom(field.getType()) && Modifier.isStatic(field.getModifiers())) {
             try {
                 return (Property<?>) field.get(null);
             } catch (IllegalAccessException e) {
                 throw new ConfigMeException("Could not fetch field '" + field.getName() + "' from class '"
-                    + field.getDeclaringClass().getSimpleName() + "'", e);
+                    + field.getDeclaringClass().getSimpleName() + "'. Is it maybe not public?", e);
             }
         }
         return null;
@@ -106,7 +105,7 @@ public class ConfigurationDataBuilder {
         private static Map<String, String[]> callSectionCommentsMethod(Method method) {
             if (!Modifier.isStatic(method.getModifiers())) {
                 throw new ConfigMeException(
-                    "Methods with @SectionComments must be static! Offending method: '" + method + "'");
+                    "Methods with @SectionComments must be static. Offending method: '" + method + "'");
             } else if (method.getParameters().length > 0) {
                 throw new ConfigMeException(
                     "@SectionComments methods may not have any parameters. Offending method: '" + method + "'");
