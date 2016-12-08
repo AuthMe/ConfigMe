@@ -91,13 +91,13 @@ public final class Transformers {
         }
     }
 
-    static final class EnumProducer extends TypedTransformer<String, Enum<?>> {
+    static final class EnumProducer extends TypedTransformer<String, Enum> {
         EnumProducer() {
-            super(String.class, (Class) Enum.class);
+            super(String.class, Enum.class);
         }
 
         @Override
-        protected Enum<?> safeTransform(Class<? extends Enum<?>> type, String value) {
+        protected Enum<?> safeTransform(Class<? extends Enum> type, String value) {
             for (Enum e : type.getEnumConstants()) {
                 if (e.name().equalsIgnoreCase(value)) {
                     return e;

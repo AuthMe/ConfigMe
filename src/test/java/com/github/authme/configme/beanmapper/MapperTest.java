@@ -41,7 +41,7 @@ public class MapperTest {
     public void shouldCreateMap() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/worlds.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
         String path = "groups";
 
         // when
@@ -61,7 +61,7 @@ public class MapperTest {
     public void shouldCreateWorldGroups() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/worlds.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
         String path = "";
 
         // when
@@ -82,7 +82,7 @@ public class MapperTest {
     public void shouldCreateCommands() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/commands.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
 
         // when
         CommandConfig config = mapper.convertToBean("commandconfig", resource, CommandConfig.class);
@@ -114,7 +114,7 @@ public class MapperTest {
     public void shouldSkipInvalidEntry() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/worlds_invalid.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
 
         // when
         WorldGroupConfig config = mapper.convertToBean("", resource, WorldGroupConfig.class);
@@ -140,7 +140,7 @@ public class MapperTest {
     public void shouldHandleInvalidErrors() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/commands_invalid.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
 
         // when
         CommandConfig config = mapper.convertToBean("commandconfig", resource, CommandConfig.class);
@@ -157,7 +157,7 @@ public class MapperTest {
     public void shouldReturnNullForUnavailableSection() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/commands.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
 
         // when
         CommandConfig result = mapper.convertToBean("does-not-exist", resource, CommandConfig.class);
@@ -170,7 +170,7 @@ public class MapperTest {
     public void shouldThrowForMapWithNonStringKeyType() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/typeissues/mapconfig.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
 
         // when / then
         verifyException(
@@ -183,7 +183,7 @@ public class MapperTest {
     public void shouldThrowForUnsupportedCollectionType() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/typeissues/collectionconfig.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
 
         // when / then
         verifyException(
@@ -196,7 +196,7 @@ public class MapperTest {
     public void shouldThrowForUntypedCollection() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/typeissues/collectionconfig.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
 
         // when / then
         verifyException(
@@ -209,7 +209,7 @@ public class MapperTest {
     public void shouldThrowForUntypedMap() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/typeissues/mapconfig.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
 
         // when / then
         verifyException(
@@ -222,7 +222,7 @@ public class MapperTest {
     public void shouldThrowForCollectionWithGenerics() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/typeissues/collectionconfig.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
 
         // when / then
         verifyException(
@@ -235,7 +235,7 @@ public class MapperTest {
     public void shouldReturnNullForUnmappableMandatoryField() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/commands_invalid_2.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
 
         // when
         CommandConfig result = mapper.convertToBean("commandconfig", resource, CommandConfig.class);
@@ -248,7 +248,7 @@ public class MapperTest {
     public void shouldReturnNullForMissingSection() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/empty_file.yml"));
-        Mapper mapper = new Mapper();
+        Mapper mapper = ConfigMeMapper.getSingleton();
 
         // when
         CommandConfig result = mapper.convertToBean("commands", resource, CommandConfig.class);

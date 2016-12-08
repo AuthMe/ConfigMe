@@ -14,7 +14,7 @@ public class BeanProperty<B> extends Property<B> {
     private final Mapper mapper;
 
     public BeanProperty(Class<B> beanClass, String path, B defaultValue) {
-        this(beanClass, path, defaultValue, new Mapper());
+        this(beanClass, path, defaultValue, ConfigMeMapper.getSingleton());
     }
 
     public BeanProperty(Class<B> beanClass, String path, B defaultValue, Mapper mapper) {

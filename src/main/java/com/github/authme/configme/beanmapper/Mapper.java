@@ -8,6 +8,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -48,6 +49,7 @@ public class Mapper {
 
     private final MappingErrorHandler errorHandler;
     private final Transformer[] transformers;
+    private final Map<Class<?>, List<PropertyDescriptor>> classProperties = new HashMap<>();
 
     /**
      * Creates a new JavaBean mapper with the default type transformers.
@@ -141,7 +143,7 @@ public class Mapper {
 
     // Handles Map fields
     @Nullable
-    protected Map<?, ?> processMap(Class<?> clazz, Type genericType, Object value, MappingContext context) {
+    protected Map processMap(Class<?> clazz, Type genericType, Object value, MappingContext context) {
         if (Map.class.isAssignableFrom(clazz) && value instanceof Map<?, ?>) {
             Map<String, ?> entries = (Map<String, ?>) value;
             Class<?>[] mapTypes = getGenericClassesSafely(genericType);
@@ -149,7 +151,7 @@ public class Mapper {
                 throw new ConfigMeMapperException("The key type of maps may only be of String type");
             }
             Map result = new LinkedHashMap<>();
-            for (Map.Entry<?, ?> entry : entries.entrySet()) {
+            for (Map.Entry<String, ?> entry : entries.entrySet()) {
                 Object mappedValue = getPropertyValue(mapTypes[1], null, entry.getValue(), context.createChild(clazz));
                 if (mappedValue != null) {
                     result.put(entry.getKey(), mappedValue);
@@ -183,7 +185,7 @@ public class Mapper {
      */
     @Nullable
     protected <T> T convertToBean(Class<T> clazz, Object value, MappingContext context) {
-        List<PropertyDescriptor> properties = getWritableProperties(clazz);
+        List<PropertyDescriptor> properties = getClassProperties(clazz);
         // Check that we have properties (or else we don't have a bean) and that the provided value is a Map
         // so we can execute the mapping process.
         if (properties.isEmpty() || !(value instanceof Map<?, ?>)) {
@@ -206,6 +208,15 @@ public class Mapper {
             }
         }
         return bean;
+    }
+
+    private List<PropertyDescriptor> getClassProperties(Class<?> clazz) {
+        List<PropertyDescriptor> properties = classProperties.get(clazz);
+        if (properties == null) {
+            properties = getWritableProperties(clazz);
+            classProperties.put(clazz, properties);
+        }
+        return properties;
     }
 
     private static final class GenericMapType implements ParameterizedType {
