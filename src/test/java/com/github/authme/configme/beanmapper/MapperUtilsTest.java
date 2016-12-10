@@ -11,7 +11,6 @@ import java.util.UUID;
 
 import static com.github.authme.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -85,34 +84,6 @@ public class MapperUtilsTest {
 
         // then
         assertThat(properties, hasSize(2));
-    }
-
-    @Test
-    public void shouldGetAndSetProperties() {
-        // given
-        PropertyDescriptor sizeProperty = getDescriptor("size", MapperUtils.getWritableProperties(SampleBean.class));
-        SampleBean bean = new SampleBean();
-        bean.setSize(77);
-
-        // when
-        Object result1 = MapperUtils.getBeanProperty(sizeProperty, bean);
-        MapperUtils.setBeanProperty(sizeProperty, bean, -120);
-        Object result2 = MapperUtils.getBeanProperty(sizeProperty, bean);
-
-        // then
-        assertThat(bean.getSize(), equalTo(-120));
-        assertThat(77, equalTo(result1));
-        assertThat(-120, equalTo(result2));
-    }
-
-    @Test(expected = ConfigMeMapperException.class)
-    public void shouldHandlePropertySetError() {
-        // given
-        PropertyDescriptor sizeProperty = getDescriptor("size", MapperUtils.getWritableProperties(SampleBean.class));
-        SampleBean bean = SampleBean.createThrowingBean();
-
-        // when
-        MapperUtils.setBeanProperty(sizeProperty, bean, 120);
     }
 
     @Test(expected = ConfigMeMapperException.class)

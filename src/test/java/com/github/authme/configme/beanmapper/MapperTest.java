@@ -19,7 +19,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 
-import java.util.Map;
 import java.util.Objects;
 
 import static com.github.authme.configme.TestUtils.getJarFile;
@@ -36,26 +35,6 @@ import static org.junit.Assert.assertThat;
  * Test for {@link Mapper}.
  */
 public class MapperTest {
-
-    @Test
-    public void shouldCreateMap() {
-        // given
-        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/worlds.yml"));
-        Mapper mapper = ConfigMeMapper.getSingleton();
-        String path = "groups";
-
-        // when
-        Map<String, Group> result = mapper.createMap(path, resource, Group.class);
-
-        // then
-        assertThat(result.keySet(), contains("default", "creative"));
-        Group survival = result.get("default");
-        assertThat(survival.getWorlds(), contains("world", "world_nether", "world_the_end"));
-        assertThat(survival.getDefaultGamemode(), equalTo(GameMode.SURVIVAL));
-        Group creative = result.get("creative");
-        assertThat(creative.getWorlds(), contains("creative"));
-        assertThat(creative.getDefaultGamemode(), equalTo(GameMode.CREATIVE));
-    }
 
     @Test
     public void shouldCreateWorldGroups() {
@@ -128,7 +107,7 @@ public class MapperTest {
     public void shouldThrowForInvalidValue() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/worlds_invalid.yml"));
-        Mapper mapper = new Mapper(MappingErrorHandler.Impl.THROWING, Transformers.getDefaultTransformers());
+        Mapper mapper = new Mapper(MappingErrorHandler.Impl.THROWING, new BeanDescriptionFactory(), Transformers.getDefaultTransformers());
 
         // when
         mapper.convertToBean("", resource, WorldGroupConfig.class);

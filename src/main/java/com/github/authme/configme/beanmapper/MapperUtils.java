@@ -77,6 +77,7 @@ final class MapperUtils {
      * @param clazz the class to process
      * @return all writable properties of the bean class
      */
+    @Deprecated // TODO #36: Remove this method
     static List<PropertyDescriptor> getWritableProperties(Class<?> clazz) {
         PropertyDescriptor[] descriptors;
         try {
@@ -94,22 +95,6 @@ final class MapperUtils {
     }
 
     /**
-     * Sets the given property to the given value on the provided bean.
-     *
-     * @param property the property
-     * @param bean the bean to write to
-     * @param value the value to write
-     */
-    static void setBeanProperty(PropertyDescriptor property, Object bean, Object value) {
-        try {
-            property.getWriteMethod().invoke(bean, value);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new ConfigMeMapperException("Could not set value for property '"
-                + property.getName() + "' to bean '" + bean + "'", e);
-        }
-    }
-
-    /**
      * Retrieves the value of the property on the provided bean.
      *
      * @param property the property to read
@@ -117,6 +102,7 @@ final class MapperUtils {
      * @return the property value
      */
     @Nullable
+    @Deprecated // TODO #36: Remove this method
     static Object getBeanProperty(PropertyDescriptor property, Object bean) {
         if (property.getReadMethod() == null) {
             return null;
