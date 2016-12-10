@@ -176,7 +176,7 @@ public class Mapper {
      */
     @Nullable
     protected <T> T convertToBean(Class<T> clazz, Object value, MappingContext context) {
-        Collection<BeanPropertyDescription> properties = getClassProperties(clazz);
+        Collection<BeanPropertyDescription> properties = getWritableProperties(clazz);
         // Check that we have properties (or else we don't have a bean) and that the provided value is a Map
         // so we can execute the mapping process.
         if (properties.isEmpty() || !(value instanceof Map<?, ?>)) {
@@ -185,15 +185,15 @@ public class Mapper {
 
         Map<?, ?> entries = (Map<?, ?>) value;
         T bean = invokeDefaultConstructor(clazz);
-        for (BeanPropertyDescription propertyDescriptor : properties) {
+        for (BeanPropertyDescription property : properties) {
             Object result = getPropertyValue(
-                propertyDescriptor.getType(),
-                propertyDescriptor.getGenericType(),
-                entries.get(propertyDescriptor.getName()),
+                property.getType(),
+                property.getGenericType(),
+                entries.get(property.getName()),
                 context.createChild(clazz));
             if (result != null) {
-                propertyDescriptor.setValue(bean, result);
-            } else if (propertyDescriptor.getValue(bean) == null) {
+                property.setValue(bean, result);
+            } else if (property.getValue(bean) == null) {
                 errorHandler.handleError(clazz, context);
                 return null;
             }
@@ -201,7 +201,7 @@ public class Mapper {
         return bean;
     }
 
-    private Collection<BeanPropertyDescription> getClassProperties(Class<?> clazz) {
+    public Collection<BeanPropertyDescription> getWritableProperties(Class<?> clazz) {
         Collection<BeanPropertyDescription> properties = classProperties.get(clazz);
         if (properties == null) {
             properties = beanDescriptionFactory.collectWritableFields(clazz);

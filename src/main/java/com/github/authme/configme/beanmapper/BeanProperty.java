@@ -3,6 +3,8 @@ package com.github.authme.configme.beanmapper;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.resource.PropertyResource;
 
+import java.util.Collection;
+
 /**
  * Property constructed by bean mapping.
  *
@@ -32,5 +34,9 @@ public class BeanProperty<B> extends Property<B> {
             return (B) object;
         }
         return mapper.convertToBean(getPath(), resource, beanClass);
+    }
+
+    public Collection<BeanPropertyDescription> getWritableProperties(Class<?> clazz) {
+        return mapper.getWritableProperties(clazz);
     }
 }

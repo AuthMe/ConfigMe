@@ -1,14 +1,7 @@
 package com.github.authme.configme.beanmapper;
 
-import javax.annotation.Nullable;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Mapper utilities.
@@ -68,51 +61,6 @@ final class MapperUtils {
             }
         }
         throw new ConfigMeMapperException("Type '" + type + "' has no generic type");
-    }
-
-    /**
-     * Returns all properties of the given class that are writable
-     * (all bean properties with an associated write method).
-     *
-     * @param clazz the class to process
-     * @return all writable properties of the bean class
-     */
-    @Deprecated // TODO #36: Remove this method
-    static List<PropertyDescriptor> getWritableProperties(Class<?> clazz) {
-        PropertyDescriptor[] descriptors;
-        try {
-            descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
-        } catch (IntrospectionException e) {
-            throw new IllegalStateException(e);
-        }
-        List<PropertyDescriptor> writableProperties = new ArrayList<>(descriptors.length);
-        for (PropertyDescriptor descriptor : descriptors) {
-            if (descriptor.getWriteMethod() != null) {
-                writableProperties.add(descriptor);
-            }
-        }
-        return writableProperties;
-    }
-
-    /**
-     * Retrieves the value of the property on the provided bean.
-     *
-     * @param property the property to read
-     * @param bean the bean to read from
-     * @return the property value
-     */
-    @Nullable
-    @Deprecated // TODO #36: Remove this method
-    static Object getBeanProperty(PropertyDescriptor property, Object bean) {
-        if (property.getReadMethod() == null) {
-            return null;
-        }
-        try {
-            return property.getReadMethod().invoke(bean);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new ConfigMeMapperException("Could not read property '" + property.getName()
-                + "' from bean '" + bean + "'", e);
-        }
     }
 
     /**

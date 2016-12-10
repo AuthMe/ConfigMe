@@ -3,15 +3,12 @@ package com.github.authme.configme.beanmapper;
 import com.github.authme.configme.TestUtils;
 import org.junit.Test;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static com.github.authme.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -75,28 +72,6 @@ public class MapperUtilsTest {
     }
 
     @Test
-    public void shouldFindWritableProperties() {
-        // given
-        Class<?> clazz = SampleBean.class;
-
-        // when
-        List<PropertyDescriptor> properties = MapperUtils.getWritableProperties(clazz);
-
-        // then
-        assertThat(properties, hasSize(2));
-    }
-
-    @Test(expected = ConfigMeMapperException.class)
-    public void shouldHandlePropertyGetError() {
-        // given
-        PropertyDescriptor sizeProperty = getDescriptor("size", MapperUtils.getWritableProperties(SampleBean.class));
-        SampleBean bean = SampleBean.createThrowingBean();
-
-        // when
-        MapperUtils.getBeanProperty(sizeProperty, bean);
-    }
-
-    @Test
     public void shouldInvokeDefaultConstructor() {
         // given / when
         SampleBean result = MapperUtils.invokeDefaultConstructor(SampleBean.class);
@@ -124,54 +99,8 @@ public class MapperUtilsTest {
         }
     }
 
-    private static PropertyDescriptor getDescriptor(String name, List<PropertyDescriptor> properties) {
-        for (PropertyDescriptor property : properties) {
-            if (property.getName().equals(name)) {
-                return property;
-            }
-        }
-        throw new IllegalArgumentException("No property with name '" + name + "'");
-    }
-
     private static final class SampleBean {
-        private String name;
-        private int size;
-        private UUID uuid = UUID.randomUUID();
-        private boolean throwExceptions = false;
-
         SampleBean() {
-        }
-
-        static SampleBean createThrowingBean() {
-            SampleBean bean = new SampleBean();
-            bean.throwExceptions = true;
-            return bean;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public int getSize() {
-            if (throwExceptions) {
-                throw new IllegalStateException();
-            }
-            return size;
-        }
-
-        public void setSize(int size) {
-            if (throwExceptions) {
-                throw new IllegalStateException();
-            }
-            this.size = size;
-        }
-
-        public UUID getUuid() {
-            return uuid;
         }
     }
 
