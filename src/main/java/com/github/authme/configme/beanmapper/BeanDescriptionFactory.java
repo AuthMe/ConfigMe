@@ -46,9 +46,6 @@ public class BeanDescriptionFactory {
      */
     @Nullable
     protected Field getAssociatedField(Class<?> clazz, PropertyDescriptor property) {
-        // TODO #36: Need to consider inheritance? #getDeclaredField is only for fields on class itself
-        // Might be an idea to use property.writeMethod.declaringClass.getDeclaredField() instead
-
         Field field = getFieldSilently(clazz, property.getName(), property.getPropertyType());
         // Special case for boolean (primitive) type -> isProp() might be getter for property "isProp" (and not "prop")
         if (field == null && boolean.class == property.getPropertyType()) {
@@ -67,8 +64,14 @@ public class BeanDescriptionFactory {
      */
     @Nullable
     protected BeanPropertyDescription convert(PropertyDescriptor descriptor, @Nullable Field field) {
-        if (field != null && Modifier.isTransient(field.getModifiers())) {
-            return null;
+        if (field != null) {
+            if (Modifier.isTransient(field.getModifiers())) {
+                return null;
+            } else if (field.getType() == boolean.class && !field.getName().equals(descriptor.getName())) {
+                // If we have a boolean field and an is* getter, it's possible that the property name doesn't correspond
+                // to the field name, so let's set the property name to the field name.
+                descriptor.setName(field.getName());
+            }
         }
         return new BeanPropertyDescription(
             descriptor.getName(),

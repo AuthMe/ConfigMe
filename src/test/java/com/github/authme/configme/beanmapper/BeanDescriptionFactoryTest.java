@@ -57,7 +57,7 @@ public class BeanDescriptionFactoryTest {
         // then
         assertThat(properties, hasSize(4));
         assertThat(properties.stream().map(BeanPropertyDescription::getName).collect(Collectors.toList()),
-            containsInAnyOrder("empty", "active", "isField", "isNotMatched"));
+            containsInAnyOrder("isEmpty", "active", "isField", "isNotMatched"));
         assertThat(factory.matchedFields.get("empty"), equalTo("isEmpty"));
         assertThat(factory.matchedFields.get("active"), equalTo("active"));
         assertThat(factory.matchedFields.get("isField"), equalTo("isField"));
@@ -75,7 +75,7 @@ public class BeanDescriptionFactoryTest {
         // then
         assertThat(properties, hasSize(2));
         assertThat(properties.stream().map(BeanPropertyDescription::getName).collect(Collectors.toList()),
-            containsInAnyOrder("name", "mandatory"));
+            containsInAnyOrder("name", "isMandatory"));
     }
 
     private static BeanPropertyDescription getDescription(String name,
