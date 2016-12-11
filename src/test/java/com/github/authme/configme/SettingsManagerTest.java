@@ -1,11 +1,11 @@
 package com.github.authme.configme;
 
-import com.github.authme.configme.beanmapper.BeanProperty;
 import com.github.authme.configme.beanmapper.worldgroup.GameMode;
 import com.github.authme.configme.beanmapper.worldgroup.Group;
 import com.github.authme.configme.beanmapper.worldgroup.WorldGroupConfig;
-import com.github.authme.configme.knownproperties.ConfigurationData;
+import com.github.authme.configme.configurationdata.ConfigurationData;
 import com.github.authme.configme.migration.MigrationService;
+import com.github.authme.configme.properties.BeanProperty;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;

@@ -1,7 +1,7 @@
 package com.github.authme.configme;
 
-import com.github.authme.configme.knownproperties.ConfigurationData;
-import com.github.authme.configme.knownproperties.ConfigurationDataBuilder;
+import com.github.authme.configme.configurationdata.ConfigurationData;
+import com.github.authme.configme.configurationdata.ConfigurationDataBuilder;
 import com.github.authme.configme.migration.MigrationService;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.resource.PropertyResource;

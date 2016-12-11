@@ -1,11 +1,12 @@
-package com.github.authme.configme.beanmapper;
+package com.github.authme.configme.properties;
 
 import com.github.authme.configme.TestUtils;
+import com.github.authme.configme.beanmapper.Mapper;
 import com.github.authme.configme.beanmapper.command.Command;
 import com.github.authme.configme.beanmapper.command.CommandConfig;
 import com.github.authme.configme.beanmapper.command.Executor;
 import com.github.authme.configme.beanmapper.worldgroup.WorldGroupConfig;
-import com.github.authme.configme.knownproperties.ConfigurationData;
+import com.github.authme.configme.configurationdata.ConfigurationData;
 import com.github.authme.configme.resource.PropertyResource;
 import com.github.authme.configme.resource.YamlFileResource;
 import org.junit.Rule;

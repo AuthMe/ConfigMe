@@ -1,7 +1,6 @@
 package com.github.authme.configme.properties;
 
 import com.github.authme.configme.TestUtils;
-import com.github.authme.configme.beanmapper.BeanProperty;
 import com.github.authme.configme.beanmapper.worldgroup.WorldGroupConfig;
 import com.github.authme.configme.samples.TestEnum;
 import org.junit.Test;

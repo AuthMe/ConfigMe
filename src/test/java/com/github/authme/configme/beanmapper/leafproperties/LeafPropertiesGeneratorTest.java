@@ -1,9 +1,11 @@
-package com.github.authme.configme.beanmapper;
+package com.github.authme.configme.beanmapper.leafproperties;
 
+import com.github.authme.configme.beanmapper.ConfigMeMapperException;
 import com.github.authme.configme.beanmapper.command.Command;
 import com.github.authme.configme.beanmapper.command.CommandConfig;
 import com.github.authme.configme.beanmapper.command.ExecutionDetails;
 import com.github.authme.configme.beanmapper.command.Executor;
+import com.github.authme.configme.properties.BeanProperty;
 import com.github.authme.configme.properties.Property;
 import org.junit.Test;
 
@@ -22,9 +24,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**
- * Test for {@link PropertyEntryGenerator}.
+ * Test for {@link LeafPropertiesGenerator}.
  */
-public class PropertyEntryGeneratorTest {
+public class LeafPropertiesGeneratorTest {
 
     @Test
     public void shouldCreatePropertyEntriesForCommandConfig() {
@@ -45,7 +47,7 @@ public class PropertyEntryGeneratorTest {
         BeanProperty<CommandConfig> property = new BeanProperty<>(CommandConfig.class, "cmd", new CommandConfig());
 
         // when
-        List<Property<?>> entries = new PropertyEntryGenerator().generate(property, config);
+        List<Property<?>> entries = new LeafPropertiesGenerator().generate(property, config);
 
         // then
         List<String> expectedPaths = expectedCommandPaths("kick", "msg", "vanish");
@@ -65,7 +67,7 @@ public class PropertyEntryGeneratorTest {
         Object bean = new Object();
 
         // when
-        new PropertyEntryGenerator().generate(property, bean);
+        new LeafPropertiesGenerator().generate(property, bean);
     }
 
     private static List<String> expectedCommandPaths(String... commands) {

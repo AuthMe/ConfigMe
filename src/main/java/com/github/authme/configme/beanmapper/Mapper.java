@@ -1,5 +1,7 @@
 package com.github.authme.configme.beanmapper;
 
+import com.github.authme.configme.beanmapper.transformer.Transformer;
+import com.github.authme.configme.beanmapper.transformer.Transformers;
 import com.github.authme.configme.resource.PropertyResource;
 
 import javax.annotation.Nullable;
@@ -81,7 +83,7 @@ public class Mapper {
     @Nullable
     @SuppressWarnings("unchecked")
     public <T> T convertToBean(String path, PropertyResource resource, Class<T> clazz) {
-        return (T) getPropertyValue(clazz, null, resource.getObject(path), MappingContext.root(null));
+        return (T) getPropertyValue(clazz, null, resource.getObject(path), MappingContext.root());
     }
 
     /**

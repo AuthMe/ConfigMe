@@ -1,4 +1,4 @@
-package com.github.authme.configme.beanmapper;
+package com.github.authme.configme.beanmapper.transformer;
 
 import com.github.authme.configme.TestUtils;
 import com.github.authme.configme.beanmapper.command.Executor;

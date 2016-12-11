@@ -1,4 +1,4 @@
-package com.github.authme.configme.beanmapper;
+package com.github.authme.configme.beanmapper.transformer;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;

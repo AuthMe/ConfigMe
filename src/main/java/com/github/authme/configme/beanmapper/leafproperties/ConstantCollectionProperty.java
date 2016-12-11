@@ -1,4 +1,4 @@
-package com.github.authme.configme.beanmapper;
+package com.github.authme.configme.beanmapper.leafproperties;
 
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.resource.PropertyResource;
@@ -10,7 +10,7 @@ import java.util.List;
  * to communicate to the property resource during the export that we have a collection consisting of
  * the provided property objects.
  */
-public class ConstantCollectionProperty extends Property<Property<?>[]> {
+public final class ConstantCollectionProperty extends Property<Property<?>[]> {
 
     public ConstantCollectionProperty(String path, List<Property<?>> entryProperties) {
         super(path, entryProperties.toArray(new Property<?>[entryProperties.size()]));

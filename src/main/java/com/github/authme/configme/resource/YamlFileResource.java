@@ -1,10 +1,10 @@
 package com.github.authme.configme.resource;
 
-import com.github.authme.configme.beanmapper.BeanProperty;
-import com.github.authme.configme.beanmapper.ConstantCollectionProperty;
-import com.github.authme.configme.beanmapper.PropertyEntryGenerator;
+import com.github.authme.configme.beanmapper.leafproperties.ConstantCollectionProperty;
+import com.github.authme.configme.beanmapper.leafproperties.LeafPropertiesGenerator;
+import com.github.authme.configme.configurationdata.ConfigurationData;
 import com.github.authme.configme.exception.ConfigMeException;
-import com.github.authme.configme.knownproperties.ConfigurationData;
+import com.github.authme.configme.properties.BeanProperty;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.properties.StringListProperty;
 import com.github.authme.configme.resource.PropertyPathTraverser.PathElement;
@@ -28,7 +28,7 @@ public class YamlFileResource implements PropertyResource {
 
     private final File file;
     private final PropertyReader reader;
-    private final PropertyEntryGenerator propertyEntryGenerator;
+    private final LeafPropertiesGenerator leafPropertiesGenerator;
     private Yaml simpleYaml;
     private Yaml singleQuoteYaml;
 
@@ -38,7 +38,7 @@ public class YamlFileResource implements PropertyResource {
      * @param file the config file
      */
     public YamlFileResource(File file) {
-        this(file, new YamlFileReader(file), new PropertyEntryGenerator());
+        this(file, new YamlFileReader(file), new LeafPropertiesGenerator());
     }
 
     /**
@@ -46,13 +46,13 @@ public class YamlFileResource implements PropertyResource {
      *
      * @param file the config file (the YAML file properties get exported to)
      * @param reader the reader from which the properties' values are read
-     * @param propertyEntryGenerator generate of property entries to export bean properties. Can be null
-     *                               if you do not use bean properties.
+     * @param leafPropertiesGenerator generator of property entries to export bean properties. Can be null
+     *                                only if you do not use bean properties.
      */
-    public YamlFileResource(File file, PropertyReader reader, PropertyEntryGenerator propertyEntryGenerator) {
+    public YamlFileResource(File file, PropertyReader reader, LeafPropertiesGenerator leafPropertiesGenerator) {
         this.file = file;
         this.reader = reader;
-        this.propertyEntryGenerator = propertyEntryGenerator;
+        this.leafPropertiesGenerator = leafPropertiesGenerator;
     }
 
     @Override
@@ -158,7 +158,7 @@ public class YamlFileResource implements PropertyResource {
         for (Property<?> entry : originalList) {
             if (entry instanceof BeanProperty<?>) {
                 BeanProperty beanProperty = (BeanProperty<?>) entry;
-                result.addAll(propertyEntryGenerator.generate(
+                result.addAll(leafPropertiesGenerator.generate(
                     beanProperty, beanProperty.getValue(this)));
             } else {
                 result.add(entry);

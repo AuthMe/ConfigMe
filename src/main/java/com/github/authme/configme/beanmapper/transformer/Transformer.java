@@ -1,4 +1,4 @@
-package com.github.authme.configme.beanmapper;
+package com.github.authme.configme.beanmapper.transformer;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
  * Transformers convert a value read from a property resource to the requested type
  * to set into a JavaBean.
  *
- * @see Mapper
+ * @see com.github.authme.configme.beanmapper.Mapper
  */
 public interface Transformer {
 

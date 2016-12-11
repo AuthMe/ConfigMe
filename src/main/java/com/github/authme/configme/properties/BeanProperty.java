@@ -1,6 +1,8 @@
-package com.github.authme.configme.beanmapper;
+package com.github.authme.configme.properties;
 
-import com.github.authme.configme.properties.Property;
+import com.github.authme.configme.beanmapper.BeanPropertyDescription;
+import com.github.authme.configme.beanmapper.ConfigMeMapper;
+import com.github.authme.configme.beanmapper.Mapper;
 import com.github.authme.configme.resource.PropertyResource;
 
 import java.util.Collection;

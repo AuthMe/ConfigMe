@@ -13,8 +13,8 @@ public class MappingContext {
         this.parentType = parentType;
     }
 
-    public static MappingContext root(Class<?> parentType) {
-        return new MappingContext(1, parentType);
+    public static MappingContext root() {
+        return new MappingContext(1, null);
     }
 
     public MappingContext createChild(Class<?> parentType) {

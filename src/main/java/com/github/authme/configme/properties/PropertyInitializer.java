@@ -1,7 +1,5 @@
 package com.github.authme.configme.properties;
 
-import com.github.authme.configme.beanmapper.BeanProperty;
-
 import java.util.List;
 
 /**

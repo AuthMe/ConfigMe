@@ -1,6 +1,6 @@
-package com.github.authme.configme.beanmapper;
+package com.github.authme.configme.beanmapper.transformer;
 
-import com.github.authme.configme.beanmapper.Transformers.ReturnerForMatchingType;
+import com.github.authme.configme.beanmapper.transformer.Transformers.ReturnerForMatchingType;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;

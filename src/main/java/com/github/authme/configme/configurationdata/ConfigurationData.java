@@ -1,4 +1,4 @@
-package com.github.authme.configme.knownproperties;
+package com.github.authme.configme.configurationdata;
 
 import com.github.authme.configme.properties.Property;
 

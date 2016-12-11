@@ -1,4 +1,4 @@
-package com.github.authme.configme.knownproperties.samples;
+package com.github.authme.configme.configurationdata.samples;
 
 import com.github.authme.configme.Comment;
 import com.github.authme.configme.SectionComments;

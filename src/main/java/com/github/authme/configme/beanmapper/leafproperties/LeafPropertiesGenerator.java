@@ -1,8 +1,10 @@
-package com.github.authme.configme.beanmapper;
+package com.github.authme.configme.beanmapper.leafproperties;
 
+import com.github.authme.configme.beanmapper.BeanPropertyDescription;
+import com.github.authme.configme.beanmapper.ConfigMeMapperException;
+import com.github.authme.configme.properties.BeanProperty;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.properties.StringProperty;
-import com.github.authme.configme.resource.PropertyResource;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ import java.util.Objects;
  * Generates {@link Property} objects for all "leaf" values of a bean to
  * properly export the values.
  */
-public class PropertyEntryGenerator {
+public class LeafPropertiesGenerator {
 
     /**
      * Generates a list of regular property objects for the given bean's data.
@@ -26,14 +28,13 @@ public class PropertyEntryGenerator {
      * @return list of all properties necessary to export the bean
      */
     public <B> List<Property<?>> generate(BeanProperty<B> beanProperty, B value) {
-        List<Property<?>> properties = new ArrayList<>();
-        new EntryBuilder(beanProperty)
-            .collectPropertiesFromBean(value, beanProperty.getPath(), properties);
-        return properties;
+        return new EntryBuilder(beanProperty)
+            .collectPropertiesFromBean(value, beanProperty.getPath());
     }
 
     protected static final class EntryBuilder {
         private final BeanProperty<?> beanProperty;
+        private final List<Property<?>> properties = new ArrayList<>();
 
         EntryBuilder(BeanProperty beanProperty) {
             this.beanProperty = beanProperty;
@@ -45,9 +46,9 @@ public class PropertyEntryGenerator {
          *
          * @param bean the bean to process
          * @param path the path of the bean in the config structure
-         * @param properties list of properties to add to
+         * @return list of all properties necessary to export the bean
          */
-        protected void collectPropertiesFromBean(Object bean, String path, List<Property<?>> properties) {
+        protected List<Property<?>> collectPropertiesFromBean(Object bean, String path) {
             Collection<BeanPropertyDescription> writableProperties =
                 beanProperty.getWritableProperties(bean.getClass());
             if (writableProperties.isEmpty()) {
@@ -55,11 +56,9 @@ public class PropertyEntryGenerator {
             }
             String prefix = path.isEmpty() ? "" : (path + ".");
             for (BeanPropertyDescription property : writableProperties) {
-                collectPropertyEntries(
-                    property.getValue(bean),
-                    prefix + property.getName(),
-                    properties);
+                collectPropertyEntries(property.getValue(bean), prefix + property.getName());
             }
+            return properties;
         }
 
         /**
@@ -67,23 +66,22 @@ public class PropertyEntryGenerator {
          *
          * @param value the value to process
          * @param path the path of the value in the config structure
-         * @param properties list of properties to add to
          */
-        protected void collectPropertyEntries(Object value, String path, List<Property<?>> properties) {
+        protected void collectPropertyEntries(Object value, String path) {
             Property<?> property = createConstantProperty(value, path);
             if (property != null) {
                 properties.add(property);
             } else if (value instanceof Collection<?>) {
-                handleCollection((Collection<?>) value, path, properties);
+                handleCollection((Collection<?>) value, path);
             } else if (value instanceof Map<?, ?>) {
                 for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
-                    collectPropertyEntries(entry.getValue(), path + "." + entry.getKey(), properties);
+                    collectPropertyEntries(entry.getValue(), path + "." + entry.getKey());
                 }
             } else {
                 Objects.requireNonNull(value);
                 // At this point it can only be a bean; the bean method checks that the class is a bean
                 // and throws an exception otherwise, so we can just delegate the value to that method
-                collectPropertiesFromBean(value, path, properties);
+                collectPropertiesFromBean(value, path);
             }
         }
 
@@ -101,9 +99,8 @@ public class PropertyEntryGenerator {
          *
          * @param value the collection
          * @param path the path of the collection in the config structure
-         * @param properties list of properties to add to
          */
-        protected void handleCollection(Collection<?> value, String path, List<Property<?>> properties) {
+        protected void handleCollection(Collection<?> value, String path) {
             List<Property<?>> entries = new ArrayList<>(value.size());
             for (Object o : value) {
                 Property<?> property = createConstantProperty(o, path);
@@ -114,31 +111,6 @@ public class PropertyEntryGenerator {
                 entries.add(property);
             }
             properties.add(new ConstantCollectionProperty(path, entries));
-        }
-    }
-
-
-    /**
-     * Property implementation that always returns the provided value.
-     *
-     * @param <T> the property type
-     */
-    private static final class ConstantValueProperty<T> extends Property<T> {
-
-        /**
-         * Constructor.
-         *
-         * @param path the path of the property
-         * @param value the value to <i>always</i> return
-         */
-        ConstantValueProperty(String path, T value) {
-            super(path, value);
-        }
-
-        @Override
-        protected T getFromResource(PropertyResource resource) {
-            // default value is the actual value we need (see constructor)
-            return getDefaultValue();
         }
     }
 }

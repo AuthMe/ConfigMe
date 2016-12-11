@@ -1,9 +1,9 @@
-package com.github.authme.configme.knownproperties;
+package com.github.authme.configme.configurationdata;
 
 import com.github.authme.configme.TestUtils;
+import com.github.authme.configme.configurationdata.samples.AdditionalTestConfiguration;
+import com.github.authme.configme.configurationdata.samples.SectionCommentsFailClasses;
 import com.github.authme.configme.exception.ConfigMeException;
-import com.github.authme.configme.knownproperties.samples.AdditionalTestConfiguration;
-import com.github.authme.configme.knownproperties.samples.SectionCommentsFailClasses;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.samples.TestConfiguration;
 import org.junit.Test;

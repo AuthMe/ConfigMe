@@ -4,6 +4,7 @@ import com.github.authme.configme.beanmapper.command.Command;
 import com.github.authme.configme.beanmapper.command.CommandConfig;
 import com.github.authme.configme.beanmapper.command.ExecutionDetails;
 import com.github.authme.configme.beanmapper.command.Executor;
+import com.github.authme.configme.beanmapper.transformer.Transformers;
 import com.github.authme.configme.beanmapper.typeissues.GenericCollection;
 import com.github.authme.configme.beanmapper.typeissues.MapWithNonStringKeys;
 import com.github.authme.configme.beanmapper.typeissues.UnsupportedCollection;
