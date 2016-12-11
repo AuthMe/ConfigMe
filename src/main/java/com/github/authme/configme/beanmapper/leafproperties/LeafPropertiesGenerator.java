@@ -4,7 +4,6 @@ import com.github.authme.configme.beanmapper.BeanPropertyDescription;
 import com.github.authme.configme.beanmapper.ConfigMeMapperException;
 import com.github.authme.configme.properties.BeanProperty;
 import com.github.authme.configme.properties.Property;
-import com.github.authme.configme.properties.StringProperty;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -101,16 +100,7 @@ public class LeafPropertiesGenerator {
          * @param path the path of the collection in the config structure
          */
         protected void handleCollection(Collection<?> value, String path) {
-            List<Property<?>> entries = new ArrayList<>(value.size());
-            for (Object o : value) {
-                Property<?> property = createConstantProperty(o, path);
-                if (property == null) {
-                    // Fallback to String if the value isn't "simple"
-                    property = new StringProperty(path, String.valueOf(o));
-                }
-                entries.add(property);
-            }
-            properties.add(new ConstantCollectionProperty(path, entries));
+            properties.add(new ConstantValueProperty<>(path, value));
         }
     }
 }

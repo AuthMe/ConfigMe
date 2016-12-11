@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -90,11 +91,8 @@ public class LeafPropertiesGeneratorTest {
         assertEquals(getPropertyValue(properties, root + "executor"), details.getExecutor());
         assertEquals(getPropertyValue(properties, root + "optional"), details.isOptional());
         assertEquals(getPropertyValue(properties, root + "importance"), details.getImportance());
-
-        List<Object> privileges = Arrays.stream((Property<Object>[]) getPropertyValue(properties, root + "privileges"))
-            .map(Property::getDefaultValue)
-            .collect(Collectors.toList());
-        assertThat(privileges, contains(details.getPrivileges().toArray()));
+        assertThat((Collection<String>) getPropertyValue(properties, root + "privileges"),
+            contains(details.getPrivileges().toArray()));
     }
 
     private static Object getPropertyValue(List<Property<?>> properties, String path) {

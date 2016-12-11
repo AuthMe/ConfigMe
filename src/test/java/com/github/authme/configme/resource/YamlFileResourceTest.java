@@ -8,6 +8,7 @@ import com.github.authme.configme.beanmapper.worldgroup.WorldGroupConfig;
 import com.github.authme.configme.configurationdata.ConfigurationData;
 import com.github.authme.configme.configurationdata.ConfigurationDataBuilder;
 import com.github.authme.configme.exception.ConfigMeException;
+import com.github.authme.configme.migration.PlainMigrationService;
 import com.github.authme.configme.properties.Property;
 import com.github.authme.configme.samples.TestConfiguration;
 import com.github.authme.configme.samples.TestEnum;
@@ -31,7 +32,6 @@ import java.util.regex.Pattern;
 import static com.github.authme.configme.TestUtils.getJarPath;
 import static com.github.authme.configme.TestUtils.verifyException;
 import static com.github.authme.configme.properties.PropertyInitializer.newProperty;
-import static com.github.authme.configme.samples.TestSettingsMigrationServices.checkAllPropertiesPresent;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -150,7 +150,7 @@ public class YamlFileResourceTest {
         ConfigurationData configData = new ConfigurationData(properties);
 
         // when
-        new SettingsManager(resource, checkAllPropertiesPresent(), configData);
+        new SettingsManager(resource, new PlainMigrationService(), configData);
         // Save and load again
         resource.exportProperties(configData);
         resource.reload();

@@ -1,6 +1,5 @@
 package com.github.authme.configme.resource;
 
-import com.github.authme.configme.beanmapper.leafproperties.ConstantCollectionProperty;
 import com.github.authme.configme.beanmapper.leafproperties.LeafPropertiesGenerator;
 import com.github.authme.configme.configurationdata.ConfigurationData;
 import com.github.authme.configme.exception.ConfigMeException;
@@ -181,18 +180,6 @@ public class YamlFileResource implements PropertyResource {
     // For more custom types, you can override this method and implement your custom behavior
     // and call super.transformValue() at the end to handle all types already handled here
     protected String transformValue(@Nullable Property<?> property, Object value) {
-        if (property instanceof ConstantCollectionProperty) {
-            Property<?>[] properties = (Property<?>[]) value;
-            if (properties.length == 0) {
-                return "[]";
-            }
-            String result = "\n";
-            for (Property<?> entry : (Property<?>[]) value) {
-                result += "\n- " + toYaml(entry, 0);
-            }
-            return result;
-        }
-
         if (value instanceof Collection) {
             Collection<?> collection = (Collection) value;
             // If the property is a non-empty collection we need to append a new line because it will be
@@ -212,7 +199,7 @@ public class YamlFileResource implements PropertyResource {
 
         if (value instanceof Enum<?>) {
             return getSingleQuoteYaml().dump(((Enum<?>) value).name());
-        }  else if (value instanceof String) {
+        } else if (value instanceof String) {
             return getSingleQuoteYaml().dump(value);
         }
         return getSimpleYaml().dump(value);
