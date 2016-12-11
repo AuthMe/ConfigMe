@@ -11,6 +11,7 @@ import com.github.authme.configme.resource.PropertyPathTraverser.PathElement;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Property resource based on a YAML file.
@@ -44,7 +46,7 @@ public class YamlFileResource implements PropertyResource {
     /**
      * Constructor.
      *
-     * @param file the config file (the YAML file properties get exported to)
+     * @param file the config file (the YAML file to which properties get exported)
      * @param reader the reader from which the properties' values are read
      * @param leafPropertiesGenerator generator of property entries to export bean properties. Can be null
      *                                only if you do not use bean properties.
@@ -178,17 +180,7 @@ public class YamlFileResource implements PropertyResource {
      */
     // For more custom types, you can override this method and implement your custom behavior
     // and call super.transformValue() at the end to handle all types already handled here
-    protected String transformValue(Property<?> property, Object value) {
-        if (property instanceof StringListProperty) {
-            // If the property is a non-empty list we need to append a new line because it will be
-            // something like the following, which requires a new line:
-            // - 'item 1'
-            // - 'second item in list'
-            String representation = getSingleQuoteYaml().dump(value);
-            return ((Collection<?>) value).isEmpty()
-                ? representation
-                : "\n" + representation;
-        }
+    protected String transformValue(@Nullable Property<?> property, Object value) {
         if (property instanceof ConstantCollectionProperty) {
             Property<?>[] properties = (Property<?>[]) value;
             if (properties.length == 0) {
@@ -200,10 +192,27 @@ public class YamlFileResource implements PropertyResource {
             }
             return result;
         }
+
+        if (value instanceof Collection) {
+            Collection<?> collection = (Collection) value;
+            // If the property is a non-empty collection we need to append a new line because it will be
+            // something like the following, which requires a new line:
+            // - 'item 1'
+            // - 'second item in list'
+            if (collection.isEmpty()) {
+                return "[]";
+            } else if (property instanceof StringListProperty) {
+                // If we have a StringProperty we can "fast track" by using the dumper because of its strict type
+                return "\n" + getSingleQuoteYaml().dump(value);
+            } else {
+                return "\n- " + collection.stream().map(v -> transformValue(null, v))
+                    .collect(Collectors.joining("- "));
+            }
+        }
+
         if (value instanceof Enum<?>) {
             return getSingleQuoteYaml().dump(((Enum<?>) value).name());
-        }
-        if (value instanceof String) {
+        }  else if (value instanceof String) {
             return getSingleQuoteYaml().dump(value);
         }
         return getSimpleYaml().dump(value);
@@ -212,16 +221,8 @@ public class YamlFileResource implements PropertyResource {
     private <T> String toYaml(Property<T> property, int indent) {
         Object value = property.getValue(this);
         String representation = transformValue(property, value);
-        String result = "";
         String[] lines = representation.split("\\n");
-        for (int i = 0; i < lines.length; ++i) {
-            if (i == 0) {
-                result = lines[0];
-            } else {
-                result += "\n" + indent(indent) + lines[i];
-            }
-        }
-        return result;
+        return String.join("\n" + indent(indent), lines);
     }
 
     private static String indent(int level) {

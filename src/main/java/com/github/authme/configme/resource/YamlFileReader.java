@@ -26,7 +26,7 @@ public class YamlFileReader implements PropertyReader {
      * To handle this, we track with this field whether the root is an object. If so, we
      * no longer accept setting values to any subpath. For consistent behavior, we may
      * want to disallow setting values in any subpath of any bean property in the future.
-     * <p>
+     *
      * @see <a href="https://github.com/AuthMe/ConfigMe/issues/22">Issue #22</a>
      */
     private boolean hasObjectAsRoot = false;
