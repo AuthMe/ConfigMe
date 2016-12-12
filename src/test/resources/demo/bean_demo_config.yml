@@ -1,0 +1,39 @@
+userdata:
+  version: 2016.4
+  users:
+    bobby:
+      name: 'Bob'
+      nicknames:
+      - 'Bobby'
+      - 'Bobby boy'
+      homeLocation:
+        longitude: 47.3887
+        latitude: 8.5174
+        coordinateType: ITRS
+    richie:
+      name: 'Richard'
+      nicknames:
+      - 'Rich'
+      homeLocation:
+        longitude: 47.44
+        latitude: 8.6
+      savedLocations:
+        restaurant:
+          longitude: 47.5
+          latitude: 8.7
+        hospital:
+          longitude: 47.1
+          latitude: 8.8901
+    lionel:
+      name: 'Lionel'
+      homeLocation:
+        longitude: 22.358
+        latitude: 32.452
+        coordinateType: ED50
+country:
+  name: 'Sweden'
+  population: 9593000
+  neighbors:
+  - 'Norway'
+  - 'Finland'
+  - 'Denmark'
