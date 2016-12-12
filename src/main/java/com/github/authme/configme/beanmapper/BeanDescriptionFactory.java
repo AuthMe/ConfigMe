@@ -119,7 +119,9 @@ public class BeanDescriptionFactory {
     }
 
     /**
-     * Returns the field on the provided class with the given name if it exists and matches the required type.
+     * Returns the field on the provided class or its parent with the given name if it exists
+     * and matches the required type. If child and parent both have a matching field, the child
+     * field is returned.
      *
      * @param clazz the class to get a field from
      * @param name the name of the field
@@ -128,13 +130,16 @@ public class BeanDescriptionFactory {
      */
     @Nullable
     private static Field getFieldSilently(Class<?> clazz, String name, Class<?> requiredType) {
-        try {
-            Field field = clazz.getDeclaredField(name);
-            if (field.getType() == requiredType) {
-                return field;
+        while (clazz != null) {
+            try {
+                Field field = clazz.getDeclaredField(name);
+                if (field.getType() == requiredType) {
+                    return field;
+                }
+            } catch (NoSuchFieldException e) {
+                // silent
             }
-        } catch (NoSuchFieldException e) {
-            // noop
+            clazz = clazz.getSuperclass();
         }
         return null;
     }

@@ -8,8 +8,8 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+import static com.github.authme.configme.TestUtils.transform;
 import static com.github.authme.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
@@ -38,7 +38,7 @@ public class PropertyListBuilderTest {
 
         // then
         List<Property<?>> knownProperties = builder.create();
-        List<String> resultPaths = knownProperties.stream().map(Property::getPath).collect(Collectors.toList());
+        List<String> resultPaths = transform(knownProperties, Property::getPath);
 
         assertThat(knownProperties, hasSize(paths.size()));
         assertThat(knownProperties, hasSize(resultPaths.size()));

@@ -1,5 +1,7 @@
 package com.github.authme.configme.beanmapper;
 
+import com.github.authme.configme.samples.inheritance.Child;
+import com.github.authme.configme.samples.inheritance.Middle;
 import org.junit.Test;
 
 import java.beans.PropertyDescriptor;
@@ -9,8 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+import static com.github.authme.configme.TestUtils.transform;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -56,7 +58,7 @@ public class BeanDescriptionFactoryTest {
 
         // then
         assertThat(properties, hasSize(4));
-        assertThat(properties.stream().map(BeanPropertyDescription::getName).collect(Collectors.toList()),
+        assertThat(transform(properties, BeanPropertyDescription::getName),
             containsInAnyOrder("isEmpty", "active", "isField", "isNotMatched"));
         assertThat(factory.matchedFields.get("empty"), equalTo("isEmpty"));
         assertThat(factory.matchedFields.get("active"), equalTo("active"));
@@ -74,8 +76,34 @@ public class BeanDescriptionFactoryTest {
 
         // then
         assertThat(properties, hasSize(2));
-        assertThat(properties.stream().map(BeanPropertyDescription::getName).collect(Collectors.toList()),
-            containsInAnyOrder("name", "isMandatory"));
+        assertThat(transform(properties, BeanPropertyDescription::getName), containsInAnyOrder("name", "isMandatory"));
+    }
+
+    @Test
+    public void shouldBeAwareOfInheritance() {
+        // given
+        BeanDescriptionFactory factory = new BeanDescriptionFactory();
+
+        // when
+        Collection<BeanPropertyDescription> properties = factory.collectWritableFields(Middle.class);
+
+        // then
+        assertThat(properties, hasSize(3));
+        assertThat(transform(properties, BeanPropertyDescription::getName), containsInAnyOrder("id", "ratio", "name"));
+    }
+
+    @Test
+    public void shouldLetChildFieldsOverrideParentFields() {
+        // given
+        BeanDescriptionFactory factory = new BeanDescriptionFactory();
+
+        // when
+        Collection<BeanPropertyDescription> properties = factory.collectWritableFields(Child.class);
+
+        // then
+        assertThat(properties, hasSize(5));
+        assertThat(transform(properties, BeanPropertyDescription::getName),
+            containsInAnyOrder("isTemporary", "importance", "ratio", "name", "id"));
     }
 
     private static BeanPropertyDescription getDescription(String name,

@@ -378,6 +378,17 @@ public class YamlFileResourceTest {
         assertThat(resource.getObject("commands.save"), nullValue());
     }
 
+    @Test
+    public void shouldReturnNullForUnknownPath() {
+        // given
+        File file = copyFileFromResources(COMPLETE_FILE);
+        YamlFileResource resource = new YamlFileResource(file);
+
+        // when / then
+        assertThat(resource.getObject("sample.ratio.wrong.dunno"), nullValue());
+        assertThat(resource.getObject(TestConfiguration.RATIO_ORDER.getPath() + ".child"), nullValue());
+    }
+
     private File copyFileFromResources(String path) {
         try {
             Path source = getJarPath(path);

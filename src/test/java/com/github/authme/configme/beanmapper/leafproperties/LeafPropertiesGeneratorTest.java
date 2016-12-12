@@ -15,8 +15,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static com.github.authme.configme.TestUtils.transform;
 import static com.github.authme.configme.beanmapper.command.Executor.CONSOLE;
 import static com.github.authme.configme.beanmapper.command.Executor.USER;
 import static org.hamcrest.Matchers.contains;
@@ -53,7 +53,7 @@ public class LeafPropertiesGeneratorTest {
         // then
         List<String> expectedPaths = expectedCommandPaths("kick", "msg", "vanish");
         expectedPaths.add("cmd.duration");
-        List<String> paths = entries.stream().map(Property::getPath).collect(Collectors.toList());
+        List<String> paths = transform(entries, Property::getPath);
         assertThat(paths, containsInAnyOrder(expectedPaths.toArray()));
         checkExecutionDetails(entries, "kick", kickExecution);
         checkExecutionDetails(entries, "msg", msgExecution);

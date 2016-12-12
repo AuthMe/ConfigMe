@@ -12,7 +12,10 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
@@ -156,5 +159,18 @@ public final class TestUtils {
                 assertThat(e.getMessage(), containsString(messageExcerpt));
             }
         }
+    }
+
+    /**
+     * Transforms all elements of the provided collection with the given function.
+     *
+     * @param coll the collection to transform
+     * @param transformer the function to use
+     * @param <T> the collection type
+     * @param <R> the result type
+     * @return the transformed list
+     */
+    public static <T, R> List<R> transform(Collection<T> coll, Function<? super T, ? extends R> transformer) {
+        return coll.stream().map(transformer).collect(Collectors.toList());
     }
 }

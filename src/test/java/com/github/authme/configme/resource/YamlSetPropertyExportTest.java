@@ -19,8 +19,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import static com.github.authme.configme.TestUtils.transform;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
@@ -83,7 +83,7 @@ public class YamlSetPropertyExportTest {
                 return null;
             }
             return new LinkedHashSet<>(
-                list.stream().map(v -> TestEnum.valueOf(v.toString())).collect(Collectors.toList()));
+                transform(list, v -> TestEnum.valueOf(v.toString())));
         }
     }
 }
