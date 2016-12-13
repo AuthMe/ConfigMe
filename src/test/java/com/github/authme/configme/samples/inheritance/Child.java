@@ -1,21 +1,23 @@
 package com.github.authme.configme.samples.inheritance;
 
+import java.beans.Transient;
+
 /**
  * Child class.
  */
 public class Child extends Middle {
 
-    private boolean isTemporary;
     private int importance;
 
     @Override
     public boolean isTemporary() {
-        return isTemporary;
+        return super.isTemporary();
     }
 
     @Override
+    @Transient(false)
     public void setTemporary(boolean temporary) {
-        isTemporary = temporary;
+        super.setTemporary(temporary);
     }
 
     public int getImportance() {

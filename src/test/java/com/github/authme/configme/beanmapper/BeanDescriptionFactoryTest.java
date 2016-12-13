@@ -4,12 +4,9 @@ import com.github.authme.configme.samples.inheritance.Child;
 import com.github.authme.configme.samples.inheritance.Middle;
 import org.junit.Test;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
+import java.beans.Transient;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static com.github.authme.configme.TestUtils.transform;
@@ -17,7 +14,6 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -51,7 +47,7 @@ public class BeanDescriptionFactoryTest {
     @Test
     public void shouldHandleBooleanMethodsAndMatchWithFields() {
         // given
-        TestBeanDescriptionFactory factory = new TestBeanDescriptionFactory();
+        BeanDescriptionFactory factory = new BeanDescriptionFactory();
 
         // when
         Collection<BeanPropertyDescription> properties = factory.collectWritableFields(BooleanTestBean.class);
@@ -59,11 +55,7 @@ public class BeanDescriptionFactoryTest {
         // then
         assertThat(properties, hasSize(4));
         assertThat(transform(properties, BeanPropertyDescription::getName),
-            containsInAnyOrder("isEmpty", "active", "isField", "isNotMatched"));
-        assertThat(factory.matchedFields.get("empty"), equalTo("isEmpty"));
-        assertThat(factory.matchedFields.get("active"), equalTo("active"));
-        assertThat(factory.matchedFields.get("isField"), equalTo("isField"));
-        assertThat(factory.matchedFields.get("isNotMatched"), nullValue());
+            containsInAnyOrder("empty", "active", "isField", "isNotMatched"));
     }
 
     @Test
@@ -76,7 +68,7 @@ public class BeanDescriptionFactoryTest {
 
         // then
         assertThat(properties, hasSize(2));
-        assertThat(transform(properties, BeanPropertyDescription::getName), containsInAnyOrder("name", "isMandatory"));
+        assertThat(transform(properties, BeanPropertyDescription::getName), containsInAnyOrder("name", "mandatory"));
     }
 
     @Test
@@ -103,7 +95,7 @@ public class BeanDescriptionFactoryTest {
         // then
         assertThat(properties, hasSize(5));
         assertThat(transform(properties, BeanPropertyDescription::getName),
-            containsInAnyOrder("isTemporary", "importance", "ratio", "name", "id"));
+            containsInAnyOrder("temporary", "importance", "ratio", "name", "id"));
     }
 
     private static BeanPropertyDescription getDescription(String name,
@@ -233,10 +225,12 @@ public class BeanDescriptionFactoryTest {
             return tempId;
         }
 
+        @Transient
         public void setTempId(long tempId) {
             this.tempId = tempId;
         }
 
+        @Transient
         public boolean isSaved() {
             return isSaved;
         }
@@ -251,17 +245,6 @@ public class BeanDescriptionFactoryTest {
 
         public void setMandatory(boolean mandatory) {
             isMandatory = mandatory;
-        }
-    }
-
-    private static final class TestBeanDescriptionFactory extends BeanDescriptionFactory {
-        // property name -> field name (null)
-        Map<String, String> matchedFields = new HashMap<>();
-
-        @Override
-        protected BeanPropertyDescription convert(PropertyDescriptor descriptor, Field field) {
-            matchedFields.put(descriptor.getName(), (field == null ? null : field.getName()));
-            return super.convert(descriptor, field);
         }
     }
 }

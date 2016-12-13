@@ -4,8 +4,6 @@ import javax.annotation.Nullable;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +27,7 @@ public class BeanDescriptionFactory {
         List<PropertyDescriptor> descriptors = getWritableProperties(clazz);
 
         List<BeanPropertyDescription> properties = descriptors.stream()
-            .map(d -> convert(d, getAssociatedField(clazz, d)))
+            .map(this::convert)
             .filter(p -> p != null)
             .collect(Collectors.toList());
 
@@ -38,41 +36,17 @@ public class BeanDescriptionFactory {
     }
 
     /**
-     * Tries to find the field of the class that is associated with the given property.
-     *
-     * @param clazz the class to process
-     * @param property the property to match to a field
-     * @return the associated field, or null if not found
-     */
-    @Nullable
-    protected Field getAssociatedField(Class<?> clazz, PropertyDescriptor property) {
-        Field field = getFieldSilently(clazz, property.getName(), property.getPropertyType());
-        // Special case for boolean (primitive) type -> isProp() might be getter for property "isProp" (and not "prop")
-        if (field == null && boolean.class == property.getPropertyType()) {
-            String alternativeName = "is" + capitalizeFirst(property.getName());
-            return getFieldSilently(clazz, alternativeName, boolean.class);
-        }
-        return field;
-    }
-
-    /**
      * Converts a {@link PropertyDescriptor} to a {@link BeanPropertyDescription} object.
      *
      * @param descriptor the descriptor to convert
-     * @param field the associated field if found, or null otherwise
      * @return the converted object, or null if the property should be skipped
      */
     @Nullable
-    protected BeanPropertyDescription convert(PropertyDescriptor descriptor, @Nullable Field field) {
-        if (field != null) {
-            if (Modifier.isTransient(field.getModifiers())) {
-                return null;
-            } else if (field.getType() == boolean.class && !field.getName().equals(descriptor.getName())) {
-                // If we have a boolean field and an is* getter, it's possible that the property name doesn't correspond
-                // to the field name, so let's set the property name to the field name.
-                descriptor.setName(field.getName());
-            }
+    protected BeanPropertyDescription convert(PropertyDescriptor descriptor) {
+        if (Boolean.TRUE.equals(descriptor.getValue("transient"))) {
+            return null;
         }
+
         return new BeanPropertyDescription(
             descriptor.getName(),
             descriptor.getPropertyType(),
@@ -116,38 +90,5 @@ public class BeanDescriptionFactory {
             }
         }
         return writableProperties;
-    }
-
-    /**
-     * Returns the field on the provided class or its parent with the given name if it exists
-     * and matches the required type. If child and parent both have a matching field, the child
-     * field is returned.
-     *
-     * @param clazz the class to get a field from
-     * @param name the name of the field
-     * @param requiredType the type the field's type needs to match <i>exactly</i>
-     * @return the field if it matched, or null otherwise
-     */
-    @Nullable
-    private static Field getFieldSilently(Class<?> clazz, String name, Class<?> requiredType) {
-        while (clazz != null) {
-            try {
-                Field field = clazz.getDeclaredField(name);
-                if (field.getType() == requiredType) {
-                    return field;
-                }
-            } catch (NoSuchFieldException e) {
-                // silent
-            }
-            clazz = clazz.getSuperclass();
-        }
-        return null;
-    }
-
-    private static String capitalizeFirst(String str) {
-        if (str.length() < 1) {
-            throw new IllegalArgumentException(str);
-        }
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }

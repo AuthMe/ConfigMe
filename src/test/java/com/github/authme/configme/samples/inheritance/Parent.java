@@ -1,5 +1,7 @@
 package com.github.authme.configme.samples.inheritance;
 
+import java.beans.Transient;
+
 /**
  * Parent class.
  */
@@ -20,6 +22,7 @@ public class Parent {
         return isTemporary;
     }
 
+    @Transient
     public void setTemporary(boolean temporary) {
         isTemporary = temporary;
     }
