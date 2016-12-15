@@ -16,7 +16,7 @@ public class StringListProperty extends Property<List<String>> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<String> getFromResource(PropertyResource resource) {
+    protected List<String> getFromResource(PropertyResource resource) {
         List<?> rawList = resource.getList(getPath());
         if (rawList != null) {
             for (Object o : rawList) {

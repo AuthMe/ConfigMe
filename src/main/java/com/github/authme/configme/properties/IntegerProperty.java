@@ -12,7 +12,7 @@ public class IntegerProperty extends Property<Integer> {
     }
 
     @Override
-    public Integer getFromResource(PropertyResource resource) {
+    protected Integer getFromResource(PropertyResource resource) {
         return resource.getInt(getPath());
     }
 }

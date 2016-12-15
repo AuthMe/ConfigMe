@@ -12,7 +12,7 @@ public class StringProperty extends Property<String> {
     }
 
     @Override
-    public String getFromResource(PropertyResource resource) {
+    protected String getFromResource(PropertyResource resource) {
         return resource.getString(getPath());
     }
 }

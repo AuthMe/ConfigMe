@@ -12,7 +12,7 @@ public class BooleanProperty extends Property<Boolean> {
     }
 
     @Override
-    public Boolean getFromResource(PropertyResource resource) {
+    protected Boolean getFromResource(PropertyResource resource) {
         return resource.getBoolean(getPath());
     }
 }

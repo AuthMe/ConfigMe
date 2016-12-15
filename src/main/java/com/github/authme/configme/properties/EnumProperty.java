@@ -18,7 +18,7 @@ public class EnumProperty<E extends Enum<E>> extends Property<E> {
     }
 
     @Override
-    public E getFromResource(PropertyResource resource) {
+    protected E getFromResource(PropertyResource resource) {
         // Value is read from file as a String, but when it is set later on it is an enum
         Object value = resource.getObject(getPath());
         if (clazz.isInstance(value)) {
