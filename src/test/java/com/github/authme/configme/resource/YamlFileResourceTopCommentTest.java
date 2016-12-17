@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -42,12 +42,12 @@ public class YamlFileResourceTopCommentTest {
         new SettingsManager(resource, new PlainMigrationService(), GroupPropertyHolder.class);
 
         // then
-        assertThat(new String(Files.readAllBytes(file.toPath())), equalTo(
-            "\n"
-            + "# Group configuration number\n"
-            + "defaultGamemode: 'CREATIVE'\n"
-            + "worlds: \n"
-            + "- 'world'"
+        assertThat(Files.readAllLines(file.toPath()), contains(
+            "",
+            "# Group configuration number",
+            "defaultGamemode: 'CREATIVE'",
+            "worlds: ",
+            "- 'world'"
         ));
     }
 
@@ -60,17 +60,17 @@ public class YamlFileResourceTopCommentTest {
         new SettingsManager(resource, new PlainMigrationService(), TestConfig.class);
 
         // then
-        assertThat(new String(Files.readAllBytes(file.toPath())), equalTo(
-            "\n"
-            + "# Root comment\n"
-            + "# 'some' Section\n"
-            + "# Explanation for 'some'\n"
-            + "some:\n"
-            + "    # Integer property\n"
-            + "    test: 4\n"
-            + "    # Other header\n"
-            + "    other:\n"
-            + "        property: 'hello'"
+        assertThat(Files.readAllLines(file.toPath()), contains(
+            "",
+            "# Root comment",
+            "# 'some' Section",
+            "# Explanation for 'some'",
+            "some:",
+            "    # Integer property",
+            "    test: 4",
+            "    # Other header",
+            "    other:",
+            "        property: 'hello'"
         ));
     }
 }
