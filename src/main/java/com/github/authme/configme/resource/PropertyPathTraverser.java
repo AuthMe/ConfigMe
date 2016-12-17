@@ -20,7 +20,8 @@ public class PropertyPathTraverser {
 
     private final ConfigurationData configurationData;
     /** Contains all path elements besides the last, e.g. {datasource, mysql} for "datasource.mysql.table". */
-    private List<String> parentPathElements = new ArrayList<>();
+    private List<String> parentPathElements = new ArrayList<>(0);
+    private boolean isFirstProperty = true;
 
     public PropertyPathTraverser(ConfigurationData configurationData) {
         this.configurationData = configurationData;
@@ -48,12 +49,33 @@ public class PropertyPathTraverser {
     private List<PathElement> convertToPathElements(int indentation, String prefix, List<String> elements) {
         List<PathElement> pathElements = new ArrayList<>(elements.size());
         for (String element : elements) {
-            String[] comments = configurationData.getCommentsForSection(prefix + element);
+            String[] comments = isFirstProperty ? getCommentsIncludingRoot(prefix + element)
+                : configurationData.getCommentsForSection(prefix + element);
             pathElements.add(new PathElement(indentation, element, comments));
             prefix += element + ".";
             ++indentation;
         }
         return pathElements;
+    }
+
+    private String[] getCommentsIncludingRoot(String path) {
+        isFirstProperty = false;
+
+        String[] rootComments = configurationData.getCommentsForSection("");
+        String[] sectionComments = configurationData.getCommentsForSection(path);
+        // One or the other array might be empty, but we only do this once so we can ignore performance considerations
+        return mergeArrays(rootComments, sectionComments);
+    }
+
+    // http://stackoverflow.com/questions/80476/how-can-i-concatenate-two-arrays-in-java
+    private static String[] mergeArrays(String[] a, String[] b) {
+        final int aLen = a.length;
+        final int bLen = b.length;
+
+        String[] c = new String[aLen + bLen];
+        System.arraycopy(a, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+        return c;
     }
 
     public static final class PathElement {
