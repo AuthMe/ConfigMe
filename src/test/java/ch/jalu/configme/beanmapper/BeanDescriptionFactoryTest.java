@@ -1,5 +1,6 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
 import ch.jalu.configme.samples.inheritance.Child;
 import ch.jalu.configme.samples.inheritance.Middle;
 import org.junit.Test;
@@ -96,6 +97,20 @@ public class BeanDescriptionFactoryTest {
         assertThat(properties, hasSize(5));
         assertThat(transform(properties, BeanPropertyDescription::getName),
             containsInAnyOrder("temporary", "importance", "ratio", "name", "id"));
+    }
+
+    @Test
+    public void shouldUseExportName() {
+        // given
+        BeanDescriptionFactory factory = new BeanDescriptionFactory();
+
+        // when
+        Collection<BeanPropertyDescription> properties = factory.collectWritableFields(AnnotatedEntry.class);
+
+        // then
+        assertThat(properties, hasSize(2));
+        assertThat(transform(properties, BeanPropertyDescription::getName),
+            containsInAnyOrder("id", "has-id"));
     }
 
     private static BeanPropertyDescription getDescription(String name,

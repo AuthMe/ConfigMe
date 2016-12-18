@@ -1,5 +1,7 @@
 package ch.jalu.configme.beanmapper.worldgroup;
 
+import ch.jalu.configme.beanmapper.ExportName;
+
 import java.util.List;
 
 /**
@@ -22,6 +24,7 @@ public class Group {
         this.defaultGamemode = defaultGamemode;
     }
 
+    @ExportName("default-gamemode")
     public GameMode getDefaultGamemode() {
         return defaultGamemode;
     }

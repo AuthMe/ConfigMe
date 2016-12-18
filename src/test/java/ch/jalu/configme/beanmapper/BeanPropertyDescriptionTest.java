@@ -1,6 +1,9 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
 import org.junit.Test;
+
+import java.util.Collection;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -46,6 +49,22 @@ public class BeanPropertyDescriptionTest {
 
         // when
         sizeProperty.getValue(bean);
+    }
+
+    @Test
+    public void shouldHaveAppropriateStringRepresentation() {
+        // given
+        Collection<BeanPropertyDescription> properties = new BeanDescriptionFactory()
+            .collectWritableFields(AnnotatedEntry.class);
+        BeanPropertyDescription hasIdProperty = properties.stream()
+            .filter(prop -> "has-id".equals(prop.getName())).findFirst().get();
+
+        // when
+        String output = "Found " + hasIdProperty;
+
+        // then
+        assertThat(output, equalTo("Found Bean property with getter "
+            + "'public boolean ch.jalu.configme.samples.beanannotations.AnnotatedEntry.getHasId()'"));
     }
 
     private static BeanPropertyDescription getDescriptor(String name, Class<?> clazz) {

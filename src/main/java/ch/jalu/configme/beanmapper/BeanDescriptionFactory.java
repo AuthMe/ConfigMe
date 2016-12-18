@@ -6,7 +6,9 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +50,7 @@ public class BeanDescriptionFactory {
         }
 
         return new BeanPropertyDescription(
-            descriptor.getName(),
+            getPropertyName(descriptor),
             descriptor.getPropertyType(),
             descriptor.getWriteMethod().getGenericParameterTypes()[0],
             descriptor.getReadMethod(),
@@ -62,11 +64,25 @@ public class BeanDescriptionFactory {
      * @param properties the properties that will be used on the class
      */
     protected void validateProperties(Class<?> clazz, Collection<BeanPropertyDescription> properties) {
-        // With #32 we will allow custom names for properties
-        long totalUniqueNames = properties.stream().map(BeanPropertyDescription::getName).distinct().count();
-        if (totalUniqueNames != properties.size()) {
-            throw new ConfigMeMapperException("Found properties with the same name in '" + clazz + "'");
+        Set<String> names = new HashSet<>(properties.size());
+        properties.forEach(property -> {
+            if (property.getName() == null || property.getName().isEmpty()) {
+                throw new ConfigMeMapperException("Custom name of " + property + " may not be empty");
+            }
+            if (!names.add(property.getName())) {
+                throw new ConfigMeMapperException(
+                    clazz + " has multiple properties with name '" + property.getName() + "'");
+            }
+        });
+    }
+
+    protected String getPropertyName(PropertyDescriptor descriptor) {
+        if (descriptor.getReadMethod().isAnnotationPresent(ExportName.class)) {
+            return descriptor.getReadMethod().getAnnotation(ExportName.class).value();
+        } else if (descriptor.getWriteMethod().isAnnotationPresent(ExportName.class)) {
+            return descriptor.getWriteMethod().getAnnotation(ExportName.class).value();
         }
+        return descriptor.getName();
     }
 
     /**

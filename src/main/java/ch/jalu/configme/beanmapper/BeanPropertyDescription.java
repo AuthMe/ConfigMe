@@ -79,4 +79,9 @@ public class BeanPropertyDescription {
                 "Could not set property '" + name + "' to value '" + value + "' on instance '" + bean + "'", e);
         }
     }
+
+    @Override
+    public String toString() {
+        return "Bean property with getter '" + getter + "'";
+    }
 }
