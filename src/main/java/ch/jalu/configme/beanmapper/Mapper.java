@@ -174,6 +174,7 @@ public class Mapper {
      * @param <T> the JavaBean type
      * @param clazz the JavaBean class
      * @param value the value from the property resource
+     * @param context the mapping context
      * @return the converted value, or null if not possible
      */
     @Nullable
