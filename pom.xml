@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.authme</groupId>
+    <groupId>ch.jalu</groupId>
     <artifactId>configme</artifactId>
     <version>0.3-SNAPSHOT</version>
 
@@ -18,6 +18,14 @@
         <url>https://github.com/AuthMe</url>
     </organization>
 
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <scm>
         <connection>scm:git:https://github.com/AuthMe/ConfigMe.git</connection>
         <developerConnection>scm:git:git@github.com:AuthMe/ConfigMe.git</developerConnection>
@@ -29,18 +37,30 @@
         <url>https://github.com/AuthMe/ConfigMe/issues</url>
     </issueManagement>
 
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>http://www.opensource.org/licenses/mit-license.php</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.jdkVersion>1.8</project.jdkVersion>
     </properties>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <developers>
+        <developer>
+            <name>AuthMe team</name>
+            <email>.</email>
+            <organization>AuthMe</organization>
+            <organizationUrl>https://github.com/AuthMe</organizationUrl>
+        </developer>
+    </developers>
 
     
     <!-- Release profile with more plugins -->
@@ -59,7 +79,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>2.2.1</version>
+                        <version>3.0.1</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -73,7 +93,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.9.1</version>
+                        <version>2.10.4</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -83,11 +103,11 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- GPG plugin: requires 'gpg' being installed and settings.xml with credentials
+                    <!-- GPG plugin: requires 'gpg' being installed and settings.xml with credentials -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -98,12 +118,11 @@
                             </execution>
                         </executions>
                     </plugin>
-                    -->
-                    <!-- Nexus Staging plugin
+                    <!-- Nexus Staging plugin -->
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.3</version>
+                        <version>1.6.7</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
@@ -111,7 +130,6 @@
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
-                    -->
                 </plugins>
             </build>
         </profile>
@@ -132,7 +150,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Unit Test Runner -->
+            <!-- Surefire plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -143,7 +161,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Coverage report publisher -->
+            <!-- Coveralls plugin -->
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
@@ -205,7 +223,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
-            <version>2.2.29</version>
+            <version>2.3.6</version>
             <exclusions>
                 <exclusion>
                     <artifactId>hamcrest-core</artifactId>
