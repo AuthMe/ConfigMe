@@ -1,6 +1,8 @@
 package ch.jalu.configme.beanmapper;
 
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
+import ch.jalu.configme.samples.beanannotations.BeanWithEmptyName;
+import ch.jalu.configme.samples.beanannotations.BeanWithNameClash;
 import ch.jalu.configme.samples.inheritance.Child;
 import ch.jalu.configme.samples.inheritance.Middle;
 import org.junit.Test;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static ch.jalu.configme.TestUtils.transform;
+import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -111,6 +114,30 @@ public class BeanDescriptionFactoryTest {
         assertThat(properties, hasSize(2));
         assertThat(transform(properties, BeanPropertyDescription::getName),
             containsInAnyOrder("id", "has-id"));
+    }
+
+    @Test
+    public void shouldThrowForMultiplePropertiesWithSameName() {
+        // given
+        BeanDescriptionFactory factory = new BeanDescriptionFactory();
+
+        // when / then
+        verifyException(
+            () -> factory.collectWritableFields(BeanWithNameClash.class),
+            ConfigMeMapperException.class,
+            "multiple properties with name 'threshold'");
+    }
+
+    @Test
+    public void shouldThrowForWhenExportNameIsNullForProperty() {
+        // given
+        BeanDescriptionFactory factory = new BeanDescriptionFactory();
+
+        // when / then
+        verifyException(
+            () -> factory.collectWritableFields(BeanWithEmptyName.class),
+            ConfigMeMapperException.class,
+            "may not be empty");
     }
 
     private static BeanPropertyDescription getDescription(String name,

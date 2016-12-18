@@ -66,7 +66,7 @@ public class BeanDescriptionFactory {
     protected void validateProperties(Class<?> clazz, Collection<BeanPropertyDescription> properties) {
         Set<String> names = new HashSet<>(properties.size());
         properties.forEach(property -> {
-            if (property.getName() == null || property.getName().isEmpty()) {
+            if (property.getName().isEmpty()) {
                 throw new ConfigMeMapperException("Custom name of " + property + " may not be empty");
             }
             if (!names.add(property.getName())) {

@@ -5,8 +5,13 @@ import ch.jalu.configme.configurationdata.samples.AdditionalTestConfiguration;
 import ch.jalu.configme.configurationdata.samples.SectionCommentsFailClasses;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.samples.ClassWithPrivatePropertyField;
 import ch.jalu.configme.samples.TestConfiguration;
 import org.junit.Test;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.arrayContaining;
@@ -76,6 +81,22 @@ public class ConfigurationDataBuilderTest {
             "Could not get section comments");
     }
 
+    @Test
+    public void shouldWrapIllegalAccessExceptionIntoConfigMeException()
+                                                                    throws NoSuchMethodException, NoSuchFieldException {
+        // given
+        Method getPropertyFieldMethod =
+            ConfigurationDataBuilder.class.getDeclaredMethod("getPropertyField", Field.class);
+        getPropertyFieldMethod.setAccessible(true);
+        Field privateProperty = ClassWithPrivatePropertyField.class.getDeclaredField("PRIVATE_INT_PROPERTY");
+
+        // when / then
+        verifyException(
+            () -> invokeStaticMethod(getPropertyFieldMethod, privateProperty),
+            ConfigMeException.class,
+            "Is it maybe not public?");
+    }
+
     private static void assertHasPropertyWithComments(ConfigurationData configurationData, Property<?> property,
                                                       String... comments) {
         for (Property<?> knownProperty : configurationData.getProperties()) {
@@ -85,6 +106,19 @@ public class ConfigurationDataBuilderTest {
             }
         }
         fail("Not found in property map: " + property);
+    }
+
+    private static void invokeStaticMethod(Method method, Object arg) {
+        try {
+            method.invoke(null, arg);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        } catch (InvocationTargetException e) {
+            if (e.getCause() instanceof RuntimeException) {
+                throw (RuntimeException) e.getCause();
+            }
+            throw new IllegalStateException(e);
+        }
     }
 
 }
