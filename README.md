@@ -90,3 +90,6 @@ public class WelcomeWriter {
 ```
 :pencil: See a full working example based on this 
 [here](https://github.com/AuthMe/ConfigMe/tree/master/src/test/java/ch/jalu/configme/demo).
+
+:pencil: See how to use custom classes as property types in the 
+[bean properties demo](https://github.com/AuthMe/ConfigMe/tree/master/src/test/java/ch/jalu/configme/demo/beans).
