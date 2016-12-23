@@ -19,27 +19,29 @@ import static ch.jalu.configme.beanmapper.MapperUtils.getGenericClassesSafely;
 import static ch.jalu.configme.beanmapper.MapperUtils.invokeDefaultConstructor;
 
 /**
- * Maps a section of a property resource to the provided JavaBean class. The mapping is based on the field names,
- * which must correspond to the field in the property resource. For example, if a JavaBean class has a field called
+ * Maps a section of a property resource to the provided JavaBean class. The mapping is based on the bean's properties,
+ * whose names must correspond with the names in the property resource. For example, if a JavaBean class has a property
  * {@code length} and should be mapped from the property resource's value at path {@code definition}, the mapper will
- * look up {@code definition.length} to get the value for the JavaBean field.
+ * look up {@code definition.length} to get the value for the JavaBean property.
  * <p>
  * Classes must be JavaBeans. These are simple classes with private fields, accompanied with getters and setters.
- * <b>The mapper only considers fields which have an associated setter method.</b> JavaBean classes without any setter
- * method are considered as type that needs to be converted to. To support these, you need to implement your own
- * {@link Transformer} and instantiate the mapper with it.
+ * <b>The mapper only considers properties which have both a getter and a setter method.</b> Any Java class without
+ * at least one property with both a getter <i>and</i> a setter is not considered as a JavaBean class. Such classes can
+ * be supported by implementing a custom {@link Transformer} that performs the conversion from the property resource to
+ * an object of the class' type.
  * <p>
  * <b>Recursion:</b> the mapping of values to a JavaBean is performed recursively, i.e. a JavaBean may have other
- * JavaBeans as fields at an arbitrary "depth."
+ * JavaBeans as fields at any arbitrary "depth."
  * <p>
  * <b>Collections</b> are only supported if they are explicitly typed, i.e. a field of {@code List&lt;String>}
- * is supported but {@code List&lt;?>} or {@code List&lt;T extends Number>} are not supported. Specifically, you may
+ * is supported but {@code List&lt;?>} and {@code List&lt;T extends Number>} are not supported. Specifically, you may
  * only declare fields of type {@link List} or {@link Set}, or a parent type ({@link Collection} or {@link Iterable}).
- * Fields of type <b>Map</b> are supported also.
+ * Fields of type <b>Map</b> are supported also, with similar limitations. Additionally, maps may only have
+ * {@code String} as key type, but no restrictions are imposed on the value type.
  * <p>
  * JavaBeans may have <b>optional fields</b>. If the mapper cannot map the property resource value to the corresponding
- * field, it only treats it as a failure if the field's value is {@code null}. If it has a default
- * value assigned to it, the default value remains and the mapping process continues. A JavaBean field whose value is
+ * field, it only treats it as a failure if the field's value is {@code null}. If the field has a default value assigned
+ * to it on initialization, the default value remains and the mapping process continues. A JavaBean field whose value is
  * {@code null} signifies a failure and stops the mapping process immediately.
  */
 public class Mapper {
@@ -50,14 +52,14 @@ public class Mapper {
     private final Map<Class<?>, Collection<BeanPropertyDescription>> classProperties = new HashMap<>();
 
     /**
-     * Creates a new JavaBean mapper with the default type transformers.
+     * Creates a new JavaBean mapper with the default configuration.
      */
     public Mapper() {
         this(MappingErrorHandler.Impl.SILENT, new BeanDescriptionFactory(), Transformers.getDefaultTransformers());
     }
 
     /**
-     * Creates a new JavaBean mapper with the given transformers.
+     * Creates a new JavaBean mapper with the given elements.
      *
      * @param mappingErrorHandler handler to use for mapping errors
      * @param beanDescriptionFactory factory to get bean property descriptions for classes

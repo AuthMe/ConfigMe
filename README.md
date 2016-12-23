@@ -89,4 +89,4 @@ public class WelcomeWriter {
 }
 ```
 :pencil: See a full working example based on this 
-[here](https://github.com/AuthMe/ConfigMe/tree/master/src/test/java/com/github/authme/configme/demo).
+[here](https://github.com/AuthMe/ConfigMe/tree/master/src/test/java/ch/jalu/configme/demo).

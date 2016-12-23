@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Generates {@link Property} objects for all "leaf" values of a bean to
- * properly export the values.
+ * Generates {@link Property} objects for all "leaf" values of a bean for the export of beans by
+ * the {@link ch.jalu.configme.resource.PropertyResource}.
  */
 public class LeafPropertiesGenerator {
 
