@@ -28,28 +28,33 @@ public class BeanPropertiesDemo {
         BeanPropertiesDemo demo = new BeanPropertiesDemo();
 
         System.out.println(demo.generateUserInfo());
+        System.out.println("Copied config file to '" + demo.configFile + "'");
     }
 
     public String generateUserInfo() {
         SettingsManager settingsManager = new SettingsManager(new YamlFileResource(configFile),
-            new PlainMigrationService(), ConfigurationDataBuilder.collectData(SettingsHolderImpl.class));
-        UserBase userBase = settingsManager.getProperty(SettingsHolderImpl.USER_BASE);
+            new PlainMigrationService(), ConfigurationDataBuilder.collectData(DemoSettings.class));
+        UserBase userBase = settingsManager.getProperty(DemoSettings.USER_BASE);
 
-        String info = "Available users: " + userBase.getUsers().keySet();
-
-        User richie = userBase.getUsers().get("richie");
+        User richie = userBase.getRichie();
         String savedLocationInfo = richie.getSavedLocations().entrySet().stream()
-            .map(entry -> entry.getKey() + "( " + entry.getValue().getLatitude() + ", " + entry.getValue().getLongitude() + ")")
+            .map(entry -> entry.getKey() + " " + entry.getValue())
             .collect(Collectors.joining(", "));
-        info += "\nSaved locations of Richie: " + savedLocationInfo;
+        String info = "Saved locations of Richie: " + savedLocationInfo;
 
-        info += "\nNicknames of Bob: " + userBase.getUsers().get("bobby").getNicknames();
+        info += "\nNicknames of Bob: " + String.join(", ", userBase.getBobby().getNicknames());
 
-        Country country = settingsManager.getProperty(SettingsHolderImpl.COUNTRY);
+        Country country = settingsManager.getProperty(DemoSettings.COUNTRY);
         info += "\nCountry '" + country.getName() + "' has neighbors: " + String.join(", ", country.getNeighbors());
         return info;
     }
 
+    /**
+     * @return the config file
+     */
+    public File getConfigFile() {
+        return configFile;
+    }
 
     /**
      * Copies a file from the codebase's resources to a temporary file.

@@ -32,4 +32,9 @@ public class Location {
     public void setCoordinateType(CoordinateSystem coordinateType) {
         this.coordinateType = coordinateType;
     }
+
+    @Override
+    public String toString() {
+        return "(" + longitude + ", " + latitude + ")";
+    }
 }

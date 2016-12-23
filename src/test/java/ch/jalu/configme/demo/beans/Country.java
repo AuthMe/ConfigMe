@@ -1,5 +1,6 @@
 package ch.jalu.configme.demo.beans;
 
+import java.beans.Transient;
 import java.util.List;
 
 /**
@@ -36,6 +37,7 @@ public class Country {
         this.neighbors = neighbors;
     }
 
+    @Transient
     public boolean isTemporary() {
         return isTemporary;
     }
