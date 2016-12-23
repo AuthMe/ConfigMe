@@ -24,18 +24,11 @@ A simple configuration management library, initially for but no longer limited t
 ### Integration
 Start using ConfigMe by adding this to your pom.xml:
 ```xml
-<repositories>
-    <repository>
-        <id>xephi-repo</id>
-        <url>http://ci.xephi.fr/plugin/repository/everything/</url>
-    </repository>
-</repositories>
-
 <dependencies>
     <dependency>
-        <groupId>com.github.authme</groupId>
+        <groupId>ch.jalu</groupId>
         <artifactId>configme</artifactId>
-        <version>0.2.1</version>
+        <version>0.3</version>
     </dependency>
 </dependencies>
 ```
