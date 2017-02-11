@@ -9,6 +9,10 @@ import static ch.jalu.configme.properties.PropertyInitializer.newBeanProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newLowercaseListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.optionalBooleanProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.optionalEnumProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.optionalIntegerProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.optionalStringProperty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
@@ -26,6 +30,11 @@ public class PropertyInitializerTest {
         assertThat(newListProperty("path", "default", "entries"), instanceOf(StringListProperty.class));
         assertThat(newLowercaseListProperty("path", "a", "b", "c"), instanceOf(LowercaseStringListProperty.class));
         assertThat(newBeanProperty(WorldGroupConfig.class, "worlds", new WorldGroupConfig()), instanceOf(BeanProperty.class));
+
+        assertThat(optionalBooleanProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalIntegerProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalStringProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalEnumProperty(TestEnum.class, "path"), instanceOf(OptionalProperty.class));
     }
 
     @Test
