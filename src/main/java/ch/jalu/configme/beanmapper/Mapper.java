@@ -206,12 +206,13 @@ public class Mapper {
         return bean;
     }
 
+    /**
+     * Returns the properties of the given bean class that need to be considered when constructing objects.
+     *
+     * @param clazz the class to get the bean properties from
+     * @return relevant properties
+     */
     public Collection<BeanPropertyDescription> getWritableProperties(Class<?> clazz) {
-        Collection<BeanPropertyDescription> properties = classProperties.get(clazz);
-        if (properties == null) {
-            properties = beanDescriptionFactory.collectWritableFields(clazz);
-            classProperties.put(clazz, properties);
-        }
-        return properties;
+        return classProperties.computeIfAbsent(clazz, beanDescriptionFactory::collectWritableFields);
     }
 }

@@ -60,7 +60,7 @@ public class ConfigurationDataBuilderTest {
         verifyException(
             () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.WrongReturnType.class),
             ConfigMeException.class,
-            "Return value must be Map<String, String>");
+            "Return value must be Map<String, String[]>");
 
         // Non-static method
         verifyException(

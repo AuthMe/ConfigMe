@@ -38,6 +38,12 @@ public class BeanProperty<B> extends Property<B> {
         return mapper.convertToBean(getPath(), resource, beanClass);
     }
 
+    /**
+     * Returns the properties of the bean class to consider while creating the object.
+     *
+     * @param clazz the class to check
+     * @return the relevant properties on the class
+     */
     public Collection<BeanPropertyDescription> getWritableProperties(Class<?> clazz) {
         return mapper.getWritableProperties(clazz);
     }

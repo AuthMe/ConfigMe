@@ -127,7 +127,7 @@ public class ConfigurationDataBuilder {
                 throw new ConfigMeException("Could not get section comments from '" + method + "'", e);
             } catch (ClassCastException e) {
                 throw new ConfigMeException("Could not get section comments from '" + method
-                    + "': Return value must be Map<String, String>", e);
+                    + "': Return value must be Map<String, String[]>", e);
             }
         }
     }
