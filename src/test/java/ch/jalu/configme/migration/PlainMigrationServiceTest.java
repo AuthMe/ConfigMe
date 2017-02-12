@@ -16,9 +16,6 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -45,7 +42,7 @@ public class PlainMigrationServiceTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    public void shouldReturnNoSaveNecessaryForAllPropertiesPresent() throws IOException {
+    public void shouldReturnNoSaveNecessaryForAllPropertiesPresent() {
         // given
         PropertyResource resource = createResourceSpy(COMPLETE_CONFIG);
 
@@ -58,7 +55,7 @@ public class PlainMigrationServiceTest {
     }
 
     @Test
-    public void shouldReturnTrueForMissingProperty() throws IOException {
+    public void shouldReturnTrueForMissingProperty() {
         // given
         PropertyResource resource = createResourceSpy(INCOMPLETE_CONFIG);
 
@@ -72,7 +69,7 @@ public class PlainMigrationServiceTest {
     }
 
     @Test
-    public void shouldPassResourceToExtendedMethod() throws IOException {
+    public void shouldPassResourceToExtendedMethod() {
         // given
         PropertyResource resource = createResourceSpy(COMPLETE_CONFIG);
         given(resource.contains("old.property")).willReturn(true);
@@ -88,7 +85,7 @@ public class PlainMigrationServiceTest {
     }
 
     @Test
-    public void shouldResetNegativeIntegerProperties() throws IOException {
+    public void shouldResetNegativeIntegerProperties() {
         // given
         PropertyResource resource = createResourceSpy(COMPLETE_CONFIG);
         PlainMigrationServiceTestExtension service = new PlainMigrationServiceTestExtension();
@@ -102,13 +99,10 @@ public class PlainMigrationServiceTest {
         verify(resource).setValue(TestConfiguration.DURATION_IN_SECONDS.getPath(), 0);
     }
 
-    private PropertyResource createResourceSpy(String file) throws IOException {
+    private PropertyResource createResourceSpy(String file) {
         // It's a little difficult to set up mock behavior for all cases, so use a YML file from test/resources
-        Path sampleJarFile = TestUtils.getJarPath(file);
-        File tempFolder = temporaryFolder.newFolder();
-        Path tempFile = new File(tempFolder, "sample.yml").toPath();
-        Files.copy(sampleJarFile, tempFile);
-        return Mockito.spy(new YamlFileResource(tempFile.toFile()));
+        File copy = TestUtils.copyFileFromResources(file, temporaryFolder);
+        return Mockito.spy(new YamlFileResource(copy));
     }
 
     private static class PlainMigrationServiceTestExtension extends PlainMigrationService {

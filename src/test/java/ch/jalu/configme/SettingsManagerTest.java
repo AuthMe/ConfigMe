@@ -22,10 +22,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -34,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static ch.jalu.configme.TestUtils.containsAll;
+import static ch.jalu.configme.TestUtils.copyFileFromResources;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -160,7 +157,7 @@ public class SettingsManagerTest {
     public void shouldAllowToSetBeanPropertyValue() {
         // given
         BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>(WorldGroupConfig.class, "worlds", new WorldGroupConfig());
-        PropertyResource resource = new YamlFileResource(copyFromResources("/beanmapper/worlds.yml"));
+        PropertyResource resource = new YamlFileResource(copyFileFromResources("/beanmapper/worlds.yml", temporaryFolder));
         SettingsManager manager = SettingsManager.createWithProperties(resource, null, Collections.singletonList(worldGroups));
         WorldGroupConfig worldGroupConfig = createTestWorldConfig();
 
@@ -175,7 +172,7 @@ public class SettingsManagerTest {
     public void shouldProperlySaveBeanPropertyValueSetAfterwards() {
         // given
         BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>(WorldGroupConfig.class, "groups", new WorldGroupConfig());
-        File file = copyFromResources("/beanmapper/worlds.yml");
+        File file = copyFileFromResources("/beanmapper/worlds.yml", temporaryFolder);
         SettingsManager manager =
             SettingsManager.createWithProperties(new YamlFileResource(file), null, Collections.singletonList(worldGroups));
         WorldGroupConfig worldGroupConfig = createTestWorldConfig();
@@ -195,7 +192,7 @@ public class SettingsManagerTest {
     @Test
     public void shouldSetOptionalPropertyCorrectly() {
         // given
-        File file = copyFromResources("/config-sample.yml");
+        File file = copyFileFromResources("/config-sample.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(file);
         SettingsManager settingsManager =
             new SettingsManager(resource, null, ConfigurationDataBuilder.collectData(TestConfiguration.class));
@@ -226,18 +223,6 @@ public class SettingsManagerTest {
         SettingsManager manager = new SettingsManager(resource, migrationService, configurationData);
         reset(migrationService);
         return manager;
-    }
-
-    private File copyFromResources(String path) {
-        Path source = TestUtils.getJarPath(path);
-        File destination;
-        try {
-            destination = temporaryFolder.newFile();
-            Files.copy(source, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not copy file from JAR", e);
-        }
-        return destination;
     }
 
     private static WorldGroupConfig createTestWorldConfig() {

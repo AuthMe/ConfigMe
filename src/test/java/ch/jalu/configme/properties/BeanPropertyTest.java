@@ -1,6 +1,5 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.beanmapper.Mapper;
 import ch.jalu.configme.beanmapper.command.Command;
 import ch.jalu.configme.beanmapper.command.CommandConfig;
@@ -14,11 +13,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
+import static ch.jalu.configme.TestUtils.copyFileFromResources;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -40,7 +36,7 @@ public class BeanPropertyTest {
         // given
         BeanProperty<CommandConfig> property =
             new BeanProperty<>(CommandConfig.class, "commandconfig", new CommandConfig());
-        File configFile = copyFileToTemporaryFolder("/beanmapper/commands.yml");
+        File configFile = copyFileFromResources("/beanmapper/commands.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(configFile);
 
         // when
@@ -65,7 +61,7 @@ public class BeanPropertyTest {
         // given
         BeanProperty<CommandConfig> property =
             new BeanProperty<>(CommandConfig.class, "", new CommandConfig());
-        File configFile = copyFileToTemporaryFolder("/beanmapper/commands_root_path.yml");
+        File configFile = copyFileFromResources("/beanmapper/commands_root_path.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(configFile);
 
         // when
@@ -99,16 +95,5 @@ public class BeanPropertyTest {
         // then
         assertThat(result, equalTo(groupConfig));
         verify(mapper).convertToBean(path, resource, WorldGroupConfig.class);
-    }
-
-    private File copyFileToTemporaryFolder(String path) {
-        Path jarPath = TestUtils.getJarPath(path);
-        try {
-            File tempFile = temporaryFolder.newFile();
-            Files.copy(jarPath, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            return tempFile;
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
     }
 }

@@ -1,6 +1,7 @@
 package ch.jalu.configme.resource;
 
 import ch.jalu.configme.SettingsManager;
+import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.beanmapper.command.CommandConfig;
 import ch.jalu.configme.beanmapper.worldgroup.GameMode;
 import ch.jalu.configme.beanmapper.worldgroup.Group;
@@ -20,7 +21,6 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -437,13 +437,6 @@ public class YamlFileResourceTest {
     }
 
     private File copyFileFromResources(String path) {
-        try {
-            Path source = getJarPath(path);
-            File destination = temporaryFolder.newFile();
-            Files.copy(source, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            return destination;
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not copy test file", e);
-        }
+        return TestUtils.copyFileFromResources(path, temporaryFolder);
     }
 }

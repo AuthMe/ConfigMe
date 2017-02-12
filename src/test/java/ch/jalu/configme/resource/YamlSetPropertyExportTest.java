@@ -13,7 +13,6 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -39,11 +38,8 @@ public class YamlSetPropertyExportTest {
     private File configFile;
 
     @Before
-    public void copyConfigFile() throws IOException {
-        Path jarFile = TestUtils.getJarPath(SAMPLE_FILE);
-        File testFile = new File(temporaryFolder.newFolder(), "config.yml");
-        Files.copy(jarFile, testFile.toPath());
-        configFile = testFile;
+    public void copyConfigFile() {
+        configFile = TestUtils.copyFileFromResources(SAMPLE_FILE, temporaryFolder);
     }
 
     @Test

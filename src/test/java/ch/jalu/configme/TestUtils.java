@@ -1,16 +1,20 @@
 package ch.jalu.configme;
 
 import org.hamcrest.Matcher;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,6 +34,10 @@ public final class TestUtils {
 
     private TestUtils() {
     }
+
+    // -------------
+    // JAR resources
+    // -------------
 
     /**
      * Returns a {@link File} to a file in the JAR's resources (main or test).
@@ -57,6 +65,24 @@ public final class TestUtils {
         return Paths.get(appropriatePath);
     }
 
+    /**
+     * Copies the resources file at the given path to a new file in the provided {@link TemporaryFolder} instance.
+     *
+     * @param path the path in the JAR's resources to copy from
+     * @param temporaryFolder the temporary folder to copy into
+     * @return the created copy
+     */
+    public static File copyFileFromResources(String path, TemporaryFolder temporaryFolder) {
+        try {
+            Path source = getJarPath(path);
+            File destination = temporaryFolder.newFile();
+            Files.copy(source, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            return destination;
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not copy test file", e);
+        }
+    }
+
     private static URI getUriOrThrow(String path) {
         URL url = TestUtils.class.getResource(path);
         if (url == null) {
@@ -65,9 +91,13 @@ public final class TestUtils {
         try {
             return new URI(url.toString());
         } catch (URISyntaxException e) {
-            throw new IllegalStateException("File '" + path + "' cannot be converted to a URI");
+            throw new IllegalStateException("File '" + path + "' cannot be converted to a URI", e);
         }
     }
+
+    // -------------
+    // Constructor validation
+    // -------------
 
     /**
      * Checks that a class only has a private, zero-argument constructor, preventing the
@@ -112,6 +142,10 @@ public final class TestUtils {
         }
     }
 
+    // -------------
+    // Matchers
+    // -------------
+
     /**
      * Creates a matcher equivalent to {@link org.hamcrest.Matchers#contains(Object[])} with an iterable as input.
      *
@@ -126,6 +160,10 @@ public final class TestUtils {
         }
         return contains(matchers);
     }
+
+    // -------------
+    // Exception verification
+    // -------------
 
     /**
      * Verifies that the provided runnable throws an exception of the given type.
@@ -160,6 +198,10 @@ public final class TestUtils {
             }
         }
     }
+
+    // -------------
+    // Convenience methods
+    // -------------
 
     /**
      * Transforms all elements of the provided collection with the given function.
