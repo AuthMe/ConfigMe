@@ -9,6 +9,7 @@ import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.migration.PlainMigrationService;
+import ch.jalu.configme.properties.OptionalProperty;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.TestConfiguration;
 import ch.jalu.configme.samples.TestEnum;
@@ -33,6 +34,7 @@ import static ch.jalu.configme.TestUtils.getJarPath;
 import static ch.jalu.configme.TestUtils.verifyException;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -296,6 +298,51 @@ public class YamlFileResourceTest {
         String writtenFileContents = new String(Files.readAllBytes(file.toPath())) + "\n";
         assertThat(pattern.matcher(writtenFileContents).replaceAll(""),
             equalTo(new String(Files.readAllBytes(getJarPath("/config-expected-export.yml")))));
+    }
+
+    @Test
+    public void shouldSkipAbsentOptionalProperty() throws IOException {
+        // given
+        ConfigurationData configurationData = new ConfigurationData(Arrays.asList(
+            new OptionalProperty<>(TestConfiguration.DURATION_IN_SECONDS),
+            new OptionalProperty<>(TestConfiguration.RATIO_ORDER)));
+        File file = copyFileFromResources(INCOMPLETE_FILE);
+        PropertyResource resource = new YamlFileResource(file);
+
+        // when
+        resource.exportProperties(configurationData);
+
+        // then
+        List<String> exportedLines = Files.readAllLines(file.toPath());
+        assertThat(exportedLines, contains(
+            "",
+            "test:",
+            "    duration: 22"
+        ));
+    }
+
+    @Test
+    public void shouldExportAllPresentOptionalProperties() throws IOException {
+        // given
+        ConfigurationData configurationData = new ConfigurationData(Arrays.asList(
+            new OptionalProperty<>(TestConfiguration.DURATION_IN_SECONDS),
+            new OptionalProperty<>(TestConfiguration.RATIO_ORDER)));
+        File file = copyFileFromResources(COMPLETE_FILE);
+        PropertyResource resource = new YamlFileResource(file);
+
+        // when
+        resource.exportProperties(configurationData);
+
+        // then
+        List<String> exportedLines = Files.readAllLines(file.toPath());
+        assertThat(exportedLines, contains(
+            "",
+            "test:",
+            "    duration: 22",
+            "sample:",
+            "    ratio:",
+            "        order: 'FIRST'"
+        ));
     }
 
     @Test

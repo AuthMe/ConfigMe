@@ -4,6 +4,7 @@ import ch.jalu.configme.beanmapper.leafproperties.LeafPropertiesGenerator;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.BeanProperty;
+import ch.jalu.configme.properties.OptionalProperty;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.StringListProperty;
 import ch.jalu.configme.resource.PropertyPathTraverser.PathElement;
@@ -18,6 +19,7 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -111,7 +113,7 @@ public class YamlFileResource implements PropertyResource {
     public void exportProperties(ConfigurationData configurationData) {
         try (Writer writer = new FileWriter(file)) {
             PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
-            for (Property<?> property : replaceBeanPropertiesToLeafValues(configurationData.getProperties())) {
+            for (Property<?> property : convertPropertiesToExportableTypes(configurationData.getProperties())) {
 
                 List<PathElement> pathElements = pathTraverser.getPathElements(property);
                 for (PathElement pathElement : pathElements) {
@@ -146,21 +148,30 @@ public class YamlFileResource implements PropertyResource {
     }
 
     /**
-     * Converts property entries of type {@link BeanProperty} to multiple {@link Property} objects
+     * Converts the property entries to exportable "leaf" properties.
+     * <p>
+     * Properties of type {@link BeanProperty} are converted to multiple {@link Property} objects
      * that reflect all concrete values that need to be stored to properly, losslessly export the bean.
      * The property entries are essentially the "leaf nodes" of the bean if viewed as a tree.
+     * <p>
+     * {@link OptionalProperty} instances are skipped if they evaluate to an empty value; otherwise,
+     * the Optional interface is stripped and the underlying property is used in the export.
      *
      * @param originalList the list of property entries to convert
      * @return list of properties with converted property entries
      */
     @SuppressWarnings("unchecked")
-    private List<Property<?>> replaceBeanPropertiesToLeafValues(List<Property<?>> originalList) {
+    protected List<Property<?>> convertPropertiesToExportableTypes(List<Property<?>> originalList) {
         List<Property<?>> result = new LinkedList<>();
         for (Property<?> entry : originalList) {
             if (entry instanceof BeanProperty<?>) {
                 BeanProperty beanProperty = (BeanProperty<?>) entry;
                 result.addAll(leafPropertiesGenerator.generate(
                     beanProperty, beanProperty.getValue(this)));
+            } else if (entry instanceof OptionalProperty) {
+                if (!entry.getValue(this).equals(Optional.empty())) {
+                    result.add(((OptionalProperty) entry).getBaseProperty());
+                }
             } else {
                 result.add(entry);
             }

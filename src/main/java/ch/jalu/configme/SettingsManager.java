@@ -3,6 +3,7 @@ package ch.jalu.configme;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.migration.MigrationService;
+import ch.jalu.configme.properties.OptionalProperty;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyResource;
 
@@ -10,6 +11,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Settings manager.
@@ -99,7 +101,11 @@ public class SettingsManager {
      * @param <T> The property's type
      */
     public <T> void setProperty(Property<T> property, T value) {
-        resource.setValue(property.getPath(), value);
+        if (property instanceof OptionalProperty<?>) {
+            resource.setValue(property.getPath(), ((Optional<?>) value).orElse(null));
+        } else {
+            resource.setValue(property.getPath(), value);
+        }
     }
 
     /**

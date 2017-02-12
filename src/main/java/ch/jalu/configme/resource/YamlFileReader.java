@@ -70,7 +70,6 @@ public class YamlFileReader implements PropertyReader {
     @Override
     public void set(String path, Object value) {
         Objects.requireNonNull(path);
-        Objects.requireNonNull(value);
 
         if (path.isEmpty()) {
             root.clear();
@@ -94,12 +93,21 @@ public class YamlFileReader implements PropertyReader {
                 node = (Map<String, Object>) child;
             } else { // child is null or some other value - replace with map
                 Map<String, Object> newEntry = new HashMap<>();
+                if (value == null) {
+                    // For consistency, replace whatever value/null here with an empty map,
+                    // but if the value is null our work here is done.
+                    return;
+                }
                 node.put(keys[i], newEntry);
                 node = newEntry;
             }
         }
         // node now contains the parent map (existing or newly created)
-        node.put(keys[keys.length - 1], value);
+        if (value == null) {
+            node.remove(keys[keys.length - 1]);
+        } else {
+            node.put(keys[keys.length - 1], value);
+        }
     }
 
     @Override

@@ -28,4 +28,20 @@ public class OptionalProperty<T> extends Property<Optional<T>> {
     protected Optional<T> getFromResource(PropertyResource resource) {
         return Optional.ofNullable(baseProperty.getFromResource(resource));
     }
+
+    @Override
+    public boolean isPresent(PropertyResource resource) {
+        // getFromResource will never return null (see above), and always returning true here prevents this
+        // optional(!) property from triggering migrations
+        return true;
+    }
+
+    /**
+     * Returns the underlying property used to retrieve the value of the optional.
+     *
+     * @return the base property
+     */
+    public Property<? extends T> getBaseProperty() {
+        return baseProperty;
+    }
 }

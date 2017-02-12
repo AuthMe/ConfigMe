@@ -1,5 +1,7 @@
 package ch.jalu.configme.resource;
 
+import javax.annotation.Nullable;
+
 /**
  * Property reader.
  */
@@ -31,7 +33,7 @@ public interface PropertyReader {
      * @param path the path to set a value for
      * @param value the value to set
      */
-    void set(String path, Object value);
+    void set(String path, @Nullable Object value);
 
     /**
      * Reloads the properties from the external source.

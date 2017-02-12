@@ -4,11 +4,14 @@ import ch.jalu.configme.beanmapper.worldgroup.GameMode;
 import ch.jalu.configme.beanmapper.worldgroup.Group;
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
 import ch.jalu.configme.configurationdata.ConfigurationData;
+import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.properties.BeanProperty;
+import ch.jalu.configme.properties.OptionalProperty;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
+import ch.jalu.configme.samples.TestConfiguration;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -28,6 +31,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static ch.jalu.configme.TestUtils.containsAll;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
@@ -186,6 +190,30 @@ public class SettingsManagerTest {
         assertThat(loadedValue.getGroups().keySet(), contains("easy", "hard"));
         assertThat(loadedValue.getGroups().get("easy").getDefaultGamemode(), equalTo(GameMode.CREATIVE));
         assertThat(loadedValue.getGroups().get("easy").getWorlds(), contains("easy1", "easy2"));
+    }
+
+    @Test
+    public void shouldSetOptionalPropertyCorrectly() {
+        // given
+        File file = copyFromResources("/config-sample.yml");
+        PropertyResource resource = new YamlFileResource(file);
+        SettingsManager settingsManager =
+            new SettingsManager(resource, null, ConfigurationDataBuilder.collectData(TestConfiguration.class));
+        OptionalProperty<Integer> intOptional = new OptionalProperty<>(newProperty("version", 65));
+        // assumption
+        assertThat(intOptional.getValue(resource), equalTo(Optional.of(2492)));
+
+        // when
+        settingsManager.setProperty(intOptional, Optional.empty());
+
+        // then
+        assertThat(intOptional.getValue(resource), equalTo(Optional.empty()));
+
+        // when (2)
+        settingsManager.setProperty(intOptional, Optional.of(43));
+
+        // then (2)
+        assertThat(intOptional.getValue(resource), equalTo(Optional.of(43)));
     }
 
     private void verifyWasMigrationServiceChecked() {

@@ -91,7 +91,7 @@ public interface PropertyResource {
      * @param path the path to set a new value for
      * @param value the value to set
      */
-    void setValue(String path, Object value);
+    void setValue(String path, @Nullable Object value);
 
     /**
      * Reloads the configuration, e.g. from a file.
