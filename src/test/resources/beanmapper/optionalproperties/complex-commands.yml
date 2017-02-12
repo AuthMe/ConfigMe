@@ -1,0 +1,41 @@
+commandconfig:
+  duration: 13
+  commands:
+    greet:
+      command: 'hello $user'
+      arguments:
+      - 'user'
+      execution:
+        executor: CONSOLE
+        importance: 0.5
+        privileges:
+        - 'user.greet'
+      nameStartsWith: 'user_'
+    block_invalid:
+      command: reject_connection
+      execution:
+        executor: CONSOLE
+        importance: 1.0
+        privileges:
+        - 'system.kick'
+      nameHasLength: 80
+      testEnumProperty: SECOND
+    log_admin:
+      command: 'log $name'
+      arguments:
+        - name
+      execution:
+        executor: console
+        importance: 0.8
+        optional: true
+        privileges: []
+      doubleOptional: 0.531
+    launch:
+      command: 'start app'
+      arguments: []
+      execution:
+        executor: 'USER'
+        importance: 1.0
+        privileges:
+        - 'app'
+      testEnumProperty: 'fourth'

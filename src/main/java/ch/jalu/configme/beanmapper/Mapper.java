@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static ch.jalu.configme.beanmapper.MapperUtils.getGenericClassesSafely;
@@ -105,7 +106,21 @@ public class Mapper {
             return result;
         } else if ((result = processMap(clazz, genericType, value, context)) != null) {
             return result;
-        } else if ((result = processTransformers(clazz, genericType, value)) != null) {
+        }
+
+        if (clazz == Optional.class) {
+            // TODO ljacqu #39: This does not work for Optional<List<String>>...
+            Class<?> classInOptional = MapperUtils.getGenericClassSafely(genericType);
+            return Optional.ofNullable(callSimpleConverters(classInOptional, null, value, context));
+        }
+        return callSimpleConverters(clazz, genericType, value, context);
+    }
+
+    @Nullable
+    private Object callSimpleConverters(Class<?> clazz, @Nullable Type genericType, @Nullable Object value,
+                                        MappingContext context) {
+        Object result;
+        if ((result = processTransformers(clazz, genericType, value)) != null) {
             return result;
         }
         return convertToBean(clazz, value, context);

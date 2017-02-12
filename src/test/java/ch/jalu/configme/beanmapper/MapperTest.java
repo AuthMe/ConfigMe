@@ -4,6 +4,8 @@ import ch.jalu.configme.beanmapper.command.Command;
 import ch.jalu.configme.beanmapper.command.CommandConfig;
 import ch.jalu.configme.beanmapper.command.ExecutionDetails;
 import ch.jalu.configme.beanmapper.command.Executor;
+import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommand;
+import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommandConfig;
 import ch.jalu.configme.beanmapper.transformer.Transformers;
 import ch.jalu.configme.beanmapper.typeissues.GenericCollection;
 import ch.jalu.configme.beanmapper.typeissues.MapWithNonStringKeys;
@@ -15,12 +17,14 @@ import ch.jalu.configme.beanmapper.worldgroup.Group;
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
+import ch.jalu.configme.samples.TestEnum;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import static ch.jalu.configme.TestUtils.getJarFile;
 import static ch.jalu.configme.TestUtils.verifyException;
@@ -237,8 +241,75 @@ public class MapperTest {
         assertThat(result, nullValue());
     }
 
-    private static Matcher<Command> hasExecution(final Executor executor, final boolean optional,
-                                                 final Double importance) {
+    @Test
+    public void shouldHandleEmptyOptionalFields() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/commands.yml"));
+        Mapper mapper = ConfigMeMapper.getSingleton();
+
+        // when
+        ComplexCommandConfig result = mapper.convertToBean("commandconfig", resource, ComplexCommandConfig.class);
+
+        // then
+        assertThat(result, not(nullValue()));
+        assertThat(result.getCommands().keySet(), contains("save", "refresh", "open"));
+        assertAllOptionalFieldsEmpty(result.getCommands().get("save"));
+        assertAllOptionalFieldsEmpty(result.getCommands().get("refresh"));
+        assertAllOptionalFieldsEmpty(result.getCommands().get("open"));
+    }
+
+    @Test
+    public void shouldLoadConfiWithOptionalProperties() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/optionalproperties/complex-commands.yml"));
+        Mapper mapper = ConfigMeMapper.getSingleton();
+
+        // when
+        ComplexCommandConfig result = mapper.convertToBean("commandconfig", resource, ComplexCommandConfig.class);
+
+        // then
+        assertThat(result, not(nullValue()));
+        assertThat(result.getCommands().keySet(), contains("greet", "block_invalid", "log_admin", "launch"));
+
+        ComplexCommand greet = result.getCommands().get("greet");
+        assertThat(greet, hasExecution(Executor.CONSOLE, false, 0.5));
+        assertThat(greet.getExecution().getPrivileges(), contains("user.greet"));
+        assertThat(greet.getNameStartsWith(), equalTo(Optional.of("user_")));
+        assertAreAllEmpty(greet.getDoubleOptional(), greet.getNameHasLength(), greet.getTestEnumProperty());
+
+        ComplexCommand block = result.getCommands().get("block_invalid");
+        assertThat(block, hasExecution(Executor.CONSOLE, false, 1.0));
+        assertThat(block.getNameHasLength(), equalTo(Optional.of(80)));
+        assertThat(block.getTestEnumProperty(), equalTo(Optional.of(TestEnum.SECOND)));
+        assertAreAllEmpty(block.getNameStartsWith(), block.getDoubleOptional());
+
+        ComplexCommand log = result.getCommands().get("log_admin");
+        assertThat(log.getCommand(), equalTo("log $name"));
+        assertThat(log, hasExecution(Executor.CONSOLE, true, 0.8));
+        assertThat(log.getDoubleOptional(), equalTo(Optional.of(0.531)));
+        assertAreAllEmpty(log.getTestEnumProperty(), log.getNameHasLength(), log.getNameStartsWith());
+
+        ComplexCommand launch = result.getCommands().get("launch");
+        assertThat(launch, hasExecution(Executor.USER, false, 1.0));
+        assertThat(launch.getTestEnumProperty(), equalTo(Optional.of(TestEnum.FOURTH)));
+        assertAreAllEmpty(launch.getDoubleOptional(), launch.getNameHasLength(), launch.getNameStartsWith());
+    }
+
+    private static void assertAllOptionalFieldsEmpty(ComplexCommand complexCommand) {
+        assertAreAllEmpty(
+            complexCommand.getNameStartsWith(),
+            complexCommand.getNameHasLength(),
+            complexCommand.getDoubleOptional(),
+            complexCommand.getTestEnumProperty());
+    }
+
+    private static void assertAreAllEmpty(Optional<?>... optionals) {
+        for (Optional<?> o : optionals) {
+            assertThat(o, equalTo(Optional.empty()));
+        }
+    }
+
+    private static Matcher<Command> hasExecution(Executor executor, boolean optional, Double importance) {
         return new TypeSafeMatcher<Command>() {
             @Override
             protected boolean matchesSafely(Command command) {
