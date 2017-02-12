@@ -33,8 +33,8 @@ import static ch.jalu.configme.beanmapper.MapperUtils.invokeDefaultConstructor;
  * <b>Recursion:</b> the mapping of values to a JavaBean is performed recursively, i.e. a JavaBean may have other
  * JavaBeans as fields at any arbitrary "depth."
  * <p>
- * <b>Collections</b> are only supported if they are explicitly typed, i.e. a field of {@code List&lt;String>}
- * is supported but {@code List&lt;?>} and {@code List&lt;T extends Number>} are not supported. Specifically, you may
+ * <b>Collections</b> are only supported if they are explicitly typed, i.e. a field of {@code List<String>}
+ * is supported but {@code List<?>} and {@code List<T extends Number>} are not supported. Specifically, you may
  * only declare fields of type {@link List} or {@link Set}, or a parent type ({@link Collection} or {@link Iterable}).
  * Fields of type <b>Map</b> are supported also, with similar limitations. Additionally, maps may only have
  * {@code String} as key type, but no restrictions are imposed on the value type.

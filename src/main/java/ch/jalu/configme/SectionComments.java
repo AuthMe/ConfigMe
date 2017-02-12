@@ -8,11 +8,11 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation for methods in {@link SettingsHolder} classes that return section comments to include
- * when saving to a file. The return type of the method must be {@code Map&lt;String, String[]>},
+ * when saving to a file. The return type of the method must be {@code Map<String, String[]>},
  * where the key is the path and the String[] value contains the comments to include.
  * <p>
  * Methods annotated with this method must be accessible (i.e. {@code public}) and have return type
- * {@code Map&lt;String, String[]>}. Null may be returned. There may be multiple methods with this
+ * {@code Map<String, String[]>}. Null may be returned. There may be multiple methods with this
  * annotation.
  * <p>
  * Comments for properties can be declared on property fields with {@link Comment} but can also be

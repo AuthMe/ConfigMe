@@ -15,7 +15,7 @@ public final class SectionCommentsFailClasses {
     }
 
     /**
-     * Method must return Map&lt;String, String>.
+     * Method must return Map<String, String>.
      */
     public final static class WrongReturnType implements SettingsHolder {
         @SectionComments

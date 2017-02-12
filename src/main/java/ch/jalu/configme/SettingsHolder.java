@@ -8,6 +8,7 @@ package ch.jalu.configme;
  * which implements this interface.
  *
  * @see ch.jalu.configme.properties.PropertyInitializer
+ * @see ch.jalu.configme.configurationdata.ConfigurationData
  */
 public interface SettingsHolder {
 }
