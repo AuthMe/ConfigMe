@@ -1,6 +1,7 @@
 package ch.jalu.configme.beanmapper.transformer;
 
-import java.lang.reflect.Type;
+import ch.jalu.configme.utils.TypeInformation;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,10 +23,10 @@ public final class Transformers {
 
     static final class ReturnerForMatchingType implements Transformer {
         @Override
-        public Object transform(Class<?> type, Type genericType, Object value) {
-            if (type.isInstance(value)) {
+        public Object transform(TypeInformation<?> type, Object value) {
+            if (type.getClazz().isInstance(value)) {
                 return value;
-            } else if (type == boolean.class && value instanceof Boolean) {
+            } else if (type.getClazz() == boolean.class && value instanceof Boolean) {
                 // Primitive number types are handled in NumberProducer
                 return value;
             }
@@ -38,12 +39,12 @@ public final class Transformers {
         private static final Map<Class<?>, Class<?>> primitiveTypes = buildPrimitiveNumberMap();
 
         @Override
-        public Number transform(Class<?> type, Type genericType, Object value) {
+        public Number transform(TypeInformation<?> typeInfo, Object value) {
             if (!(value instanceof Number)) {
                 return null;
             }
             Number number = (Number) value;
-            type = asReferenceClass(type);
+            Class<?> type = asReferenceClass(typeInfo.getClazz());
 
             if (type.isInstance(value)) {
                 return number;

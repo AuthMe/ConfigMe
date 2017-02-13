@@ -1,7 +1,8 @@
 package ch.jalu.configme.beanmapper.transformer;
 
+import ch.jalu.configme.utils.TypeInformation;
+
 import javax.annotation.Nullable;
-import java.lang.reflect.Type;
 
 /**
  * Typed implementation of {@link Transformer} for convenient extension.
@@ -33,9 +34,9 @@ public abstract class TypedTransformer<S, R> implements Transformer {
     }
 
     @Override
-    public Object transform(Class<?> type, Type genericType, Object value) {
-        if (resultType.isAssignableFrom(type) && sourceType.isInstance(value)) {
-            return safeTransform((Class) type, (S) value);
+    public Object transform(TypeInformation<?> type, Object value) {
+        if (type.isOfType(resultType) && sourceType.isInstance(value)) {
+            return safeTransform((Class) type.getClazz(), (S) value);
         }
         return null;
     }

@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import static ch.jalu.configme.TestUtils.transform;
 import static ch.jalu.configme.TestUtils.verifyException;
+import static ch.jalu.configme.utils.TypeInformation.of;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -35,8 +36,8 @@ public class BeanDescriptionFactoryTest {
 
         // then
         assertThat(descriptions, hasSize(2));
-        assertThat(getDescription("size", descriptions).getType(), equalTo(int.class));
-        assertThat(getDescription("name", descriptions).getType(), equalTo(String.class));
+        assertThat(getDescription("size", descriptions).getTypeInformation(), equalTo(of(int.class, int.class)));
+        assertThat(getDescription("name", descriptions).getTypeInformation(), equalTo(of(String.class, String.class)));
     }
 
     @Test
@@ -191,7 +192,6 @@ public class BeanDescriptionFactoryTest {
         private boolean isEmpty;
         private Boolean isReference;
         private boolean active;
-        private boolean isActive; // <-- should not match! First choice for isActive() / getActive() is active
         private String isString;
         private boolean isField;
         private boolean notMatched;

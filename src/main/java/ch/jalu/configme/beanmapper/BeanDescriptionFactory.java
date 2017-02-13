@@ -1,5 +1,7 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.utils.TypeInformation;
+
 import javax.annotation.Nullable;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -51,8 +53,7 @@ public class BeanDescriptionFactory {
 
         return new BeanPropertyDescription(
             getPropertyName(descriptor),
-            descriptor.getPropertyType(),
-            descriptor.getWriteMethod().getGenericParameterTypes()[0],
+            getTypeInfo(descriptor),
             descriptor.getReadMethod(),
             descriptor.getWriteMethod());
     }
@@ -83,6 +84,12 @@ public class BeanDescriptionFactory {
             return descriptor.getWriteMethod().getAnnotation(ExportName.class).value();
         }
         return descriptor.getName();
+    }
+
+    protected TypeInformation getTypeInfo(PropertyDescriptor descriptor) {
+        return TypeInformation.of(
+            descriptor.getPropertyType(),
+            descriptor.getWriteMethod().getGenericParameterTypes()[0]);
     }
 
     /**

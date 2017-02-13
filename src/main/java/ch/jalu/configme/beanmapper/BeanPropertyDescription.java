@@ -1,9 +1,10 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.utils.TypeInformation;
+
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 
 /**
  * Information about a bean property.
@@ -11,16 +12,13 @@ import java.lang.reflect.Type;
 public class BeanPropertyDescription {
 
     private final String name;
-    private final Class<?> type;
-    private final Type genericType;
+    private final TypeInformation typeInformation;
     private final Method getter;
     private final Method setter;
 
-    public BeanPropertyDescription(String name, Class<?> type, @Nullable Type genericType,
-                                   Method getter, Method setter) {
+    public BeanPropertyDescription(String name, TypeInformation typeInformation, Method getter, Method setter) {
         this.name = name;
-        this.type = type;
-        this.genericType = genericType;
+        this.typeInformation = typeInformation;
         this.getter = getter;
         this.setter = setter;
     }
@@ -35,18 +33,10 @@ public class BeanPropertyDescription {
     }
 
     /**
-     * @return the property type
+     * @return the type information
      */
-    public Class<?> getType() {
-        return type;
-    }
-
-    /**
-     * @return the generic type of the property
-     */
-    @Nullable
-    public Type getGenericType() {
-        return genericType;
+    public TypeInformation getTypeInformation() {
+        return typeInformation;
     }
 
     /**

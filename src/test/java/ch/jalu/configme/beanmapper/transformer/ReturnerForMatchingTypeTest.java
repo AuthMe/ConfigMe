@@ -1,8 +1,10 @@
 package ch.jalu.configme.beanmapper.transformer;
 
 import ch.jalu.configme.beanmapper.transformer.Transformers.ReturnerForMatchingType;
+import ch.jalu.configme.utils.TypeInformation;
 import org.junit.Test;
 
+import static ch.jalu.configme.utils.TypeInformation.of;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -15,12 +17,12 @@ public class ReturnerForMatchingTypeTest {
     @Test
     public void shouldReturnValueOfSameType() {
         // given
-        Class<?> clazz = String.class;
+        TypeInformation<?> type = of(String.class);
         Object value = "test";
         ReturnerForMatchingType transformer = new ReturnerForMatchingType();
 
         // when
-        Object result = transformer.transform(clazz, null, value);
+        Object result = transformer.transform(type, value);
 
         // then
         assertThat(result, equalTo(value));
@@ -29,12 +31,12 @@ public class ReturnerForMatchingTypeTest {
     @Test
     public void shouldReturnForParentType() {
         // given
-        Class<?> clazz = Exception.class;
+        TypeInformation<?> type = of(Exception.class);
         Object value = new IllegalStateException();
         ReturnerForMatchingType transformer = new ReturnerForMatchingType();
 
         // when
-        Object result = transformer.transform(clazz, null, value);
+        Object result = transformer.transform(type, value);
 
         // then
         assertThat(result, equalTo(value));
@@ -43,12 +45,12 @@ public class ReturnerForMatchingTypeTest {
     @Test
     public void shouldReturnForBooleanPrimitive() {
         // given
-        Class<?> clazz = boolean.class;
+        TypeInformation<?> type = of(boolean.class);
         Object value = Boolean.TRUE;
         ReturnerForMatchingType transformer = new ReturnerForMatchingType();
 
         // when
-        Object result = transformer.transform(clazz, null, value);
+        Object result = transformer.transform(type, value);
 
         // then
         assertThat(result, equalTo(value));
@@ -57,12 +59,12 @@ public class ReturnerForMatchingTypeTest {
     @Test
     public void shouldReturnNullForOtherType() {
         // given
-        Class<?> clazz = boolean.class;
+        TypeInformation<?> type = of(boolean.class);
         Object value = "A string";
         ReturnerForMatchingType transformer = new ReturnerForMatchingType();
 
         // when
-        Object result = transformer.transform(clazz, null, value);
+        Object result = transformer.transform(type, value);
 
         // then
         assertThat(result, nullValue());
@@ -71,12 +73,12 @@ public class ReturnerForMatchingTypeTest {
     @Test
     public void shouldReturnNullForNullValue() {
         // given
-        Class<?> clazz = String.class;
+        TypeInformation<?> type = of(String.class);
         Object value = null;
         ReturnerForMatchingType transformer = new ReturnerForMatchingType();
 
         // when
-        Object result = transformer.transform(clazz, null, value);
+        Object result = transformer.transform(type, value);
 
         // then
         assertThat(result, nullValue());

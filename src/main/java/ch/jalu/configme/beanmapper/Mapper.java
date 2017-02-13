@@ -3,9 +3,9 @@ package ch.jalu.configme.beanmapper;
 import ch.jalu.configme.beanmapper.transformer.Transformer;
 import ch.jalu.configme.beanmapper.transformer.Transformers;
 import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.utils.TypeInformation;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static ch.jalu.configme.beanmapper.MapperUtils.getGenericClassesSafely;
 import static ch.jalu.configme.beanmapper.MapperUtils.invokeDefaultConstructor;
 
 /**
@@ -86,65 +85,63 @@ public class Mapper {
     @Nullable
     @SuppressWarnings("unchecked")
     public <T> T convertToBean(String path, PropertyResource resource, Class<T> clazz) {
-        return (T) getPropertyValue(clazz, null, resource.getObject(path), MappingContext.root());
+        return (T) getPropertyValue(TypeInformation.of(clazz), resource.getObject(path), MappingContext.root());
     }
 
     /**
      * Returns a value of type {@code clazz} based on the provided {@code value} if possible.
      *
-     * @param clazz the desired type to return
-     * @param genericType the generic type if applicable
+     * @param typeInformation type information
      * @param value the value to convert from
      * @param context the mapping context
      * @return the converted value, or null if not possible
      */
     @Nullable
-    protected Object getPropertyValue(Class<?> clazz, @Nullable Type genericType, @Nullable Object value,
+    protected Object getPropertyValue(TypeInformation typeInformation, @Nullable Object value,
                                       MappingContext context) {
         Object result;
-        if ((result = processCollection(clazz, genericType, value, context)) != null) {
+        if ((result = processCollection(typeInformation, value, context)) != null) {
             return result;
-        } else if ((result = processMap(clazz, genericType, value, context)) != null) {
+        } else if ((result = processMap(typeInformation, value, context)) != null) {
             return result;
         }
 
-        if (clazz == Optional.class) {
+        if (typeInformation.getClazz() == Optional.class) {
             // TODO ljacqu #39: This does not work for Optional<List<String>>...
-            Class<?> classInOptional = MapperUtils.getGenericClassSafely(genericType);
-            return Optional.ofNullable(callSimpleConverters(classInOptional, null, value, context));
+            TypeInformation<?> typeInOptional = TypeInformation.of(typeInformation.getGenericClass(0)); // TODO ljacqu
+            return Optional.ofNullable(callSimpleConverters(typeInOptional, value, context));
         }
-        return callSimpleConverters(clazz, genericType, value, context);
+        return callSimpleConverters(typeInformation, value, context);
     }
 
     @Nullable
-    private Object callSimpleConverters(Class<?> clazz, @Nullable Type genericType, @Nullable Object value,
-                                        MappingContext context) {
+    private Object callSimpleConverters(TypeInformation<?> type, @Nullable Object value, MappingContext context) {
         Object result;
-        if ((result = processTransformers(clazz, genericType, value)) != null) {
+        if ((result = processTransformers(type, value)) != null) {
             return result;
         }
-        return convertToBean(clazz, value, context);
+        return convertToBean(type, value, context);
     }
 
     // Handles List and Set fields
     @Nullable
-    protected Collection<?> processCollection(Class<?> clazz, Type genericType, Object value, MappingContext context) {
-        if (Iterable.class.isAssignableFrom(clazz) && value instanceof Iterable<?>) {
-            Class<?> collectionType = MapperUtils.getGenericClassSafely(genericType);
+    protected Collection<?> processCollection(TypeInformation<?> type, Object value, MappingContext context) {
+        if (type.isOfType(Iterable.class) && value instanceof Iterable<?>) {
+            TypeInformation<?> collectionType = TypeInformation.of(type.getGenericClass(0)); // TODO ljacqu .
             List<Object> list = new ArrayList<>();
             for (Object o : (Iterable<?>) value) {
-                Object mappedValue = getPropertyValue(collectionType, null, o, context.createChild(clazz));
+                Object mappedValue = getPropertyValue(collectionType, o, context.createChild(type));
                 if (mappedValue != null) {
                     list.add(mappedValue);
                 }
             }
 
-            if (clazz.isAssignableFrom(List.class)) {
+            if (type.isOfType(List.class)) {
                 return list;
-            } else if (clazz.isAssignableFrom(Set.class)) {
+            } else if (type.isOfType(Set.class)) {
                 return new LinkedHashSet<>(list);
             } else {
-                throw new ConfigMeMapperException("Unsupported collection type '" + clazz
+                throw new ConfigMeMapperException("Unsupported collection type '" + type
                     + "' encountered. Only List and Set are supported by default");
             }
         }
@@ -153,16 +150,16 @@ public class Mapper {
 
     // Handles Map fields
     @Nullable
-    protected Map processMap(Class<?> clazz, Type genericType, Object value, MappingContext context) {
-        if (Map.class.isAssignableFrom(clazz) && value instanceof Map<?, ?>) {
+    protected Map processMap(TypeInformation<?> type, Object value, MappingContext context) {
+        if (type.isOfType(Map.class) && value instanceof Map<?, ?>) {
             Map<String, ?> entries = (Map<String, ?>) value;
-            Class<?>[] mapTypes = getGenericClassesSafely(genericType);
-            if (mapTypes[0] != String.class) {
+            if (type.getGenericClass(0) != String.class) {
                 throw new ConfigMeMapperException("The key type of maps may only be of String type");
             }
             Map result = new LinkedHashMap<>();
             for (Map.Entry<String, ?> entry : entries.entrySet()) {
-                Object mappedValue = getPropertyValue(mapTypes[1], null, entry.getValue(), context.createChild(clazz));
+                // TODO ljacqu: Create better substitution to new TypeInformation<>(type.getGenericClass(1));
+                Object mappedValue = getPropertyValue(TypeInformation.of(type.getGenericClass(1)), entry.getValue(), context.createChild(type));
                 if (mappedValue != null) {
                     result.put(entry.getKey(), mappedValue);
                 }
@@ -174,10 +171,10 @@ public class Mapper {
 
     // Passes value to Transformers
     @Nullable
-    protected Object processTransformers(Class<?> type, Type genericType, Object value) {
+    protected Object processTransformers(TypeInformation typeInformation, Object value) {
         Object result;
         for (Transformer transformer : transformers) {
-            result = transformer.transform(type, genericType, value);
+            result = transformer.transform(typeInformation, value);
             if (result != null) {
                 return result;
             }
@@ -189,14 +186,14 @@ public class Mapper {
      * Converts the provided value to the requested JavaBeans class if possible.
      *
      * @param <T> the JavaBean type
-     * @param clazz the JavaBean class
+     * @param type type information
      * @param value the value from the property resource
      * @param context the mapping context
      * @return the converted value, or null if not possible
      */
     @Nullable
-    protected <T> T convertToBean(Class<T> clazz, Object value, MappingContext context) {
-        Collection<BeanPropertyDescription> properties = getWritableProperties(clazz);
+    protected <T> T convertToBean(TypeInformation<T> type, Object value, MappingContext context) {
+        Collection<BeanPropertyDescription> properties = getWritableProperties(type.getClazz());
         // Check that we have properties (or else we don't have a bean) and that the provided value is a Map
         // so we can execute the mapping process.
         if (properties.isEmpty() || !(value instanceof Map<?, ?>)) {
@@ -204,17 +201,16 @@ public class Mapper {
         }
 
         Map<?, ?> entries = (Map<?, ?>) value;
-        T bean = invokeDefaultConstructor(clazz);
+        T bean = invokeDefaultConstructor(type.getClazz());
         for (BeanPropertyDescription property : properties) {
             Object result = getPropertyValue(
-                property.getType(),
-                property.getGenericType(),
+                property.getTypeInformation(),
                 entries.get(property.getName()),
-                context.createChild(clazz));
+                context.createChild(type));
             if (result != null) {
                 property.setValue(bean, result);
             } else if (property.getValue(bean) == null) {
-                errorHandler.handleError(clazz, context);
+                errorHandler.handleError(property.getClass(), context);
                 return null;
             }
         }

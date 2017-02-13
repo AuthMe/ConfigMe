@@ -1,14 +1,16 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.utils.TypeInformation;
+
 /**
  * Context in which a mapping takes place.
  */
 public class MappingContext {
 
     private final int level;
-    private final Class<?> parentType;
+    private final TypeInformation<?> parentType;
 
-    private MappingContext(int level, Class<?> parentType) {
+    private MappingContext(int level, TypeInformation<?> parentType) {
         this.level = level;
         this.parentType = parentType;
     }
@@ -17,7 +19,7 @@ public class MappingContext {
         return new MappingContext(1, null);
     }
 
-    public MappingContext createChild(Class<?> parentType) {
+    public MappingContext createChild(TypeInformation<?> parentType) {
         return new MappingContext(level + 1, parentType);
     }
 
@@ -25,7 +27,7 @@ public class MappingContext {
         return level;
     }
 
-    public Class<?> getParentType() {
+    public TypeInformation<?> getParentType() {
         return parentType;
     }
 }

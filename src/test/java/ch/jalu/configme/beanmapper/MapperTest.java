@@ -15,6 +15,7 @@ import ch.jalu.configme.beanmapper.typeissues.UntypedMap;
 import ch.jalu.configme.beanmapper.worldgroup.GameMode;
 import ch.jalu.configme.beanmapper.worldgroup.Group;
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
+import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
 import ch.jalu.configme.samples.TestEnum;
@@ -185,7 +186,7 @@ public class MapperTest {
         // when / then
         verifyException(
             () -> mapper.convertToBean("", resource, UntypedCollection.class),
-            ConfigMeMapperException.class,
+            ConfigMeException.class,
             "has no generic type");
     }
 
@@ -198,7 +199,7 @@ public class MapperTest {
         // when / then
         verifyException(
             () -> mapper.convertToBean("", resource, UntypedMap.class),
-            ConfigMeMapperException.class,
+            ConfigMeException.class,
             "does not have a concrete generic type");
     }
 
@@ -211,7 +212,7 @@ public class MapperTest {
         // when / then
         verifyException(
             () -> mapper.convertToBean("", resource, GenericCollection.class),
-            ConfigMeMapperException.class,
+            ConfigMeException.class,
             "does not have a concrete generic type");
     }
 
@@ -259,7 +260,7 @@ public class MapperTest {
     }
 
     @Test
-    public void shouldLoadConfiWithOptionalProperties() {
+    public void shouldLoadConfigWithOptionalProperties() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/optionalproperties/complex-commands.yml"));
         Mapper mapper = ConfigMeMapper.getSingleton();

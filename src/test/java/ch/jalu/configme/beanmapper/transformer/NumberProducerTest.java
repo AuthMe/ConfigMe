@@ -1,5 +1,6 @@
 package ch.jalu.configme.beanmapper.transformer;
 
+import ch.jalu.configme.utils.TypeInformation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -31,9 +32,10 @@ public class NumberProducerTest {
     public void shouldReturnTypedNumber() {
         // given
         Transformers.NumberProducer numberProducer = new Transformers.NumberProducer();
+        TypeInformation<?> typeInformation = TypeInformation.of(clazz);
 
         // when
-        Number result = numberProducer.transform(clazz, null, value);
+        Number result = numberProducer.transform(typeInformation, value);
 
         // then
         Number expectedResult = expectedValue(value, clazz);
