@@ -4,8 +4,12 @@ import ch.jalu.configme.exception.ConfigMeException;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.containsString;
@@ -25,6 +29,8 @@ public class TypeInformationTest {
     private Map<Double, ?> wildcardMap;
     private Map<?, Character> wildcardMap2;
     private Map uncheckedMap;
+
+    private Collection<Iterable<Comparable<Optional<Class<Supplier<String>>>>>> nestedType;
 
     @Test
     public void shouldFindGenericType() {
@@ -102,6 +108,22 @@ public class TypeInformationTest {
 
         // then
         assertThat(string, containsString("clazz=class java.lang.String"));
+    }
+
+    @Test
+    public void shouldBuildGenericType() {
+        // given
+        TypeInformation<?> type = fromField("nestedType");
+        List<Class<?>> expectedTypes = Arrays.asList(Collection.class, Iterable.class, Comparable.class,
+            Optional.class, Class.class, Supplier.class, String.class);
+
+        // when / then
+        for (int i = 0; i < expectedTypes.size(); ++i) {
+            assertThat(type.getClazz(), equalTo(expectedTypes.get(i)));
+            if (i < expectedTypes.size() - 1) {
+                type = type.buildGenericType(0);
+            }
+        }
     }
 
     private static TypeInformation fromField(String name) {

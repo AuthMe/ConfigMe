@@ -66,4 +66,16 @@ public class OptionalPropertyTest {
         assertThat(intResult, equalTo(Optional.empty()));
         assertThat(enumResult, equalTo(Optional.empty()));
     }
+
+    @Test
+    public void shouldAlwaysReturnThatIsPresent() {
+        // given
+        OptionalProperty<Boolean> booleanProp = new OptionalProperty<>(new BooleanProperty("bool", false));
+
+        // when
+        boolean isPresent = booleanProp.isPresent(resource);
+
+        // then
+        assertThat(isPresent, equalTo(true));
+    }
 }

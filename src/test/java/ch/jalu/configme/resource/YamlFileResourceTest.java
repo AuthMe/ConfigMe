@@ -35,6 +35,7 @@ import static ch.jalu.configme.TestUtils.getJarPath;
 import static ch.jalu.configme.TestUtils.verifyException;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -462,6 +463,21 @@ public class YamlFileResourceTest {
             "    commands: {}",
             "    duration: 3"
         ));
+    }
+
+    @Test
+    public void shouldClearIntermediateValuesForNull() {
+        // given
+        File file = copyFileFromResources("/empty_file.yml");
+        YamlFileResource resource = new YamlFileResource(file);
+        resource.setValue("abc.def", 25);
+        resource.setValue("abc.xyz", "Hi Peter");
+
+        // when
+        resource.setValue("abc.def.ghi.jjj", null);
+
+        // then
+        assertThat((Map<?, ?>) resource.getObject("abc.def"), anEmptyMap());
     }
 
     private File copyFileFromResources(String path) {

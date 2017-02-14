@@ -93,12 +93,12 @@ public class YamlFileReader implements PropertyReader {
                 node = (Map<String, Object>) child;
             } else { // child is null or some other value - replace with map
                 Map<String, Object> newEntry = new HashMap<>();
+                node.put(keys[i], newEntry);
                 if (value == null) {
                     // For consistency, replace whatever value/null here with an empty map,
                     // but if the value is null our work here is done.
                     return;
                 }
-                node.put(keys[i], newEntry);
                 node = newEntry;
             }
         }

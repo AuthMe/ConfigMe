@@ -66,12 +66,7 @@ public class TypeInformation<T> {
         if (genericType instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) genericType;
             Type rawType = pt.getRawType();
-            if (rawType instanceof Class<?>) {
-                return of((Class<?>) rawType, pt);
-            } else {
-                throw new ConfigMeException("Expected generic type '" + genericType + "' at index "
-                    + index + " to have a Class object as raw type");
-            }
+            return of((Class<?>) rawType, pt);
         }
         throw new ConfigMeException("Generic type '" + genericType + "' at index " + index + " not recognized");
     }
