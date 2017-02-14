@@ -12,6 +12,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -21,6 +23,9 @@ import static ch.jalu.configme.beanmapper.command.Executor.CONSOLE;
 import static ch.jalu.configme.beanmapper.command.Executor.USER;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -69,6 +74,27 @@ public class LeafPropertiesGeneratorTest {
 
         // when
         new LeafPropertiesGenerator().generate(property, bean);
+    }
+
+    @Test
+    public void shouldAddEmptyMapAsLeafProperty() {
+        // given
+        CommandConfig config = new CommandConfig();
+        config.setCommands(new HashMap<>());
+        config.setDuration(14);
+        BeanProperty<CommandConfig> property = new BeanProperty<>(CommandConfig.class, "cmd", new CommandConfig());
+
+        // when
+        List<Property<?>> entries = new LeafPropertiesGenerator().generate(property, config);
+
+        // then
+        assertThat(entries, hasSize(2));
+        assertThat(entries.get(0).getPath(), equalTo("cmd.commands"));
+        assertThat(entries.get(0), instanceOf(ConstantValueProperty.class));
+        assertThat(entries.get(0).getDefaultValue(), equalTo(Collections.emptyMap()));
+        assertThat(entries.get(1).getPath(), equalTo("cmd.duration"));
+        assertThat(entries.get(1), instanceOf(ConstantValueProperty.class));
+        assertThat(entries.get(1).getDefaultValue(), equalTo(14));
     }
 
     private static List<String> expectedCommandPaths(String... commands) {

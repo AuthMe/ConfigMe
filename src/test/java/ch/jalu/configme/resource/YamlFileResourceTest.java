@@ -10,6 +10,7 @@ import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.migration.PlainMigrationService;
+import ch.jalu.configme.properties.BeanProperty;
 import ch.jalu.configme.properties.OptionalProperty;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.TestConfiguration;
@@ -434,6 +435,33 @@ public class YamlFileResourceTest {
         // when / then
         assertThat(resource.getObject("sample.ratio.wrong.dunno"), nullValue());
         assertThat(resource.getObject(TestConfiguration.RATIO_ORDER.getPath() + ".child"), nullValue());
+    }
+
+    @Test
+    public void shouldExportEmptyMap() throws IOException {
+        // given
+        CommandConfig config = new CommandConfig();
+        config.setDuration(3);
+        config.setCommands(Collections.emptyMap());
+
+        File file = copyFileFromResources("/beanmapper/commands.yml");
+        YamlFileResource resource = new YamlFileResource(file);
+        resource.setValue("config", config);
+
+        Property<CommandConfig> commandConfigProperty =
+            new BeanProperty<>(CommandConfig.class, "config", new CommandConfig());
+
+        // when
+        resource.exportProperties(new ConfigurationData(Collections.singletonList(commandConfigProperty)));
+
+        // then
+        List<String> exportedLines = Files.readAllLines(file.toPath());
+        assertThat(exportedLines, contains(
+            "",
+            "config:",
+            "    commands: {}",
+            "    duration: 3"
+        ));
     }
 
     private File copyFileFromResources(String path) {

@@ -8,6 +8,7 @@ import ch.jalu.configme.properties.Property;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -73,8 +74,12 @@ public class LeafPropertiesGenerator {
             } else if (value instanceof Collection<?>) {
                 handleCollection((Collection<?>) value, path);
             } else if (value instanceof Map<?, ?>) {
-                for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
-                    collectPropertyEntries(entry.getValue(), path + "." + entry.getKey());
+                if (((Map) value).isEmpty()) {
+                    properties.add(new ConstantValueProperty<>(path, Collections.emptyMap()));
+                } else {
+                    for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
+                        collectPropertyEntries(entry.getValue(), path + "." + entry.getKey());
+                    }
                 }
             } else {
                 Objects.requireNonNull(value);
