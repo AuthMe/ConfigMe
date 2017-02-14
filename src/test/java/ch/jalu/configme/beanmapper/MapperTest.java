@@ -6,6 +6,7 @@ import ch.jalu.configme.beanmapper.command.ExecutionDetails;
 import ch.jalu.configme.beanmapper.command.Executor;
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommand;
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommandConfig;
+import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexOptionalTypeConfig;
 import ch.jalu.configme.beanmapper.transformer.Transformers;
 import ch.jalu.configme.beanmapper.typeissues.GenericCollection;
 import ch.jalu.configme.beanmapper.typeissues.MapWithNonStringKeys;
@@ -29,6 +30,7 @@ import java.util.Optional;
 
 import static ch.jalu.configme.TestUtils.getJarFile;
 import static ch.jalu.configme.TestUtils.verifyException;
+import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -200,7 +202,7 @@ public class MapperTest {
         verifyException(
             () -> mapper.convertToBean("", resource, UntypedMap.class),
             ConfigMeException.class,
-            "does not have a concrete generic type");
+            "type '?' at index 1 not recognized");
     }
 
     @Test
@@ -213,7 +215,7 @@ public class MapperTest {
         verifyException(
             () -> mapper.convertToBean("", resource, GenericCollection.class),
             ConfigMeException.class,
-            "does not have a concrete generic type");
+            "at index 0 not recognized");
     }
 
     @Test
@@ -294,6 +296,35 @@ public class MapperTest {
         assertThat(launch, hasExecution(Executor.USER, false, 1.0));
         assertThat(launch.getTestEnumProperty(), equalTo(Optional.of(TestEnum.FOURTH)));
         assertAreAllEmpty(launch.getDoubleOptional(), launch.getNameHasLength(), launch.getNameStartsWith());
+    }
+
+    @Test
+    public void shouldHandleComplexOptionalType() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/commands.yml"));
+        Mapper mapper = ConfigMeMapper.getSingleton();
+
+        // when
+        ComplexOptionalTypeConfig result = mapper.convertToBean("", resource, ComplexOptionalTypeConfig.class);
+
+        // then
+        assertThat(result, not(nullValue()));
+        assertThat(result.getCommandconfig().isPresent(), equalTo(true));
+        assertThat(result.getCommandconfig().get(), aMapWithSize(2));
+    }
+
+    @Test
+    public void shouldReturnEmptyOptionalForEmptyFile() {
+        // given
+        PropertyResource resource = new YamlFileResource(getJarFile("/empty_file.yml"));
+        Mapper mapper = ConfigMeMapper.getSingleton();
+
+        // when
+        ComplexOptionalTypeConfig result = mapper.convertToBean("", resource, ComplexOptionalTypeConfig.class);
+
+        // then
+        assertThat(result, not(nullValue()));
+        assertThat(result.getCommandconfig(), equalTo(Optional.empty()));
     }
 
     private static void assertAllOptionalFieldsEmpty(ComplexCommand complexCommand) {

@@ -99,35 +99,27 @@ public class Mapper {
     @Nullable
     protected Object getPropertyValue(TypeInformation typeInformation, @Nullable Object value,
                                       MappingContext context) {
+        if (typeInformation.getClazz() == Optional.class) {
+            TypeInformation<?> typeInOptional = typeInformation.buildGenericType(0);
+            return Optional.ofNullable(getPropertyValue(typeInOptional, value, context));
+        }
+
         Object result;
         if ((result = processCollection(typeInformation, value, context)) != null) {
             return result;
         } else if ((result = processMap(typeInformation, value, context)) != null) {
             return result;
-        }
-
-        if (typeInformation.getClazz() == Optional.class) {
-            // TODO ljacqu #39: This does not work for Optional<List<String>>...
-            TypeInformation<?> typeInOptional = TypeInformation.of(typeInformation.getGenericClass(0)); // TODO ljacqu
-            return Optional.ofNullable(callSimpleConverters(typeInOptional, value, context));
-        }
-        return callSimpleConverters(typeInformation, value, context);
-    }
-
-    @Nullable
-    private Object callSimpleConverters(TypeInformation<?> type, @Nullable Object value, MappingContext context) {
-        Object result;
-        if ((result = processTransformers(type, value)) != null) {
+        } else if ((result = processTransformers(typeInformation, value)) != null) {
             return result;
         }
-        return convertToBean(type, value, context);
+        return convertToBean(typeInformation, value, context);
     }
 
     // Handles List and Set fields
     @Nullable
     protected Collection<?> processCollection(TypeInformation<?> type, Object value, MappingContext context) {
         if (type.isOfType(Iterable.class) && value instanceof Iterable<?>) {
-            TypeInformation<?> collectionType = TypeInformation.of(type.getGenericClass(0)); // TODO ljacqu .
+            TypeInformation<?> collectionType = type.buildGenericType(0);
             List<Object> list = new ArrayList<>();
             for (Object o : (Iterable<?>) value) {
                 Object mappedValue = getPropertyValue(collectionType, o, context.createChild(type));
@@ -158,8 +150,7 @@ public class Mapper {
             }
             Map result = new LinkedHashMap<>();
             for (Map.Entry<String, ?> entry : entries.entrySet()) {
-                // TODO ljacqu: Create better substitution to new TypeInformation<>(type.getGenericClass(1));
-                Object mappedValue = getPropertyValue(TypeInformation.of(type.getGenericClass(1)), entry.getValue(), context.createChild(type));
+                Object mappedValue = getPropertyValue(type.buildGenericType(1), entry.getValue(), context.createChild(type));
                 if (mappedValue != null) {
                     result.put(entry.getKey(), mappedValue);
                 }

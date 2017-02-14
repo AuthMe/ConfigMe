@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ch.jalu.configme.TestUtils.verifyException;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -73,6 +74,34 @@ public class TypeInformationTest {
                 type.getGenericClass(1);
             }, ConfigMeException.class);
         }
+    }
+
+    @Test
+    public void shouldHaveEqualsImplementation() {
+        // given
+        TypeInformation<Iterable> iterableType = TypeInformation.of(Iterable.class);
+        TypeInformation<Iterable> stringIterableType = TypeInformation.of(Iterable.class, String.class);
+        TypeInformation<String> stringType = TypeInformation.of(String.class);
+
+        // when / then
+        assertThat(iterableType.equals(new Object()), equalTo(false));
+        assertThat(iterableType.equals(TypeInformation.of(Iterable.class)), equalTo(true));
+        assertThat(iterableType.equals(stringIterableType), equalTo(false));
+        assertThat(stringIterableType.equals(iterableType), equalTo(false));
+        assertThat(stringIterableType.equals(TypeInformation.of(Iterable.class, String.class)), equalTo(true));
+        assertThat(stringType.equals(TypeInformation.of(String.class)), equalTo(true));
+    }
+
+    @Test
+    public void shouldHaveTypeInfoInToString() {
+        // given
+        TypeInformation<String> type = TypeInformation.of(String.class);
+
+        // when
+        String string = type.toString();
+
+        // then
+        assertThat(string, containsString("clazz=class java.lang.String"));
     }
 
     private static TypeInformation fromField(String name) {

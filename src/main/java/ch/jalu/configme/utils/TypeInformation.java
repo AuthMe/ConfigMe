@@ -34,8 +34,46 @@ public class TypeInformation<T> {
         return clazz;
     }
 
+    /**
+     * Returns whether this type is equal to or a child of the given type.
+     * <p>
+     * Examples:
+     * <code>TypeInformation.of(Integer.class).isOfType(Number.class); // true</code>
+     * <code>TypeInformation.of(String.class).isOfType(Number.class); // false</code>
+     *
+     * @param type the type to check
+     * @return true if this type extends or is equal to the given type
+     */
     public boolean isOfType(Class<?> type) {
         return type.isAssignableFrom(clazz);
+    }
+
+    /**
+     * Builds a TypeInformation object for the underlying generic type at the given index.
+     * For example, given a TypeInformation instance of {@code List<Iterable<Double>>},
+     * a TypeInformation object for {@code Iterable<Double>} is returned.
+     *
+     * @param index the index of the generic type to use
+     * @return type information for the "below" type
+     */
+    public TypeInformation<?> buildGenericType(int index) {
+        // if this = List<String>, then getGenericType(0) = String.class
+        Type genericType = getGenericType(index);
+        if (genericType instanceof Class<?>) {
+            return of((Class<?>) genericType);
+        }
+        // if this = List<Optional<String>>, then genericType(0) = ParameterizedType for Optional<String>
+        if (genericType instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) genericType;
+            Type rawType = pt.getRawType();
+            if (rawType instanceof Class<?>) {
+                return of((Class<?>) rawType, pt);
+            } else {
+                throw new ConfigMeException("Expected generic type '" + genericType + "' at index "
+                    + index + " to have a Class object as raw type");
+            }
+        }
+        throw new ConfigMeException("Generic type '" + genericType + "' at index " + index + " not recognized");
     }
 
     @Nullable
