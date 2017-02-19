@@ -22,7 +22,6 @@ import java.util.Set;
 import static ch.jalu.configme.TestUtils.transform;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -59,11 +58,14 @@ public class YamlSetPropertyExportTest {
         assertThat(new StringListProperty("sample.ratio.fields").getValue(resource),
             contains(TestEnum.FIRST.name(), TestEnum.SECOND.name(), TestEnum.THIRD.name()));
 
-        assertThat(String.join("\n", Files.readAllLines(configFile.toPath())), containsString(
-            "        fields: \n"
-            + "        - 'FIRST'\n"
-            + "        - 'SECOND'\n"
-            + "        - 'THIRD'"));
+        assertThat(Files.readAllLines(configFile.toPath()), contains(
+            "",
+            "sample:",
+            "    ratio:",
+            "        fields: ",
+            "        - 'FIRST'",
+            "        - 'SECOND'",
+            "        - 'THIRD'"));
     }
 
     private static final class EnumSetProperty extends Property<Set<TestEnum>> {

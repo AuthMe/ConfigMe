@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import static ch.jalu.configme.TestUtils.getJarPath;
 import static ch.jalu.configme.TestUtils.verifyException;
@@ -285,7 +284,8 @@ public class YamlFileResourceTest {
     @Test
     public void shouldExportConfigurationWithExpectedComments() throws IOException {
         // given
-        File file = copyFileFromResources(COMPLETE_FILE);
+        File file = new File("../test.yml");
+        file.createNewFile();//copyFileFromResources(COMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         ConfigurationData configurationData = ConfigurationDataBuilder.collectData(TestConfiguration.class);
 
@@ -293,13 +293,11 @@ public class YamlFileResourceTest {
         resource.exportProperties(configurationData);
 
         // then
-        // In some cases we have a space before a new line. The IDE strips ending whitespace automatically and so there
-        // is a mismatch because of those spaces; this pattern will remove any ending space to fix this.
-        // Similarly, we add a new line because IntelliJ keeps adding a new line to the saved file.
-        Pattern pattern = Pattern.compile("( )$", Pattern.MULTILINE);
-        String writtenFileContents = new String(Files.readAllBytes(file.toPath())) + "\n";
-        assertThat(pattern.matcher(writtenFileContents).replaceAll(""),
-            equalTo(new String(Files.readAllBytes(getJarPath("/config-expected-export.yml")))));
+        // The IDE likes manipulating the whitespace in the expected file. As long as it's handled outside of an IDE
+        // this test should be fine.
+        assertThat(
+            Files.readAllLines(file.toPath()),
+            equalTo(Files.readAllLines(getJarPath("/config-export-expected.yml"))));
     }
 
     @Test

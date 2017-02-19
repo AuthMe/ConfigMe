@@ -1,0 +1,35 @@
+
+# Test section
+test:
+    # Duration in seconds
+    duration: 4
+    # The system name
+    systemName: '[TestDefaultValue]'
+# Sample section
+sample:
+    ratio:
+        order: 'SECOND'
+        fields: 
+        - 'a'
+        - 'b'
+        - 'c'
+# The version number
+# This is just a random number
+version: 32046
+features:
+    # Plain boring features
+    boring:
+        # Skip boring features?
+        skip: false
+        # Add some boring colors here (gray, beige, ...)
+        colors: []
+        dustLevel: -1
+    # Cool features
+    # Contains cool settings
+    cool:
+        # Enable cool features?
+        enabled: false
+        # List of cool options to use
+        options: 
+        - 'Sparks'
+        - 'Sprinkles'

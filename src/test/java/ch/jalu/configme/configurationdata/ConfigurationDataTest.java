@@ -20,7 +20,7 @@ public class ConfigurationDataTest {
     @Test
     public void shouldAcceptListWithTypedProperty() {
         // given
-        List<Property<String>> properties = Arrays.asList(
+        List<Property<?>> properties = Arrays.asList(
             new StringProperty("test", "Test"),
             new StringProperty("taste", "Taste"),
             new StringProperty("toast", "Toaster"));
@@ -29,7 +29,7 @@ public class ConfigurationDataTest {
         ConfigurationData configData = new ConfigurationData(properties);
 
         // then
-        assertThat(configData.getProperties(), containsAll((List) properties));
+        assertThat(configData.getProperties(), containsAll(properties));
     }
 
     @Test
