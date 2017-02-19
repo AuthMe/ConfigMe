@@ -2,34 +2,37 @@
 # Test section
 test:
     # Duration in seconds
-    duration: 4
+    duration: 22
     # The system name
-    systemName: '[TestDefaultValue]'
+    systemName: 'Custom sys name'
 # Sample section
 sample:
     ratio:
-        order: 'SECOND'
+        order: 'FIRST'
         fields: 
-        - 'a'
-        - 'b'
-        - 'c'
+        - 'Australia'
+        - 'Burundi'
+        - 'Colombia'
 # The version number
 # This is just a random number
-version: 32046
+version: 2492
 features:
     # Plain boring features
     boring:
         # Skip boring features?
         skip: false
         # Add some boring colors here (gray, beige, ...)
-        colors: []
-        dustLevel: -1
+        colors: 
+        - 'beige'
+        - 'gray'
+        dustLevel: 2
     # Cool features
     # Contains cool settings
     cool:
         # Enable cool features?
-        enabled: false
+        enabled: true
         # List of cool options to use
         options: 
-        - 'Sparks'
-        - 'Sprinkles'
+        - 'Dinosaurs'
+        - 'Explosions'
+        - 'Big trucks'

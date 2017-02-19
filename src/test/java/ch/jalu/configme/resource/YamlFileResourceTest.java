@@ -284,8 +284,7 @@ public class YamlFileResourceTest {
     @Test
     public void shouldExportConfigurationWithExpectedComments() throws IOException {
         // given
-        File file = new File("../test.yml");
-        file.createNewFile();//copyFileFromResources(COMPLETE_FILE);
+        File file = copyFileFromResources(COMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         ConfigurationData configurationData = ConfigurationDataBuilder.collectData(TestConfiguration.class);
 
@@ -295,8 +294,7 @@ public class YamlFileResourceTest {
         // then
         // The IDE likes manipulating the whitespace in the expected file. As long as it's handled outside of an IDE
         // this test should be fine.
-        assertThat(
-            Files.readAllLines(file.toPath()),
+        assertThat(Files.readAllLines(file.toPath()),
             equalTo(Files.readAllLines(getJarPath("/config-export-expected.yml"))));
     }
 
