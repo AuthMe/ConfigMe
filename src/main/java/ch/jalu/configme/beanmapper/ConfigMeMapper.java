@@ -11,8 +11,9 @@ public final class ConfigMeMapper {
     }
 
     public static Mapper getSingleton() {
-        return mapper == null
-            ? (mapper = new Mapper())
-            : mapper;
+        if (mapper == null) {
+            mapper = new Mapper();
+        }
+        return mapper;
     }
 }
