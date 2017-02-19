@@ -1,6 +1,8 @@
 package ch.jalu.configme.beanmapper;
 
 import ch.jalu.configme.utils.TypeInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.beans.IntrospectionException;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
  * which don't have an associated setter (or getter) will be ignored.
  */
 public class BeanDescriptionFactory {
+
+    private static final Logger logger = LoggerFactory.getLogger(BeanDescriptionFactory.class);
 
     /**
      * Returns all properties of the given bean class for which there exists a getter and setter.
@@ -48,6 +52,7 @@ public class BeanDescriptionFactory {
     @Nullable
     protected BeanPropertyDescription convert(PropertyDescriptor descriptor) {
         if (Boolean.TRUE.equals(descriptor.getValue("transient"))) {
+            logger.trace("Skipping transient property '{}'", descriptor);
             return null;
         }
 
@@ -79,8 +84,10 @@ public class BeanDescriptionFactory {
 
     protected String getPropertyName(PropertyDescriptor descriptor) {
         if (descriptor.getReadMethod().isAnnotationPresent(ExportName.class)) {
+            logger.trace("Using @ExportName on getter for '{}'", descriptor);
             return descriptor.getReadMethod().getAnnotation(ExportName.class).value();
         } else if (descriptor.getWriteMethod().isAnnotationPresent(ExportName.class)) {
+            logger.trace("Using @ExportName on setter for '{}'", descriptor);
             return descriptor.getWriteMethod().getAnnotation(ExportName.class).value();
         }
         return descriptor.getName();
@@ -110,6 +117,8 @@ public class BeanDescriptionFactory {
         for (PropertyDescriptor descriptor : descriptors) {
             if (descriptor.getWriteMethod() != null && descriptor.getReadMethod() != null) {
                 writableProperties.add(descriptor);
+            } else {
+                logger.trace("Skipping property '{}' for '{}': missing getter and/or setter", descriptor, clazz);
             }
         }
         return writableProperties;

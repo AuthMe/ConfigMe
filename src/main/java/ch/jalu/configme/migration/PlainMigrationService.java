@@ -2,6 +2,8 @@ package ch.jalu.configme.migration;
 
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -9,6 +11,8 @@ import java.util.List;
  * Simple migration service that can be extended.
  */
 public class PlainMigrationService implements MigrationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PlainMigrationService.class);
 
     @Override
     public boolean checkAndMigrate(PropertyResource resource, List<Property<?>> properties) {
@@ -35,9 +39,11 @@ public class PlainMigrationService implements MigrationService {
     private static boolean containsAllSettings(PropertyResource resource, List<Property<?>> properties) {
         for (Property<?> property : properties) {
             if (!property.isPresent(resource)) {
+                logger.debug("Did not find {} in resource '{}'", property, resource);
                 return false;
             }
         }
+        logger.trace("All properties present in resource '{}'", resource);
         return true;
     }
 
