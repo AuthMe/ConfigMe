@@ -49,7 +49,7 @@ public class Mapper {
     private final MappingErrorHandler errorHandler;
     private final Transformer[] transformers;
     private final BeanDescriptionFactory beanDescriptionFactory;
-    private final Map<Class<?>, Collection<BeanPropertyDescription>> classProperties = new HashMap<>();
+    private final Map<String, Collection<BeanPropertyDescription>> classProperties = new HashMap<>();
 
     /**
      * Creates a new JavaBean mapper with the default configuration.
@@ -215,6 +215,7 @@ public class Mapper {
      * @return relevant properties
      */
     public Collection<BeanPropertyDescription> getWritableProperties(Class<?> clazz) {
-        return classProperties.computeIfAbsent(clazz, beanDescriptionFactory::collectWritableFields);
+        return classProperties.computeIfAbsent(clazz.getCanonicalName(),
+            s -> beanDescriptionFactory.collectWritableFields(clazz));
     }
 }
