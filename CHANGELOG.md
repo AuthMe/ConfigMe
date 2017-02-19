@@ -1,5 +1,18 @@
 # ConfigMe Changelog
 
+#### 0.4 (2017-02-19)
+- Add support for `Optional`
+  - New optional property type `OptionalProperty`
+  - Support `Optional<?>` fields in beans
+- Fix export of empty map (now `{}`)
+- Add shorthand method for creating a SettingsManager from a YAML file
+- Improve handling of generics in the mapper
+- Technical improvements
+  - Avoid Map with `Class<?>` keys
+  - Add `@Documented` on relevant annotations
+
+:blue_book: [All changes in 0.4](https://github.com/AuthMe/ConfigMe/milestone/4?closed=1)
+
 #### 0.3 (2016-12-23)
 - Now available from Maven Central!
   - The project package is now `ch.jalu.configme`
