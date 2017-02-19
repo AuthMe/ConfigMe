@@ -3,11 +3,15 @@ package ch.jalu.configme;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.migration.MigrationService;
+import ch.jalu.configme.migration.PlainMigrationService;
 import ch.jalu.configme.properties.OptionalProperty;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.resource.YamlFileResource;
+import ch.jalu.configme.utils.Utils;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -80,6 +84,22 @@ public class SettingsManager {
             ? (List<Property<?>>) properties
             : new ArrayList<>(properties);
         return new SettingsManager(resource, migrationService, new ConfigurationData(propertyList));
+    }
+
+    /**
+     * Convenience method for creating a settings manager for the provided YAML file with defaults.
+     * Creates the YAML file if it doesn't exist. Uses the default migration service, checking that all
+     * properties are present in the YAML file.
+     *
+     * @param yamlFile the file to read from and write to
+     * @param settingsClasses classes whose Property fields make up all known properties
+     * @return the created settings manager
+     */
+    @SafeVarargs
+    public static SettingsManager createWithYamlFile(File yamlFile,
+                                                     Class<? extends SettingsHolder>... settingsClasses) {
+        Utils.createFileIfNotExists(yamlFile);
+        return new SettingsManager(new YamlFileResource(yamlFile), new PlainMigrationService(), settingsClasses);
     }
 
     /**

@@ -34,6 +34,7 @@ import static ch.jalu.configme.TestUtils.copyFileFromResources;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -211,6 +212,21 @@ public class SettingsManagerTest {
 
         // then (2)
         assertThat(intOptional.getValue(resource), equalTo(Optional.of(43)));
+    }
+
+    @Test
+    public void shouldCreateManagerWithYamlShorthand() {
+        // given
+        File file = copyFileFromResources("/config-incomplete-sample.yml", temporaryFolder);
+        long fileLength = file.length();
+
+        // when
+        SettingsManager manager = SettingsManager.createWithYamlFile(file, TestConfiguration.class);
+
+        // then
+        assertThat(manager, not(nullValue()));
+        // check that file was written to (migration services notices incomplete file)
+        assertThat(file.length(), greaterThan(fileLength));
     }
 
     private void verifyWasMigrationServiceChecked() {
