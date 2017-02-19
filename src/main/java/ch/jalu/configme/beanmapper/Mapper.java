@@ -46,8 +46,6 @@ import static ch.jalu.configme.beanmapper.MapperUtils.invokeDefaultConstructor;
  */
 public class Mapper {
 
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Mapper.class);
-
     private final MappingErrorHandler errorHandler;
     private final Transformer[] transformers;
     private final BeanDescriptionFactory beanDescriptionFactory;
@@ -87,7 +85,6 @@ public class Mapper {
     @Nullable
     @SuppressWarnings("unchecked")
     public <T> T convertToBean(String path, PropertyResource resource, Class<T> clazz) {
-        logger.trace("Converting path '{}' to bean of class '{}'", path, clazz);
         return (T) getPropertyValue(TypeInformation.of(clazz), resource.getObject(path), MappingContext.root());
     }
 
@@ -104,11 +101,9 @@ public class Mapper {
                                       MappingContext context) {
         if (typeInformation.getClazz() == Optional.class) {
             TypeInformation<?> typeInOptional = typeInformation.buildGenericType(0);
-            logger.trace("Processing optional type '{}'", typeInformation);
             return Optional.ofNullable(getPropertyValue(typeInOptional, value, context));
         }
 
-        logger.trace("Processing type '{}'", typeInformation);
         Object result;
         if ((result = processCollection(typeInformation, value, context)) != null) {
             return result;
@@ -123,14 +118,12 @@ public class Mapper {
     // Handles List and Set fields
     @Nullable
     protected Collection<?> processCollection(TypeInformation<?> type, Object value, MappingContext context) {
-        logger.trace("Processing collection for type '{}' and value '{}'", type, value);
         if (type.isOfType(Iterable.class) && value instanceof Iterable<?>) {
             TypeInformation<?> collectionType = type.buildGenericType(0);
             List<Object> list = new ArrayList<>();
             for (Object o : (Iterable<?>) value) {
                 Object mappedValue = getPropertyValue(collectionType, o, context.createChild(type));
                 if (mappedValue != null) {
-                    logger.trace("  Adding entry '{}' (collection type: '{}')", mappedValue, collectionType);
                     list.add(mappedValue);
                 }
             }
@@ -150,7 +143,6 @@ public class Mapper {
     // Handles Map fields
     @Nullable
     protected Map processMap(TypeInformation<?> type, Object value, MappingContext context) {
-        logger.trace("Processing map for type '{}' and value '{}'", type, value);
         if (type.isOfType(Map.class) && value instanceof Map<?, ?>) {
             Map<String, ?> entries = (Map<String, ?>) value;
             if (type.getGenericClass(0) != String.class) {
@@ -171,7 +163,6 @@ public class Mapper {
     // Passes value to Transformers
     @Nullable
     protected Object processTransformers(TypeInformation typeInformation, Object value) {
-        logger.trace("Processing transformers for type '{}' and value '{}'", typeInformation, value);
         Object result;
         for (Transformer transformer : transformers) {
             result = transformer.transform(typeInformation, value);
@@ -197,7 +188,6 @@ public class Mapper {
         // Check that we have properties (or else we don't have a bean) and that the provided value is a Map
         // so we can execute the mapping process.
         if (properties.isEmpty() || !(value instanceof Map<?, ?>)) {
-            logger.debug("Cannot convert value '{}' to bean '{}'. Found properties: '{}'", value, type, properties);
             return null;
         }
 
@@ -211,7 +201,6 @@ public class Mapper {
             if (result != null) {
                 property.setValue(bean, result);
             } else if (property.getValue(bean) == null) {
-                logger.debug("Value for property '{}' is null (bean type '{}') - aborting", property.getName(), type);
                 errorHandler.handleError(property.getClass(), context);
                 return null;
             }
