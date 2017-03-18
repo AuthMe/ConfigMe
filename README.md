@@ -1,7 +1,8 @@
 # ConfigMe
-[![Build Status](https://travis-ci.org/AuthMe/ConfigMe.svg?branch=master)](https://travis-ci.org/AuthMe/ConfigMe) [![Coverage Status]
-(https://coveralls.io/repos/github/AuthMe/ConfigMe/badge.svg?branch=master)](https://coveralls.io/github/AuthMe/ConfigMe?branch=master) [![Javadocs]
-(https://www.javadoc.io/badge/ch.jalu/configme.svg)](https://www.javadoc.io/doc/ch.jalu/configme)
+[![Build Status](https://travis-ci.org/AuthMe/ConfigMe.svg?branch=master)](https://travis-ci.org/AuthMe/ConfigMe)
+[![Coverage Status](https://coveralls.io/repos/github/AuthMe/ConfigMe/badge.svg?branch=master)](https://coveralls.io/github/AuthMe/ConfigMe?branch=master)
+[![Javadocs](https://www.javadoc.io/badge/ch.jalu/configme.svg)](https://www.javadoc.io/doc/ch.jalu/configme)
+[![Code Climate](https://codeclimate.com/github/AuthMe/ConfigMe/badges/gpa.svg)](https://codeclimate.com/github/AuthMe/ConfigMe)
 
 A simple configuration management library, initially for but no longer limited to Bukkit plugins.
 
