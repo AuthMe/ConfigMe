@@ -1,5 +1,10 @@
 # ConfigMe Changelog
 
+#### 0.4.1 (2018-01-14)
+- Fix `Optional` fields not being able to be saved in bean properties ([#51](https://github.com/AuthMe/ConfigMe/issues/51)
+
+:blue_book: [All changes in 0.4.1](https://github.com/AuthMe/ConfigMe/milestone/7?closed=1)
+
 #### 0.4 (2017-02-19)
 - Add support for `Optional`
   - New optional property type `OptionalProperty`
