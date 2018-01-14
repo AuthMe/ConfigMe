@@ -200,7 +200,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.17</version>
+            <version>1.19</version>
         </dependency>
 
         <!-- FindBugs, has implementation for @Nullable -->
@@ -208,7 +208,7 @@
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
             <scope>provided</scope>
-            <version>3.0.1</version>
+            <version>3.0.2</version>
         </dependency>
 
         <!-- Unit testing -->
@@ -228,7 +228,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
-            <version>2.7.6</version>
+            <version>2.13.0</version>
             <exclusions>
                 <exclusion>
                     <artifactId>hamcrest-core</artifactId>
