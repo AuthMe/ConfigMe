@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Generates {@link Property} objects for all "leaf" values of a bean for the export of beans by
@@ -33,10 +34,10 @@ public class LeafPropertiesGenerator {
     }
 
     protected static final class EntryBuilder {
-        private final BeanProperty<?> beanProperty;
-        private final List<Property<?>> properties = new ArrayList<>();
+        protected final BeanProperty<?> beanProperty;
+        protected final List<Property<?>> properties = new ArrayList<>();
 
-        EntryBuilder(BeanProperty beanProperty) {
+        protected EntryBuilder(BeanProperty beanProperty) {
             this.beanProperty = beanProperty;
         }
 
@@ -68,6 +69,16 @@ public class LeafPropertiesGenerator {
          * @param path the path of the value in the config structure
          */
         protected void collectPropertyEntries(Object value, String path) {
+            if (value instanceof Optional<?>) {
+                Optional optional = (Optional) value;
+                if (optional.isPresent()) {
+                    value = optional.get();
+                } else {
+                    // Empty optional does not get saved
+                    return;
+                }
+            }
+
             Property<?> property = createConstantProperty(value, path);
             if (property != null) {
                 properties.add(property);
@@ -90,7 +101,7 @@ public class LeafPropertiesGenerator {
         }
 
         @Nullable
-        protected ConstantValueProperty<?> createConstantProperty(Object value, String path) {
+        protected Property<?> createConstantProperty(Object value, String path) {
             if (value instanceof String || value instanceof Enum<?>
                 || value instanceof Number || value instanceof Boolean) {
                 return new ConstantValueProperty<>(path, value);
