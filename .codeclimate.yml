@@ -1,18 +1,34 @@
-engines:
-  duplication:
-    enabled: true
-    config:
-        languages:
-        - java
+version: '2' # required to adjust maintainability checks
+
+plugins:
   checkstyle:
     enabled: true
-    channel: beta
-    config: '.checkstyle.xml'
-  pmd:
+    config:
+      file: '.checkstyle.xml'
+
+checks:
+  # We disable all the following CodeClimate checks: Checkstyle already checks for these things and has the advantage
+  # that the Checkstyle config can also be used in one's IDE.
+  argument-count:
+    enabled: false
+  complex-logic:
+    enabled: false
+  file-lines:
+    enabled: false
+  method-complexity:
+    enabled: false
+  method-count:
+    enabled: false
+  method-lines:
+    enabled: false
+  nested-control-flow:
+    enabled: false
+  return-statements:
+    enabled: false
+  # Let's give those last two a try since there's no Checkstyle equivalent
+  similar-code:
     enabled: true
-    channel: beta
-ratings:
-  paths:
-  # Check only production files
-  - 'src/main/java/**'
-exclude_paths: []
+  identical-code:
+    enabled: true
+
+exclude_patterns: []
