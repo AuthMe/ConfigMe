@@ -18,10 +18,10 @@ public class PlainMigrationService implements MigrationService {
     /**
      * Override this method for custom migrations. This method is executed before checking
      * if all settings are present. For instance, you could implement deleting obsolete properties
-     * and renamed properties in this method.
+     * and rename properties in this method.
      * <p>
      * Note that you do <i>not</i> have to save the resource. The settings manager automatically
-     * does this if the migration service returns an according result.
+     * does this if the migration service returns {@code true} from {@link #checkAndMigrate}.
      *
      * @param resource the property resource to check
      * @param properties list of known properties
