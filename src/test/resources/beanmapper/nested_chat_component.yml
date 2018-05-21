@@ -1,0 +1,8 @@
+message-key:
+  color: blue
+  text: outside
+  extra:
+    - color: green
+      text: inner1
+    - color: blue
+      text: inner2
