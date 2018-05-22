@@ -36,7 +36,7 @@ public class YamlFileReader implements PropertyReader {
      *
      * @param file the file to load
      */
-    @SuppressWarnings("unchecked")
+    //@SuppressWarnings("unchecked")
     public YamlFileReader(File file) {
         this.file = file;
         reload();
