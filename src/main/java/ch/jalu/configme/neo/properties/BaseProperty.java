@@ -1,12 +1,11 @@
 package ch.jalu.configme.neo.properties;
 
-import ch.jalu.configme.neo.resource.PropertyResource;
+import ch.jalu.configme.neo.resource.PropertyReader;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-// TODO: Should we add a hamcrest-like "do_not_implement_interface()" method on Property?
-// And/or think about renaming this to NonNullProperty and supporting that by default but allowing other
+// TODO: Think about renaming this to NonNullProperty and supporting that by default but allowing other
 // users to have nullable properties if they so desire.
 public abstract class BaseProperty<T> implements Property<T> {
 
@@ -25,17 +24,16 @@ public abstract class BaseProperty<T> implements Property<T> {
         return path;
     }
 
-    @Override
-    public T getDefaultValue() {
+    protected T getDefaultValue() {
         return defaultValue;
     }
 
     @Override
-    public T getValue(PropertyResource resource) {
-        T value = getFromResource(resource);
+    public T getValue(PropertyReader reader) {
+        T value = getFromResource(reader);
         return value != null ? value : getDefaultValue();
     }
 
     @Nullable
-    protected abstract T getFromResource(PropertyResource resource);
+    protected abstract T getFromResource(PropertyReader reader);
 }

@@ -4,6 +4,8 @@ package ch.jalu.configme.neo;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.migration.MigrationService;
 import ch.jalu.configme.neo.properties.Property;
+import ch.jalu.configme.neo.registry.ValuesRegistry;
+import ch.jalu.configme.neo.resource.PropertyReader;
 import ch.jalu.configme.neo.resource.PropertyResource;
 
 import javax.annotation.Nullable;
@@ -30,6 +32,7 @@ public class SettingsManagerImpl implements SettingsManager {
     protected final ConfigurationData configurationData;
     protected final PropertyResource resource;
     protected final MigrationService migrationService;
+    protected final ValuesRegistry valuesRegistry;
 
     /**
      * Constructor.
@@ -39,11 +42,12 @@ public class SettingsManagerImpl implements SettingsManager {
      * @param configurationData the configuration data
      */
     public SettingsManagerImpl(PropertyResource resource, @Nullable MigrationService migrationService,
-                               ConfigurationData configurationData) {
+                               ConfigurationData configurationData, ValuesRegistry registry) {
         this.configurationData = configurationData;
         this.resource = resource;
         this.migrationService = migrationService;
-        validateAndLoadOptions();
+        this.valuesRegistry = registry;
+        loadFromResourceAndValidate();
     }
 
     // TODO: missing many convenience instantiation methods. Have them here or export them to some builder?
@@ -57,7 +61,9 @@ public class SettingsManagerImpl implements SettingsManager {
      * @return The property's value
      */
     public <T> T getProperty(Property<T> property) {
-        return property.getValue(resource);
+        // return property.getValue(resource); // TODO: valueRegistry.get(property) ?
+        // Would users understand that or is that way too confusing, given the methods on Property?
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     /**
@@ -77,21 +83,20 @@ public class SettingsManagerImpl implements SettingsManager {
      * Reloads the configuration.
      */
     public void reload() {
-        resource.reload();
-        validateAndLoadOptions();
+        loadFromResourceAndValidate();
     }
 
     public void save() {
-        throw new UnsupportedOperationException("Not yet implemented"); // TODO fix me
+        // TODO: resource.exportProperties(configurationData, valueRegistry) ?
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    /**
-     * Checks with the migration service if the configuration is up to date.
-     * If not, saves the config.
-     */
-    protected void validateAndLoadOptions() {
-        if (migrationService != null
-                && migrationService.checkAndMigrate(resource, configurationData.getAllProperties())) {
+    protected void loadFromResourceAndValidate() {
+        final PropertyReader reader = resource.createReader();
+        valuesRegistry.setAllProperties(reader, configurationData);
+
+        if (migrationService != null && migrationService.checkAndMigrate(reader, configurationData.getAllProperties())) {
+            // TODO: Update registry
             save();
         }
     }

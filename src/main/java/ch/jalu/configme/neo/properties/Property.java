@@ -1,19 +1,18 @@
 package ch.jalu.configme.neo.properties;
 
-import ch.jalu.configme.neo.resource.PropertyResource;
+import ch.jalu.configme.neo.resource.PropertyReader;
 
 import javax.annotation.Nullable;
 
-// TODO: Interface or abstract class?
 public interface Property<T> {
 
     String getPath();
 
-    T getDefaultValue();
+    // TODO: @Nullable ?
+    // TODO: Better name like determineValue? Something to make it clear that we won't be calling it all the time.
+    T getValue(PropertyReader reader);
 
-    T getValue(PropertyResource resource);
-
-    boolean isPresent(PropertyResource resource);
+    boolean isPresent(PropertyReader reader);
 
     @Nullable
     Object toExportRepresentation(T value); // TODO: Provide a way to signal a skip? Or would that be null?

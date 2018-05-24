@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo.properties;
 
-import ch.jalu.configme.neo.resource.PropertyResource;
+import ch.jalu.configme.neo.resource.PropertyReader;
 
 public class StringProperty extends BaseProperty<String> {
 
@@ -9,8 +9,8 @@ public class StringProperty extends BaseProperty<String> {
     }
 
     @Override
-    public boolean isPresent(PropertyResource resource) {
-        return resource.getString(getPath()) != null;
+    public boolean isPresent(PropertyReader reader) {
+        return reader.getString(getPath()) != null;
     }
 
     @Override
@@ -19,7 +19,7 @@ public class StringProperty extends BaseProperty<String> {
     }
 
     @Override
-    protected String getFromResource(PropertyResource resource) {
-        return resource.getString(getPath());
+    protected String getFromResource(PropertyReader reader) {
+        return reader.getString(getPath());
     }
 }

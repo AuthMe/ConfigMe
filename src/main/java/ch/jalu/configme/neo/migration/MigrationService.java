@@ -1,7 +1,7 @@
 package ch.jalu.configme.neo.migration;
 
 import ch.jalu.configme.neo.properties.Property;
-import ch.jalu.configme.neo.resource.PropertyResource;
+import ch.jalu.configme.neo.resource.PropertyReader;
 
 import java.util.List;
 
@@ -12,15 +12,8 @@ import java.util.List;
  */
 public interface MigrationService {
 
-    /**
-     * Checks the settings and perform any necessary migrations.
-     *
-     * @param resource the property resource
-     * @param properties all existing properties
-     * @return {@code true} if a migration has been performed, {@code false} if the settings are up-to-date
-     */
-    boolean checkAndMigrate(PropertyResource resource, List<Property<?>> properties);
-    // TODO: Replace with enum return value?
+    boolean checkAndMigrate(PropertyReader reader, List<Property<?>> properties);
+    // TODO: Replace with enum return value? Makes it annoying to concatenate multiple checks... But is more speaking.
     // TODO: Pass in ConfigurationData instead? (to include comments, should we ever want to have them modifiable later)
 
 }
