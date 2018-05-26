@@ -1,6 +1,8 @@
 package ch.jalu.configme.neo.migration;
 
+import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.properties.Property;
+import ch.jalu.configme.neo.registry.ValuesRegistry;
 import ch.jalu.configme.neo.resource.PropertyReader;
 
 import java.util.List;
@@ -11,17 +13,12 @@ import java.util.List;
 public class PlainMigrationService implements MigrationService {
 
     @Override
-    public boolean checkAndMigrate(PropertyReader reader, List<Property<?>> properties) {
-        return performMigrations(reader, properties) || !containsAllSettings(reader, properties);
+    public boolean checkAndMigrate(PropertyReader reader,
+                                   ValuesRegistry registry,
+                                   ConfigurationData configurationData) {
+        return performMigrations(reader, registry, configurationData)
+            || !containsAllSettings(reader, configurationData.getAllProperties());
     }
-
-    // TODO: CRITICAL - not possible to set any values anymore...
-    // Changing from PropertyResource to PropertyReader has effectively broken migration possibilities since we can't
-    // set any values to the property reader. So probably we need to pass in the "value registry" as well...?
-    // We might have something like "checkAndMigrate(ValueRegistry, PropertyReader, ConfigurationData)" in the end.
-    // Even if we don't allow to modify comments, ConfigurationData would be clearer as to where the list of properties come from.
-    // What's confusing for the user about having the PropertyReader and the ValueRegistry is for him to know which one
-    // to use to check some value.
 
     /**
      * Override this method for custom migrations. This method is executed before checking
@@ -32,13 +29,17 @@ public class PlainMigrationService implements MigrationService {
      * does this if the migration service returns {@code true} from {@link #checkAndMigrate}.
      *
      * @param reader the property reader to check
-     * @param properties list of known properties
+     * @param registry the values registry
+     * @param configurationData configuration data
      * @return true if a migration was performed and the config should be saved,
-     * false if no migration was performed
+     *         false if no migration was performed
      */
-    protected boolean performMigrations(PropertyReader reader, List<Property<?>> properties) {
+    protected boolean performMigrations(PropertyReader reader, ValuesRegistry registry,
+                                        ConfigurationData configurationData) {
         return false;
     }
+
+    // TODO: Offer protected static method to move old property to new property
 
     private static boolean containsAllSettings(PropertyReader reader, List<Property<?>> properties) {
         for (Property<?> property : properties) {

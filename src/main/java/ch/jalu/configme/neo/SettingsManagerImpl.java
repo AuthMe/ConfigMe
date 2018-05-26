@@ -38,20 +38,19 @@ public class SettingsManagerImpl implements SettingsManager {
      * Constructor.
      *
      * @param resource the property resource to read and write properties to
-     * @param migrationService migration service to check the property resource with
      * @param configurationData the configuration data
+     * @param migrationService migration service to check the property resource with
+     * @param registry values registry
      */
-    public SettingsManagerImpl(PropertyResource resource, @Nullable MigrationService migrationService,
-                               ConfigurationData configurationData, ValuesRegistry registry) {
+    protected SettingsManagerImpl(PropertyResource resource, ConfigurationData configurationData,
+                                  @Nullable MigrationService migrationService, ValuesRegistry registry) {
         this.configurationData = configurationData;
         this.resource = resource;
         this.migrationService = migrationService;
         this.valuesRegistry = registry;
         loadFromResourceAndValidate();
+        // TODO: Configuration validation on "startup"
     }
-
-    // TODO: missing many convenience instantiation methods. Have them here or export them to some builder?
-    // Having a separate config kind of thing would make it more flexible...
 
     /**
      * Gets the given property from the configuration.
@@ -61,9 +60,7 @@ public class SettingsManagerImpl implements SettingsManager {
      * @return The property's value
      */
     public <T> T getProperty(Property<T> property) {
-        // return property.getValue(resource); // TODO: valueRegistry.get(property) ?
-        // Would users understand that or is that way too confusing, given the methods on Property?
-        throw new UnsupportedOperationException("Not yet implemented");
+        return valuesRegistry.get(property);
     }
 
     /**
@@ -74,9 +71,8 @@ public class SettingsManagerImpl implements SettingsManager {
      * @param <T> The property's type
      */
     public <T> void setProperty(Property<T> property, T value) {
-        throw new UnsupportedOperationException("Not yet implemented");  // TODO fix me
-        // validate that value may be set by a method on Property? Would allow us to have BaseProperty for sure not
-        // nullable while not overly restricting it for others...
+        property.validateValueToBeSet(value);
+        valuesRegistry.set(property, value);
     }
 
     /**
@@ -93,10 +89,9 @@ public class SettingsManagerImpl implements SettingsManager {
 
     protected void loadFromResourceAndValidate() {
         final PropertyReader reader = resource.createReader();
-        valuesRegistry.setAllProperties(reader, configurationData);
+        valuesRegistry.initializeValues(reader, configurationData);
 
-        if (migrationService != null && migrationService.checkAndMigrate(reader, configurationData.getAllProperties())) {
-            // TODO: Update registry
+        if (migrationService != null && migrationService.checkAndMigrate(reader, valuesRegistry, configurationData)) {
             save();
         }
     }
