@@ -3,7 +3,6 @@ package ch.jalu.configme.neo.resource;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.properties.Property;
-import ch.jalu.configme.neo.registry.ValuesRegistry;
 import ch.jalu.configme.neo.resource.PropertyPathTraverser.PathElement;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -34,11 +33,11 @@ public class YamlFileResource implements PropertyResource {
     }
 
     @Override
-    public void exportProperties(ConfigurationData configurationData, ValuesRegistry valuesRegistry) {
+    public void exportProperties(ConfigurationData configurationData) {
         try (Writer writer = new FileWriter(file)) {
             PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
             for (Property<?> property : configurationData.getProperties()) {
-                final Object exportObject = ((Property) property).toExportRepresentation(valuesRegistry.get(property));
+                final Object exportObject = ((Property) property).toExportRepresentation(configurationData.getValue(property));
                 if (exportObject == null) {
                     continue;
                 }

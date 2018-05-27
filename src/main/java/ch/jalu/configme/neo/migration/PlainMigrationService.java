@@ -2,7 +2,6 @@ package ch.jalu.configme.neo.migration;
 
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.properties.Property;
-import ch.jalu.configme.neo.registry.ValuesRegistry;
 import ch.jalu.configme.neo.resource.PropertyReader;
 
 import java.util.List;
@@ -13,15 +12,12 @@ import java.util.List;
 public class PlainMigrationService implements MigrationService {
 
     @Override
-    public boolean checkAndMigrate(PropertyReader reader,
-                                   ValuesRegistry registry,
-                                   ConfigurationData configurationData) {
-        return performMigrations(reader, registry, configurationData)
+    public boolean checkAndMigrate(PropertyReader reader, ConfigurationData configurationData) {
+        return performMigrations(reader, configurationData)
             || !containsAllSettings(reader, configurationData.getProperties());
     }
 
-    protected boolean performMigrations(PropertyReader reader, ValuesRegistry registry,
-                                        ConfigurationData configurationData) {
+    protected boolean performMigrations(PropertyReader reader, ConfigurationData configurationData) {
         return false;
     }
 

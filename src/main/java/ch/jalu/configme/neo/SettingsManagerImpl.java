@@ -3,7 +3,6 @@ package ch.jalu.configme.neo;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.migration.MigrationService;
 import ch.jalu.configme.neo.properties.Property;
-import ch.jalu.configme.neo.registry.ValuesRegistry;
 import ch.jalu.configme.neo.resource.PropertyReader;
 import ch.jalu.configme.neo.resource.PropertyResource;
 
@@ -31,7 +30,6 @@ public class SettingsManagerImpl implements SettingsManager {
     protected final ConfigurationData configurationData;
     protected final PropertyResource resource;
     protected final MigrationService migrationService;
-    protected final ValuesRegistry valuesRegistry;
 
     /**
      * Constructor.
@@ -39,14 +37,12 @@ public class SettingsManagerImpl implements SettingsManager {
      * @param resource the property resource to read and write properties to
      * @param configurationData the configuration data
      * @param migrationService migration service to check the property resource with
-     * @param registry values registry
      */
     protected SettingsManagerImpl(PropertyResource resource, ConfigurationData configurationData,
-                                  @Nullable MigrationService migrationService, ValuesRegistry registry) {
+                                  @Nullable MigrationService migrationService) {
         this.configurationData = configurationData;
         this.resource = resource;
         this.migrationService = migrationService;
-        this.valuesRegistry = registry;
         loadFromResourceAndValidate();
         // TODO: Configuration validation on "startup"
     }
@@ -59,7 +55,7 @@ public class SettingsManagerImpl implements SettingsManager {
      * @return The property's value
      */
     public <T> T getProperty(Property<T> property) {
-        return valuesRegistry.get(property);
+        return configurationData.getValue(property);
     }
 
     /**
@@ -70,7 +66,7 @@ public class SettingsManagerImpl implements SettingsManager {
      * @param <T> The property's type
      */
     public <T> void setProperty(Property<T> property, T value) {
-        valuesRegistry.set(property, value);
+        configurationData.setValue(property, value);
     }
 
     /**
@@ -81,14 +77,14 @@ public class SettingsManagerImpl implements SettingsManager {
     }
 
     public void save() {
-        resource.exportProperties(configurationData, valuesRegistry);
+        resource.exportProperties(configurationData);
     }
 
     protected void loadFromResourceAndValidate() {
         final PropertyReader reader = resource.createReader();
-        valuesRegistry.initializeValues(reader, configurationData);
+        configurationData.initializeValues(reader);
 
-        if (migrationService != null && migrationService.checkAndMigrate(reader, valuesRegistry, configurationData)) {
+        if (migrationService != null && migrationService.checkAndMigrate(reader, configurationData)) {
             save();
         }
     }

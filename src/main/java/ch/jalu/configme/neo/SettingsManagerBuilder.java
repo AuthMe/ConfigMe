@@ -4,8 +4,6 @@ import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.neo.migration.MigrationService;
 import ch.jalu.configme.neo.migration.PlainMigrationService;
-import ch.jalu.configme.neo.registry.DefaultValueRegistry;
-import ch.jalu.configme.neo.registry.ValuesRegistry;
 import ch.jalu.configme.neo.resource.PropertyResource;
 import ch.jalu.configme.neo.resource.YamlFileResource;
 import ch.jalu.configme.utils.Utils;
@@ -21,7 +19,6 @@ public class SettingsManagerBuilder {
     private ConfigurationData configurationData;
     private PropertyResource resource;
     private MigrationService migrationService = new PlainMigrationService();
-    private ValuesRegistry valuesRegistry = new DefaultValueRegistry();
 
     private SettingsManagerBuilder(PropertyResource resource) {
         this.resource = resource;
@@ -56,16 +53,10 @@ public class SettingsManagerBuilder {
         return this;
     }
 
-    public SettingsManagerBuilder valuesRegistry(ValuesRegistry valuesRegistry) {
-        this.valuesRegistry = valuesRegistry;
-        return this;
-    }
-
     public SettingsManager create() {
         Objects.requireNonNull(configurationData, "configurationData");
         Objects.requireNonNull(resource, "resource");
-        Objects.requireNonNull(valuesRegistry, "valuesRegistry");
-        return new SettingsManagerImpl(resource, configurationData, migrationService, valuesRegistry);
+        return new SettingsManagerImpl(resource, configurationData, migrationService);
     }
 
 }

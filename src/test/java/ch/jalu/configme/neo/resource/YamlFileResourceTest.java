@@ -8,8 +8,6 @@ import ch.jalu.configme.neo.configurationdata.ConfigurationDataImpl;
 import ch.jalu.configme.neo.properties.BaseProperty;
 import ch.jalu.configme.neo.properties.OptionalProperty;
 import ch.jalu.configme.neo.properties.Property;
-import ch.jalu.configme.neo.registry.DefaultValueRegistry;
-import ch.jalu.configme.neo.registry.ValuesRegistry;
 import ch.jalu.configme.neo.samples.TestConfiguration;
 import ch.jalu.configme.neo.samples.TestEnum;
 import org.junit.Ignore;
@@ -56,11 +54,10 @@ public class YamlFileResourceTest {
         File file = copyFileFromResources(INCOMPLETE_FILE);
         YamlFileResource resource = new YamlFileResource(file);
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestConfiguration.class);
-        ValuesRegistry valuesRegistry = new DefaultValueRegistry();
-        valuesRegistry.initializeValues(resource.createReader(), configurationData);
+        configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData, valuesRegistry);
+        resource.exportProperties(configurationData);
 
         // then
         // Load file again to make sure what we wrote can be read again
@@ -99,11 +96,10 @@ public class YamlFileResourceTest {
             newProperty("more.string2", "\tthis one\nhas some\nnew '' lines-test")));
         properties.addAll(ConfigurationDataBuilder.createConfiguration(TestConfiguration.class).getProperties());
         ConfigurationData configData = new ConfigurationDataImpl(properties);
-        ValuesRegistry valuesRegistry = new DefaultValueRegistry();
-        valuesRegistry.initializeValues(resource.createReader(), configData);
+        configData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configData, valuesRegistry);
+        resource.exportProperties(configData);
 
         // then
         PropertyReader reader = resource.createReader();
@@ -152,8 +148,7 @@ public class YamlFileResourceTest {
         File file = copyFileFromResources(INCOMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestConfiguration.class);
-        ValuesRegistry valuesRegistry = new DefaultValueRegistry();
-        valuesRegistry.initializeValues(resource.createReader(), configurationData);
+        configurationData.initializeValues(resource.createReader());
         file.delete();
         // Hacky: the only way we can easily provoke an IOException is by deleting the file and creating a folder
         // with the same name...
@@ -161,7 +156,7 @@ public class YamlFileResourceTest {
 
         // when / then
         try {
-            resource.exportProperties(configurationData, valuesRegistry);
+            resource.exportProperties(configurationData);
             fail("Expected ConfigMeException to be thrown");
         } catch (ConfigMeException e) {
             assertThat(e.getCause(), instanceOf(IOException.class));
@@ -175,11 +170,10 @@ public class YamlFileResourceTest {
         File file = copyFileFromResources(COMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestConfiguration.class);
-        ValuesRegistry valuesRegistry = new DefaultValueRegistry();
-        valuesRegistry.initializeValues(resource.createReader(), configurationData);
+        configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData, valuesRegistry);
+        resource.exportProperties(configurationData);
 
         // then
         // The IDE likes manipulating the whitespace in the expected file. As long as it's handled outside of an IDE
@@ -197,11 +191,10 @@ public class YamlFileResourceTest {
             new OptionalProperty<>((BaseProperty<TestEnum>) TestConfiguration.RATIO_ORDER)));
         File file = copyFileFromResources(INCOMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
-        ValuesRegistry valuesRegistry = new DefaultValueRegistry();
-        valuesRegistry.initializeValues(resource.createReader(), configurationData);
+        configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData, valuesRegistry);
+        resource.exportProperties(configurationData);
 
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
@@ -221,11 +214,10 @@ public class YamlFileResourceTest {
             new OptionalProperty<>((BaseProperty<TestEnum>) TestConfiguration.RATIO_ORDER)));
         File file = copyFileFromResources(COMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
-        ValuesRegistry valuesRegistry = new DefaultValueRegistry();
-        valuesRegistry.initializeValues(resource.createReader(), configurationData);
+        configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData, valuesRegistry);
+        resource.exportProperties(configurationData);
 
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
