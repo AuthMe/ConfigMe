@@ -1,6 +1,5 @@
 package ch.jalu.configme.neo;
 
-//import ch.jalu.configme.neo.SettingsHolder;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.migration.MigrationService;
 import ch.jalu.configme.neo.properties.Property;
@@ -71,7 +70,6 @@ public class SettingsManagerImpl implements SettingsManager {
      * @param <T> The property's type
      */
     public <T> void setProperty(Property<T> property, T value) {
-        property.validateValueToBeSet(value);
         valuesRegistry.set(property, value);
     }
 

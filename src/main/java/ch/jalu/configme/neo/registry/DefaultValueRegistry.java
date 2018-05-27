@@ -1,5 +1,6 @@
 package ch.jalu.configme.neo.registry;
 
+import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.properties.Property;
 import ch.jalu.configme.neo.resource.PropertyReader;
@@ -19,7 +20,11 @@ public class DefaultValueRegistry implements ValuesRegistry {
 
     @Override
     public <T> void set(Property<T> property, T value) {
-        values.put(property.getPath(), value);
+        if (property.isValidValueForSetting(value)) {
+            values.put(property.getPath(), value);
+        } else {
+            throw new ConfigMeException("Invalid value for property '" + property + "': " + value);
+        }
     }
 
     @Override

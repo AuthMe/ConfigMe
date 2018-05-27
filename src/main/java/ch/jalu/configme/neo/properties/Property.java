@@ -19,6 +19,6 @@ public interface Property<T> {
 
     Object toExportRepresentation(T value);
 
-    void validateValueToBeSet(T value);
+    boolean isValidValueForSetting(T value);
 
 }

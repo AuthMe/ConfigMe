@@ -20,20 +20,6 @@ public class PlainMigrationService implements MigrationService {
             || !containsAllSettings(reader, configurationData.getAllProperties());
     }
 
-    /**
-     * Override this method for custom migrations. This method is executed before checking
-     * if all settings are present. For instance, you could implement deleting obsolete properties
-     * and rename properties in this method.
-     * <p>
-     * Note that you do <i>not</i> have to save the resource. The settings manager automatically
-     * does this if the migration service returns {@code true} from {@link #checkAndMigrate}.
-     *
-     * @param reader the property reader to check
-     * @param registry the values registry
-     * @param configurationData configuration data
-     * @return true if a migration was performed and the config should be saved,
-     *         false if no migration was performed
-     */
     protected boolean performMigrations(PropertyReader reader, ValuesRegistry registry,
                                         ConfigurationData configurationData) {
         return false;

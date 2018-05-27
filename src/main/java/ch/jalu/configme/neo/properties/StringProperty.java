@@ -9,17 +9,12 @@ public class StringProperty extends BaseProperty<String> {
     }
 
     @Override
-    public boolean isPresent(PropertyReader reader) {
-        return reader.getString(getPath()) != null;
+    protected String getFromResource(PropertyReader reader) {
+        return reader.getString(getPath());
     }
 
     @Override
     public Object toExportRepresentation(String value) {
         return value;
-    }
-
-    @Override
-    protected String getFromResource(PropertyReader reader) {
-        return reader.getString(getPath());
     }
 }

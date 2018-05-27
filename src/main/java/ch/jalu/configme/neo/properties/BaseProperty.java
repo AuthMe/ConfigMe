@@ -1,6 +1,5 @@
 package ch.jalu.configme.neo.properties;
 
-import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.neo.resource.PropertyReader;
 
 import javax.annotation.Nullable;
@@ -41,10 +40,8 @@ public abstract class BaseProperty<T> implements Property<T> {
     }
 
     @Override
-    public void validateValueToBeSet(T value) {
-        if (value == null) {
-            throw new ConfigMeException("Value may not be null");
-        }
+    public boolean isValidValueForSetting(T value) {
+        return value != null;
     }
 
     @Nullable
