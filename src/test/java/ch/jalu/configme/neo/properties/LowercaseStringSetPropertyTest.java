@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -99,5 +100,20 @@ public class LowercaseStringSetPropertyTest {
         // then
         assertThat(exportValue, instanceOf(Collection.class));
         assertThat((Collection<?>) exportValue, contains("first", "second", "third", "fourth"));
+    }
+
+    @Test
+    public void shouldDefineIfIsPresent() {
+        // given
+        Property<Set<String>> presentProperty = new LowercaseStringSetProperty("lowercaselist.path.test", "1", "two");
+        Property<Set<String>> absentProperty = new LowercaseStringSetProperty("lowercaselist.path.wrong");
+
+        // when
+        boolean isPresent1 = presentProperty.isPresent(reader);
+        boolean isPresent2 = absentProperty.isPresent(reader);
+
+        // then
+        assertThat(isPresent1, equalTo(true));
+        assertThat(isPresent2, equalTo(false));
     }
 }

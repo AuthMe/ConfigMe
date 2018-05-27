@@ -11,6 +11,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Utility class responsible for retrieving all {@link Property} fields
@@ -20,10 +22,10 @@ import java.util.Arrays;
  */
 public class ConfigurationDataBuilder {
 
-    private final PropertyListBuilder propertyListBuilder = new PropertyListBuilder();
-    private final CommentsConfiguration commentsConfiguration = new CommentsConfiguration();
+    protected PropertyListBuilder propertyListBuilder = new PropertyListBuilder();
+    protected CommentsConfiguration commentsConfiguration = new CommentsConfiguration();
 
-    private ConfigurationDataBuilder() {
+    protected ConfigurationDataBuilder() {
     }
 
     /**
@@ -34,7 +36,6 @@ public class ConfigurationDataBuilder {
      * @return collected configuration data
      */
     @SafeVarargs
-    // TODO: Used to be called collectData, check if this is really better (and warrants the breaking change)
     public static ConfigurationData createConfiguration(Class<? extends SettingsHolder>... classes) {
         return createConfiguration(Arrays.asList(classes));
     }
@@ -51,6 +52,15 @@ public class ConfigurationDataBuilder {
         return builder.collectData(classes);
     }
 
+    public static ConfigurationData createConfiguration(List<? extends Property<?>> properties) {
+        return new ConfigurationDataImpl(properties, Collections.emptyMap());
+    }
+
+    public static ConfigurationData createConfiguration(List<? extends Property<?>> properties,
+                                                        CommentsConfiguration commentsConfiguration) {
+        return new ConfigurationDataImpl(properties, commentsConfiguration.getAllComments());
+    }
+
     protected ConfigurationData collectData(Iterable<Class<? extends SettingsHolder>> classes) {
         for (Class<? extends SettingsHolder> clazz : classes) {
             collectProperties(clazz);
@@ -59,20 +69,21 @@ public class ConfigurationDataBuilder {
         return new ConfigurationDataImpl(propertyListBuilder.create(), commentsConfiguration.getAllComments());
     }
 
-    private void collectProperties(Class<?> clazz) {
+    protected void collectProperties(Class<?> clazz) {
         Field[] declaredFields = clazz.getDeclaredFields();
         for (Field field : declaredFields) {
             Property<?> property = getPropertyField(field);
             if (property != null) {
                 propertyListBuilder.add(property);
-                saveComment(field, property.getPath());
+                setCommentForPropertyField(field, property.getPath());
             }
         }
     }
 
-    private void saveComment(Field field, String path) {
-        if (field.isAnnotationPresent(Comment.class)) {
-            commentsConfiguration.setComment(path, field.getAnnotation(Comment.class).value());
+    protected void setCommentForPropertyField(Field field, String path) {
+        Comment commentAnnotation = field.getAnnotation(Comment.class);
+        if (commentAnnotation != null) {
+            commentsConfiguration.setComment(path, commentAnnotation.value());
         }
     }
 
@@ -83,7 +94,7 @@ public class ConfigurationDataBuilder {
      * @return the property the field defines, or null if not applicable
      */
     @Nullable
-    private static Property<?> getPropertyField(Field field) {
+    protected Property<?> getPropertyField(Field field) {
         if (Property.class.isAssignableFrom(field.getType()) && Modifier.isStatic(field.getModifiers())) {
             try {
                 return (Property<?>) field.get(null);

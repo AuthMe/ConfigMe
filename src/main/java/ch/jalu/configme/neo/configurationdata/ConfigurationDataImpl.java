@@ -12,19 +12,16 @@ import java.util.Map;
 /**
  * Contains information about the available properties and their associated comments.
  */
-// TODO: Do we really need an interface for this? This class is probably fine on its own and would keep old code working.
 public class ConfigurationDataImpl implements ConfigurationData {
 
     private final List<Property<?>> properties;
     private final Map<String, List<String>> sectionComments;
+    private final Map<String, Object> values;
 
-    public ConfigurationDataImpl(List<? extends Property<?>> allProperties) {
-        this(allProperties, Collections.emptyMap());
-    }
-
-    public ConfigurationDataImpl(List<? extends Property<?>> allProperties, Map<String, List<String>> sectionComments) {
+    protected ConfigurationDataImpl(List<? extends Property<?>> allProperties, Map<String, List<String>> sectionComments) {
         this.properties = Collections.unmodifiableList(allProperties);
         this.sectionComments = Collections.unmodifiableMap(sectionComments);
+        this.values = new HashMap<>();
     }
 
     @Override
@@ -36,8 +33,6 @@ public class ConfigurationDataImpl implements ConfigurationData {
     public List<String> getCommentsForSection(String path) {
         return sectionComments.getOrDefault(path, Collections.emptyList());
     }
-
-    private final Map<String, Object> values = new HashMap<>();
 
     @Override
     @SuppressWarnings("unchecked")

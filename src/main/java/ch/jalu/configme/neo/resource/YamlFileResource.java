@@ -37,8 +37,8 @@ public class YamlFileResource implements PropertyResource {
         try (Writer writer = new FileWriter(file)) {
             PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
             for (Property<?> property : configurationData.getProperties()) {
-                final Object exportObject = ((Property) property).toExportRepresentation(configurationData.getValue(property));
-                if (exportObject == null) {
+                final Object exportValue = getExportValue(property, configurationData);
+                if (exportValue == null) {
                     continue;
                 }
 
@@ -52,7 +52,7 @@ public class YamlFileResource implements PropertyResource {
                 }
 
                 writer.append(" ")
-                    .append(toYaml(property, exportObject, pathElements.get(pathElements.size() - 1).indentationLevel));
+                    .append(toYaml(property, exportValue, pathElements.get(pathElements.size() - 1).indentationLevel));
             }
             writer.flush();
             writer.close();
@@ -132,7 +132,11 @@ public class YamlFileResource implements PropertyResource {
         return singleQuoteYaml;
     }
 
-    private static Yaml newYaml(boolean useSingleQuotes) {
+    private <T> Object getExportValue(Property<T> property, ConfigurationData configurationData) {
+        return property.toExportRepresentation(configurationData.getValue(property));
+    }
+
+    protected Yaml newYaml(boolean useSingleQuotes) {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setAllowUnicode(true);

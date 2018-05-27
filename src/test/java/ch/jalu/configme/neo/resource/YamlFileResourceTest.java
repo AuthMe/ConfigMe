@@ -3,8 +3,6 @@ package ch.jalu.configme.neo.resource;
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
-import ch.jalu.configme.neo.configurationdata.ConfigurationDataBuilder;
-import ch.jalu.configme.neo.configurationdata.ConfigurationDataImpl;
 import ch.jalu.configme.neo.properties.BaseProperty;
 import ch.jalu.configme.neo.properties.OptionalProperty;
 import ch.jalu.configme.neo.properties.Property;
@@ -27,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ch.jalu.configme.TestUtils.getJarPath;
+import static ch.jalu.configme.neo.configurationdata.ConfigurationDataBuilder.createConfiguration;
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newProperty;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -53,7 +52,7 @@ public class YamlFileResourceTest {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
         YamlFileResource resource = new YamlFileResource(file);
-        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestConfiguration.class);
+        ConfigurationData configurationData = createConfiguration(TestConfiguration.class);
         configurationData.initializeValues(resource.createReader());
 
         // when
@@ -94,8 +93,8 @@ public class YamlFileResourceTest {
         List<Property<?>> properties = new ArrayList<>(Arrays.asList(
             newProperty("more.string1", "it's a text with some \\'apostrophes'"),
             newProperty("more.string2", "\tthis one\nhas some\nnew '' lines-test")));
-        properties.addAll(ConfigurationDataBuilder.createConfiguration(TestConfiguration.class).getProperties());
-        ConfigurationData configData = new ConfigurationDataImpl(properties);
+        properties.addAll(createConfiguration(TestConfiguration.class).getProperties());
+        ConfigurationData configData = createConfiguration(properties);
         configData.initializeValues(resource.createReader());
 
         // when
@@ -147,7 +146,7 @@ public class YamlFileResourceTest {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
-        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestConfiguration.class);
+        ConfigurationData configurationData = createConfiguration(TestConfiguration.class);
         configurationData.initializeValues(resource.createReader());
         file.delete();
         // Hacky: the only way we can easily provoke an IOException is by deleting the file and creating a folder
@@ -169,7 +168,7 @@ public class YamlFileResourceTest {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
-        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestConfiguration.class);
+        ConfigurationData configurationData = createConfiguration(TestConfiguration.class);
         configurationData.initializeValues(resource.createReader());
 
         // when
@@ -186,7 +185,7 @@ public class YamlFileResourceTest {
     public void shouldSkipAbsentOptionalProperty() throws IOException {
         // given
         // TODO: REMOVE CASTING AFTER SPLITTING TYPE SYSTEM
-        ConfigurationData configurationData = new ConfigurationDataImpl(Arrays.asList(
+        ConfigurationData configurationData = createConfiguration(Arrays.asList(
             new OptionalProperty<>((BaseProperty<Integer>) TestConfiguration.DURATION_IN_SECONDS),
             new OptionalProperty<>((BaseProperty<TestEnum>) TestConfiguration.RATIO_ORDER)));
         File file = copyFileFromResources(INCOMPLETE_FILE);
@@ -209,7 +208,7 @@ public class YamlFileResourceTest {
     public void shouldExportAllPresentOptionalProperties() throws IOException {
         // given
         // TODO: REMOVE CASTING AFTER SPLITTING TYPE SYSTEM
-        ConfigurationData configurationData = new ConfigurationDataImpl(Arrays.asList(
+        ConfigurationData configurationData = createConfiguration(Arrays.asList(
             new OptionalProperty<>((BaseProperty<Integer>) TestConfiguration.DURATION_IN_SECONDS),
             new OptionalProperty<>((BaseProperty<TestEnum>) TestConfiguration.RATIO_ORDER)));
         File file = copyFileFromResources(COMPLETE_FILE);
@@ -230,27 +229,7 @@ public class YamlFileResourceTest {
             "        order: 'FIRST'"
         ));
     }
-//
-//    @Test
-//    public void shouldSetValueAfterLoadingEmptyFile() {
-//        // given
-//        String durationPath = "duration";
-//        int duration = 13;
-//        String headerPath = "text.sample.titles.header";
-//        String header = "Test header";
-//
-//        File file = copyFileFromResources("/empty_file.yml");
-//        PropertyResource resource = new YamlFileResource(file);
-//
-//        // when
-//        resource.setValue(durationPath, duration);
-//        resource.setValue(headerPath, header);
-//
-//        // then
-//        assertThat(resource.getObject(durationPath), equalTo(duration));
-//        assertThat(resource.getObject(headerPath), equalTo(header));
-//    }
-//
+
 //    @Test
 //    public void shouldClearOtherValuesWhenBeanAtRootIsSet() {
 //        // given

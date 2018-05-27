@@ -1,6 +1,7 @@
 package ch.jalu.configme.neo.properties;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -98,24 +99,24 @@ public class PropertyInitializer {
 //    public static <B> Property<B> newBeanProperty(Class<B> beanClass, String path, B defaultValue) {
 //        return new BeanProperty<>(beanClass, path, defaultValue);
 //    }
-//
-//    // --------------
-//    // Optional flavors
-//    // --------------
-//    public static Property<Optional<Boolean>> optionalBooleanProperty(String path) {
-//        return new OptionalProperty<>(new BooleanProperty(path, false));
-//    }
-//
-//    public static Property<Optional<Integer>> optionalIntegerProperty(String path) {
-//        return new OptionalProperty<>(new IntegerProperty(path, 0));
-//    }
-//
-//    public static Property<Optional<String>> optionalStringProperty(String path) {
-//        return new OptionalProperty<>(new StringProperty(path, ""));
-//    }
-//
-//    public static <E extends Enum<E>> Property<Optional<E>> optionalEnumProperty(Class<E> clazz, String path) {
-//        // default value may never be null, so get the first entry in the enum class
-//        return new OptionalProperty<>(new EnumProperty<>(clazz, path, clazz.getEnumConstants()[0]));
-//    }
+
+    // --------------
+    // Optional flavors
+    // --------------
+    public static Property<Optional<Boolean>> optionalBooleanProperty(String path) {
+        return new OptionalProperty<>(new BooleanProperty(path, false));
+    }
+
+    public static Property<Optional<Integer>> optionalIntegerProperty(String path) {
+        return new OptionalProperty<>(new IntegerProperty(path, 0));
+    }
+
+    public static Property<Optional<String>> optionalStringProperty(String path) {
+        return new OptionalProperty<>(new StringProperty(path, ""));
+    }
+
+    public static <E extends Enum<E>> Property<Optional<E>> optionalEnumProperty(Class<E> clazz, String path) {
+        // default value may never be null, so get the first entry in the enum class
+        return new OptionalProperty<>(new EnumProperty<>(clazz, path, clazz.getEnumConstants()[0]));
+    }
 }

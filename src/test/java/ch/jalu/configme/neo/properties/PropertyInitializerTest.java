@@ -5,7 +5,12 @@ import ch.jalu.configme.samples.TestEnum;
 import org.junit.Test;
 
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newListProperty;
+import static ch.jalu.configme.neo.properties.PropertyInitializer.newLowercaseStringSetProperty;
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newProperty;
+import static ch.jalu.configme.neo.properties.PropertyInitializer.optionalBooleanProperty;
+import static ch.jalu.configme.neo.properties.PropertyInitializer.optionalEnumProperty;
+import static ch.jalu.configme.neo.properties.PropertyInitializer.optionalIntegerProperty;
+import static ch.jalu.configme.neo.properties.PropertyInitializer.optionalStringProperty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
@@ -21,13 +26,13 @@ public class PropertyInitializerTest {
         assertThat(newProperty("my.path", "default"), instanceOf(StringProperty.class));
         assertThat(newProperty(TestEnum.class, "my.path", TestEnum.FIRST), instanceOf(EnumProperty.class));
         assertThat(newListProperty("path", "default", "entries"), instanceOf(StringListProperty.class));
-//        assertThat(newLowercaseListProperty("path", "a", "b", "c"), instanceOf(LowercaseStringListProperty.class));
+        assertThat(newLowercaseStringSetProperty("path", "a", "b", "c"), instanceOf(LowercaseStringSetProperty.class));
 //        assertThat(newBeanProperty(WorldGroupConfig.class, "worlds", new WorldGroupConfig()), instanceOf(BeanProperty.class));
-//
-//        assertThat(optionalBooleanProperty("path"), instanceOf(OptionalProperty.class));
-//        assertThat(optionalIntegerProperty("path"), instanceOf(OptionalProperty.class));
-//        assertThat(optionalStringProperty("path"), instanceOf(OptionalProperty.class));
-//        assertThat(optionalEnumProperty(TestEnum.class, "path"), instanceOf(OptionalProperty.class));
+
+        assertThat(optionalBooleanProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalIntegerProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalStringProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalEnumProperty(TestEnum.class, "path"), instanceOf(OptionalProperty.class));
     }
 
     @Test

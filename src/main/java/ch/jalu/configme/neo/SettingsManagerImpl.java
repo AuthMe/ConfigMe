@@ -44,7 +44,6 @@ public class SettingsManagerImpl implements SettingsManager {
         this.resource = resource;
         this.migrationService = migrationService;
         loadFromResourceAndValidate();
-        // TODO: Configuration validation on "startup"
     }
 
     /**
