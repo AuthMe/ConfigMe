@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ConfigurationData {
 
-    List<Property<?>> getAllProperties();
+    List<Property<?>> getProperties();
 
     List<String> getCommentsForSection(String path);
 

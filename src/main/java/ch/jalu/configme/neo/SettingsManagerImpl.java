@@ -81,8 +81,7 @@ public class SettingsManagerImpl implements SettingsManager {
     }
 
     public void save() {
-        // TODO: resource.exportProperties(configurationData, valueRegistry) ?
-        throw new UnsupportedOperationException("Not yet implemented");
+        resource.exportProperties(configurationData, valuesRegistry);
     }
 
     protected void loadFromResourceAndValidate() {

@@ -34,6 +34,7 @@ public class ConfigurationDataBuilder {
      * @return collected configuration data
      */
     @SafeVarargs
+    // TODO: Used to be called collectData, check if this is really better (and warrants the breaking change)
     public static ConfigurationData createConfiguration(Class<? extends SettingsHolder>... classes) {
         return createConfiguration(Arrays.asList(classes));
     }
@@ -101,13 +102,13 @@ public class ConfigurationDataBuilder {
 
     protected <T extends SettingsHolder> T createSettingsHolderInstance(Class<T> clazz) {
         try {
-            Constructor<T> constructor = clazz.getConstructor();
+            Constructor<T> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
             return constructor.newInstance();
         } catch (NoSuchMethodException e) {
-            throw new ConfigMeException("", e); // todo error handling
+            throw new ConfigMeException("Expected no-args constructor to be available for " + clazz, e);
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            throw new ConfigMeException("", e); // todo error handling
+            throw new ConfigMeException("Could not create instance of " + clazz, e);
         }
     }
 }

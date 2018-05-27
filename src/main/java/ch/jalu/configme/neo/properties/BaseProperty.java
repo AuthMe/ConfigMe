@@ -24,7 +24,8 @@ public abstract class BaseProperty<T> implements Property<T> {
         return path;
     }
 
-    protected T getDefaultValue() {
+    @Override
+    public T getDefaultValue() {
         return defaultValue;
     }
 

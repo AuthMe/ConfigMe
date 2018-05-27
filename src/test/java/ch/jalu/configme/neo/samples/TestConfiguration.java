@@ -1,14 +1,12 @@
 package ch.jalu.configme.neo.samples;
 
-import ch.jalu.configme.Comment; // TODO .
-import ch.jalu.configme.SectionComments; // TODO .
+import ch.jalu.configme.Comment;
 import ch.jalu.configme.neo.SettingsHolder;
+import ch.jalu.configme.neo.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.neo.properties.IntegerProperty;
 import ch.jalu.configme.neo.properties.Property;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newProperty;
@@ -65,13 +63,11 @@ public final class TestConfiguration implements SettingsHolder {
     private TestConfiguration() {
     }
 
-    @SectionComments
-    public static Map<String, String[]> getComments() {
-        Map<String, String[]> comments = new HashMap<>();
-        comments.put("sample", new String[]{"Sample section"});
-        comments.put("features.cool", new String[]{"Cool features", "Contains cool settings"});
-        comments.put("features.boring", new String[]{"Plain boring features"});
-        comments.put("test", new String[]{"Test section"});
-        return comments;
+    @Override
+    public void registerComments(CommentsConfiguration conf) {
+        conf.setComment("sample", "Sample section");
+        conf.setComment("features.cool", "Cool features", "Contains cool settings");
+        conf.setComment("features.boring", "Plain boring features");
+        conf.setComment("test", "Test section");
     }
 }

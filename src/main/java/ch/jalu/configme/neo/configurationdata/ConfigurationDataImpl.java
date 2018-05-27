@@ -9,6 +9,7 @@ import java.util.Map;
 /**
  * Contains information about the available properties and their associated comments.
  */
+// TODO: Do we really need an interface for this? This class is probably fine on its own and would keep old code working.
 public class ConfigurationDataImpl implements ConfigurationData {
 
     private final List<Property<?>> properties;
@@ -24,7 +25,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
-    public List<Property<?>> getAllProperties() {
+    public List<Property<?>> getProperties() {
         return properties;
     }
 

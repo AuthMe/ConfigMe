@@ -13,8 +13,7 @@ public interface ValuesRegistry {
 
     <T> void set(Property<T> property, T value);
 
+    // TODO: Move configurationData first?
     void initializeValues(PropertyReader reader, ConfigurationData configurationData);
 
-    // TODO int size(); ?
-    // TODO getKeys() ?
 }

@@ -31,7 +31,7 @@ public class DefaultValueRegistry implements ValuesRegistry {
     @SuppressWarnings("unchecked")
     public void initializeValues(PropertyReader reader, ConfigurationData configurationData) {
         values.clear();
-        configurationData.getAllProperties()
+        configurationData.getProperties()
             .forEach(property -> set((Property) property, property.getValue(reader)));
     }
 }

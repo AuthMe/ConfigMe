@@ -14,7 +14,7 @@ import ch.jalu.configme.neo.configurationdata.CommentsConfiguration;
  */
 public interface SettingsHolder {
 
-    default void registerComments(CommentsConfiguration configuration) {
+    default void registerComments(CommentsConfiguration conf) {
         // noop
     }
 }

@@ -17,7 +17,7 @@ public class PlainMigrationService implements MigrationService {
                                    ValuesRegistry registry,
                                    ConfigurationData configurationData) {
         return performMigrations(reader, registry, configurationData)
-            || !containsAllSettings(reader, configurationData.getAllProperties());
+            || !containsAllSettings(reader, configurationData.getProperties());
     }
 
     protected boolean performMigrations(PropertyReader reader, ValuesRegistry registry,
