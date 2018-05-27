@@ -8,6 +8,6 @@ public interface ConfigurationData {
 
     List<Property<?>> getAllProperties();
 
-    String[] getCommentsForSection(String path); // TODO: Subject to change
+    List<String> getCommentsForSection(String path);
 
 }

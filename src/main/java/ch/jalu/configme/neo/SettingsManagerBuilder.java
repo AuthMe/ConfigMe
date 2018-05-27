@@ -1,6 +1,7 @@
 package ch.jalu.configme.neo;
 
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
+import ch.jalu.configme.neo.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.neo.migration.MigrationService;
 import ch.jalu.configme.neo.migration.PlainMigrationService;
 import ch.jalu.configme.neo.registry.DefaultValueRegistry;
@@ -40,12 +41,15 @@ public class SettingsManagerBuilder {
         return this;
     }
 
+    public SettingsManagerBuilder configurationData(Class<? extends SettingsHolder>... classes) {
+        this.configurationData = ConfigurationDataBuilder.createConfiguration(classes);
+        return this;
+    }
+
     public SettingsManagerBuilder configurationData(ConfigurationData configurationData) {
         this.configurationData = configurationData;
         return this;
     }
-
-    // TODO: configurationData(Class...)
 
     public SettingsManagerBuilder migrationService(MigrationService migrationService) {
         this.migrationService = migrationService;

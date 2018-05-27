@@ -1,6 +1,7 @@
 package ch.jalu.configme.neo.properties;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Convenience class for instantiating {@link Property} objects. You can use
@@ -73,18 +74,18 @@ public class PropertyInitializer {
         // does not have the same name as not to clash with #newProperty(String, String)
         return new StringListProperty(path, defaultValues);
     }
-//
-//    /**
-//     * Creates a new String list property where all values are lowercase.
-//     *
-//     * @param path the property's path
-//     * @param defaultValues the items in the default list
-//     * @return the created list property
-//     */
-//    public static Property<List<String>> newLowercaseListProperty(String path, String... defaultValues) {
-//        return new LowercaseStringListProperty(path, defaultValues);
-//    }
-//
+
+    /**
+     * Creates a new String set property where all values are lowercase.
+     *
+     * @param path the property's path
+     * @param defaultValues the items in the default set
+     * @return the created set property
+     */
+    public static Property<Set<String>> newLowercaseStringSetProperty(String path, String... defaultValues) {
+        return new LowercaseStringSetProperty(path, defaultValues);
+    }
+
 //    /**
 //     * Creates a new bean property.
 //     *

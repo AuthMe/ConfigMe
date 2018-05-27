@@ -11,26 +11,25 @@ import java.util.Map;
  */
 public class ConfigurationDataImpl implements ConfigurationData {
 
-    private final List<Property<?>> allProperties;
-    private final Map<String, String[]> sectionComments;
+    private final List<Property<?>> properties;
+    private final Map<String, List<String>> sectionComments;
 
     public ConfigurationDataImpl(List<? extends Property<?>> allProperties) {
         this(allProperties, Collections.emptyMap());
     }
 
-    public ConfigurationDataImpl(List<? extends Property<?>> allProperties, Map<String, String[]> sectionComments) {
-        this.allProperties = Collections.unmodifiableList(allProperties);
+    public ConfigurationDataImpl(List<? extends Property<?>> allProperties, Map<String, List<String>> sectionComments) {
+        this.properties = Collections.unmodifiableList(allProperties);
         this.sectionComments = Collections.unmodifiableMap(sectionComments);
     }
 
     @Override
     public List<Property<?>> getAllProperties() {
-        return allProperties;
+        return properties;
     }
 
     @Override
-    public String[] getCommentsForSection(String path) {
-        String[] comments = sectionComments.get(path);
-        return (comments == null) ? new String[0] : comments;
+    public List<String> getCommentsForSection(String path) {
+        return sectionComments.getOrDefault(path, Collections.emptyList());
     }
 }

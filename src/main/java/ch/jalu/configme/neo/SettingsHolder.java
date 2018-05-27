@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo;
 
-import ch.jalu.configme.neo.configurationdata.ConfigurationData;
+import ch.jalu.configme.neo.configurationdata.CommentsConfiguration;
 
 /**
  * Marker interface for classes that have Property objects.
@@ -14,7 +14,7 @@ import ch.jalu.configme.neo.configurationdata.ConfigurationData;
  */
 public interface SettingsHolder {
 
-    default void registerComments(ConfigurationData configurationData) {
+    default void registerComments(CommentsConfiguration configuration) {
         // noop
     }
 }

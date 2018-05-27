@@ -22,18 +22,18 @@ import static org.mockito.Mockito.when;
  */
 public class LowercaseStringSetPropertyTest {
 
-    private static PropertyReader resource;
+    private static PropertyReader reader;
 
     @BeforeClass
     @SuppressWarnings("unchecked")
     public static void setUpConfiguration() {
-        resource = mock(PropertyReader.class);
+        reader = mock(PropertyReader.class);
         // need to have the List objects unchecked so we satisfy the List<?> signature
         List stringList = Arrays.asList("test1", "Test2", "3rd TEST");
-        when(resource.getList("lowercaselist.path.test")).thenReturn(stringList);
-        when(resource.getList("lowercaselist.path.wrong")).thenReturn(null);
+        when(reader.getList("lowercaselist.path.test")).thenReturn(stringList);
+        when(reader.getList("lowercaselist.path.wrong")).thenReturn(null);
         List mixedList = Arrays.asList('b', "test", 1);
-        when(resource.getList("lowercaselist.path.mixed")).thenReturn(mixedList);
+        when(reader.getList("lowercaselist.path.mixed")).thenReturn(mixedList);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class LowercaseStringSetPropertyTest {
         Property<Set<String>> property = new LowercaseStringSetProperty("lowercaselist.path.test", "1", "b");
 
         // when
-        Set<String> result = property.getValue(resource);
+        Set<String> result = property.getValue(reader);
 
         // then
         assertThat(result, contains("test1", "test2", "3rd test"));
@@ -55,7 +55,7 @@ public class LowercaseStringSetPropertyTest {
             new LowercaseStringSetProperty("lowercaselist.path.wrong", "default", "list", "elements");
 
         // when
-        Set<String> result = property.getValue(resource);
+        Set<String> result = property.getValue(reader);
 
         // then
         assertThat(result, contains("default", "list", "elements"));
@@ -68,7 +68,7 @@ public class LowercaseStringSetPropertyTest {
             new LowercaseStringSetProperty("lowercaselist.path.mixed", "my", "default", "values");
 
         // when
-        Set<String> result = property.getValue(resource);
+        Set<String> result = property.getValue(reader);
 
         // then
         assertThat(result, contains("b", "test", "1"));
@@ -79,10 +79,10 @@ public class LowercaseStringSetPropertyTest {
         // given
         Property<Set<String>> property = new LowercaseStringSetProperty("path");
         List list = Arrays.asList(null, "test", null, "test");
-        given(resource.getList(property.getPath())).willReturn(list);
+        given(reader.getList(property.getPath())).willReturn(list);
 
         // when
-        Set<String> result = property.getValue(resource);
+        Set<String> result = property.getValue(reader);
 
         // then
         assertThat(result, contains("null", "test"));
