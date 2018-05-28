@@ -133,7 +133,7 @@ public class YamlFileResource implements PropertyResource {
     }
 
     private <T> Object getExportValue(Property<T> property, ConfigurationData configurationData) {
-        return property.toExportRepresentation(configurationData.getValue(property));
+        return property.getPropertyType().toExportValue(configurationData.getValue(property));
     }
 
     protected Yaml newYaml(boolean useSingleQuotes) {

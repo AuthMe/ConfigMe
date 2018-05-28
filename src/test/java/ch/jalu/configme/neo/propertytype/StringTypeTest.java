@@ -1,18 +1,19 @@
-package ch.jalu.configme.neo.properties;
+package ch.jalu.configme.neo.propertytype;
 
 import ch.jalu.configme.neo.resource.PropertyReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for {@link StringProperty}.
+ * Test for {@link StringType}.
  */
-public class StringPropertyTest {
+public class StringTypeTest {
 
     private static PropertyReader reader;
 
@@ -26,34 +27,34 @@ public class StringPropertyTest {
     @Test
     public void shouldGetStringValue() {
         // given
-        Property<String> property = new StringProperty("str.path.test", "unused default");
+        PropertyType<String> type = new StringType();
 
         // when
-        String result = property.getValue(reader);
+        String result = type.getFromReader(reader, "str.path.test");
 
         // then
         assertThat(result, equalTo("Test value"));
     }
 
     @Test
-    public void shouldGetStringDefault() {
+    public void shouldReturnNullForMissingValue() {
         // given
-        Property<String> property = new StringProperty("str.path.wrong", "given default value");
+        PropertyType<String> type = new StringType();
 
         // when
-        String result = property.getValue(reader);
+        String result = type.getFromReader(reader, "str.path.wrong");
 
         // then
-        assertThat(result, equalTo("given default value"));
+        assertThat(result, nullValue());
     }
 
     @Test
     public void shouldDefineExportValue() {
         // given
-        Property<String> property = new StringProperty("path", "def. value");
+        PropertyType<String> type = new StringType();
 
         // when
-        Object exportValue = property.toExportRepresentation("some value");
+        Object exportValue = type.toExportValue("some value");
 
         // then
         assertThat(exportValue, equalTo("some value"));

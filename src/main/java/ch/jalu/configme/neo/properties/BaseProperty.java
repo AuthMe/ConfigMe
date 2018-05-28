@@ -1,22 +1,23 @@
 package ch.jalu.configme.neo.properties;
 
+import ch.jalu.configme.neo.propertytype.PropertyType;
 import ch.jalu.configme.neo.resource.PropertyReader;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
-// TODO: Think about renaming this to NonNullProperty and supporting that by default but allowing other
-// users to have nullable properties if they so desire.
-public abstract class BaseProperty<T> implements Property<T> {
+public class BaseProperty<T> implements Property<T> {
 
     private final String path;
     private final T defaultValue;
+    private final PropertyType<T> propertyType;
 
-    protected BaseProperty(String path, T defaultValue) {
+    public BaseProperty(String path, T defaultValue, PropertyType<T> propertyType) {
         Objects.requireNonNull(path, "path");
         Objects.requireNonNull(defaultValue, "defaultValue");
+        Objects.requireNonNull(propertyType, "propertyType");
         this.path = path;
         this.defaultValue = defaultValue;
+        this.propertyType = propertyType;
     }
 
     @Override
@@ -25,26 +26,23 @@ public abstract class BaseProperty<T> implements Property<T> {
     }
 
     @Override
+    public T determineValue(PropertyReader reader) {
+        T value = propertyType.getFromReader(reader, getPath());
+        return value != null ? value : getDefaultValue();
+    }
+
+    @Override
     public T getDefaultValue() {
         return defaultValue;
     }
 
     @Override
-    public T getValue(PropertyReader reader) {
-        T value = getFromResource(reader);
-        return value != null ? value : getDefaultValue();
+    public boolean isPresent(PropertyReader propertyReader) {
+        return propertyType.isPresent(propertyReader, getPath());
     }
 
     @Override
-    public boolean isPresent(PropertyReader reader) {
-        return getFromResource(reader) != null;
+    public PropertyType<T> getPropertyType() {
+        return propertyType;
     }
-
-    @Override
-    public boolean isValidValueForSetting(T value) {
-        return value != null;
-    }
-
-    @Nullable
-    protected abstract T getFromResource(PropertyReader reader);
 }

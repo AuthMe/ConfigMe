@@ -80,7 +80,7 @@ public class YamlFileReaderTest {
 
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
             assertThat("Property '" + entry.getKey().getPath() + "' has expected value",
-                entry.getKey().getValue(reader), equalTo(entry.getValue()));
+                entry.getKey().determineValue(reader), equalTo(entry.getValue()));
         }
     }
 

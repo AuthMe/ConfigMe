@@ -1,7 +1,6 @@
 package ch.jalu.configme.neo.configurationdata;
 
 import ch.jalu.configme.neo.properties.Property;
-import ch.jalu.configme.neo.properties.StringProperty;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -10,6 +9,7 @@ import java.util.List;
 
 import static ch.jalu.configme.TestUtils.containsAll;
 import static ch.jalu.configme.TestUtils.verifyException;
+import static ch.jalu.configme.neo.properties.PropertyInitializer.newProperty;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -21,9 +21,9 @@ public class ConfigurationDataImplTest {
     public void shouldAcceptListWithTypedProperty() {
         // given
         List<Property<?>> properties = Arrays.asList(
-            new StringProperty("test", "Test"),
-            new StringProperty("taste", "Taste"),
-            new StringProperty("toast", "Toaster"));
+            newProperty("test", "Test"),
+            newProperty("taste", "Taste"),
+            newProperty("toast", "Toaster"));
 
         // when
         ConfigurationData configData = new ConfigurationDataImpl(properties, Collections.emptyMap());
@@ -35,7 +35,7 @@ public class ConfigurationDataImplTest {
     @Test
     public void shouldHaveImmutablePropertyList() {
         // given
-        List<Property<?>> properties = Collections.singletonList(new StringProperty("test", ""));
+        List<Property<?>> properties = Collections.singletonList(newProperty("test", ""));
         ConfigurationData configData = new ConfigurationDataImpl(properties, Collections.emptyMap());
 
         // when / then

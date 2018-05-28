@@ -4,9 +4,7 @@ import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.neo.configurationdata.samples.AdditionalTestConfiguration;
 import ch.jalu.configme.neo.configurationdata.samples.IllegalSettingsHolderConstructorClasses;
-import ch.jalu.configme.neo.properties.IntegerProperty;
 import ch.jalu.configme.neo.properties.Property;
-import ch.jalu.configme.neo.properties.StringProperty;
 import ch.jalu.configme.neo.samples.ClassWithPrivatePropertyField;
 import ch.jalu.configme.neo.samples.TestConfiguration;
 import org.junit.Test;
@@ -16,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static ch.jalu.configme.TestUtils.verifyException;
+import static ch.jalu.configme.neo.properties.PropertyInitializer.newProperty;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -100,9 +99,9 @@ public class ConfigurationDataBuilderTest {
     public void shouldCreateConfigDataWithPropertiesList() {
         // given
         List<Property<?>> properties = Arrays.asList(
-            new StringProperty("test", "t"),
-            new StringProperty("test.test", "oo"),
-            new IntegerProperty("test.int", 4));
+            newProperty("test", "t"),
+            newProperty("test.test", "oo"),
+            newProperty("test.int", 4));
 
         // when
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(properties);
@@ -116,9 +115,9 @@ public class ConfigurationDataBuilderTest {
     public void shouldCreateConfigDataWithPropertiesListAndCommentsMap() {
         // given
         List<Property<?>> properties = Arrays.asList(
-            new StringProperty("test", "t"),
-            new StringProperty("test.test", "oo"),
-            new IntegerProperty("test.int", 4));
+            newProperty("test", "t"),
+            newProperty("test.test", "oo"),
+            newProperty("test.int", 4));
         CommentsConfiguration commentsConfiguration = new CommentsConfiguration();
         commentsConfiguration.setComment("test.test", "Comment for 'test.test'", "Two lines here");
 

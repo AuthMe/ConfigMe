@@ -1,4 +1,4 @@
-package ch.jalu.configme.neo.properties;
+package ch.jalu.configme.neo.propertytype;
 
 import ch.jalu.configme.neo.resource.PropertyReader;
 import org.junit.BeforeClass;
@@ -9,14 +9,15 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for {@link StringListProperty}.
+ * Test for {@link StringListType}.
  */
-public class StringListPropertyTest {
+public class StringListTypeTest {
 
     private static PropertyReader reader;
 
@@ -35,48 +36,47 @@ public class StringListPropertyTest {
     @Test
     public void shouldGetStringListValue() {
         // given
-        Property<List<String>> property = new StringListProperty("list.path.test", "1", "b");
+        PropertyType<List<String>> type = new StringListType();
 
         // when
-        List<String> result = property.getValue(reader);
+        List<String> result = type.getFromReader(reader, "list.path.test");
 
         // then
         assertThat(result, contains("test1", "Test2", "3rd test"));
     }
 
     @Test
-    public void shouldGetStringListDefault() {
+    public void shouldReturnNullForMissingValue() {
         // given
-        Property<List<String>> property = new StringListProperty("list.path.wrong", "default", "list", "elements");
+        PropertyType<List<String>> type = new StringListType();
 
         // when
-        List<String> result = property.getValue(reader);
+        List<String> result = type.getFromReader(reader, "list.path.wrong");
 
         // then
-        assertThat(result, contains("default", "list", "elements"));
+        assertThat(result, nullValue());
     }
 
     @Test
-    public void shouldGetStringListDefaultForMixedListFromResource() {
+    public void shouldReturnNullForMixedListFromResource() {
         // given
-        Property<List<String>> property = new StringListProperty("list.path.mixed", "My", "default", "values");
+        PropertyType<List<String>> type = new StringListType();
 
         // when
-        List<String> result = property.getValue(reader);
+        List<String> result = type.getFromReader(reader, "list.path.mixed");
 
         // then
-        assertThat(result, contains("My", "default", "values"));
+        assertThat(result, nullValue()); // TODO: Behavior subject to change.
     }
 
     @Test
     public void shouldCheckIfValueIsListForPresenceCheck() {
         // given
-        Property<List<String>> property1 = new StringListProperty("list.path.wrong");
-        Property<List<String>> property2 = new StringListProperty("list.path.mixed");
+        PropertyType<List<String>> type = new StringListType();
 
         // when
-        boolean result1 = property1.isPresent(reader);
-        boolean result2 = property2.isPresent(reader);
+        boolean result1 = type.isPresent(reader, "list.path.wrong");
+        boolean result2 = type.isPresent(reader, "list.path.mixed");
 
         // then
         assertThat(result1, equalTo(false));
@@ -86,11 +86,11 @@ public class StringListPropertyTest {
     @Test
     public void shouldReturnValueAsExportValue() {
         // given
-        Property<List<String>> property = new StringListProperty("test.path");
+        PropertyType<List<String>> type = new StringListType();
         List<String> value = Arrays.asList("one", "two");
 
         // when
-        Object exportValue = property.toExportRepresentation(value);
+        Object exportValue = type.toExportValue(value);
 
         // then
         assertThat(exportValue, equalTo(value));

@@ -1,5 +1,10 @@
 package ch.jalu.configme.neo.properties;
 
+import ch.jalu.configme.neo.propertytype.BooleanType;
+import ch.jalu.configme.neo.propertytype.EnumType;
+import ch.jalu.configme.neo.propertytype.IntegerType;
+import ch.jalu.configme.neo.propertytype.StringType;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -26,7 +31,7 @@ public class PropertyInitializer {
      * @return the created property
      */
     public static Property<Boolean> newProperty(String path, boolean defaultValue) {
-        return new BooleanProperty(path, defaultValue);
+        return new BaseProperty<>(path, defaultValue, BooleanType.instance());
     }
 
     /**
@@ -37,7 +42,7 @@ public class PropertyInitializer {
      * @return the created property
      */
     public static Property<Integer> newProperty(String path, int defaultValue) {
-        return new IntegerProperty(path, defaultValue);
+        return new BaseProperty<>(path, defaultValue, IntegerType.instance());
     }
 
     /**
@@ -48,7 +53,7 @@ public class PropertyInitializer {
      * @return the created property
      */
     public static Property<String> newProperty(String path, String defaultValue) {
-        return new StringProperty(path, defaultValue);
+        return new BaseProperty<>(path, defaultValue, StringType.instance());
     }
 
     /**
@@ -61,7 +66,7 @@ public class PropertyInitializer {
      * @return the created enum property
      */
     public static <E extends Enum<E>> Property<E> newProperty(Class<E> clazz, String path, E defaultValue) {
-        return new EnumProperty<>(clazz, path, defaultValue);
+        return new BaseProperty<>(path, defaultValue, new EnumType<>(clazz));
     }
 
     /**
@@ -104,19 +109,19 @@ public class PropertyInitializer {
     // Optional flavors
     // --------------
     public static Property<Optional<Boolean>> optionalBooleanProperty(String path) {
-        return new OptionalProperty<>(new BooleanProperty(path, false));
+        return new OptionalProperty<>(path, BooleanType.instance());
     }
 
     public static Property<Optional<Integer>> optionalIntegerProperty(String path) {
-        return new OptionalProperty<>(new IntegerProperty(path, 0));
+        return new OptionalProperty<>(path, IntegerType.instance());
     }
 
     public static Property<Optional<String>> optionalStringProperty(String path) {
-        return new OptionalProperty<>(new StringProperty(path, ""));
+        return new OptionalProperty<>(path, StringType.instance());
     }
 
     public static <E extends Enum<E>> Property<Optional<E>> optionalEnumProperty(Class<E> clazz, String path) {
         // default value may never be null, so get the first entry in the enum class
-        return new OptionalProperty<>(new EnumProperty<>(clazz, path, clazz.getEnumConstants()[0]));
+        return new OptionalProperty<>(path, new EnumType<>(clazz));
     }
 }

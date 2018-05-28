@@ -3,7 +3,6 @@ package ch.jalu.configme.neo.samples;
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.neo.SettingsHolder;
 import ch.jalu.configme.neo.configurationdata.CommentsConfiguration;
-import ch.jalu.configme.neo.properties.IntegerProperty;
 import ch.jalu.configme.neo.properties.Property;
 
 import java.util.List;
@@ -36,8 +35,8 @@ public final class TestConfiguration implements SettingsHolder {
     @Comment({
         "The version number",
         "This is just a random number" })
-    public static final IntegerProperty VERSION_NUMBER =
-        new IntegerProperty("version", 32046);
+    public static final Property<Integer> VERSION_NUMBER =
+        newProperty("version", 32046);
 
     @Comment("Skip boring features?")
     public static final Property<Boolean> SKIP_BORING_FEATURES =

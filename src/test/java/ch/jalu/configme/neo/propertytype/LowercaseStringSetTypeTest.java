@@ -1,4 +1,4 @@
-package ch.jalu.configme.neo.properties;
+package ch.jalu.configme.neo.propertytype;
 
 import ch.jalu.configme.neo.resource.PropertyReader;
 import org.junit.BeforeClass;
@@ -13,15 +13,16 @@ import java.util.Set;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for {@link LowercaseStringSetProperty}.
+ * Test for {@link LowercaseStringSetType}.
  */
-public class LowercaseStringSetPropertyTest {
+public class LowercaseStringSetTypeTest {
 
     private static PropertyReader reader;
 
@@ -40,36 +41,34 @@ public class LowercaseStringSetPropertyTest {
     @Test
     public void shouldGetLowercaseStringListValue() {
         // given
-        Property<Set<String>> property = new LowercaseStringSetProperty("lowercaselist.path.test", "1", "b");
+        PropertyType<Set<String>> type = new LowercaseStringSetType();
 
         // when
-        Set<String> result = property.getValue(reader);
+        Set<String> result = type.getFromReader(reader, "lowercaselist.path.test");
 
         // then
         assertThat(result, contains("test1", "test2", "3rd test"));
     }
 
     @Test
-    public void shouldGetLowercaseStringListDefault() {
+    public void shouldReturnNullForMissingValues() {
         // given
-        Property<Set<String>> property =
-            new LowercaseStringSetProperty("lowercaselist.path.wrong", "default", "list", "elements");
+        PropertyType<Set<String>> type = new LowercaseStringSetType();
 
         // when
-        Set<String> result = property.getValue(reader);
+        Set<String> result = type.getFromReader(reader, "lowercaselist.path.wrong");
 
         // then
-        assertThat(result, contains("default", "list", "elements"));
+        assertThat(result, nullValue());
     }
 
     @Test
-    public void shouldGetStringListDefaultForMixedListFromResource() {
+    public void shouldReturnListOfStringsForListWithMixedTypes() {
         // given
-        Property<Set<String>> property =
-            new LowercaseStringSetProperty("lowercaselist.path.mixed", "my", "default", "values");
+        PropertyType<Set<String>> type = new LowercaseStringSetType();
 
         // when
-        Set<String> result = property.getValue(reader);
+        Set<String> result = type.getFromReader(reader, "lowercaselist.path.mixed");
 
         // then
         assertThat(result, contains("b", "test", "1"));
@@ -78,12 +77,12 @@ public class LowercaseStringSetPropertyTest {
     @Test
     public void shouldHandleNull() {
         // given
-        Property<Set<String>> property = new LowercaseStringSetProperty("path");
+        PropertyType<Set<String>> type = new LowercaseStringSetType();
         List list = Arrays.asList(null, "test", null, "test");
-        given(reader.getList(property.getPath())).willReturn(list);
+        given(reader.getList("the.path.to.fetch")).willReturn(list);
 
         // when
-        Set<String> result = property.getValue(reader);
+        Set<String> result = type.getFromReader(reader, "the.path.to.fetch");
 
         // then
         assertThat(result, contains("null", "test"));
@@ -92,10 +91,10 @@ public class LowercaseStringSetPropertyTest {
     @Test
     public void shouldDefineExportValue() {
         // given
-        Property<Set<String>> property = new LowercaseStringSetProperty("path");
+        PropertyType<Set<String>> type = new LowercaseStringSetType();
 
         // when
-        Object exportValue = property.toExportRepresentation(new LinkedHashSet<>(Arrays.asList("first", "second", "third", "fourth")));
+        Object exportValue = type.toExportValue(new LinkedHashSet<>(Arrays.asList("first", "second", "third", "fourth")));
 
         // then
         assertThat(exportValue, instanceOf(Collection.class));
@@ -105,12 +104,11 @@ public class LowercaseStringSetPropertyTest {
     @Test
     public void shouldDefineIfIsPresent() {
         // given
-        Property<Set<String>> presentProperty = new LowercaseStringSetProperty("lowercaselist.path.test", "1", "two");
-        Property<Set<String>> absentProperty = new LowercaseStringSetProperty("lowercaselist.path.wrong");
+        PropertyType<Set<String>> type = new LowercaseStringSetType();
 
         // when
-        boolean isPresent1 = presentProperty.isPresent(reader);
-        boolean isPresent2 = absentProperty.isPresent(reader);
+        boolean isPresent1 = type.isPresent(reader, "lowercaselist.path.test");
+        boolean isPresent2 = type.isPresent(reader, "lowercaselist.path.wrong");
 
         // then
         assertThat(isPresent1, equalTo(true));

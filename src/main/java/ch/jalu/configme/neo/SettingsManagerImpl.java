@@ -53,6 +53,7 @@ public class SettingsManagerImpl implements SettingsManager {
      * @param <T> The property's type
      * @return The property's value
      */
+    @Override
     public <T> T getProperty(Property<T> property) {
         return configurationData.getValue(property);
     }
@@ -64,6 +65,7 @@ public class SettingsManagerImpl implements SettingsManager {
      * @param value The new value to assign to the property
      * @param <T> The property's type
      */
+    @Override
     public <T> void setProperty(Property<T> property, T value) {
         configurationData.setValue(property, value);
     }
@@ -71,10 +73,12 @@ public class SettingsManagerImpl implements SettingsManager {
     /**
      * Reloads the configuration.
      */
+    @Override
     public void reload() {
         loadFromResourceAndValidate();
     }
 
+    @Override
     public void save() {
         resource.exportProperties(configurationData);
     }

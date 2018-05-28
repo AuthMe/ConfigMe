@@ -1,18 +1,19 @@
-package ch.jalu.configme.neo.properties;
+package ch.jalu.configme.neo.propertytype;
 
 import ch.jalu.configme.neo.resource.PropertyReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for {@link BooleanProperty}.
+ * Test for {@link BooleanType}.
  */
-public class BooleanPropertyTest {
+public class BooleanTypeTest {
 
     private static PropertyReader reader;
 
@@ -26,34 +27,34 @@ public class BooleanPropertyTest {
     @Test
     public void shouldGetBoolValue() {
         // given
-        Property<Boolean> property = new BooleanProperty("bool.path.test", false);
+        PropertyType<Boolean> type = new BooleanType();
 
         // when
-        boolean result = property.getValue(reader);
+        Boolean result = type.getFromReader(reader, "bool.path.test");
 
         // then
         assertThat(result, equalTo(true));
     }
 
     @Test
-    public void shouldGetBoolDefault() {
+    public void shouldReturnNullForMissingValue() {
         // given
-        Property<Boolean> property = new BooleanProperty("bool.path.wrong", true);
+        PropertyType<Boolean> type = new BooleanType();
 
         // when
-        boolean result = property.getValue(reader);
+        Boolean result = type.getFromReader(reader, "bool.path.wrong");
 
         // then
-        assertThat(result, equalTo(true));
+        assertThat(result, nullValue());
     }
 
     @Test
     public void shouldReturnExportRepresentation() {
         // given
-        Property<Boolean> property = new BooleanProperty("bool.path.test", true);
+        PropertyType<Boolean> type = new BooleanType();
 
         // when
-        Object exportValue = property.toExportRepresentation(true);
+        Object exportValue = type.toExportValue(true);
 
         // then
         assertThat(exportValue, equalTo(true));

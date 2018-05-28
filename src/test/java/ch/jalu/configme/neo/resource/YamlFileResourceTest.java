@@ -3,7 +3,6 @@ package ch.jalu.configme.neo.resource;
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
-import ch.jalu.configme.neo.properties.BaseProperty;
 import ch.jalu.configme.neo.properties.OptionalProperty;
 import ch.jalu.configme.neo.properties.Property;
 import ch.jalu.configme.neo.samples.TestConfiguration;
@@ -136,8 +135,8 @@ public class YamlFileResourceTest {
         PropertyReader readerAfterCopy = resource.createReader();
 
         // then
-        assertThat(TestConfiguration.RATIO_ORDER.getValue(readerBeforeCopy), equalTo(TestEnum.SECOND)); // default value
-        assertThat(TestConfiguration.RATIO_ORDER.getValue(readerAfterCopy), equalTo(TestEnum.FIRST));
+        assertThat(TestConfiguration.RATIO_ORDER.determineValue(readerBeforeCopy), equalTo(TestEnum.SECOND)); // default value
+        assertThat(TestConfiguration.RATIO_ORDER.determineValue(readerAfterCopy), equalTo(TestEnum.FIRST));
     }
 
 
@@ -184,10 +183,9 @@ public class YamlFileResourceTest {
     @Test
     public void shouldSkipAbsentOptionalProperty() throws IOException {
         // given
-        // TODO: REMOVE CASTING AFTER SPLITTING TYPE SYSTEM
         ConfigurationData configurationData = createConfiguration(Arrays.asList(
-            new OptionalProperty<>((BaseProperty<Integer>) TestConfiguration.DURATION_IN_SECONDS),
-            new OptionalProperty<>((BaseProperty<TestEnum>) TestConfiguration.RATIO_ORDER)));
+            createOptionalProperty(TestConfiguration.DURATION_IN_SECONDS),
+            createOptionalProperty(TestConfiguration.RATIO_ORDER)));
         File file = copyFileFromResources(INCOMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         configurationData.initializeValues(resource.createReader());
@@ -207,10 +205,9 @@ public class YamlFileResourceTest {
     @Test
     public void shouldExportAllPresentOptionalProperties() throws IOException {
         // given
-        // TODO: REMOVE CASTING AFTER SPLITTING TYPE SYSTEM
         ConfigurationData configurationData = createConfiguration(Arrays.asList(
-            new OptionalProperty<>((BaseProperty<Integer>) TestConfiguration.DURATION_IN_SECONDS),
-            new OptionalProperty<>((BaseProperty<TestEnum>) TestConfiguration.RATIO_ORDER)));
+            createOptionalProperty(TestConfiguration.DURATION_IN_SECONDS),
+            createOptionalProperty(TestConfiguration.RATIO_ORDER)));
         File file = copyFileFromResources(COMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         configurationData.initializeValues(resource.createReader());
@@ -279,5 +276,9 @@ public class YamlFileResourceTest {
 
     private File copyFileFromResources(String path) {
         return TestUtils.copyFileFromResources(path, temporaryFolder);
+    }
+
+    private static <T> OptionalProperty<T> createOptionalProperty(Property<T> baseProperty) {
+        return new OptionalProperty<>(baseProperty.getPath(), baseProperty.getPropertyType());
     }
 }

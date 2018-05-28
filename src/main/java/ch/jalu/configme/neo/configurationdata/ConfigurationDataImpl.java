@@ -42,7 +42,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
 
     @Override
     public <T> void setValue(Property<T> property, T value) {
-        if (property.isValidValueForSetting(value)) {
+        if (property.getPropertyType().isValidValue(value)) {
             values.put(property.getPath(), value);
         } else {
             throw new ConfigMeException("Invalid value for property '" + property + "': " + value);
@@ -53,6 +53,6 @@ public class ConfigurationDataImpl implements ConfigurationData {
     @SuppressWarnings("unchecked")
     public void initializeValues(PropertyReader reader) {
         values.clear();
-        getProperties().forEach(property -> setValue((Property) property, property.getValue(reader)));
+        getProperties().forEach(property -> setValue((Property) property, property.determineValue(reader)));
     }
 }
