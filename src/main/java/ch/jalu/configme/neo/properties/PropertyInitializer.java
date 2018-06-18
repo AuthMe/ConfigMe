@@ -3,8 +3,13 @@ package ch.jalu.configme.neo.properties;
 import ch.jalu.configme.neo.propertytype.BooleanType;
 import ch.jalu.configme.neo.propertytype.EnumType;
 import ch.jalu.configme.neo.propertytype.IntegerType;
+import ch.jalu.configme.neo.propertytype.LowercaseStringSetType;
+import ch.jalu.configme.neo.propertytype.StringListType;
 import ch.jalu.configme.neo.propertytype.StringType;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -78,7 +83,7 @@ public class PropertyInitializer {
      */
     public static Property<List<String>> newListProperty(String path, String... defaultValues) {
         // does not have the same name as not to clash with #newProperty(String, String)
-        return new StringListProperty(path, defaultValues);
+        return new BaseProperty<>(path, Arrays.asList(defaultValues), StringListType.instance());
     }
 
     /**
@@ -89,7 +94,7 @@ public class PropertyInitializer {
      * @return the created set property
      */
     public static Property<Set<String>> newLowercaseStringSetProperty(String path, String... defaultValues) {
-        return new LowercaseStringSetProperty(path, defaultValues);
+        return new BaseProperty<>(path, toLinkedHashSet(defaultValues), LowercaseStringSetType.instance());
     }
 
 //    /**
@@ -123,5 +128,9 @@ public class PropertyInitializer {
     public static <E extends Enum<E>> Property<Optional<E>> optionalEnumProperty(Class<E> clazz, String path) {
         // default value may never be null, so get the first entry in the enum class
         return new OptionalProperty<>(path, new EnumType<>(clazz));
+    }
+
+    protected static Set<String> toLinkedHashSet(String... values) {
+        return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(values)));
     }
 }
