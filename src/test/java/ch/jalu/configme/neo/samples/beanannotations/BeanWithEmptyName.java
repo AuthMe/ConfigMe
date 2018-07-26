@@ -1,11 +1,10 @@
 package ch.jalu.configme.neo.samples.beanannotations;
 
-import ch.jalu.configme.beanmapper.ExportName;
+import ch.jalu.configme.neo.beanmapper.ExportName;
 
 /**
  * Sample bean where an export name is null.
  */
-@Deprecated // TODO: Add bean property to neo
 public class BeanWithEmptyName {
 
     private String author;

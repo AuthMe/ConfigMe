@@ -95,4 +95,20 @@ public class TypeInformation {
     public String toString() {
         return "TypeInformation[type=" + type + "]";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof TypeInformation) {
+            TypeInformation other = (TypeInformation) obj;
+            return Objects.equals(this.type, other.type);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.type == null ? 0 : this.type.hashCode();
+    }
 }

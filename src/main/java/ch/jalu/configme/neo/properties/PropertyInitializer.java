@@ -97,18 +97,18 @@ public class PropertyInitializer {
         return new BaseProperty<>(path, toLinkedHashSet(defaultValues), LowercaseStringSetType.instance());
     }
 
-//    /**
-//     * Creates a new bean property.
-//     *
-//     * @param beanClass the JavaBean class
-//     * @param path the property's path
-//     * @param defaultValue default value
-//     * @param <B> the bean type
-//     * @return the created bean property
-//     */
-//    public static <B> Property<B> newBeanProperty(Class<B> beanClass, String path, B defaultValue) {
-//        return new BeanProperty<>(beanClass, path, defaultValue);
-//    }
+    /**
+     * Creates a new bean property.
+     *
+     * @param beanClass the JavaBean class
+     * @param path the property's path
+     * @param defaultValue default value
+     * @param <B> the bean type
+     * @return the created bean property
+     */
+    public static <B> Property<B> newBeanProperty(Class<B> beanClass, String path, B defaultValue) {
+        return new BeanProperty<>(beanClass, path, defaultValue);
+    }
 
     // --------------
     // Optional flavors

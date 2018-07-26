@@ -4,7 +4,7 @@ import ch.jalu.configme.neo.utils.TypeInformation;
 
 import javax.annotation.Nullable;
 
-public interface BeanProperty {
+public interface BeanProperty { // TODO: Naming clash -.-
 
     String getName();
 

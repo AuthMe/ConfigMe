@@ -1,11 +1,10 @@
 package ch.jalu.configme.neo.samples.beanannotations;
 
-import ch.jalu.configme.beanmapper.ExportName;
+import ch.jalu.configme.neo.beanmapper.ExportName;
 
 /**
  * "Entry" bean class with annotated properties.
  */
-@Deprecated // TODO: Add bean property to neo
 public class AnnotatedEntry {
 
     private long id;
