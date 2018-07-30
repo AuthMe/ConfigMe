@@ -1,18 +1,19 @@
-package ch.jalu.configme.neo.propertytype;
+package ch.jalu.configme.neo.properties;
 
 import ch.jalu.configme.neo.resource.PropertyReader;
 
-public class EnumType<E extends Enum<E>> extends NonNullPropertyType<E> {
+public class EnumProperty<E extends Enum<E>> extends BaseProperty<E> {
 
     private final Class<E> clazz;
 
-    public EnumType(Class<E> clazz) {
+    public EnumProperty(Class<E> clazz, String path, E defaultValue) {
+        super(path, defaultValue);
         this.clazz = clazz;
     }
 
     @Override
-    public E getFromReader(PropertyReader reader, String path) {
-        String value = reader.getString(path);
+    protected E getFromResource(PropertyReader reader) {
+        String value = reader.getString(getPath());
         return value == null ? null : mapToEnum(value);
     }
 

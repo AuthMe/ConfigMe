@@ -1,19 +1,18 @@
-package ch.jalu.configme.neo.propertytype;
+package ch.jalu.configme.neo.properties;
 
 import ch.jalu.configme.neo.resource.PropertyReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for {@link IntegerType}.
+ * Test for {@link IntegerProperty}.
  */
-public class IntegerTypeTest {
+public class IntegerPropertyTest {
 
     private static PropertyReader reader;
 
@@ -27,34 +26,34 @@ public class IntegerTypeTest {
     @Test
     public void shouldGetIntValue() {
         // given
-        PropertyType<Integer> type = new IntegerType();
+        Property<Integer> property = new IntegerProperty("int.path.test", 3);
 
         // when
-        Integer result = type.getFromReader(reader, "int.path.test");
+        int result = property.determineValue(reader);
 
         // then
         assertThat(result, equalTo(27));
     }
 
     @Test
-    public void shouldReturnNullForMissingValue() {
+    public void shouldGetIntDefault() {
         // given
-        PropertyType<Integer> type = new IntegerType();
+        Property<Integer> property = new IntegerProperty("int.path.wrong", -10);
 
         // when
-        Integer result = type.getFromReader(reader, "int.path.wrong");
+        int result = property.determineValue(reader);
 
         // then
-        assertThat(result, nullValue());
+        assertThat(result, equalTo(-10));
     }
 
     @Test
     public void shouldReturnValueForExport() {
         // given
-        PropertyType<Integer> type = new IntegerType();
+        Property<Integer> property = new IntegerProperty("some.path", -5);
 
         // when
-        Object exportValue = type.toExportValue(45);
+        Object exportValue = property.toExportValue(45);
 
         // then
         assertThat(exportValue, equalTo(45));

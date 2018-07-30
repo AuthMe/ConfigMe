@@ -1,7 +1,6 @@
 package ch.jalu.configme.neo.properties;
 
-import ch.jalu.configme.neo.propertytype.OptionalType;
-import ch.jalu.configme.neo.propertytype.PropertyType;
+import ch.jalu.configme.neo.resource.PropertyReader;
 
 import java.util.Optional;
 
@@ -13,11 +12,34 @@ import java.util.Optional;
  */
 public class OptionalProperty<T> extends BaseProperty<Optional<T>> {
 
-    public OptionalProperty(String path, PropertyType<T> basePropertyType) {
-        super(path, Optional.empty(), new OptionalType<>(basePropertyType));
+    private final Property<T> baseProperty;
+
+    public OptionalProperty(Property<T> baseProperty) {
+        super(baseProperty.getPath(), Optional.empty());
+        this.baseProperty = baseProperty;
     }
 
-    public OptionalProperty(String path, T defaultValue, PropertyType<T> basePropertyType) {
-        super(path, Optional.of(defaultValue), new OptionalType<>(basePropertyType));
+    public OptionalProperty(Property<T> baseProperty, T defaultValue) {
+        super(baseProperty.getPath(), Optional.of(defaultValue));
+        this.baseProperty = baseProperty;
+    }
+
+    @Override
+    protected Optional<T> getFromResource(PropertyReader reader) {
+        return baseProperty.isPresent(reader)
+            ? Optional.of(baseProperty.determineValue(reader))
+            : Optional.empty();
+    }
+
+    @Override
+    public boolean isPresent(PropertyReader reader) {
+        // getFromResource will never return null, and always returning true here prevents this
+        // optional(!) property from triggering migrations
+        return true;
+    }
+
+    @Override
+    public Object toExportValue(Optional<T> value) {
+        return value.map(baseProperty::toExportValue).orElse(null);
     }
 }

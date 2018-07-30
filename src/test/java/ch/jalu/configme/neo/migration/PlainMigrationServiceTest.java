@@ -2,8 +2,8 @@ package ch.jalu.configme.neo.migration;
 
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
+import ch.jalu.configme.neo.properties.IntegerProperty;
 import ch.jalu.configme.neo.properties.Property;
-import ch.jalu.configme.neo.propertytype.IntegerType;
 import ch.jalu.configme.neo.resource.PropertyReader;
 import ch.jalu.configme.neo.resource.YamlFileReader;
 import ch.jalu.configme.neo.samples.TestConfiguration;
@@ -119,7 +119,7 @@ public class PlainMigrationServiceTest {
             // Set any int property to 0 if its value is above 20
             boolean hasChange = false;
             for (Property<?> property : configurationData.getProperties()) {
-                if (property.getPropertyType() instanceof IntegerType) {
+                if (property instanceof IntegerProperty) {
                     Property<Integer> intProperty = (Property<Integer>) property;
                     if (intProperty.determineValue(reader) > 20) {
                         configurationData.setValue(intProperty, 0);

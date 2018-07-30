@@ -1,19 +1,18 @@
-package ch.jalu.configme.neo.propertytype;
+package ch.jalu.configme.neo.properties;
 
 import ch.jalu.configme.neo.resource.PropertyReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test for {@link BooleanType}.
+ * Test for {@link BooleanProperty}.
  */
-public class BooleanTypeTest {
+public class BooleanPropertyTest {
 
     private static PropertyReader reader;
 
@@ -27,34 +26,34 @@ public class BooleanTypeTest {
     @Test
     public void shouldGetBoolValue() {
         // given
-        PropertyType<Boolean> type = new BooleanType();
+        Property<Boolean> property = new BooleanProperty("bool.path.test", false);
 
         // when
-        Boolean result = type.getFromReader(reader, "bool.path.test");
+        boolean result = property.determineValue(reader);
 
         // then
         assertThat(result, equalTo(true));
     }
 
     @Test
-    public void shouldReturnNullForMissingValue() {
+    public void shouldGetBoolDefault() {
         // given
-        PropertyType<Boolean> type = new BooleanType();
+        Property<Boolean> property = new BooleanProperty("bool.path.wrong", true);
 
         // when
-        Boolean result = type.getFromReader(reader, "bool.path.wrong");
+        boolean result = property.determineValue(reader);
 
         // then
-        assertThat(result, nullValue());
+        assertThat(result, equalTo(true));
     }
 
     @Test
     public void shouldReturnExportRepresentation() {
         // given
-        PropertyType<Boolean> type = new BooleanType();
+        Property<Boolean> property = new BooleanProperty("bool.path.test", true);
 
         // when
-        Object exportValue = type.toExportValue(true);
+        Object exportValue = property.toExportValue(true);
 
         // then
         assertThat(exportValue, equalTo(true));

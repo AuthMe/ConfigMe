@@ -1,6 +1,5 @@
 package ch.jalu.configme.neo.properties;
 
-import ch.jalu.configme.neo.propertytype.PropertyType;
 import ch.jalu.configme.neo.resource.PropertyReader;
 
 public interface Property<T> {
@@ -13,6 +12,8 @@ public interface Property<T> {
 
     boolean isPresent(PropertyReader propertyReader);
 
-    PropertyType<T> getPropertyType();
+    boolean isValidValue(Object value);
+
+    Object toExportValue(T value);
 
 }

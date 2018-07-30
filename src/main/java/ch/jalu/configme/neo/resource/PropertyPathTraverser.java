@@ -63,8 +63,11 @@ public class PropertyPathTraverser {
         isFirstProperty = false;
 
         List<String> rootComments = configurationData.getCommentsForSection("");
+        if ("".equals(path)) {
+            return rootComments;
+        }
         List<String> sectionComments = configurationData.getCommentsForSection(path);
-        // One or the other array might be empty, but we only do this once so we can ignore performance considerations
+        // One or the other list might be empty, but we only do this once so we can ignore performance considerations
         if (sectionComments.isEmpty()) {
             return rootComments;
         }

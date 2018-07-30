@@ -42,7 +42,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
 
     @Override
     public <T> void setValue(Property<T> property, T value) {
-        if (property.getPropertyType().isValidValue(value)) {
+        if (property.isValidValue(value)) {
             values.put(property.getPath(), value);
         } else {
             throw new ConfigMeException("Invalid value for property '" + property + "': " + value);

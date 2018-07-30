@@ -186,8 +186,8 @@ public class YamlFileResourceTest {
     public void shouldSkipAbsentOptionalProperty() throws IOException {
         // given
         ConfigurationData configurationData = createConfiguration(Arrays.asList(
-            createOptionalProperty(TestConfiguration.DURATION_IN_SECONDS),
-            createOptionalProperty(TestConfiguration.RATIO_ORDER)));
+            new OptionalProperty<>(TestConfiguration.DURATION_IN_SECONDS),
+            new OptionalProperty<>(TestConfiguration.RATIO_ORDER)));
         File file = copyFileFromResources(INCOMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         configurationData.initializeValues(resource.createReader());
@@ -208,8 +208,8 @@ public class YamlFileResourceTest {
     public void shouldExportAllPresentOptionalProperties() throws IOException {
         // given
         ConfigurationData configurationData = createConfiguration(Arrays.asList(
-            createOptionalProperty(TestConfiguration.DURATION_IN_SECONDS),
-            createOptionalProperty(TestConfiguration.RATIO_ORDER)));
+            new OptionalProperty<>(TestConfiguration.DURATION_IN_SECONDS),
+            new OptionalProperty<>(TestConfiguration.RATIO_ORDER)));
         File file = copyFileFromResources(COMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         configurationData.initializeValues(resource.createReader());
@@ -280,9 +280,5 @@ public class YamlFileResourceTest {
 
     private File copyFileFromResources(String path) {
         return TestUtils.copyFileFromResources(path, temporaryFolder);
-    }
-
-    private static <T> OptionalProperty<T> createOptionalProperty(Property<T> baseProperty) {
-        return new OptionalProperty<>(baseProperty.getPath(), baseProperty.getPropertyType());
     }
 }
