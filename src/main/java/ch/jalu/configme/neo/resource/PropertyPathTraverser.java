@@ -1,7 +1,6 @@
 package ch.jalu.configme.neo.resource;
 
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
-import ch.jalu.configme.neo.properties.Property;
 import ch.jalu.configme.neo.utils.CollectionUtils;
 
 import java.util.ArrayList;
@@ -30,11 +29,11 @@ public class PropertyPathTraverser {
     /**
      * Returns all path elements for the given property that have not been traversed yet.
      *
-     * @param property the property
+     * @param path the property path
      * @return the new path elements
      */
-    public List<PathElement> getPathElements(Property<?> property) {
-        List<String> propertyPath = Arrays.asList(property.getPath().split("\\."));
+    public List<PathElement> getPathElements(String path) {
+        List<String> propertyPath = Arrays.asList(path.split("\\."));
         List<String> commonPathParts = CollectionUtils.filterCommonStart(
             parentPathElements, propertyPath.subList(0, propertyPath.size() - 1));
         List<String> newPathParts = CollectionUtils.getRange(propertyPath, commonPathParts.size());
@@ -44,6 +43,13 @@ public class PropertyPathTraverser {
         int indentationLevel = commonPathParts.size();
         String prefix = commonPathParts.isEmpty() ? "" : String.join(".", commonPathParts) + ".";
         return convertToPathElements(indentationLevel, prefix, newPathParts);
+    }
+
+    public List<PathElement> getPathElements(String parentPath, String path) {
+        if (parentPath.isEmpty()) {
+            return getPathElements(path);
+        }
+        return getPathElements(parentPath + "." + path);
     }
 
     private List<PathElement> convertToPathElements(int indentation, String prefix, List<String> elements) {

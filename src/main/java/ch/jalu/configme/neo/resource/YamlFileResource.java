@@ -1,7 +1,7 @@
 package ch.jalu.configme.neo.resource;
 
-import ch.jalu.configme.neo.exception.ConfigMeException;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
+import ch.jalu.configme.neo.exception.ConfigMeException;
 import ch.jalu.configme.neo.properties.Property;
 import ch.jalu.configme.neo.resource.PropertyPathTraverser.PathElement;
 import org.yaml.snakeyaml.DumperOptions;
@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class YamlFileResource implements PropertyResource {
 
@@ -38,23 +39,7 @@ public class YamlFileResource implements PropertyResource {
             PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
             for (Property<?> property : configurationData.getProperties()) {
                 final Object exportValue = getExportValue(property, configurationData);
-                if (exportValue == null) {
-                    continue;
-                }
-                // TODO: if export value is a map it should act as a separate property for each (for comments)
-                // TODO: Make more methods protected
-
-                List<PathElement> pathElements = pathTraverser.getPathElements(property);
-                for (PathElement pathElement : pathElements) {
-                    writeComments(writer, pathElement.indentationLevel, pathElement.comments);
-                    writer.append("\n")
-                        .append(indent(pathElement.indentationLevel))
-                        .append(pathElement.name)
-                        .append(":");
-                }
-
-                writer.append(" ")
-                    .append(toYaml(property, exportValue, pathElements.get(pathElements.size() - 1).indentationLevel));
+                exportValue(writer, pathTraverser, property.getPath(), exportValue);
             }
             writer.flush();
         } catch (IOException e) {
@@ -62,6 +47,32 @@ public class YamlFileResource implements PropertyResource {
         } finally {
             simpleYaml = null;
             singleQuoteYaml = null;
+        }
+    }
+
+    protected void exportValue(Writer writer, PropertyPathTraverser pathTraverser,
+                               String path, Object value) throws IOException {
+        if (value == null) {
+            return;
+        }
+
+        if (value instanceof Map<?, ?>) {
+            final String pathPrefix = path.isEmpty() ? "" : path + ".";
+            for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
+                exportValue(writer, pathTraverser, pathPrefix + entry.getKey(), entry.getValue());
+            }
+        } else {
+            List<PathElement> pathElements = pathTraverser.getPathElements(path);
+            for (PathElement pathElement : pathElements) {
+                writeComments(writer, pathElement.indentationLevel, pathElement.comments);
+                writer.append("\n")
+                    .append(indent(pathElement.indentationLevel))
+                    .append(pathElement.name)
+                    .append(":");
+            }
+
+            writer.append(" ")
+                .append(toYaml(value, pathElements.get(pathElements.size() - 1).indentationLevel));
         }
     }
 
@@ -75,8 +86,8 @@ public class YamlFileResource implements PropertyResource {
         }
     }
 
-    private String toYaml(Property<?> property, @Nullable Object value, int indent) {
-        String representation = transformValue(property, value);
+    private String toYaml(@Nullable Object value, int indent) {
+        String representation = transformValue(value);
         String[] lines = representation.split("\\n");
         return String.join("\n" + indent(indent), lines);
     }
@@ -86,13 +97,10 @@ public class YamlFileResource implements PropertyResource {
      * This method returns the YAML representation of the value only (does not include the key)
      * with no indentation (will be applied afterwards with the appropriate level).
      *
-     * @param property the associated property
      * @param value the value to transform as YAML
      * @return the YAML representation of the value
      */
-    // For more custom types, you can override this method and implement your custom behavior
-    // and call super.transformValue() at the end to handle all types already handled here
-    protected String transformValue(Property<?> property, @Nullable Object value) {
+    protected String transformValue(@Nullable Object value) { // TODO: find better name?
         if (value instanceof String) {
             return getSingleQuoteYaml().dump(value);
         } else if (value instanceof Collection<?>) {
