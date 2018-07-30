@@ -1,8 +1,9 @@
 package ch.jalu.configme.neo.resource;
 
 import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.neo.beanmapper.command.CommandConfig;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
+import ch.jalu.configme.neo.exception.ConfigMeException;
 import ch.jalu.configme.neo.properties.OptionalProperty;
 import ch.jalu.configme.neo.properties.Property;
 import ch.jalu.configme.neo.samples.TestConfiguration;
@@ -26,6 +27,7 @@ import java.util.Map;
 import static ch.jalu.configme.TestUtils.getJarPath;
 import static ch.jalu.configme.neo.configurationdata.ConfigurationDataBuilder.createConfiguration;
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newProperty;
+import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -227,25 +229,27 @@ public class YamlFileResourceTest {
         ));
     }
 
-//    @Test
-//    public void shouldClearOtherValuesWhenBeanAtRootIsSet() {
-//        // given
-//        PropertyResource resource = new YamlFileResource(copyFileFromResources("/beanmapper/commands_root_path.yml"));
-//        // assumption
-//        assertThat((Map<?, ?>) resource.getObject("commands.save"), aMapWithSize(2));
-//
-//        CommandConfig newConfig = new CommandConfig();
-//        newConfig.setDuration(14);
-//        newConfig.setCommands(Collections.emptyMap());
-//
-//        // when
+    @Test
+    @Ignore
+    public void shouldClearOtherValuesWhenBeanAtRootIsSet() {
+        // given
+        PropertyResource resource = new YamlFileResource(copyFileFromResources("/beanmapper/commands_root_path.yml"));
+        // assumption
+        assertThat((Map<?, ?>) resource.createReader().getObject("commands.save"), aMapWithSize(2));
+
+        CommandConfig newConfig = new CommandConfig();
+        newConfig.setDuration(14);
+        newConfig.setCommands(Collections.emptyMap());
+
+        // when
 //        resource.setValue("", newConfig);
-//
-//        // then
+
+        // then
 //        assertThat(resource.getObject(""), equalTo(newConfig));
 //        assertThat(resource.getObject("commands.save"), nullValue());
-//    }
-//
+    }
+
+    // TODO: Uncomment & fix test
 //    @Test
 //    public void shouldExportEmptyMap() throws IOException {
 //        // given

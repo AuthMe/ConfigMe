@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo.beanmapper;
 
-import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.neo.exception.ConfigMeException;
 
 /**
  * Exception during a bean mapping process.

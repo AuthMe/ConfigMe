@@ -38,7 +38,8 @@ public class SettingsManagerBuilder {
         return this;
     }
 
-    public SettingsManagerBuilder configurationData(Class<? extends SettingsHolder>... classes) {
+    @SafeVarargs
+    public final SettingsManagerBuilder configurationData(Class<? extends SettingsHolder>... classes) {
         this.configurationData = ConfigurationDataBuilder.createConfiguration(classes);
         return this;
     }

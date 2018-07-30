@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo.resource;
 
-import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.neo.exception.ConfigMeException;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;

@@ -1,4 +1,4 @@
-package ch.jalu.configme.utils;
+package ch.jalu.configme.neo.utils;
 
 import ch.jalu.configme.TestUtils;
 import org.junit.Test;
@@ -13,7 +13,6 @@ import static org.junit.Assert.assertThat;
 /**
  * Test for {@link CollectionUtils}.
  */
-@Deprecated // has been moved
 public class CollectionUtilsTest {
 
     @Test

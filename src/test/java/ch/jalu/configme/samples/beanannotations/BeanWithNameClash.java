@@ -5,6 +5,7 @@ import ch.jalu.configme.beanmapper.ExportName;
 /**
  * Sample bean with two properties declared with the same name.
  */
+@Deprecated // has been moved
 public class BeanWithNameClash {
 
     private String location;

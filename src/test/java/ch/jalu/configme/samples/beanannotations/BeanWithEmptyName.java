@@ -5,6 +5,7 @@ import ch.jalu.configme.beanmapper.ExportName;
 /**
  * Sample bean where an export name is null.
  */
+@Deprecated // has been moved
 public class BeanWithEmptyName {
 
     private String author;

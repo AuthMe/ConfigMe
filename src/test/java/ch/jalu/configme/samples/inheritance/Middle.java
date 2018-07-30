@@ -3,6 +3,7 @@ package ch.jalu.configme.samples.inheritance;
 /**
  * Middle class.
  */
+@Deprecated // has been moved
 public class Middle extends Parent {
 
     private String name;

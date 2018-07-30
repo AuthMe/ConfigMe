@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo.resource;
 
-import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.neo.exception.ConfigMeException;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.properties.Property;
 import ch.jalu.configme.neo.resource.PropertyPathTraverser.PathElement;
@@ -41,6 +41,8 @@ public class YamlFileResource implements PropertyResource {
                 if (exportValue == null) {
                     continue;
                 }
+                // TODO: if export value is a map it should act as a separate property for each (for comments)
+                // TODO: Make more methods protected
 
                 List<PathElement> pathElements = pathTraverser.getPathElements(property);
                 for (PathElement pathElement : pathElements) {
@@ -55,7 +57,6 @@ public class YamlFileResource implements PropertyResource {
                     .append(toYaml(property, exportValue, pathElements.get(pathElements.size() - 1).indentationLevel));
             }
             writer.flush();
-            writer.close();
         } catch (IOException e) {
             throw new ConfigMeException("Could not save config to '" + file.getPath() + "'", e);
         } finally {

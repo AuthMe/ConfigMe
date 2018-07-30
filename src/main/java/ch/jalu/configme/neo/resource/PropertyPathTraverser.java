@@ -2,7 +2,7 @@ package ch.jalu.configme.neo.resource;
 
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.properties.Property;
-import ch.jalu.configme.utils.CollectionUtils;
+import ch.jalu.configme.neo.utils.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

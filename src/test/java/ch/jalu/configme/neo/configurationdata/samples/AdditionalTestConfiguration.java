@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo.configurationdata.samples;
 
-import ch.jalu.configme.Comment;
+import ch.jalu.configme.neo.Comment;
 import ch.jalu.configme.neo.SettingsHolder;
 import ch.jalu.configme.neo.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.neo.properties.Property;

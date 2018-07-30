@@ -6,6 +6,7 @@ import java.util.Set;
 /**
  * Sample bean class with annotated properties.
  */
+@Deprecated // has been moved
 public class AnnotatedBean {
 
     private String name;

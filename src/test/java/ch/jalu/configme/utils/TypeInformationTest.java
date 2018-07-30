@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Test for {@link TypeInformation}.
  */
+@Deprecated // has been moved
 public class TypeInformationTest {
 
     private List<String> stringList;

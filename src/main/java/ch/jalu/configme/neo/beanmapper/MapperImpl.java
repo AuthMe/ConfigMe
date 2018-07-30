@@ -9,17 +9,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-public class StandardMapper implements Mapper {
+public class MapperImpl implements Mapper {
 
     private final Map<String, Collection<BeanProperty>> classProperties = new HashMap<>();
     private BeanDescriptionFactory beanDescriptionFactory = new BeanDescriptionFactoryImpl();
-    private ValueTransformer valueTransformer = new ValueTransformer();
+    private ValueTransformer valueTransformer = new ValueTransformerImpl();
 
-    @Nullable
     @Override
     public <T> T convertToBean(PropertyReader reader, String path, Class<T> clazz) {
         Object value = reader.getObject(path);
@@ -28,6 +28,56 @@ public class StandardMapper implements Mapper {
         }
 
         return (T) convertToValueForField(new TypeInformation(clazz), value);
+    }
+
+    @Override
+    public Object toExportValue(Object object) {
+        return transformValueToExport(object);
+    }
+
+    protected void visitRecursively(Object value, String path, Map<String, Object> result) {
+        Object simpleValue = valueTransformer.toExportValue(value);
+        if (simpleValue != null) {
+            result.put(path, simpleValue);
+        } else if (value == null) {
+            return;
+        }
+
+        String pathPrefix = path.isEmpty() ? "" : path + ".";
+        for (BeanProperty property : getWritableProperties(value.getClass())) {
+            visitRecursively(property.getValue(value), pathPrefix + property.getName(), result);
+        }
+    }
+
+    protected Object transformValueToExport(Object value) {
+        if (value instanceof Collection<?>) {
+            List<Object> result = new ArrayList<>();
+            for (Object entry : (Collection) value) {
+                result.add(transformValueToExport(entry));
+            }
+            return result;
+        }
+
+        if (value instanceof Map<?, ?>) {
+            Map<String, Object> result = new LinkedHashMap<>();
+            for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
+                result.put(entry.getKey(), transformValueToExport(entry.getValue()));
+            }
+            return result;
+        }
+
+        Object simpleValue = valueTransformer.toExportValue(value);
+        if (simpleValue != null) {
+            return simpleValue;
+        } else if (value == null) {
+            return null;
+        }
+
+        Map<String, Object> mappedBean = new HashMap<>();
+        for (BeanProperty property : getWritableProperties(value.getClass())) {
+            mappedBean.put(property.getName(), transformValueToExport(property.getValue(value)));
+        }
+        return mappedBean;
     }
 
     // TODO: typeInformation will have to be a context with more stuff later on.
@@ -131,8 +181,7 @@ public class StandardMapper implements Mapper {
             if (result != null) {
                 property.setValue(bean, result);
             } else if (property.getValue(bean) == null) {
-                // TODO: Refine error handling
-                throw new IllegalStateException("For property '" + property + "' no value could be found");
+                return null;
             }
         }
         return bean;
@@ -153,7 +202,7 @@ public class StandardMapper implements Mapper {
      * @param clazz the class to get the bean properties from
      * @return relevant properties
      */
-    public Collection<BeanProperty> getWritableProperties(Class<?> clazz) {
+    protected Collection<BeanProperty> getWritableProperties(Class<?> clazz) {
         return classProperties.computeIfAbsent(clazz.getCanonicalName(),
             s -> beanDescriptionFactory.collectWritableFields(clazz));
     }

@@ -1,7 +1,7 @@
 package ch.jalu.configme.neo.configurationdata;
 
 import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.neo.exception.ConfigMeException;
 import ch.jalu.configme.neo.configurationdata.samples.AdditionalTestConfiguration;
 import ch.jalu.configme.neo.configurationdata.samples.IllegalSettingsHolderConstructorClasses;
 import ch.jalu.configme.neo.properties.Property;

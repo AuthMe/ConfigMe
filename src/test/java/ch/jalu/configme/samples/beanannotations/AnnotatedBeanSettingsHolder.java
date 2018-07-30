@@ -9,6 +9,7 @@ import static ch.jalu.configme.properties.PropertyInitializer.newBeanProperty;
 /**
  * SettingsHolder class for {@link AnnotatedBean} setting.
  */
+@Deprecated // has been moved
 public final class AnnotatedBeanSettingsHolder implements SettingsHolder {
 
     @Comment("Example: bean with annotated properties")

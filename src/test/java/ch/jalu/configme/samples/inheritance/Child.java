@@ -5,6 +5,7 @@ import java.beans.Transient;
 /**
  * Child class.
  */
+@Deprecated // has been moved
 public class Child extends Middle {
 
     private int importance;

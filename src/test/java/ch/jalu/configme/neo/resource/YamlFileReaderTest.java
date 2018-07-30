@@ -1,7 +1,7 @@
 package ch.jalu.configme.neo.resource;
 
 import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.neo.exception.ConfigMeException;
 import ch.jalu.configme.neo.properties.Property;
 import ch.jalu.configme.neo.samples.TestConfiguration;
 import ch.jalu.configme.neo.samples.TestEnum;

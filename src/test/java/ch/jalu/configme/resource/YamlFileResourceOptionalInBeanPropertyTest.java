@@ -27,6 +27,7 @@ import static org.junit.Assert.assertThat;
  *
  * @see <a href="https://github.com/AuthMe/ConfigMe/issues/51">Issue #51</a>
  */
+// TODO: port this test to neo package
 public class YamlFileResourceOptionalInBeanPropertyTest {
 
     private static BeanProperty<ComplexCommandConfig> commandConfigProperty = new BeanProperty<>(

@@ -5,6 +5,7 @@ import ch.jalu.configme.beanmapper.ExportName;
 /**
  * "Entry" bean class with annotated properties.
  */
+@Deprecated // has been moved
 public class AnnotatedEntry {
 
     private long id;

@@ -5,6 +5,7 @@ import java.beans.Transient;
 /**
  * Parent class.
  */
+@Deprecated // has been moved
 public class Parent {
 
     private long id;

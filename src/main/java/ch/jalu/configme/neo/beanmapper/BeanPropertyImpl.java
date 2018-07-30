@@ -1,6 +1,5 @@
 package ch.jalu.configme.neo.beanmapper;
 
-import ch.jalu.configme.neo.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.neo.utils.TypeInformation;
 
 import javax.annotation.Nullable;

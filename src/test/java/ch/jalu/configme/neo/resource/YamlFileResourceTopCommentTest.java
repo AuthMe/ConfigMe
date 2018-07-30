@@ -1,9 +1,8 @@
-package ch.jalu.configme.resource;
+package ch.jalu.configme.neo.resource;
 
-import ch.jalu.configme.SettingsManager;
-import ch.jalu.configme.migration.PlainMigrationService;
-import ch.jalu.configme.resource.rootcommentsamples.GroupPropertyHolder;
-import ch.jalu.configme.resource.rootcommentsamples.TestConfig;
+import ch.jalu.configme.neo.SettingsManagerBuilder;
+import ch.jalu.configme.neo.resource.rootcommentsamples.GroupPropertyHolder;
+import ch.jalu.configme.neo.resource.rootcommentsamples.TestConfig;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,7 +20,6 @@ import static org.junit.Assert.assertThat;
  *
  * @see <a href="https://github.com/AuthMe/ConfigMe/issues/25">Issue #25</a>
  */
-@Deprecated // has been moved
 public class YamlFileResourceTopCommentTest {
 
     @Rule
@@ -40,7 +38,9 @@ public class YamlFileResourceTopCommentTest {
         PropertyResource resource = new YamlFileResource(file);
 
         // when
-        new SettingsManager(resource, new PlainMigrationService(), GroupPropertyHolder.class);
+        SettingsManagerBuilder.withResource(resource)
+            .configurationData(GroupPropertyHolder.class)
+            .create();
 
         // then
         assertThat(Files.readAllLines(file.toPath()), contains(
@@ -58,7 +58,9 @@ public class YamlFileResourceTopCommentTest {
         PropertyResource resource = new YamlFileResource(file);
 
         // when
-        new SettingsManager(resource, new PlainMigrationService(), TestConfig.class);
+        SettingsManagerBuilder.withResource(resource)
+            .configurationData(TestConfig.class)
+            .create();
 
         // then
         assertThat(Files.readAllLines(file.toPath()), contains(

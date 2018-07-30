@@ -17,6 +17,7 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 /**
  * Sample properties for testing purposes.
  */
+@Deprecated // has been moved
 public final class TestConfiguration implements SettingsHolder {
 
     @Comment("Duration in seconds")

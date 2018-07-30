@@ -1,8 +1,8 @@
 package ch.jalu.configme.neo.configurationdata;
 
-import ch.jalu.configme.Comment;
-import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.neo.Comment;
 import ch.jalu.configme.neo.SettingsHolder;
+import ch.jalu.configme.neo.exception.ConfigMeException;
 import ch.jalu.configme.neo.properties.Property;
 
 import javax.annotation.Nullable;

@@ -1,7 +1,7 @@
-package ch.jalu.configme.utils;
+package ch.jalu.configme.neo.utils;
 
 import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.neo.exception.ConfigMeException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -20,7 +20,6 @@ import static org.mockito.Mockito.doThrow;
 /**
  * Test for {@link Utils}.
  */
-@Deprecated // has been moved
 public class UtilsTest {
 
     @Rule
