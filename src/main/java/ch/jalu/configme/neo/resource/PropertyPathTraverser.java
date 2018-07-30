@@ -45,13 +45,6 @@ public class PropertyPathTraverser {
         return convertToPathElements(indentationLevel, prefix, newPathParts);
     }
 
-    public List<PathElement> getPathElements(String parentPath, String path) {
-        if (parentPath.isEmpty()) {
-            return getPathElements(path);
-        }
-        return getPathElements(parentPath + "." + path);
-    }
-
     private List<PathElement> convertToPathElements(int indentation, String prefix, List<String> elements) {
         List<PathElement> pathElements = new ArrayList<>(elements.size());
         for (String element : elements) {
