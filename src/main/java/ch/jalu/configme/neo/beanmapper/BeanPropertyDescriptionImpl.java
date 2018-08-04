@@ -6,6 +6,9 @@ import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * Default implementation of {@link BeanPropertyDescription}.
+ */
 public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
 
     private final String name;
@@ -13,6 +16,14 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
     private final Method getter;
     private final Method setter;
 
+    /**
+     * Constructor.
+     *
+     * @param name name of the property in the export
+     * @param typeInformation type of the property
+     * @param getter getter for the property
+     * @param setter setter for the property
+     */
     public BeanPropertyDescriptionImpl(String name, TypeInformation typeInformation, Method getter, Method setter) {
         this.name = name;
         this.typeInformation = typeInformation;

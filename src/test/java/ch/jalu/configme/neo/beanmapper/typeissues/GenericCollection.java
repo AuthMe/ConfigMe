@@ -1,11 +1,10 @@
-package ch.jalu.configme.beanmapper.typeissues;
+package ch.jalu.configme.neo.beanmapper.typeissues;
 
 import java.util.List;
 
 /**
  * Class with collection using generics.
  */
-@Deprecated // Has been moved
 public class GenericCollection {
 
     private String name = "";

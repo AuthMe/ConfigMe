@@ -19,7 +19,7 @@ public class MapperImpl implements Mapper {
 
     private final Map<String, Collection<BeanPropertyDescription>> classProperties = new HashMap<>();
     private BeanDescriptionFactory beanDescriptionFactory = new BeanDescriptionFactoryImpl();
-    private ValueTransformer valueTransformer = new ValueTransformerImpl();
+    private ValueTransformer valueTransformer = StandardTransformers.getDefaultValueTransformer();
 
     @Override
     public <T> T convertToBean(PropertyReader reader, String path, Class<T> clazz) {
@@ -138,7 +138,7 @@ public class MapperImpl implements Mapper {
         } else if (collectionType.isAssignableFrom(LinkedHashSet.class)) {
             return new LinkedHashSet();
         } else {
-            throw new IllegalStateException("Unsupported collection type '" + collectionType + "'");
+            throw new ConfigMeMapperException("Unsupported collection type '" + collectionType + "'");
         }
     }
 
@@ -149,7 +149,7 @@ public class MapperImpl implements Mapper {
         } else if (mapType.isAssignableFrom(TreeMap.class)) {
             return new TreeMap();
         } else {
-            throw new IllegalStateException("Unsupported map type '" + mapType + "'");
+            throw new ConfigMeMapperException("Unsupported map type '" + mapType + "'");
         }
     }
 
@@ -201,6 +201,6 @@ public class MapperImpl implements Mapper {
      */
     protected Collection<BeanPropertyDescription> getWritableProperties(Class<?> clazz) {
         return classProperties.computeIfAbsent(clazz.getCanonicalName(),
-            s -> beanDescriptionFactory.collectWritableFields(clazz));
+            s -> beanDescriptionFactory.findAllWritableProperties(clazz));
     }
 }

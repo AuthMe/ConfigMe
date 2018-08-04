@@ -1,11 +1,10 @@
-package ch.jalu.configme.beanmapper.typeissues;
+package ch.jalu.configme.neo.beanmapper.typeissues;
 
 import java.util.List;
 
 /**
  * Class with untyped collection.
  */
-@Deprecated // Has been moved
 public class UntypedCollection {
 
     private String name;

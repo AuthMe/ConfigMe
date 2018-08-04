@@ -1,11 +1,10 @@
-package ch.jalu.configme.beanmapper.typeissues;
+package ch.jalu.configme.neo.beanmapper.typeissues;
 
 import java.util.Map;
 
 /**
  * Class with untyped map.
  */
-@Deprecated // Has been moved
 public class UntypedMap {
 
     private String name = "";

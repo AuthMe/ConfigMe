@@ -1,11 +1,10 @@
-package ch.jalu.configme.beanmapper.typeissues;
+package ch.jalu.configme.neo.beanmapper.typeissues;
 
 import java.util.Map;
 
 /**
  * Map with a key type other than String.
  */
-@Deprecated // Has been moved
 public class MapWithNonStringKeys {
 
     private String name = "";
