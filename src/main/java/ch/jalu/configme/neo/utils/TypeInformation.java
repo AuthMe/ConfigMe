@@ -14,6 +14,7 @@ import java.util.Objects;
  */
 public class TypeInformation {
 
+    @Nullable
     private final Type type;
 
     public TypeInformation(Type type) {
@@ -24,6 +25,7 @@ public class TypeInformation {
         return new TypeInformation(field.getGenericType());
     }
 
+    @Nullable
     public Type getType() {
         return type;
     }

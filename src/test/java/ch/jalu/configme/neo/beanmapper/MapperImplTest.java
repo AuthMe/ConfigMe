@@ -34,6 +34,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -112,24 +113,24 @@ public class MapperImplTest {
         assertThat(config.getGroups().keySet(), contains("creative"));
     }
 
-//
-//    @Test
-//    public void shouldHandleInvalidErrors() {
-//        // given
-//        PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/commands_invalid.yml"));
-//        MapperImpl mapper = ConfigMeMapper.getSingleton();
-//
-//        // when
-//        CommandConfig config = mapper.convertToBean("commandconfig", resource, CommandConfig.class);
-//
-//        // then
-//        assertThat(config, not(nullValue()));
-//        assertThat(config.getCommands().keySet(), contains("refresh", "open", "cancel"));
-//        Command cancelCommand = config.getCommands().get("cancel");
-//        assertThat(cancelCommand.getArguments(), empty());
-//        assertThat(cancelCommand.getExecution().getPrivileges(), hasSize(4));
-//    }
-//
+
+    @Test
+    public void shouldHandleInvalidErrors() {
+        // given
+        PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid.yml");
+        MapperImpl mapper = new MapperImpl();
+
+        // when
+        CommandConfig config = mapper.convertToBean(reader, "commandconfig", CommandConfig.class);
+
+        // then
+        assertThat(config, not(nullValue()));
+        assertThat(config.getCommands().keySet(), contains("refresh", "open", "cancel"));
+        Command cancelCommand = config.getCommands().get("cancel");
+        assertThat(cancelCommand.getArguments(), empty());
+        assertThat(cancelCommand.getExecution().getPrivileges(), hasSize(4));
+    }
+
     @Test
     public void shouldReturnNullForUnavailableSection() {
         // given
@@ -170,7 +171,6 @@ public class MapperImplTest {
     }
 
     @Test
-    @Ignore // TODO .
     public void shouldThrowForUntypedCollection() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
@@ -180,11 +180,10 @@ public class MapperImplTest {
         verifyException(
             () -> mapper.convertToBean(reader, "", UntypedCollection.class),
             ConfigMeMapperException.class,
-            "has no generic type");
+            "The generic type 0 is not well defined, for mapping of: [Path: 'collection', type: 'interface java.util.List']");
     }
 
     @Test
-    @Ignore // TODO .
     public void shouldThrowForUntypedMap() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/mapconfig.yml");
@@ -194,11 +193,10 @@ public class MapperImplTest {
         verifyException(
             () -> mapper.convertToBean(reader, "", UntypedMap.class),
             ConfigMeMapperException.class,
-            "type '?' at index 1 not recognized");
+            "The generic type 1 is not well defined, for mapping of: [Path: 'map', type: 'java.util.Map<java.lang.String, ?>']");
     }
 
     @Test
-    @Ignore // TODO .
     public void shouldThrowForCollectionWithGenerics() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
@@ -208,7 +206,7 @@ public class MapperImplTest {
         verifyException(
             () -> mapper.convertToBean(reader, "", GenericCollection.class),
             ConfigMeMapperException.class,
-            "at index 0 not recognized");
+            "The generic type 0 is not well defined, for mapping of: [Path: 'collection', type: 'java.util.List<? extends java.lang.String>']");
     }
 
     @Test

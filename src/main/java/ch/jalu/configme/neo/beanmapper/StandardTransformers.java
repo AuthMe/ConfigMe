@@ -37,8 +37,9 @@ public final class StandardTransformers {
 
         @Override
         public Object value(Class<?> clazz, Object value) {
-            if (clazz == String.class && value instanceof String) {
-                return value;
+            if (clazz == String.class
+                && (value instanceof String || value instanceof Number || value instanceof Boolean)) {
+                return value.toString();
             }
             return null;
         }
