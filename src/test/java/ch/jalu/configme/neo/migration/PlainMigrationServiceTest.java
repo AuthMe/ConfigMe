@@ -113,7 +113,7 @@ public class PlainMigrationServiceTest {
         protected boolean performMigrations(PropertyReader reader, ConfigurationData configurationData) {
             // If contains -> return true = migration is necessary
             if (reader.contains("old.property")) {
-                return true;
+                return MIGRATION_REQUIRED;
             }
 
             // Set any int property to 0 if its value is above 20
@@ -127,7 +127,7 @@ public class PlainMigrationServiceTest {
                     }
                 }
             }
-            return hasChange;
+            return hasChange ? MIGRATION_REQUIRED : NO_MIGRATION_NEEDED;
         }
     }
 

@@ -4,17 +4,35 @@ import ch.jalu.configme.neo.resource.PropertyReader;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LowercaseStringSetProperty extends BaseProperty<Set<String>> {
 
-    // TODO: Ensure that default entries are lowercase + create constructor taking a Set
+    /**
+     * Constructor.
+     *
+     * @param path property path
+     * @param defaultEntries entries in the Set that is the default value
+     */
     public LowercaseStringSetProperty(String path, String... defaultEntries) {
-        super(path, toLinkedHashSet(defaultEntries));
+        super(path, toLowercaseLinkedHashSet(Arrays.stream(defaultEntries)));
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param path property path
+     * @param defaultEntries entries in the Set that is the default value
+     */
+    public LowercaseStringSetProperty(String path, Collection<String> defaultEntries) {
+        super(path, toLowercaseLinkedHashSet(defaultEntries.stream()));
     }
 
     @Override
@@ -41,11 +59,13 @@ public class LowercaseStringSetProperty extends BaseProperty<Set<String>> {
     }
 
     protected String convertToLowercaseString(@Nullable Object value) {
-        // TODO: BEtter thing for arrays?
         return Objects.toString(value).toLowerCase();
     }
 
-    private static Set<String> toLinkedHashSet(String... values) {
-        return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(values)));
+    private static Set<String> toLowercaseLinkedHashSet(Stream<String> valuesStream) {
+        Set<String> valuesLowercase = valuesStream
+            .map(String::toLowerCase)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+        return Collections.unmodifiableSet(valuesLowercase);
     }
 }

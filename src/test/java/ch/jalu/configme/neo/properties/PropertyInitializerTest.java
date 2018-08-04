@@ -1,9 +1,11 @@
 package ch.jalu.configme.neo.properties;
 
 import ch.jalu.configme.TestUtils;
+import ch.jalu.configme.neo.beanmapper.worldgroup.WorldGroupConfig;
 import ch.jalu.configme.neo.samples.TestEnum;
 import org.junit.Test;
 
+import static ch.jalu.configme.neo.properties.PropertyInitializer.newBeanProperty;
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newLowercaseStringSetProperty;
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newProperty;
@@ -27,8 +29,7 @@ public class PropertyInitializerTest {
         assertThat(newProperty(TestEnum.class, "my.path", TestEnum.FIRST), instanceOf(EnumProperty.class));
         assertThat(newListProperty("path", "default", "entries"), instanceOf(StringListProperty.class));
         assertThat(newLowercaseStringSetProperty("path", "a", "b", "c"), instanceOf(LowercaseStringSetProperty.class));
-        // TODO .
-//        assertThat(newBeanProperty(WorldGroupConfig.class, "worlds", new WorldGroupConfig()), instanceOf(BeanProperty.class));
+        assertThat(newBeanProperty(WorldGroupConfig.class, "worlds", new WorldGroupConfig()), instanceOf(BeanProperty.class));
 
         assertThat(optionalBooleanProperty("path"), instanceOf(OptionalProperty.class));
         assertThat(optionalIntegerProperty("path"), instanceOf(OptionalProperty.class));

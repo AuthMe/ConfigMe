@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -99,5 +100,18 @@ public class LowercaseStringSetPropertyTest {
         // then
         assertThat(exportValue, instanceOf(Collection.class));
         assertThat((Collection<?>) exportValue, contains("first", "second", "third", "fourth"));
+    }
+
+    @Test
+    public void shouldCreateImmutableSetForDefaultValue() {
+        // given / when
+        LowercaseStringSetProperty property1 = new LowercaseStringSetProperty("test.path", "abc", "def", "ghi");
+        LowercaseStringSetProperty property2 = new LowercaseStringSetProperty("other.path", Arrays.asList("111", "222", "33"));
+
+        // then
+        assertThat(property1.getDefaultValue().getClass().getName(), equalTo("java.util.Collections$UnmodifiableSet"));
+        assertThat(property1.getDefaultValue(), contains("abc", "def", "ghi"));
+        assertThat(property2.getDefaultValue().getClass().getName(), equalTo("java.util.Collections$UnmodifiableSet"));
+        assertThat(property2.getDefaultValue(), contains("111", "222", "33"));
     }
 }
