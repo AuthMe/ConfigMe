@@ -1,15 +1,15 @@
-package ch.jalu.configme.properties;
+package ch.jalu.configme.neo.properties;
 
-import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.neo.resource.PropertyReader;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
- * General test for {@link Property} abstract type.
+ * Test for the {@link BaseProperty} abstract type.
  */
-public class PropertyGeneralTest {
+public class BasePropertyTest {
 
     @Test(expected = NullPointerException.class)
     public void shouldRejectNullValue() {
@@ -37,17 +37,22 @@ public class PropertyGeneralTest {
     }
 
 
-    private static final class PropertyTestImpl extends Property<Byte> {
+    private static final class PropertyTestImpl extends BaseProperty<Byte> {
         PropertyTestImpl(String path, Byte defaultValue) {
             super(path, defaultValue);
         }
 
         @Override
-        protected Byte getFromResource(PropertyResource resource) {
-            Integer value = resource.getInt(getPath());
+        protected Byte getFromResource(PropertyReader reader) {
+            Integer value = reader.getInt(getPath());
             return value != null && value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE
                 ? value.byteValue()
                 : null;
+        }
+
+        @Override
+        public Object toExportValue(Byte value) {
+            return value;
         }
     }
 }

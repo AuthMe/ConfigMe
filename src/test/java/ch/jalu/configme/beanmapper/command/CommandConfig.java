@@ -5,6 +5,7 @@ import java.util.Map;
 /**
  * Command configuration.
  */
+@Deprecated // has been moved
 public class CommandConfig {
 
     private Map<String, Command> commands;

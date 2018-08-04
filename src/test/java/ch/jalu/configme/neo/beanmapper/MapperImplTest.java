@@ -16,8 +16,7 @@ import ch.jalu.configme.neo.beanmapper.worldgroup.GameMode;
 import ch.jalu.configme.neo.beanmapper.worldgroup.Group;
 import ch.jalu.configme.neo.beanmapper.worldgroup.WorldGroupConfig;
 import ch.jalu.configme.neo.resource.PropertyReader;
-import ch.jalu.configme.neo.resource.PropertyResource;
-import ch.jalu.configme.neo.resource.YamlFileResource;
+import ch.jalu.configme.neo.resource.YamlFileReader;
 import ch.jalu.configme.neo.samples.TestEnum;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -28,8 +27,8 @@ import org.junit.Test;
 import java.util.Objects;
 import java.util.Optional;
 
-import static ch.jalu.configme.TestUtils.getJarFile;
-import static ch.jalu.configme.TestUtils.verifyException;
+import static ch.jalu.configme.neo.TestUtils.getJarFile;
+import static ch.jalu.configme.neo.TestUtils.verifyException;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
@@ -334,8 +333,7 @@ public class MapperImplTest {
     }
 
     private static PropertyReader createReaderFromFile(String file) {
-        PropertyResource resource = new YamlFileResource(getJarFile(file));
-        return resource.createReader();
+        return new YamlFileReader(getJarFile(file));
     }
 
     private static Matcher<Command> hasExecution(Executor executor, boolean optional, Double importance) {

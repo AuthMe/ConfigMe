@@ -1,4 +1,4 @@
-package ch.jalu.configme;
+package ch.jalu.configme.neo;
 
 import org.hamcrest.Matcher;
 import org.junit.rules.TemporaryFolder;
@@ -30,7 +30,6 @@ import static org.junit.Assert.fail;
 /**
  * Utilities for testing.
  */
-@Deprecated // has been moved
 public final class TestUtils {
 
     private TestUtils() {

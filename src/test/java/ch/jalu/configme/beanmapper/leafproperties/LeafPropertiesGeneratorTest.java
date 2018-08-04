@@ -32,6 +32,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test for {@link LeafPropertiesGenerator}.
  */
+// TODO: Can we salvage this for the export properties?
 public class LeafPropertiesGeneratorTest {
 
     @Test

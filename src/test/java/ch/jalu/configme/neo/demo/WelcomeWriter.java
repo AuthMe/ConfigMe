@@ -1,10 +1,8 @@
-package ch.jalu.configme.demo;
+package ch.jalu.configme.neo.demo;
 
-import ch.jalu.configme.SettingsManager;
-import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.migration.PlainMigrationService;
-import ch.jalu.configme.resource.PropertyResource;
-import ch.jalu.configme.resource.YamlFileResource;
+import ch.jalu.configme.neo.SettingsManager;
+import ch.jalu.configme.neo.SettingsManagerBuilder;
+import ch.jalu.configme.neo.TestUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,8 +58,7 @@ public class WelcomeWriter {
     private SettingsManager initSettings() {
         // Copy the demo/config.yml instead of using it directly so it doesn't get overridden
         configFile = copyFileFromJar("/demo/config.yml");
-        PropertyResource resource = new YamlFileResource(configFile);
-        return new SettingsManager(resource, new PlainMigrationService(), TitleConfig.class);
+        return SettingsManagerBuilder.withYamlFile(configFile).configurationData(TitleConfig.class).create();
     }
 
     /**

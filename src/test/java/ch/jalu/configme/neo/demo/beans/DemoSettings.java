@@ -1,11 +1,11 @@
-package ch.jalu.configme.demo.beans;
+package ch.jalu.configme.neo.demo.beans;
 
-import ch.jalu.configme.SettingsHolder;
-import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.neo.SettingsHolder;
+import ch.jalu.configme.neo.properties.Property;
 
 import java.util.ArrayList;
 
-import static ch.jalu.configme.properties.PropertyInitializer.newBeanProperty;
+import static ch.jalu.configme.neo.properties.PropertyInitializer.newBeanProperty;
 
 /**
  * Holds the settings we want to use.

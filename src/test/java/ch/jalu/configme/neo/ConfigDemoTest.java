@@ -1,6 +1,6 @@
-package ch.jalu.configme;
+package ch.jalu.configme.neo;
 
-import ch.jalu.configme.demo.WelcomeWriter;
+import ch.jalu.configme.neo.demo.WelcomeWriter;
 import org.junit.Test;
 
 import java.io.File;

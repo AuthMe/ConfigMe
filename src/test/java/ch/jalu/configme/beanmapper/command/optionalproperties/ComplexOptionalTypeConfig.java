@@ -6,6 +6,7 @@ import java.util.Optional;
 /**
  * Sample class with complex type inside an Optional.
  */
+@Deprecated // has been moved
 public class ComplexOptionalTypeConfig {
 
     private Optional<Map<String, Object>> commandconfig;

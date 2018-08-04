@@ -1,9 +1,9 @@
-package ch.jalu.configme.demo;
+package ch.jalu.configme.neo.demo;
 
-import ch.jalu.configme.SettingsHolder;
-import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.neo.SettingsHolder;
+import ch.jalu.configme.neo.properties.Property;
 
-import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
+import static ch.jalu.configme.neo.properties.PropertyInitializer.newProperty;
 
 /**
  * Sample file with property fields. You can have multiple classes with property fields

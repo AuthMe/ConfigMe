@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static ch.jalu.configme.TestUtils.transform;
+import static ch.jalu.configme.neo.TestUtils.transform;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;

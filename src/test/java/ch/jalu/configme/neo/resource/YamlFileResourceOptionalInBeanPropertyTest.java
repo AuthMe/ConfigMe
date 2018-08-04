@@ -18,7 +18,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Optional;
 
-import static ch.jalu.configme.TestUtils.copyFileFromResources;
+import static ch.jalu.configme.neo.TestUtils.copyFileFromResources;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;

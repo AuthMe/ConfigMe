@@ -1,9 +1,10 @@
-package ch.jalu.configme.beanmapper;
+package ch.jalu.configme.neo.beanmapper;
 
-import ch.jalu.configme.SettingsHolder;
-import ch.jalu.configme.SettingsManager;
-import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.neo.SettingsHolder;
+import ch.jalu.configme.neo.SettingsManager;
+import ch.jalu.configme.neo.SettingsManagerBuilder;
+import ch.jalu.configme.neo.TestUtils;
+import ch.jalu.configme.neo.properties.Property;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -13,7 +14,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ch.jalu.configme.properties.PropertyInitializer.newBeanProperty;
+import static ch.jalu.configme.neo.properties.PropertyInitializer.newBeanProperty;
 import static org.junit.Assert.fail;
 
 /**
@@ -28,7 +29,8 @@ public class BeanWithCollectionOfBeanTypeTest {
     public void shouldSerializeProperly() throws IOException {
         // given
         File file = TestUtils.getJarFile("/beanmapper/nested_chat_component.yml");
-        SettingsManager settingsManager = SettingsManager.createWithYamlFile(file, PropertyHolder.class);
+        SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file)
+            .configurationData(PropertyHolder.class).create();
 
         // when
         settingsManager.setProperty(PropertyHolder.TEST, createComplexComponent());

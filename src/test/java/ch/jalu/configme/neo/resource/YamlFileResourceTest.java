@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo.resource;
 
-import ch.jalu.configme.TestUtils;
+import ch.jalu.configme.neo.TestUtils;
 import ch.jalu.configme.neo.beanmapper.command.CommandConfig;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.configurationdata.ConfigurationDataBuilder;
@@ -10,7 +10,6 @@ import ch.jalu.configme.neo.properties.OptionalProperty;
 import ch.jalu.configme.neo.properties.Property;
 import ch.jalu.configme.neo.samples.TestConfiguration;
 import ch.jalu.configme.neo.samples.TestEnum;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -26,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ch.jalu.configme.TestUtils.getJarPath;
+import static ch.jalu.configme.neo.TestUtils.getJarPath;
 import static ch.jalu.configme.neo.configurationdata.ConfigurationDataBuilder.createConfiguration;
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newProperty;
 import static java.util.Collections.singletonList;

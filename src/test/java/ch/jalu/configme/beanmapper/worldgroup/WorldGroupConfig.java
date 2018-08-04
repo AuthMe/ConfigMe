@@ -5,6 +5,7 @@ import java.util.Map;
 /**
  * Main class for the world groups configuration.
  */
+@Deprecated // has been moved
 public class WorldGroupConfig {
 
     private Map<String, Group> groups;

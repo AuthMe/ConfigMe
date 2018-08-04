@@ -1,4 +1,4 @@
-package ch.jalu.configme.demo.beans;
+package ch.jalu.configme.neo.demo.beans;
 
 /**
  * Location bean.

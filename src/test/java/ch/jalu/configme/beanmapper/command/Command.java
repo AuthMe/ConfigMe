@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * Command.
  */
+@Deprecated // has been moved
 public class Command {
 
     private String command;

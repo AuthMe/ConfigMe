@@ -8,6 +8,7 @@ import java.util.Optional;
 /**
  * Extension of sample {@link Command} class.
  */
+@Deprecated // has been moved
 public class ComplexCommand extends Command {
 
     private Optional<String> nameStartsWith;

@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo.utils;
 
-import ch.jalu.configme.TestUtils;
+import ch.jalu.configme.neo.TestUtils;
 import ch.jalu.configme.neo.exception.ConfigMeException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import java.io.File;
 import java.io.IOException;
 
-import static ch.jalu.configme.TestUtils.verifyException;
+import static ch.jalu.configme.neo.TestUtils.verifyException;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;

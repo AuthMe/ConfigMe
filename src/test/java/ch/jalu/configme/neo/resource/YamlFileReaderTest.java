@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo.resource;
 
-import ch.jalu.configme.TestUtils;
+import ch.jalu.configme.neo.TestUtils;
 import ch.jalu.configme.neo.exception.ConfigMeException;
 import ch.jalu.configme.neo.properties.Property;
 import ch.jalu.configme.neo.samples.TestConfiguration;
@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ch.jalu.configme.TestUtils.verifyException;
+import static ch.jalu.configme.neo.TestUtils.verifyException;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -140,6 +140,17 @@ public class YamlFileReaderTest {
         // then
         assertThat(result, instanceOf(Map.class));
         assertThat(((Map<String, ?>) result).keySet(), containsInAnyOrder("test", "sample", "version", "features"));
+    }
+
+    @Test
+    public void shouldReturnNullForUnknownPath() {
+        // given
+        File file = copyFileFromResources(COMPLETE_FILE);
+        PropertyReader reader = new YamlFileReader(file);
+
+        // when / then
+        assertThat(reader.getObject("sample.ratio.wrong.dunno"), nullValue());
+        assertThat(reader.getObject(TestConfiguration.RATIO_ORDER.getPath() + ".child"), nullValue());
     }
 
     private File copyFileFromResources(String path) {

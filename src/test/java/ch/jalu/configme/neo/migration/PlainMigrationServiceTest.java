@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo.migration;
 
-import ch.jalu.configme.TestUtils;
+import ch.jalu.configme.neo.TestUtils;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.properties.IntegerProperty;
 import ch.jalu.configme.neo.properties.Property;
@@ -48,14 +48,14 @@ public class PlainMigrationServiceTest {
     @Test
     public void shouldReturnNoSaveNecessaryForAllPropertiesPresent() {
         // given
-        PropertyReader resource = createReaderSpy(COMPLETE_CONFIG);
+        PropertyReader reader = createReaderSpy(COMPLETE_CONFIG);
 
         // when
-        boolean result = service.checkAndMigrate(resource, configurationData);
+        boolean result = service.checkAndMigrate(reader, configurationData);
 
         // then
         assertThat(result, equalTo(false));
-        verify(service).performMigrations(resource, configurationData);
+        verify(service).performMigrations(reader, configurationData);
     }
 
     @Test

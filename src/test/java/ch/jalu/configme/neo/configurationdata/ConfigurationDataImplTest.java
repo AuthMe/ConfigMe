@@ -1,5 +1,6 @@
 package ch.jalu.configme.neo.configurationdata;
 
+import ch.jalu.configme.neo.exception.ConfigMeException;
 import ch.jalu.configme.neo.properties.Property;
 import org.junit.Test;
 
@@ -7,8 +8,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static ch.jalu.configme.TestUtils.containsAll;
-import static ch.jalu.configme.TestUtils.verifyException;
+import static ch.jalu.configme.neo.TestUtils.containsAll;
+import static ch.jalu.configme.neo.TestUtils.verifyException;
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newProperty;
 import static org.junit.Assert.assertThat;
 
@@ -40,5 +41,19 @@ public class ConfigurationDataImplTest {
 
         // when / then
         verifyException(() -> configData.getProperties().remove(0), UnsupportedOperationException.class);
+    }
+
+    @Test
+    public void shouldThrowForInvalidValue() {
+        // given
+        List<Property<?>> properties = Arrays.asList(
+            newProperty("test", "Test"),
+            newProperty("taste", "Taste"),
+            newProperty("toast", "Toaster"));
+        ConfigurationData configData = new ConfigurationDataImpl(properties, Collections.emptyMap());
+
+        // when / then
+        verifyException(() -> configData.setValue(properties.get(0), null),
+            ConfigMeException.class, "Invalid value");
     }
 }

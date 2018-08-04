@@ -51,6 +51,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 /**
  * Test for {@link SettingsManager}.
  */
+// TODO: migrate
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsManagerTest {
 

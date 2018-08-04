@@ -5,6 +5,7 @@ import java.util.Map;
 /**
  * Like {@link ch.jalu.configme.beanmapper.command.CommandConfig} but for {@link ComplexCommand}.
  */
+@Deprecated // has been moved
 public class ComplexCommandConfig {
 
     private Map<String, ComplexCommand> commands;

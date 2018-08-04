@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-import static ch.jalu.configme.TestUtils.transform;
-import static ch.jalu.configme.TestUtils.verifyException;
+import static ch.jalu.configme.neo.TestUtils.transform;
+import static ch.jalu.configme.neo.TestUtils.verifyException;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;

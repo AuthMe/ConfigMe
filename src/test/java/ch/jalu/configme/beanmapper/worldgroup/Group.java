@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * World group.
  */
+@Deprecated // has been moved
 public class Group {
 
     private List<String> worlds;

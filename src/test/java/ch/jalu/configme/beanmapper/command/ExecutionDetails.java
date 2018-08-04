@@ -5,6 +5,7 @@ import java.util.Set;
 /**
  * Command execution details.
  */
+@Deprecated // has been moved
 public class ExecutionDetails {
 
     private Executor executor;

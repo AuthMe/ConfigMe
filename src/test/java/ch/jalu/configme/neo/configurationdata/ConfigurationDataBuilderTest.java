@@ -1,9 +1,9 @@
 package ch.jalu.configme.neo.configurationdata;
 
-import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.neo.exception.ConfigMeException;
+import ch.jalu.configme.neo.TestUtils;
 import ch.jalu.configme.neo.configurationdata.samples.AdditionalTestConfiguration;
 import ch.jalu.configme.neo.configurationdata.samples.IllegalSettingsHolderConstructorClasses;
+import ch.jalu.configme.neo.exception.ConfigMeException;
 import ch.jalu.configme.neo.properties.Property;
 import ch.jalu.configme.neo.samples.ClassWithPrivatePropertyField;
 import ch.jalu.configme.neo.samples.TestConfiguration;
@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
-import static ch.jalu.configme.TestUtils.verifyException;
+import static ch.jalu.configme.neo.TestUtils.verifyException;
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newProperty;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;

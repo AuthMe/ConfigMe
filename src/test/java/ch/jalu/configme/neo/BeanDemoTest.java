@@ -1,6 +1,6 @@
-package ch.jalu.configme;
+package ch.jalu.configme.neo;
 
-import ch.jalu.configme.demo.beans.BeanPropertiesDemo;
+import ch.jalu.configme.neo.demo.beans.BeanPropertiesDemo;
 import org.junit.Test;
 
 import java.io.File;

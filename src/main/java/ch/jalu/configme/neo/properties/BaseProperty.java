@@ -45,4 +45,9 @@ public abstract class BaseProperty<T> implements Property<T> {
 
     @Nullable
     protected abstract T getFromResource(PropertyReader reader);
+
+    @Override
+    public String toString() {
+        return "Property '" + path + "'";
+    }
 }

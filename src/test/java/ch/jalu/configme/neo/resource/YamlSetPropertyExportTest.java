@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo.resource;
 
-import ch.jalu.configme.TestUtils;
+import ch.jalu.configme.neo.TestUtils;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
 import ch.jalu.configme.neo.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.neo.properties.BaseProperty;
@@ -20,7 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static ch.jalu.configme.TestUtils.transform;
+import static ch.jalu.configme.neo.TestUtils.transform;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;

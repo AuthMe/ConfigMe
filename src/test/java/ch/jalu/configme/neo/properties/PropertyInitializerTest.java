@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo.properties;
 
-import ch.jalu.configme.TestUtils;
+import ch.jalu.configme.neo.TestUtils;
 import ch.jalu.configme.neo.beanmapper.worldgroup.WorldGroupConfig;
 import ch.jalu.configme.neo.samples.TestEnum;
 import org.junit.Test;

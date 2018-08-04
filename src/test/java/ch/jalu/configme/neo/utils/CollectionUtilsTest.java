@@ -1,6 +1,6 @@
 package ch.jalu.configme.neo.utils;
 
-import ch.jalu.configme.TestUtils;
+import ch.jalu.configme.neo.TestUtils;
 import org.junit.Test;
 
 import java.util.Arrays;

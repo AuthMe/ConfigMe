@@ -9,8 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static ch.jalu.configme.TestUtils.transform;
-import static ch.jalu.configme.TestUtils.verifyException;
+import static ch.jalu.configme.neo.TestUtils.transform;
+import static ch.jalu.configme.neo.TestUtils.verifyException;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;

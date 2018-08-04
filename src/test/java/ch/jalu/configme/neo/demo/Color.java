@@ -1,4 +1,4 @@
-package ch.jalu.configme.demo;
+package ch.jalu.configme.neo.demo;
 
 /**
  * Colors.
