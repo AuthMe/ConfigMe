@@ -16,7 +16,7 @@ import java.util.TreeMap;
 
 public class MapperImpl implements Mapper {
 
-    private final Map<String, Collection<BeanProperty>> classProperties = new HashMap<>();
+    private final Map<String, Collection<BeanPropertyDescription>> classProperties = new HashMap<>();
     private BeanDescriptionFactory beanDescriptionFactory = new BeanDescriptionFactoryImpl();
     private ValueTransformer valueTransformer = new ValueTransformerImpl();
 
@@ -44,7 +44,7 @@ public class MapperImpl implements Mapper {
         }
 
         String pathPrefix = path.isEmpty() ? "" : path + ".";
-        for (BeanProperty property : getWritableProperties(value.getClass())) {
+        for (BeanPropertyDescription property : getWritableProperties(value.getClass())) {
             visitRecursively(property.getValue(value), pathPrefix + property.getName(), result);
         }
     }
@@ -74,7 +74,7 @@ public class MapperImpl implements Mapper {
         }
 
         Map<String, Object> mappedBean = new HashMap<>();
-        for (BeanProperty property : getWritableProperties(value.getClass())) {
+        for (BeanPropertyDescription property : getWritableProperties(value.getClass())) {
             mappedBean.put(property.getName(), transformValueToExport(property.getValue(value)));
         }
         return mappedBean;
@@ -165,7 +165,7 @@ public class MapperImpl implements Mapper {
      */
     @Nullable
     protected Object convertToBean(TypeInformation type, Object value) {
-        Collection<BeanProperty> properties = getWritableProperties(type.getSafeToWriteClass());
+        Collection<BeanPropertyDescription> properties = getWritableProperties(type.getSafeToWriteClass());
         // Check that we have properties (or else we don't have a bean) and that the provided value is a Map
         // so we can execute the mapping process.
         if (properties.isEmpty() || !(value instanceof Map<?, ?>)) {
@@ -174,7 +174,7 @@ public class MapperImpl implements Mapper {
 
         Map<?, ?> entries = (Map<?, ?>) value;
         Object bean = createBean(type.getSafeToWriteClass());
-        for (BeanProperty property : properties) {
+        for (BeanPropertyDescription property : properties) {
             Object result = convertToValueForField(
                 property.getTypeInformation(),
                 entries.get(property.getName()));
@@ -202,7 +202,7 @@ public class MapperImpl implements Mapper {
      * @param clazz the class to get the bean properties from
      * @return relevant properties
      */
-    protected Collection<BeanProperty> getWritableProperties(Class<?> clazz) {
+    protected Collection<BeanPropertyDescription> getWritableProperties(Class<?> clazz) {
         return classProperties.computeIfAbsent(clazz.getCanonicalName(),
             s -> beanDescriptionFactory.collectWritableFields(clazz));
     }

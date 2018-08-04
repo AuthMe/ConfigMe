@@ -6,14 +6,14 @@ import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class BeanPropertyImpl implements BeanProperty {
+public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
 
     private final String name;
     private final TypeInformation typeInformation;
     private final Method getter;
     private final Method setter;
 
-    public BeanPropertyImpl(String name, TypeInformation typeInformation, Method getter, Method setter) {
+    public BeanPropertyDescriptionImpl(String name, TypeInformation typeInformation, Method getter, Method setter) {
         this.name = name;
         this.typeInformation = typeInformation;
         this.getter = getter;

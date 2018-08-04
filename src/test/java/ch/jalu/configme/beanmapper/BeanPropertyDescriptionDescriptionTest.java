@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test for {@link BeanPropertyDescription}.
  */
-public class BeanPropertyDescriptionTest {
+public class BeanPropertyDescriptionDescriptionTest {
 
     @Test
     public void shouldGetAndSetProperties() {

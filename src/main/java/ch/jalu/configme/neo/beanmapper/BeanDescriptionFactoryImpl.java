@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Creates all {@link BeanProperty} objects for a given class.
+ * Creates all {@link BeanPropertyDescription} objects for a given class.
  * <p>
  * The returned bean field objects are required to be writable properties, i.e. any fields
  * which don't have an associated setter (or getter) will be ignored.
@@ -28,10 +28,10 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @return the bean class' properties to handle
      */
     @Override
-    public Collection<BeanProperty> collectWritableFields(Class<?> clazz) {
+    public Collection<BeanPropertyDescription> collectWritableFields(Class<?> clazz) {
         List<PropertyDescriptor> descriptors = getWritableProperties(clazz);
 
-        List<BeanProperty> properties = descriptors.stream()
+        List<BeanPropertyDescription> properties = descriptors.stream()
             .map(this::convert)
             .filter(p -> p != null)
             .collect(Collectors.toList());
@@ -41,18 +41,18 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
     }
 
     /**
-     * Converts a {@link PropertyDescriptor} to a {@link BeanProperty} object.
+     * Converts a {@link PropertyDescriptor} to a {@link BeanPropertyDescription} object.
      *
      * @param descriptor the descriptor to convert
      * @return the converted object, or null if the property should be skipped
      */
     @Nullable
-    protected BeanProperty convert(PropertyDescriptor descriptor) {
+    protected BeanPropertyDescription convert(PropertyDescriptor descriptor) {
         if (Boolean.TRUE.equals(descriptor.getValue("transient"))) {
             return null;
         }
 
-        return new BeanPropertyImpl(
+        return new BeanPropertyDescriptionImpl(
             getPropertyName(descriptor),
             createTypeInfo(descriptor),
             descriptor.getReadMethod(),
@@ -65,7 +65,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param clazz the class to which the properties belong
      * @param properties the properties that will be used on the class
      */
-    protected void validateProperties(Class<?> clazz, Collection<BeanProperty> properties) {
+    protected void validateProperties(Class<?> clazz, Collection<BeanPropertyDescription> properties) {
         Set<String> names = new HashSet<>(properties.size());
         properties.forEach(property -> {
             if (property.getName().isEmpty()) {

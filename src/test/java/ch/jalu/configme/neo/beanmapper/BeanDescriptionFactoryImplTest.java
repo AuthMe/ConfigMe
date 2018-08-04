@@ -25,7 +25,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Test for {@link BeanDescriptionFactoryImpl}.
  */
-public class BeanDescriptionFactoryTest {
+public class BeanDescriptionFactoryImplTest {
 
     @Test
     public void shouldReturnWritableProperties() {
@@ -33,7 +33,7 @@ public class BeanDescriptionFactoryTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanProperty> descriptions = factory.collectWritableFields(SampleBean.class);
+        Collection<BeanPropertyDescription> descriptions = factory.collectWritableFields(SampleBean.class);
 
         // then
         assertThat(descriptions, hasSize(2));
@@ -56,11 +56,11 @@ public class BeanDescriptionFactoryTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanProperty> properties = factory.collectWritableFields(BooleanTestBean.class);
+        Collection<BeanPropertyDescription> properties = factory.collectWritableFields(BooleanTestBean.class);
 
         // then
         assertThat(properties, hasSize(4));
-        assertThat(transform(properties, BeanProperty::getName),
+        assertThat(transform(properties, BeanPropertyDescription::getName),
             containsInAnyOrder("empty", "active", "isField", "isNotMatched"));
     }
 
@@ -70,11 +70,11 @@ public class BeanDescriptionFactoryTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanProperty> properties = factory.collectWritableFields(BeanWithTransientFields.class);
+        Collection<BeanPropertyDescription> properties = factory.collectWritableFields(BeanWithTransientFields.class);
 
         // then
         assertThat(properties, hasSize(2));
-        assertThat(transform(properties, BeanProperty::getName), containsInAnyOrder("name", "mandatory"));
+        assertThat(transform(properties, BeanPropertyDescription::getName), containsInAnyOrder("name", "mandatory"));
     }
 
     @Test
@@ -83,11 +83,11 @@ public class BeanDescriptionFactoryTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanProperty> properties = factory.collectWritableFields(Middle.class);
+        Collection<BeanPropertyDescription> properties = factory.collectWritableFields(Middle.class);
 
         // then
         assertThat(properties, hasSize(3));
-        assertThat(transform(properties, BeanProperty::getName), containsInAnyOrder("id", "ratio", "name"));
+        assertThat(transform(properties, BeanPropertyDescription::getName), containsInAnyOrder("id", "ratio", "name"));
     }
 
     @Test
@@ -96,11 +96,11 @@ public class BeanDescriptionFactoryTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanProperty> properties = factory.collectWritableFields(Child.class);
+        Collection<BeanPropertyDescription> properties = factory.collectWritableFields(Child.class);
 
         // then
         assertThat(properties, hasSize(5));
-        assertThat(transform(properties, BeanProperty::getName),
+        assertThat(transform(properties, BeanPropertyDescription::getName),
             containsInAnyOrder("temporary", "importance", "ratio", "name", "id"));
     }
 
@@ -110,11 +110,11 @@ public class BeanDescriptionFactoryTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanProperty> properties = factory.collectWritableFields(AnnotatedEntry.class);
+        Collection<BeanPropertyDescription> properties = factory.collectWritableFields(AnnotatedEntry.class);
 
         // then
         assertThat(properties, hasSize(2));
-        assertThat(transform(properties, BeanProperty::getName),
+        assertThat(transform(properties, BeanPropertyDescription::getName),
             containsInAnyOrder("id", "has-id"));
     }
 
@@ -142,9 +142,9 @@ public class BeanDescriptionFactoryTest {
             "may not be empty");
     }
 
-    private static BeanProperty getDescription(String name,
-                                                          Collection<BeanProperty> descriptions) {
-        for (BeanProperty description : descriptions) {
+    private static BeanPropertyDescription getDescription(String name,
+                                                          Collection<BeanPropertyDescription> descriptions) {
+        for (BeanPropertyDescription description : descriptions) {
             if (name.equals(description.getName())) {
                 return description;
             }

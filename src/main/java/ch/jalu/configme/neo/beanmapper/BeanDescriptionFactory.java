@@ -4,6 +4,6 @@ import java.util.Collection;
 
 public interface BeanDescriptionFactory {
 
-    Collection<BeanProperty> collectWritableFields(Class<?> clazz);
+    Collection<BeanPropertyDescription> collectWritableFields(Class<?> clazz);
 
 }
