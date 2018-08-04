@@ -21,10 +21,6 @@ public class EnumProperty<E extends Enum<E>> extends Property<E> {
     protected E getFromResource(PropertyResource resource) {
         // Value is read from file as a String, but when it is set later on it is an enum
         Object value = resource.getObject(getPath());
-        // TODO: Review - hacky things like this should be avoided in the future, maybe by actually reading all values
-        // into some registry and then never working with the resource anymore. This should also hopefully be more
-        // efficient since conversions / sanity checks etc. only take place once.
-        // Consider that this might require us to first validate that no properties have overlapping paths (#24)
         if (clazz.isInstance(value)) {
             return clazz.cast(value);
         }

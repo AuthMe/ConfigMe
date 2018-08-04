@@ -1,10 +1,11 @@
-package ch.jalu.configme.resource;
+package ch.jalu.configme.neo.resource;
 
 import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.configurationdata.ConfigurationData;
-import ch.jalu.configme.properties.Property;
-import ch.jalu.configme.properties.StringListProperty;
-import ch.jalu.configme.samples.TestEnum;
+import ch.jalu.configme.neo.configurationdata.ConfigurationData;
+import ch.jalu.configme.neo.configurationdata.ConfigurationDataBuilder;
+import ch.jalu.configme.neo.properties.BaseProperty;
+import ch.jalu.configme.neo.properties.Property;
+import ch.jalu.configme.neo.samples.TestEnum;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,7 +28,6 @@ import static org.junit.Assert.assertThat;
 /**
  * Tests that {@link YamlFileResource} exports Sets in a nice way (cf. issue #27).
  */
-@Deprecated // has bee nmoved
 public class YamlSetPropertyExportTest {
 
     private static final String SAMPLE_FILE = "/empty_file.yml";
@@ -46,43 +46,45 @@ public class YamlSetPropertyExportTest {
     public void shouldLoadAndExportProperly() throws IOException {
         // given
         PropertyResource resource = new YamlFileResource(configFile);
-        resource.setValue("sample.ratio.fields", Arrays.asList(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD));
         Property<Set<TestEnum>> setProperty = new EnumSetProperty("sample.ratio.fields", Collections.emptySet());
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(singletonList(setProperty));
+        configurationData.setValue(setProperty, new LinkedHashSet<>(Arrays.asList(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD)));
 
         // when
-        resource.exportProperties(new ConfigurationData(singletonList(setProperty)));
-        resource.reload();
+        resource.exportProperties(configurationData);
 
         // then
-        assertThat(setProperty.getValue(resource), contains(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD));
-        // Check that export can be read with StringListProperty too
-        assertThat(new StringListProperty("sample.ratio.fields").getValue(resource),
-            contains(TestEnum.FIRST.name(), TestEnum.SECOND.name(), TestEnum.THIRD.name()));
+        assertThat(setProperty.determineValue(resource.createReader()), contains(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD));
 
         assertThat(Files.readAllLines(configFile.toPath()), contains(
             "",
             "sample:",
             "    ratio:",
             "        fields: ",
-            "        - 'FIRST'",
-            "        - 'SECOND'",
-            "        - 'THIRD'"));
+            "        - FIRST",
+            "        - SECOND",
+            "        - THIRD"));
     }
 
-    private static final class EnumSetProperty extends Property<Set<TestEnum>> {
+    private static final class EnumSetProperty extends BaseProperty<Set<TestEnum>> {
 
         EnumSetProperty(String path, Set<TestEnum> defaultValue) {
             super(path, defaultValue);
         }
 
         @Override
-        protected Set<TestEnum> getFromResource(PropertyResource resource) {
-            List<?> list = resource.getList(getPath());
+        protected Set<TestEnum> getFromResource(PropertyReader reader) {
+            List<?> list = reader.getList(getPath());
             if (list == null) {
                 return null;
             }
             return new LinkedHashSet<>(
                 transform(list, v -> TestEnum.valueOf(v.toString())));
+        }
+
+        @Override
+        public List<String> toExportValue(Set<TestEnum> value) {
+            return transform(value, Enum::name);
         }
     }
 }

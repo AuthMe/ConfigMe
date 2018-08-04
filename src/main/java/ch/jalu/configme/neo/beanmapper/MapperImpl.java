@@ -12,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
 
 public class MapperImpl implements Mapper {
@@ -35,20 +36,6 @@ public class MapperImpl implements Mapper {
         return transformValueToExport(object);
     }
 
-    protected void visitRecursively(Object value, String path, Map<String, Object> result) {
-        Object simpleValue = valueTransformer.toExportValue(value);
-        if (simpleValue != null) {
-            result.put(path, simpleValue);
-        } else if (value == null) {
-            return;
-        }
-
-        String pathPrefix = path.isEmpty() ? "" : path + ".";
-        for (BeanPropertyDescription property : getWritableProperties(value.getClass())) {
-            visitRecursively(property.getValue(value), pathPrefix + property.getName(), result);
-        }
-    }
-
     protected Object transformValueToExport(Object value) {
         if (value instanceof Collection<?>) {
             List<Object> result = new ArrayList<>();
@@ -64,6 +51,11 @@ public class MapperImpl implements Mapper {
                 result.put(entry.getKey(), transformValueToExport(entry.getValue()));
             }
             return result;
+        }
+
+        if (value instanceof Optional<?>) {
+            Optional<?> optional = (Optional<?>) value;
+            return optional.map(this::transformValueToExport).orElse(null);
         }
 
         Object simpleValue = valueTransformer.toExportValue(value);
@@ -93,12 +85,17 @@ public class MapperImpl implements Mapper {
 
         if (Collection.class.isAssignableFrom(rawClass)) {
             return createCollection(typeInformation, value);
-        }
-
-        if (Map.class.isAssignableFrom(rawClass)) {
+        } else if (Map.class.isAssignableFrom(rawClass)) {
             return processMap(typeInformation, value);
+        } else if (Optional.class.isAssignableFrom(rawClass)) {
+            return processOptional(typeInformation, value);
         }
         return convertToBean(typeInformation, value);
+    }
+
+    protected Object processOptional(TypeInformation typeInformation, Object value) {
+        Object result = convertToValueForField(typeInformation.getGenericType(0), value);
+        return Optional.ofNullable(result);
     }
 
     @Nullable

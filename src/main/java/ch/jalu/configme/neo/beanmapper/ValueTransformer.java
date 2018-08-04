@@ -5,9 +5,9 @@ import javax.annotation.Nullable;
 public interface ValueTransformer {
 
     @Nullable
-    Object value(Class<?> clazz, Object value);
+    Object value(Class<?> clazz, @Nullable Object value);
 
     @Nullable
-    Object toExportValue(Object value);
+    Object toExportValue(@Nullable Object value);
 
 }

@@ -1,7 +1,7 @@
 package ch.jalu.configme.neo.beanmapper.command.optionalproperties;
 
 import ch.jalu.configme.neo.beanmapper.command.Command;
-import ch.jalu.configme.samples.TestEnum;
+import ch.jalu.configme.neo.samples.TestEnum;
 
 import java.util.Optional;
 

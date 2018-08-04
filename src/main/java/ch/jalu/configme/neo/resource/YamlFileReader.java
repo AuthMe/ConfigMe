@@ -2,6 +2,7 @@ package ch.jalu.configme.neo.resource;
 
 import ch.jalu.configme.neo.exception.ConfigMeException;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,6 +91,8 @@ public class YamlFileReader implements PropertyReader {
             throw new ConfigMeException("Could not read file '" + file + "'", e);
         } catch (ClassCastException e) {
             throw new ConfigMeException("Top-level is not a map in '" + file + "'", e);
+        } catch (YAMLException e) {
+            throw new ConfigMeException("YAML error while trying loading file '" + file + "'", e);
         }
     }
 

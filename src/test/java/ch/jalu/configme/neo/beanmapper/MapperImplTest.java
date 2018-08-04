@@ -32,6 +32,8 @@ import static org.junit.Assert.assertThat;
  */
 public class MapperImplTest {
 
+    // TODO: tests for toExportValue
+
     @Test
     public void shouldCreateWorldGroups() {
         // given
@@ -86,7 +88,7 @@ public class MapperImplTest {
     }
 
     @Test
-    @Ignore
+    @Ignore // TODO unignore
     public void shouldSkipInvalidEntry() {
         // given
         PropertyResource resource = new YamlFileResource(getJarFile("/beanmapper/worlds_invalid.yml"));
@@ -100,6 +102,7 @@ public class MapperImplTest {
         assertThat(config.getGroups().keySet(), contains("creative"));
     }
 
+    // TODO uncomment .
 //    @Test(expected = ConfigMeMapperException.class)
 //    public void shouldThrowForInvalidValue() {
 //        // given

@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class ValueTransformerImpl implements ValueTransformer {
 
-    // TODO: Cleanup needed :( + interface + test
+    // TODO: Cleanup needed :( + test
 
     private final Map<Class<?>, Class<?>> primitiveTypes = buildPrimitiveNumberMap();
 
