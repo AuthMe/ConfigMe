@@ -21,8 +21,7 @@ public class YamlFileResource implements PropertyResource {
     private static final String INDENTATION = "    ";
 
     protected final File file;
-    private Yaml simpleYaml;
-    private Yaml singleQuoteYaml;
+    private Yaml yamlObject;
 
     public YamlFileResource(File file) {
         this.file = file;
@@ -45,8 +44,7 @@ public class YamlFileResource implements PropertyResource {
         } catch (IOException e) {
             throw new ConfigMeException("Could not save config to '" + file.getPath() + "'", e);
         } finally {
-            simpleYaml = null;
-            singleQuoteYaml = null;
+            onWriteComplete();
         }
     }
 
@@ -56,7 +54,7 @@ public class YamlFileResource implements PropertyResource {
             return;
         }
 
-        if (value instanceof Map<?, ?>) {
+        if (value instanceof Map<?, ?> && !((Map) value).isEmpty()) {
             final String pathPrefix = path.isEmpty() ? "" : path + ".";
             for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
                 exportValue(writer, pathTraverser, pathPrefix + entry.getKey(), entry.getValue());
@@ -102,14 +100,14 @@ public class YamlFileResource implements PropertyResource {
      */
     protected String transformValue(@Nullable Object value) { // TODO: find better name?
         if (value instanceof String) {
-            return getSingleQuoteYaml().dump(value);
+            return getYamlObject().dump(value);
         } else if (value instanceof Collection<?>) {
-            return ((Collection<?>) value).isEmpty() ? "[]" : "\n" + getSimpleYaml().dump(value);
+            return ((Collection<?>) value).isEmpty() ? "[]" : "\n" + getYamlObject().dump(value);
         }
-        return getSimpleYaml().dump(value);
+        return getYamlObject().dump(value);
     }
 
-    private static String indent(int level) {
+    protected String indent(int level) {
         String result = "";
         for (int i = 0; i < level; i++) {
             result += INDENTATION;
@@ -118,40 +116,32 @@ public class YamlFileResource implements PropertyResource {
     }
 
     /**
-     * Returns a YAML instance set to export values with the default style.
-     *
-     * @return YAML instance
+     * Called at the end of {@link #exportProperties}, regardless whteher the execution was successful or not.
      */
-    protected Yaml getSimpleYaml() {
-        if (simpleYaml == null) {
-            simpleYaml = newYaml(false);
-        }
-        return simpleYaml;
+    protected void onWriteComplete() {
+        yamlObject = null;
     }
 
     /**
-     * Returns a YAML instance set to export values with single quotes.
+     * Returns the YAML instance with which values are converted to YAML.
      *
-     * @return YAML instance
+     * @return the YAML instance to use
      */
-    protected Yaml getSingleQuoteYaml() {
-        if (singleQuoteYaml == null) {
-            singleQuoteYaml = newYaml(true);
+    protected Yaml getYamlObject() {
+        if (yamlObject == null) {
+            yamlObject = createNewYaml();
         }
-        return singleQuoteYaml;
+        return yamlObject;
+    }
+
+    protected Yaml createNewYaml() {
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setAllowUnicode(true);
+        return new Yaml(options);
     }
 
     private <T> Object getExportValue(Property<T> property, ConfigurationData configurationData) {
         return property.toExportValue(configurationData.getValue(property));
-    }
-
-    protected Yaml newYaml(boolean useSingleQuotes) {
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        options.setAllowUnicode(true);
-        if (useSingleQuotes) {
-            options.setDefaultScalarStyle(DumperOptions.ScalarStyle.SINGLE_QUOTED);
-        }
-        return new Yaml(options);
     }
 }

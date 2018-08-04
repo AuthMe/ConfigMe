@@ -15,12 +15,18 @@ import java.util.Map;
 public class ConfigurationDataImpl implements ConfigurationData {
 
     private final List<Property<?>> properties;
-    private final Map<String, List<String>> sectionComments;
+    private final Map<String, List<String>> allComments;
     private final Map<String, Object> values;
 
-    protected ConfigurationDataImpl(List<? extends Property<?>> allProperties, Map<String, List<String>> sectionComments) {
+    /**
+     * Constructor. See also {@link ConfigurationDataBuilder}.
+     *
+     * @param allProperties all known properties
+     * @param allComments map of comments by path
+     */
+    protected ConfigurationDataImpl(List<? extends Property<?>> allProperties, Map<String, List<String>> allComments) {
         this.properties = Collections.unmodifiableList(allProperties);
-        this.sectionComments = Collections.unmodifiableMap(sectionComments);
+        this.allComments = Collections.unmodifiableMap(allComments);
         this.values = new HashMap<>();
     }
 
@@ -31,7 +37,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
 
     @Override
     public List<String> getCommentsForSection(String path) {
-        return sectionComments.getOrDefault(path, Collections.emptyList());
+        return allComments.getOrDefault(path, Collections.emptyList());
     }
 
     @Override

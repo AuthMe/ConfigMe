@@ -3,7 +3,9 @@ package ch.jalu.configme.neo.resource;
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.neo.beanmapper.command.CommandConfig;
 import ch.jalu.configme.neo.configurationdata.ConfigurationData;
+import ch.jalu.configme.neo.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.neo.exception.ConfigMeException;
+import ch.jalu.configme.neo.properties.BeanProperty;
 import ch.jalu.configme.neo.properties.OptionalProperty;
 import ch.jalu.configme.neo.properties.Property;
 import ch.jalu.configme.neo.samples.TestConfiguration;
@@ -27,7 +29,7 @@ import java.util.Map;
 import static ch.jalu.configme.TestUtils.getJarPath;
 import static ch.jalu.configme.neo.configurationdata.ConfigurationDataBuilder.createConfiguration;
 import static ch.jalu.configme.neo.properties.PropertyInitializer.newProperty;
-import static org.hamcrest.Matchers.aMapWithSize;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -164,7 +166,6 @@ public class YamlFileResourceTest {
     }
 
     @Test
-    @Ignore // TODO: Strings in lists are no longer wrapped in single quotes
     public void shouldExportConfigurationWithExpectedComments() throws IOException {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
@@ -225,57 +226,37 @@ public class YamlFileResourceTest {
             "    duration: 22",
             "sample:",
             "    ratio:",
-            "        order: 'FIRST'"
+            "        order: FIRST"
         ));
     }
 
     @Test
-    @Ignore
-    public void shouldClearOtherValuesWhenBeanAtRootIsSet() {
+    public void shouldExportEmptyMap() throws IOException {
         // given
-        PropertyResource resource = new YamlFileResource(copyFileFromResources("/beanmapper/commands_root_path.yml"));
-        // assumption
-        assertThat((Map<?, ?>) resource.createReader().getObject("commands.save"), aMapWithSize(2));
+        CommandConfig config = new CommandConfig();
+        config.setDuration(3);
+        config.setCommands(Collections.emptyMap());
 
-        CommandConfig newConfig = new CommandConfig();
-        newConfig.setDuration(14);
-        newConfig.setCommands(Collections.emptyMap());
+        File file = copyFileFromResources("/beanmapper/commands.yml");
+        YamlFileResource resource = new YamlFileResource(file);
+
+        Property<CommandConfig> commandConfigProperty =
+            new BeanProperty<>(CommandConfig.class, "config", new CommandConfig());
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(singletonList(commandConfigProperty));
+        configurationData.setValue(commandConfigProperty, config);
 
         // when
-//        resource.setValue("", newConfig);
+        resource.exportProperties(configurationData);
 
         // then
-//        assertThat(resource.getObject(""), equalTo(newConfig));
-//        assertThat(resource.getObject("commands.save"), nullValue());
+        List<String> exportedLines = Files.readAllLines(file.toPath());
+        assertThat(exportedLines, contains(
+            "",
+            "config:",
+            "    commands: {}",
+            "    duration: 3"
+        ));
     }
-
-    // TODO: Uncomment & fix test
-//    @Test
-//    public void shouldExportEmptyMap() throws IOException {
-//        // given
-//        CommandConfig config = new CommandConfig();
-//        config.setDuration(3);
-//        config.setCommands(Collections.emptyMap());
-//
-//        File file = copyFileFromResources("/beanmapper/commands.yml");
-//        YamlFileResource resource = new YamlFileResource(file);
-//        resource.setValue("config", config);
-//
-//        Property<CommandConfig> commandConfigProperty =
-//            new BeanProperty<>(CommandConfig.class, "config", new CommandConfig());
-//
-//        // when
-//        resource.exportProperties(new ConfigurationData(Collections.singletonList(commandConfigProperty)));
-//
-//        // then
-//        List<String> exportedLines = Files.readAllLines(file.toPath());
-//        assertThat(exportedLines, contains(
-//            "",
-//            "config:",
-//            "    commands: {}",
-//            "    duration: 3"
-//        ));
-//    }
 
 
     private File copyFileFromResources(String path) {

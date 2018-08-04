@@ -73,7 +73,7 @@ public class MapperImpl implements Mapper {
             return null;
         }
 
-        Map<String, Object> mappedBean = new HashMap<>();
+        Map<String, Object> mappedBean = new LinkedHashMap<>();
         for (BeanPropertyDescription property : getWritableProperties(value.getClass())) {
             mappedBean.put(property.getName(), transformValueToExport(property.getValue(value)));
         }
