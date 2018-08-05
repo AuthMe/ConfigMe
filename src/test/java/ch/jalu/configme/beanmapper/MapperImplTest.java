@@ -23,7 +23,6 @@ import ch.jalu.configme.utils.TypeInformation;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -326,7 +325,6 @@ public class MapperImplTest {
     }
 
     @Test
-    @Ignore // TODO .
     public void shouldHandleComplexOptionalType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");

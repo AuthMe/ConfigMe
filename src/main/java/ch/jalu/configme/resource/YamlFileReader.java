@@ -83,6 +83,9 @@ public class YamlFileReader implements PropertyReader {
         return getObject(path) != null;
     }
 
+    /**
+     * Loads the values of the file.
+     */
     protected void loadFile() {
         try (FileInputStream fis = new FileInputStream(file)) {
             Object obj = new Yaml().load(fis);

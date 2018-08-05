@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.beanmapper.DefaultMapper;
 import ch.jalu.configme.beanmapper.Mapper;
 import ch.jalu.configme.beanmapper.command.Command;
 import ch.jalu.configme.beanmapper.command.CommandConfig;
@@ -7,16 +8,21 @@ import ch.jalu.configme.beanmapper.command.Executor;
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
+import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
+import ch.jalu.configme.utils.TypeInformation;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.lang.reflect.Type;
+import java.util.HashMap;
 
 import static ch.jalu.configme.TestUtils.copyFileFromResources;
+import static ch.jalu.configme.TestUtils.verifyException;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -85,19 +91,49 @@ public class BeanPropertyTest {
         // given
         Mapper mapper = mock(Mapper.class);
         String path = "cnf";
-        BeanProperty<WorldGroupConfig> property =
-            new BeanProperty<>(WorldGroupConfig.class, path, new WorldGroupConfig(), mapper);
+        BeanProperty<WorldGroupConfig> property = new BeanProperty<>(
+            WorldGroupConfig.class, path, new WorldGroupConfig(), mapper);
         PropertyReader reader = mock(PropertyReader.class);
         Object value = new Object();
         given(reader.getObject(path)).willReturn(value);
         WorldGroupConfig groupConfig = new WorldGroupConfig();
-        given(mapper.convertToBean(reader, path, WorldGroupConfig.class)).willReturn(groupConfig);
+        given(mapper.convertToBean(reader, path, new TypeInformation(WorldGroupConfig.class))).willReturn(groupConfig);
 
         // when
         WorldGroupConfig result = property.determineValue(reader);
 
         // then
         assertThat(result, equalTo(groupConfig));
-        verify(mapper).convertToBean(reader, path, WorldGroupConfig.class);
+        verify(mapper).convertToBean(reader, path, new TypeInformation(WorldGroupConfig.class));
+    }
+
+    @Test
+    public void shouldAllowInstantiationWithGenerics() throws NoSuchFieldException {
+        // given
+        Type stringComparable = TestFields.class.getDeclaredField("comparable").getGenericType();
+
+
+        // when
+        BeanProperty<Comparable<String>> property = new BeanProperty<>(new TypeInformation(stringComparable),
+            "path.test", "defaultValue", DefaultMapper.getInstance());
+
+        // then
+        assertThat(property.getDefaultValue(), equalTo("defaultValue"));
+    }
+
+    @Test
+    public void shouldThrowForObviouslyWrongDefaultValue() throws NoSuchFieldException {
+        // given
+        Type stringComparable = TestFields.class.getDeclaredField("comparable").getGenericType();
+
+        // when / then
+        verifyException(() -> new BeanProperty<>(new TypeInformation(stringComparable),
+            "path.test", new HashMap<>(), DefaultMapper.getInstance()),
+            ConfigMeException.class,
+            "does not match bean type");
+    }
+
+    private static final class TestFields {
+        private Comparable<String> comparable;
     }
 }

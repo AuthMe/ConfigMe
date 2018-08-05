@@ -96,6 +96,20 @@ public class StandardTransformersTest {
     }
 
     @Test
+    public void shouldMapToObject() {
+        // given
+        Object input1 = "str";
+        Object input2 = Collections.emptyMap();
+        Object input3 = null;
+        ValueTransformer transformer = StandardTransformers.getDefaultValueTransformer();
+
+        // when / then
+        assertThat(transformer.value(Object.class, input1), equalTo(input1));
+        assertThat(transformer.value(Object.class, input2), equalTo(input2));
+        assertThat(transformer.value(Object.class, input3), nullValue());
+    }
+
+    @Test
     public void shouldMapToNumbers() {
         // given
         Object input1 = 3;

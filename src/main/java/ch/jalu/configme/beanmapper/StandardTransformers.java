@@ -26,8 +26,8 @@ public final class StandardTransformers {
      */
     public static ValueTransformer getDefaultValueTransformer() {
         if (defaultTransformer == null) {
-            defaultTransformer = new CombiningValueTransformer(
-                new StringTransformer(), new EnumTransformer(), new BooleanTransformer(), new NumberTransformer());
+            defaultTransformer = new CombiningValueTransformer(new StringTransformer(), new EnumTransformer(),
+                new BooleanTransformer(), new ObjectTransformer(), new NumberTransformer());
         }
         return defaultTransformer;
     }
@@ -89,6 +89,23 @@ public final class StandardTransformers {
         @Override
         public Object toExportValue(Object value) {
             return (value instanceof Boolean) ? value : null;
+        }
+    }
+
+    /** Object transformer. */
+    public static class ObjectTransformer implements ValueTransformer {
+
+        @Override
+        public Object value(Class<?> clazz, Object value) {
+            if (clazz == Object.class) {
+                return value;
+            }
+            return null;
+        }
+
+        @Override
+        public Object toExportValue(Object value) {
+            return null;
         }
     }
 

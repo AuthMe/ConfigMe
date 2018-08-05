@@ -21,11 +21,20 @@ public class BeanProperty<T> extends BaseProperty<T> {
         this.mapper = mapper;
     }
 
+    /**
+     * Constructor. Allows to instantiate bean properties with generic types. Since it is hard to validate that
+     * the default value is actually correct, it is recommended to extend this class with specific type parameters.
+     *
+     * @param beanType the bean type
+     * @param path the path
+     * @param defaultValue the default value
+     * @param mapper the mapper to map with
+     */
     protected BeanProperty(TypeInformation beanType, String path, T defaultValue, Mapper mapper) {
         super(path, defaultValue);
         if (!beanType.getSafeToWriteClass().isInstance(defaultValue)) {
             throw new ConfigMeException(
-                "Default value invalid for path '" + path + "' and bean type '" + beanType + "'");
+                "Default value for path '" + path + "' does not match bean type '" + beanType + "'");
         }
         this.beanType = beanType;
         this.mapper = mapper;

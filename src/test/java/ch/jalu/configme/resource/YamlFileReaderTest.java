@@ -30,7 +30,6 @@ public class YamlFileReaderTest {
 
     private static final String COMPLETE_FILE = "/config-sample.yml";
     private static final String INCOMPLETE_FILE = "/config-incomplete-sample.yml";
-    private static final String DIFFICULT_FILE = "/config-difficult-values.yml";
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
