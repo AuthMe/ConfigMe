@@ -40,8 +40,8 @@ public class MapperImpl implements Mapper {
         this.valueTransformer = valueTransformer;
     }
 
-    protected MappingContext createRootMappingContext(String path, Class<?> clazz) {
-        return MappingContextImpl.createRoot(path, new TypeInformation(clazz));
+    protected MappingContext createRootMappingContext(String path, TypeInformation beanType) {
+        return MappingContextImpl.createRoot(path, beanType);
     }
 
     /**
@@ -113,13 +113,13 @@ public class MapperImpl implements Mapper {
     // ---------
 
     @Override
-    public <T> T convertToBean(PropertyReader reader, String path, Class<T> clazz) {
+    public Object convertToBean(PropertyReader reader, String path, TypeInformation beanType) {
         Object value = reader.getObject(path);
         if (value == null) {
             return null;
         }
 
-        return (T) convertValueForType(createRootMappingContext(path, clazz), value);
+        return convertValueForType(createRootMappingContext(path, beanType), value);
     }
 
     protected Object convertValueForType(MappingContext context, Object value) {
@@ -238,11 +238,15 @@ public class MapperImpl implements Mapper {
      */
     @Nullable
     protected Object createBean(MappingContext context, Object value) {
+        // Ensure that the value is a map so we can map it to a bean
+        if (!(value instanceof Map<?, ?>)) {
+            return null;
+        }
+
         Collection<BeanPropertyDescription> properties = getWritableProperties(
             context.getTypeInformation().getSafeToWriteClass());
-        // Check that we have properties (or else we don't have a bean) and that the provided value is a Map
-        // so we can execute the mapping process.
-        if (properties.isEmpty() || !(value instanceof Map<?, ?>)) {
+        // Check that we have properties (or else we don't have a bean)
+        if (properties.isEmpty()) {
             return null;
         }
 
@@ -277,6 +281,4 @@ public class MapperImpl implements Mapper {
                 + "'. It is required to have a default constructor.", e);
         }
     }
-
-
 }

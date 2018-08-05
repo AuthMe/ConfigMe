@@ -53,8 +53,6 @@ import static org.junit.Assert.fail;
  */
 public class MapperImplTest {
 
-    // TODO: tests for toExportValue
-
     @Test
     public void shouldCreateWorldGroups() {
         // given
