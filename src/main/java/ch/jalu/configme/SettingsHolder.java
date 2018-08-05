@@ -1,5 +1,7 @@
 package ch.jalu.configme;
 
+import ch.jalu.configme.configurationdata.CommentsConfiguration;
+
 /**
  * Marker interface for classes that have Property objects.
  * <p>
@@ -11,4 +13,8 @@ package ch.jalu.configme;
  * @see ch.jalu.configme.configurationdata.ConfigurationData
  */
 public interface SettingsHolder {
+
+    default void registerComments(CommentsConfiguration conf) {
+        // noop
+    }
 }

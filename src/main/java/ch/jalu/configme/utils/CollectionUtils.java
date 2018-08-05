@@ -19,7 +19,7 @@ public final class CollectionUtils {
      * @param start the start index
      * @param <T> the list type
      * @return the sublist of all elements from index {@code start} and on; empty list
-     * if the start index exceeds the list's size
+     *         if the start index exceeds the list's size
      */
     public static <T> List<T> getRange(List<T> list, int start) {
         if (start >= list.size()) {

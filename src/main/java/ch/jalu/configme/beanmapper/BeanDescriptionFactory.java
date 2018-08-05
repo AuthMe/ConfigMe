@@ -1,117 +1,19 @@
 package ch.jalu.configme.beanmapper;
 
-import ch.jalu.configme.utils.TypeInformation;
-
-import javax.annotation.Nullable;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
- * Creates all {@link BeanPropertyDescription} objects for a given class.
- * <p>
- * The returned bean field objects are required to be writable properties, i.e. any fields
- * which don't have an associated setter (or getter) will be ignored.
+ * Factory which analyzes a class and returns all writable properties.
  */
-public class BeanDescriptionFactory {
+public interface BeanDescriptionFactory {
 
     /**
-     * Returns all properties of the given bean class for which there exists a getter and setter.
+     * Returns all properties on the given class which should be considered while creating a bean of the
+     * given type. This is usually all properties which can be read from and written to.
      *
-     * @param clazz the bean property to process
-     * @return the bean class' properties to handle
+     * @param clazz the class whose properties should be returned
+     * @return the relevant properties on the class
      */
-    public Collection<BeanPropertyDescription> collectWritableFields(Class<?> clazz) {
-        List<PropertyDescriptor> descriptors = getWritableProperties(clazz);
+    Collection<BeanPropertyDescription> findAllWritableProperties(Class<?> clazz);
 
-        List<BeanPropertyDescription> properties = descriptors.stream()
-            .map(this::convert)
-            .filter(p -> p != null)
-            .collect(Collectors.toList());
-
-        validateProperties(clazz, properties);
-        return properties;
-    }
-
-    /**
-     * Converts a {@link PropertyDescriptor} to a {@link BeanPropertyDescription} object.
-     *
-     * @param descriptor the descriptor to convert
-     * @return the converted object, or null if the property should be skipped
-     */
-    @Nullable
-    protected BeanPropertyDescription convert(PropertyDescriptor descriptor) {
-        if (Boolean.TRUE.equals(descriptor.getValue("transient"))) {
-            return null;
-        }
-
-        return new BeanPropertyDescription(
-            getPropertyName(descriptor),
-            getTypeInfo(descriptor),
-            descriptor.getReadMethod(),
-            descriptor.getWriteMethod());
-    }
-
-    /**
-     * Validates the class' properties.
-     *
-     * @param clazz the class to which the properties belong
-     * @param properties the properties that will be used on the class
-     */
-    protected void validateProperties(Class<?> clazz, Collection<BeanPropertyDescription> properties) {
-        Set<String> names = new HashSet<>(properties.size());
-        properties.forEach(property -> {
-            if (property.getName().isEmpty()) {
-                throw new ConfigMeMapperException("Custom name of " + property + " may not be empty");
-            }
-            if (!names.add(property.getName())) {
-                throw new ConfigMeMapperException(
-                    clazz + " has multiple properties with name '" + property.getName() + "'");
-            }
-        });
-    }
-
-    protected String getPropertyName(PropertyDescriptor descriptor) {
-        if (descriptor.getReadMethod().isAnnotationPresent(ExportName.class)) {
-            return descriptor.getReadMethod().getAnnotation(ExportName.class).value();
-        } else if (descriptor.getWriteMethod().isAnnotationPresent(ExportName.class)) {
-            return descriptor.getWriteMethod().getAnnotation(ExportName.class).value();
-        }
-        return descriptor.getName();
-    }
-
-    protected TypeInformation getTypeInfo(PropertyDescriptor descriptor) {
-        return TypeInformation.of(
-            descriptor.getPropertyType(),
-            descriptor.getWriteMethod().getGenericParameterTypes()[0]);
-    }
-
-    /**
-     * Returns all properties of the given class that are writable
-     * (all bean properties with an associated read and write method).
-     *
-     * @param clazz the class to process
-     * @return all writable properties of the bean class
-     */
-    private static List<PropertyDescriptor> getWritableProperties(Class<?> clazz) {
-        PropertyDescriptor[] descriptors;
-        try {
-            descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
-        } catch (IntrospectionException e) {
-            throw new IllegalStateException(e);
-        }
-        List<PropertyDescriptor> writableProperties = new ArrayList<>(descriptors.length);
-        for (PropertyDescriptor descriptor : descriptors) {
-            if (descriptor.getWriteMethod() != null && descriptor.getReadMethod() != null) {
-                writableProperties.add(descriptor);
-            }
-        }
-        return writableProperties;
-    }
 }

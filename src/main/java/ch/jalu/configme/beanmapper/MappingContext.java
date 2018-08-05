@@ -3,31 +3,43 @@ package ch.jalu.configme.beanmapper;
 import ch.jalu.configme.utils.TypeInformation;
 
 /**
- * Context in which a mapping takes place.
+ * Holds necessary information for a certain value that is being mapped in the bean mapper.
  */
-public class MappingContext {
+public interface MappingContext {
 
-    private final int level;
-    private final TypeInformation<?> parentType;
+    /**
+     * Creates a child context with the given path addition ("name") and type information.
+     *
+     * @param name additional path element to append to this context's path
+     * @param typeInformation the required type
+     * @return new child context
+     */
+    MappingContext createChild(String name, TypeInformation typeInformation);
 
-    private MappingContext(int level, TypeInformation<?> parentType) {
-        this.level = level;
-        this.parentType = parentType;
+    /**
+     * @return the required type the value needs to be mapped to
+     */
+    TypeInformation getTypeInformation();
+
+    /**
+     * Convenience method: gets the generic type info for the given index and ensures that the generic type information
+     * exists and that it can be converted into a safe-to-write class. Throws an exception otherwise.
+     *
+     * @param index the index to get generic type info for
+     * @return the generic type info (throws exception if absent or not precise enough)
+     */
+    default TypeInformation getGenericTypeInfoOrFail(int index) {
+        TypeInformation genericType = getTypeInformation().getGenericType(index);
+        if (genericType == null || genericType.getSafeToWriteClass() == null) {
+            throw new ConfigMeMapperException(this,
+                "The generic type " + index + " is not well defined");
+        }
+        return getTypeInformation().getGenericType(index);
     }
 
-    public static MappingContext root() {
-        return new MappingContext(1, null);
-    }
+    /**
+     * @return textual representation of the info in the context, used in exceptions
+     */
+    String createDescription();
 
-    public MappingContext createChild(TypeInformation<?> parentType) {
-        return new MappingContext(level + 1, parentType);
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public TypeInformation<?> getParentType() {
-        return parentType;
-    }
 }

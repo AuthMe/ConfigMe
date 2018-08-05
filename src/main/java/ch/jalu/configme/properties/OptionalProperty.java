@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.resource.PropertyReader;
 
 import java.util.Optional;
 
@@ -10,38 +10,36 @@ import java.util.Optional;
  * Wraps another property with an {@link Optional}: if a property is not present in the property resource,
  * {@link Optional#empty} is returned.
  */
-public class OptionalProperty<T> extends Property<Optional<T>> {
+public class OptionalProperty<T> extends BaseProperty<Optional<T>> {
 
-    private final Property<? extends T> baseProperty;
+    private final Property<T> baseProperty;
 
-    /**
-     * Constructor.
-     *
-     * @param baseProperty the property to wrap
-     */
-    public OptionalProperty(Property<? extends T> baseProperty) {
+    public OptionalProperty(Property<T> baseProperty) {
         super(baseProperty.getPath(), Optional.empty());
         this.baseProperty = baseProperty;
     }
 
-    @Override
-    protected Optional<T> getFromResource(PropertyResource resource) {
-        return Optional.ofNullable(baseProperty.getFromResource(resource));
+    public OptionalProperty(Property<T> baseProperty, T defaultValue) {
+        super(baseProperty.getPath(), Optional.of(defaultValue));
+        this.baseProperty = baseProperty;
     }
 
     @Override
-    public boolean isPresent(PropertyResource resource) {
-        // getFromResource will never return null (see above), and always returning true here prevents this
+    protected Optional<T> getFromResource(PropertyReader reader) {
+        return baseProperty.isPresent(reader)
+            ? Optional.of(baseProperty.determineValue(reader))
+            : Optional.empty();
+    }
+
+    @Override
+    public boolean isPresent(PropertyReader reader) {
+        // getFromResource will never return null, and always returning true here prevents this
         // optional(!) property from triggering migrations
         return true;
     }
 
-    /**
-     * Returns the underlying property used to retrieve the value of the optional.
-     *
-     * @return the base property
-     */
-    public Property<? extends T> getBaseProperty() {
-        return baseProperty;
+    @Override
+    public Object toExportValue(Optional<T> value) {
+        return value.map(baseProperty::toExportValue).orElse(null);
     }
 }

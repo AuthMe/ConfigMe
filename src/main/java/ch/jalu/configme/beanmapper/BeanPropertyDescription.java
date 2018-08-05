@@ -3,75 +3,37 @@ package ch.jalu.configme.beanmapper;
 import ch.jalu.configme.utils.TypeInformation;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
- * Information about a bean property.
+ * Represents a bean property, as used by {@link Mapper}.
  */
-public class BeanPropertyDescription {
-
-    private final String name;
-    private final TypeInformation typeInformation;
-    private final Method getter;
-    private final Method setter;
-
-    public BeanPropertyDescription(String name, TypeInformation typeInformation, Method getter, Method setter) {
-        this.name = name;
-        this.typeInformation = typeInformation;
-        this.getter = getter;
-        this.setter = setter;
-    }
+public interface BeanPropertyDescription {
 
     /**
-     * Returns the name of the property for the purpose of reading from and writing to a property resource.
+     * @return the name of the property in the configuration file
+     */
+    String getName();
+
+    /**
+     * @return property type
+     */
+    TypeInformation getTypeInformation();
+
+    /**
+     * Sets the given value on the provided bean for this property. The value should correspond
+     * to the {@link #getTypeInformation() property type}.
      *
-     * @return the export name of the property
+     * @param bean the bean to set the property on
+     * @param value the value to set
      */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @return the type information
-     */
-    public TypeInformation getTypeInformation() {
-        return typeInformation;
-    }
+    void setValue(Object bean, Object value);
 
     /**
      * Returns the value of the property for the given bean.
      *
      * @param bean the bean to read the property from
-     * @return bean value
+     * @return the value of the property (can be null)
      */
     @Nullable
-    public Object getValue(Object bean) {
-        try {
-            return getter.invoke(bean);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new ConfigMeMapperException(
-                "Could not get property '" + name + "' from instance '" + bean + "'", e);
-        }
-    }
-
-    /**
-     * Sets the given property to the given value on the provided bean.
-     *
-     * @param bean the bean to modify
-     * @param value the value to set the property to
-     */
-    public void setValue(Object bean, Object value) {
-        try {
-            setter.invoke(bean, value);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new ConfigMeMapperException(
-                "Could not set property '" + name + "' to value '" + value + "' on instance '" + bean + "'", e);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "Bean property with getter '" + getter + "'";
-    }
+    Object getValue(Object bean);
 }
