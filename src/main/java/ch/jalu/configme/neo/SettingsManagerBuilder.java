@@ -16,8 +16,8 @@ import java.util.Objects;
  */
 public class SettingsManagerBuilder {
 
+    private final PropertyResource resource;
     private ConfigurationData configurationData;
-    private PropertyResource resource;
     private MigrationService migrationService = new PlainMigrationService();
 
     private SettingsManagerBuilder(PropertyResource resource) {
@@ -31,11 +31,6 @@ public class SettingsManagerBuilder {
 
     public static SettingsManagerBuilder withResource(PropertyResource resource) {
         return new SettingsManagerBuilder(resource);
-    }
-
-    public SettingsManagerBuilder propertyResource(PropertyResource resource) {
-        this.resource = resource;
-        return this;
     }
 
     @SafeVarargs
@@ -59,5 +54,4 @@ public class SettingsManagerBuilder {
         Objects.requireNonNull(resource, "resource");
         return new SettingsManagerImpl(resource, configurationData, migrationService);
     }
-
 }

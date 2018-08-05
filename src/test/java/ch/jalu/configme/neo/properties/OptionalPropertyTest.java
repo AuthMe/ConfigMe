@@ -78,4 +78,16 @@ public class OptionalPropertyTest {
         // then
         assertThat(isPresent, equalTo(true));
     }
+
+    @Test
+    public void shouldAllowToDefineDefaultValue() {
+        // given
+        OptionalProperty<Integer> integerProp = new OptionalProperty<>(new IntegerProperty("path", 0), 42);
+
+        // when
+        Optional<Integer> defaultValue = integerProp.getDefaultValue();
+
+        // then
+        assertThat(defaultValue, equalTo(Optional.of(42)));
+    }
 }

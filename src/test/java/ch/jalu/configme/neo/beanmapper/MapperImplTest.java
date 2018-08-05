@@ -15,28 +15,38 @@ import ch.jalu.configme.neo.beanmapper.typeissues.UntypedMap;
 import ch.jalu.configme.neo.beanmapper.worldgroup.GameMode;
 import ch.jalu.configme.neo.beanmapper.worldgroup.Group;
 import ch.jalu.configme.neo.beanmapper.worldgroup.WorldGroupConfig;
+import ch.jalu.configme.neo.exception.ConfigMeException;
 import ch.jalu.configme.neo.resource.PropertyReader;
 import ch.jalu.configme.neo.resource.YamlFileReader;
 import ch.jalu.configme.neo.samples.TestEnum;
+import ch.jalu.configme.neo.utils.TypeInformation;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import static ch.jalu.configme.neo.TestUtils.getJarFile;
 import static ch.jalu.configme.neo.TestUtils.verifyException;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Test for {@link MapperImpl}.
@@ -209,6 +219,35 @@ public class MapperImplTest {
     }
 
     @Test
+    public void shouldThrowForUnsupportedMapType() {
+        // given
+        MapperImpl mapper = new MapperImpl();
+        TypeInformation invalidMapType = new TypeInformation(new HashMap() {}.getClass());
+
+        // when / then
+        verifyException(
+            () -> mapper.createMapMatchingType(invalidMapType),
+            ConfigMeMapperException.class,
+            "Unsupported map type '" + invalidMapType.getType() + "'");
+    }
+
+    @Test
+    public void shouldCreateCorrectMapType() {
+        // given
+        MapperImpl mapper = new MapperImpl();
+        TypeInformation interfaceType = new TypeInformation(Map.class);
+        TypeInformation hashType = new TypeInformation(HashMap.class);
+        TypeInformation navigableType = new TypeInformation(NavigableMap.class);
+        TypeInformation treeType = new TypeInformation(TreeMap.class);
+
+        // when / then
+        assertThat(mapper.createMapMatchingType(interfaceType), instanceOf(LinkedHashMap.class));
+        assertThat(mapper.createMapMatchingType(hashType), instanceOf(LinkedHashMap.class));
+        assertThat(mapper.createMapMatchingType(navigableType), instanceOf(TreeMap.class));
+        assertThat(mapper.createMapMatchingType(treeType), instanceOf(TreeMap.class));
+    }
+
+    @Test
     public void shouldReturnNullForUnmappableMandatoryField() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid_2.yml");
@@ -316,6 +355,35 @@ public class MapperImplTest {
         // then
         assertThat(result, not(nullValue()));
         assertThat(result.getCommandconfig(), equalTo(Optional.empty()));
+    }
+
+    @Test
+    public void shouldInvokeDefaultConstructor() {
+        // given
+        MapperImpl mapper = new MapperImpl();
+
+        // when
+        Object command = mapper.createBeanMatchingType(new TypeInformation(Command.class));
+
+        // then
+        assertThat(command, instanceOf(Command.class));
+    }
+
+    @Test
+    public void shouldForwardException() {
+        // given
+        MapperImpl mapper = new MapperImpl();
+
+        // when
+        try {
+            mapper.createBeanMatchingType(new TypeInformation(Iterable.class));
+
+            // then
+            fail("Expected exception to be thrown");
+        } catch (ConfigMeException e) {
+            assertThat(e.getMessage(), containsString("It is required to have a default constructor"));
+            assertThat(e.getCause(), instanceOf(NoSuchMethodException.class));
+        }
     }
 
     private static void assertAllOptionalFieldsEmpty(ComplexCommand complexCommand) {

@@ -27,9 +27,9 @@ import javax.annotation.Nullable;
  */
 public class SettingsManagerImpl implements SettingsManager {
 
-    protected final ConfigurationData configurationData;
-    protected final PropertyResource resource;
-    protected final MigrationService migrationService;
+    private final ConfigurationData configurationData;
+    private final PropertyResource resource;
+    private final MigrationService migrationService;
 
     /**
      * Constructor.
@@ -93,4 +93,15 @@ public class SettingsManagerImpl implements SettingsManager {
         }
     }
 
+    protected final PropertyResource getPropertyResource() {
+        return resource;
+    }
+
+    protected final ConfigurationData getConfigurationData() {
+        return configurationData;
+    }
+
+    protected final MigrationService getMigrationService() {
+        return migrationService;
+    }
 }

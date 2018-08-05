@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 /**
- * Test for {@link BeanProperty}.
+ * Test for {@link BeanProperty} and its integration with {@link YamlFileResource}.
  */
 public class BeanPropertyTest {
 

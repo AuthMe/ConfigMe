@@ -14,7 +14,9 @@ import java.util.Set;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
@@ -177,6 +179,35 @@ public class TypeInformationTest {
 
         // then
         assertThat(string, equalTo(type.getClass().getSimpleName() + "[type=class java.lang.String]"));
+    }
+
+    @Test
+    public void shouldDefineHashCodeFromType() {
+        // given
+        TypeInformation type1 = new TypeInformation(String.class);
+        TypeInformation type2 = createTypeFromSampleField("str");
+        TypeInformation type3 = new TypeInformation(null);
+
+        // when / then
+        assertThat(type1.hashCode(), equalTo(type1.getType().hashCode()));
+        assertThat(type2.hashCode(), equalTo(type2.getType().hashCode()));
+        assertThat(type3.hashCode(), equalTo(0));
+    }
+
+    @Test
+    public void shouldBaseEqualsOnWrappedType() {
+        // given
+        TypeInformation type1 = createTypeFromSampleField("listExStr");
+        TypeInformation type2 = createTypeFromSampleField("listExStr");
+        TypeInformation type3 = new TypeInformation(String.class);
+
+        // when / then
+        assertTrue(type1.equals(type1));
+        assertTrue(type1.equals(type2));
+
+        assertFalse(type1.equals(type3));
+        assertFalse(type1.equals(null));
+        assertFalse(type1.equals(new Object()));
     }
 
     private static TypeInformation createTypeFromSampleField(String name) {
