@@ -1,6 +1,8 @@
 package ch.jalu.configme.beanmapper;
 
 import ch.jalu.configme.TestUtils;
+import ch.jalu.configme.beanmapper.leafvaluehandler.CombiningLeafValueHandler;
+import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.sameInstance;
@@ -32,7 +34,7 @@ public class DefaultMapperTest {
     @Test(expected = UnsupportedOperationException.class)
     public void shouldDisallowSettingValueTransformer() {
         // given / when / then
-        ((MapperImpl) DefaultMapper.getInstance()).setValueTransformer(new CombiningValueTransformer());
+        ((MapperImpl) DefaultMapper.getInstance()).setLeafValueHandler(new CombiningLeafValueHandler());
     }
 
     @Test

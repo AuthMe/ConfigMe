@@ -1,5 +1,10 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.beanmapper.leafvaluehandler.StandardLeafValueHandlers;
+import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
+import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
+import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
+import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.utils.TypeInformation;
 
@@ -22,7 +27,7 @@ public class MapperImpl implements Mapper {
 
     private final Map<String, Collection<BeanPropertyDescription>> classProperties = new HashMap<>();
     private BeanDescriptionFactory beanDescriptionFactory = new BeanDescriptionFactoryImpl();
-    private ValueTransformer valueTransformer = StandardTransformers.getDefaultValueTransformer();
+    private LeafValueHandler leafValueHandler = StandardLeafValueHandlers.getDefaultLeafValueHandler();
 
     protected final BeanDescriptionFactory getBeanDescriptionFactory() {
         return beanDescriptionFactory;
@@ -32,12 +37,12 @@ public class MapperImpl implements Mapper {
         this.beanDescriptionFactory = beanDescriptionFactory;
     }
 
-    protected final ValueTransformer getValueTransformer() {
-        return valueTransformer;
+    protected final LeafValueHandler getLeafValueHandler() {
+        return leafValueHandler;
     }
 
-    protected void setValueTransformer(ValueTransformer valueTransformer) {
-        this.valueTransformer = valueTransformer;
+    protected void setLeafValueHandler(LeafValueHandler leafValueHandler) {
+        this.leafValueHandler = leafValueHandler;
     }
 
     protected MappingContext createRootMappingContext(String path, TypeInformation beanType) {
@@ -63,7 +68,7 @@ public class MapperImpl implements Mapper {
     @Override
     public Object toExportValue(Object value) {
         // Step 1: attempt simple value transformation
-        Object simpleValue = valueTransformer.toExportValue(value);
+        Object simpleValue = leafValueHandler.toExportValue(value);
         if (simpleValue != null) {
             return simpleValue;
         } else if (value == null) {
@@ -129,7 +134,7 @@ public class MapperImpl implements Mapper {
         }
 
         // Step 1: check if a value transformer can perform a simple conversion
-        Object result = valueTransformer.value(rawClass, value);
+        Object result = leafValueHandler.convert(context.getTypeInformation(), value);
         if (result != null) {
             return result;
         }

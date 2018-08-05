@@ -25,6 +25,10 @@ public class TypeInformation {
         return new TypeInformation(field.getGenericType());
     }
 
+    public static TypeInformation of(Type type) {
+        return new TypeInformation(type);
+    }
+
     @Nullable
     public Type getType() {
         return type;

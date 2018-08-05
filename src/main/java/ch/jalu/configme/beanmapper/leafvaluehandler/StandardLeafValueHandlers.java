@@ -1,42 +1,42 @@
-package ch.jalu.configme.beanmapper;
+package ch.jalu.configme.beanmapper.leafvaluehandler;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Contains default value transformer implementations and provides the value transformer used by default.
- * The value transformer implementations contain in this class only handle on type each. This allows to easily
+ * Contains default leaf value handlers implementations and provides the leaf value handler which is used by default.
+ * The handler implementations contained in this class only handle one type each. This allows to easily
  * override a specific behavior (by extending that small class only), allows for reuse (if you only want to use
- * specific elements) and can be combined using {@link CombiningValueTransformer}.
+ * specific elements) and can be combined using {@link CombiningLeafValueHandler}.
  *
- * @see #getDefaultValueTransformer()
+ * @see #getDefaultLeafValueHandler()
  */
-public final class StandardTransformers {
+public final class StandardLeafValueHandlers {
 
-    private static ValueTransformer defaultTransformer;
+    private static LeafValueHandler defaultHandler;
 
-    private StandardTransformers() {
+    private StandardLeafValueHandlers() {
     }
 
     /**
-     * Returns the default value transformer of ConfigMe.
+     * Returns the default leaf value handler used in ConfigMe.
      *
-     * @return the default value transformer
+     * @return default leaf value handler
      */
-    public static ValueTransformer getDefaultValueTransformer() {
-        if (defaultTransformer == null) {
-            defaultTransformer = new CombiningValueTransformer(new StringTransformer(), new EnumTransformer(),
-                new BooleanTransformer(), new ObjectTransformer(), new NumberTransformer());
+    public static LeafValueHandler getDefaultLeafValueHandler() {
+        if (defaultHandler == null) {
+            defaultHandler = new CombiningLeafValueHandler(new StringHandler(), new EnumHandler(),
+                new BooleanHandler(), new ObjectHandler(), new NumberHandler());
         }
-        return defaultTransformer;
+        return defaultHandler;
     }
 
-    /** String transformer. */
-    public static class StringTransformer implements ValueTransformer {
+    /** String handler. */
+    public static class StringHandler extends AbstractLeafValueHandler {
 
         @Override
-        public Object value(Class<?> clazz, Object value) {
+        public Object convert(Class<?> clazz, Object value) {
             if (clazz == String.class
                 && (value instanceof String || value instanceof Number || value instanceof Boolean)) {
                 return value.toString();
@@ -50,11 +50,11 @@ public final class StandardTransformers {
         }
     }
 
-    /** Enum transformer. */
-    public static class EnumTransformer implements ValueTransformer {
+    /** Enum handler. */
+    public static class EnumHandler extends AbstractLeafValueHandler {
 
         @Override
-        public Object value(Class<?> clazz, Object value) {
+        public Object convert(Class<?> clazz, Object value) {
             if (value instanceof String && Enum.class.isAssignableFrom(clazz)) {
                 String givenText = (String) value;
                 for (Enum e : (Enum[]) clazz.getEnumConstants()) {
@@ -75,11 +75,11 @@ public final class StandardTransformers {
         }
     }
 
-    /** Boolean transformer. */
-    public static class BooleanTransformer implements ValueTransformer {
+    /** Boolean handler. */
+    public static class BooleanHandler extends AbstractLeafValueHandler {
 
         @Override
-        public Object value(Class<?> clazz, Object value) {
+        public Object convert(Class<?> clazz, Object value) {
             if ((clazz == boolean.class || clazz == Boolean.class) && value instanceof Boolean) {
                 return value;
             }
@@ -92,11 +92,11 @@ public final class StandardTransformers {
         }
     }
 
-    /** Object transformer. */
-    public static class ObjectTransformer implements ValueTransformer {
+    /** Object handler. */
+    public static class ObjectHandler extends AbstractLeafValueHandler {
 
         @Override
-        public Object value(Class<?> clazz, Object value) {
+        public Object convert(Class<?> clazz, Object value) {
             if (clazz == Object.class) {
                 return value;
             }
@@ -109,13 +109,13 @@ public final class StandardTransformers {
         }
     }
 
-    /** Number transformer. */
-    public static class NumberTransformer implements ValueTransformer {
+    /** Number handler. */
+    public static class NumberHandler extends AbstractLeafValueHandler {
 
         private static final Map<Class<?>, Class<?>> PRIMITIVE_NUMBERS_MAP = buildPrimitiveNumberMap();
 
         @Override
-        public Object value(Class<?> clazz, Object value) {
+        public Object convert(Class<?> clazz, Object value) {
             if (!(value instanceof Number)) {
                 return null;
             }

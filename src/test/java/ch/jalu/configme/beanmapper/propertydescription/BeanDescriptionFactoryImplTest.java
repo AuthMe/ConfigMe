@@ -1,6 +1,7 @@
-package ch.jalu.configme.beanmapper;
+package ch.jalu.configme.beanmapper.propertydescription;
 
 
+import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
 import ch.jalu.configme.samples.beanannotations.BeanWithEmptyName;
 import ch.jalu.configme.samples.beanannotations.BeanWithNameClash;

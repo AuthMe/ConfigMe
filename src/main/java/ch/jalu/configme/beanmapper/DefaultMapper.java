@@ -1,5 +1,8 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
+import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
+
 /**
  * Provides the {@link Mapper} instance which is used by default.
  */
@@ -26,7 +29,7 @@ public final class DefaultMapper extends MapperImpl {
     }
 
     @Override
-    protected void setValueTransformer(ValueTransformer valueTransformer) {
+    protected void setLeafValueHandler(LeafValueHandler leafValueHandler) {
         throw new UnsupportedOperationException("Default mapper is immutable");
     }
 }

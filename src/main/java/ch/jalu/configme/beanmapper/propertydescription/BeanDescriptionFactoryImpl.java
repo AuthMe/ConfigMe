@@ -1,5 +1,7 @@
-package ch.jalu.configme.beanmapper;
+package ch.jalu.configme.beanmapper.propertydescription;
 
+import ch.jalu.configme.beanmapper.ConfigMeMapperException;
+import ch.jalu.configme.beanmapper.ExportName;
 import ch.jalu.configme.utils.TypeInformation;
 
 import javax.annotation.Nullable;

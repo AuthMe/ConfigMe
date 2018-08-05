@@ -1,9 +1,11 @@
-package ch.jalu.configme.beanmapper;
+package ch.jalu.configme.beanmapper.propertydescription;
 
 import java.util.Collection;
 
 /**
  * Factory which analyzes a class and returns all writable properties.
+ * <p>
+ * Default implementation: {@link BeanDescriptionFactoryImpl}.
  */
 public interface BeanDescriptionFactory {
 

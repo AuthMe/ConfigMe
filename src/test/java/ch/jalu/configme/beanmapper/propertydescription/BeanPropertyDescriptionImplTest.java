@@ -1,5 +1,6 @@
-package ch.jalu.configme.beanmapper;
+package ch.jalu.configme.beanmapper.propertydescription;
 
+import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
 import org.junit.Test;
 
@@ -9,9 +10,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
- * Test for {@link BeanPropertyDescription}.
+ * Test for {@link BeanPropertyDescriptionImpl}.
  */
-public class BeanPropertyDescriptionTest {
+public class BeanPropertyDescriptionImplTest {
 
     @Test
     public void shouldGetAndSetProperties() {

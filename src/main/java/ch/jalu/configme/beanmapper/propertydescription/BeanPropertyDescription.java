@@ -1,11 +1,14 @@
-package ch.jalu.configme.beanmapper;
+package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.utils.TypeInformation;
 
 import javax.annotation.Nullable;
 
 /**
- * Represents a bean property, as used by {@link Mapper}.
+ * Represents a property within a bean class, as used in {@link ch.jalu.configme.beanmapper.MapperImpl}.
+ * There, for instance, there is a {@link BeanDescriptionFactory} field responsible for creating bean descriptions.
+ * <p>
+ * Default implementation is {@link BeanPropertyDescriptionImpl}.
  */
 public interface BeanPropertyDescription {
 
