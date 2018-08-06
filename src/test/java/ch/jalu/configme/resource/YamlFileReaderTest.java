@@ -17,10 +17,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static ch.jalu.configme.TestUtils.verifyException;
+import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -145,11 +147,38 @@ public class YamlFileReaderTest {
     public void shouldReturnNullForUnknownPath() {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
-        PropertyReader reader = new YamlFileReader(file);
+        YamlFileReader reader = new YamlFileReader(file);
 
         // when / then
         assertThat(reader.getObject("sample.ratio.wrong.dunno"), nullValue());
         assertThat(reader.getObject(TestConfiguration.RATIO_ORDER.getPath() + ".child"), nullValue());
+        assertThat(reader.getRoot().keySet(), containsInAnyOrder("test", "sample", "version", "features"));
+    }
+
+    @Test
+    public void shouldWrapYamlException() throws IOException {
+        // given
+        String invalidYaml = "test:\n   'broken quote";
+        File file = temporaryFolder.newFile();
+        Files.write(file.toPath(), invalidYaml.getBytes());
+
+        // when / then
+        verifyException(() -> new YamlFileReader(file),
+            ConfigMeException.class, "YAML error while trying to load file");
+    }
+
+    @Test
+    public void shouldHandleEmptyFile() throws IOException {
+        // given
+        File file = temporaryFolder.newFile();
+        YamlFileReader reader = new YamlFileReader(file);
+
+        // when
+        File result = reader.getFile();
+
+        // then
+        assertThat(result, sameInstance(file));
+        assertThat(reader.getRoot(), anEmptyMap());
     }
 
     private File copyFileFromResources(String path) {

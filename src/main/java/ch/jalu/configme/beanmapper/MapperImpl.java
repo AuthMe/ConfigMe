@@ -1,7 +1,7 @@
 package ch.jalu.configme.beanmapper;
 
-import ch.jalu.configme.beanmapper.leafvaluehandler.StandardLeafValueHandlers;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
+import ch.jalu.configme.beanmapper.leafvaluehandler.StandardLeafValueHandlers;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;

@@ -16,8 +16,8 @@ import java.util.Map;
  */
 public class YamlFileReader implements PropertyReader {
 
-    protected final File file;
-    protected Map<String, Object> root;
+    private final File file;
+    private final Map<String, Object> root;
 
     /**
      * Constructor.
@@ -26,7 +26,7 @@ public class YamlFileReader implements PropertyReader {
      */
     public YamlFileReader(File file) {
         this.file = file;
-        loadFile();
+        this.root = loadFile();
     }
 
     @Override
@@ -48,7 +48,6 @@ public class YamlFileReader implements PropertyReader {
 
     @Override
     public String getString(String path) {
-        // TODO: As an improvement we could also return the toString of any scalar values
         return getTypedObject(path, String.class);
     }
 
@@ -85,18 +84,28 @@ public class YamlFileReader implements PropertyReader {
 
     /**
      * Loads the values of the file.
+     *
+     * @return map with the values from the file
      */
-    protected void loadFile() {
+    protected Map<String, Object> loadFile() {
         try (FileInputStream fis = new FileInputStream(file)) {
             Object obj = new Yaml().load(fis);
-            root = obj == null ? Collections.emptyMap() : (Map<String, Object>) obj;
+            return obj == null ? Collections.emptyMap() : (Map<String, Object>) obj;
         } catch (IOException e) {
             throw new ConfigMeException("Could not read file '" + file + "'", e);
         } catch (ClassCastException e) {
             throw new ConfigMeException("Top-level is not a map in '" + file + "'", e);
         } catch (YAMLException e) {
-            throw new ConfigMeException("YAML error while trying loading file '" + file + "'", e);
+            throw new ConfigMeException("YAML error while trying to load file '" + file + "'", e);
         }
+    }
+
+    protected final File getFile() {
+        return file;
+    }
+
+    protected final Map<String, Object> getRoot() {
+        return root;
     }
 
     protected <T> T getTypedObject(String path, Class<T> clazz) {
