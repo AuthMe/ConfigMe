@@ -15,6 +15,13 @@ public class MappingContextImpl implements MappingContext {
         this.typeInformation = typeInformation;
     }
 
+    /**
+     * Creates an initial context (used at the start of a mapping process).
+     *
+     * @param path the path
+     * @param typeInformation the required type
+     * @return root mapping context
+     */
     public static MappingContextImpl createRoot(String path, TypeInformation typeInformation) {
         return new MappingContextImpl(path, typeInformation);
     }
