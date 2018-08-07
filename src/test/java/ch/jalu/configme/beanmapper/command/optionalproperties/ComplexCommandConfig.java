@@ -1,11 +1,9 @@
 package ch.jalu.configme.beanmapper.command.optionalproperties;
 
-import ch.jalu.configme.beanmapper.command.CommandConfig;
-
 import java.util.Map;
 
 /**
- * Like {@link CommandConfig} but for {@link ComplexCommand}.
+ * Like {@link ch.jalu.configme.beanmapper.command.CommandConfig} but for {@link ComplexCommand}.
  */
 public class ComplexCommandConfig {
 
