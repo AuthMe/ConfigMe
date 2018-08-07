@@ -1,33 +1,31 @@
 package ch.jalu.configme.configurationdata;
 
 import ch.jalu.configme.Comment;
-import ch.jalu.configme.SectionComments;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Utility class responsible for retrieving all {@link Property} fields
  * from {@link SettingsHolder} implementations via reflection.
  * <p>
  * Properties must be declared as {@code public static} fields or they are ignored.
- * Comments for sections (parent paths of properties) may be defined with {@link SectionComments} methods.
  */
 public class ConfigurationDataBuilder {
 
-    private final PropertyListBuilder propertyListBuilder = new PropertyListBuilder();
-    private final CommentsGatherer commentsGatherer = new CommentsGatherer();
+    protected PropertyListBuilder propertyListBuilder = new PropertyListBuilder();
+    protected CommentsConfiguration commentsConfiguration = new CommentsConfiguration();
 
-    private ConfigurationDataBuilder() {
+    protected ConfigurationDataBuilder() {
     }
 
     /**
@@ -38,8 +36,8 @@ public class ConfigurationDataBuilder {
      * @return collected configuration data
      */
     @SafeVarargs
-    public static ConfigurationData collectData(Class<? extends SettingsHolder>... classes) {
-        return collectData(Arrays.asList(classes));
+    public static ConfigurationData createConfiguration(Class<? extends SettingsHolder>... classes) {
+        return createConfiguration(Arrays.asList(classes));
     }
 
     /**
@@ -49,29 +47,43 @@ public class ConfigurationDataBuilder {
      * @param classes the classes to scan for their property data
      * @return collected configuration data
      */
-    public static ConfigurationData collectData(Iterable<Class<? extends SettingsHolder>> classes) {
+    public static ConfigurationData createConfiguration(Iterable<Class<? extends SettingsHolder>> classes) {
         ConfigurationDataBuilder builder = new ConfigurationDataBuilder();
-        for (Class<? extends SettingsHolder> clazz : classes) {
-            builder.collectProperties(clazz);
-            builder.commentsGatherer.collectAllSectionComments(clazz);
-        }
-        return new ConfigurationData(builder.propertyListBuilder.create(), builder.commentsGatherer.getComments());
+        return builder.collectData(classes);
     }
 
-    private void collectProperties(Class<?> clazz) {
+    public static ConfigurationData createConfiguration(List<? extends Property<?>> properties) {
+        return new ConfigurationDataImpl(properties, Collections.emptyMap());
+    }
+
+    public static ConfigurationData createConfiguration(List<? extends Property<?>> properties,
+                                                        CommentsConfiguration commentsConfiguration) {
+        return new ConfigurationDataImpl(properties, commentsConfiguration.getAllComments());
+    }
+
+    protected ConfigurationData collectData(Iterable<Class<? extends SettingsHolder>> classes) {
+        for (Class<? extends SettingsHolder> clazz : classes) {
+            collectProperties(clazz);
+            collectSectionComments(clazz);
+        }
+        return new ConfigurationDataImpl(propertyListBuilder.create(), commentsConfiguration.getAllComments());
+    }
+
+    protected void collectProperties(Class<?> clazz) {
         Field[] declaredFields = clazz.getDeclaredFields();
         for (Field field : declaredFields) {
             Property<?> property = getPropertyField(field);
             if (property != null) {
                 propertyListBuilder.add(property);
-                saveComment(field, property.getPath());
+                setCommentForPropertyField(field, property.getPath());
             }
         }
     }
 
-    private void saveComment(Field field, String path) {
-        if (field.isAnnotationPresent(Comment.class)) {
-            commentsGatherer.comments.put(path, field.getAnnotation(Comment.class).value());
+    protected void setCommentForPropertyField(Field field, String path) {
+        Comment commentAnnotation = field.getAnnotation(Comment.class);
+        if (commentAnnotation != null) {
+            commentsConfiguration.setComment(path, commentAnnotation.value());
         }
     }
 
@@ -82,7 +94,7 @@ public class ConfigurationDataBuilder {
      * @return the property the field defines, or null if not applicable
      */
     @Nullable
-    private static Property<?> getPropertyField(Field field) {
+    protected Property<?> getPropertyField(Field field) {
         if (Property.class.isAssignableFrom(field.getType()) && Modifier.isStatic(field.getModifiers())) {
             try {
                 return (Property<?>) field.get(null);
@@ -94,42 +106,20 @@ public class ConfigurationDataBuilder {
         return null;
     }
 
-    /**
-     * Collects all section comments via {@link SectionComments} methods and {@link Comment} annotations
-     * from the provided classes.
-     */
-    private static final class CommentsGatherer {
-        private final Map<String, String[]> comments = new HashMap<>();
-
-        void collectAllSectionComments(Class<?> clazz) {
-            Arrays.stream(clazz.getMethods())
-                .filter(method -> method.isAnnotationPresent(SectionComments.class))
-                .map(method -> callSectionCommentsMethod(method))
-                .filter(map -> map != null)
-                .forEach(comments::putAll);
-        }
-
-        Map<String, String[]> getComments() {
-            return comments;
-        }
-
-        private static Map<String, String[]> callSectionCommentsMethod(Method method) {
-            if (!Modifier.isStatic(method.getModifiers())) {
-                throw new ConfigMeException(
-                    "Methods with @SectionComments must be static. Offending method: '" + method + "'");
-            } else if (method.getParameters().length > 0) {
-                throw new ConfigMeException(
-                    "@SectionComments methods may not have any parameters. Offending method: '" + method + "'");
-            }
-            try {
-                return (Map<String, String[]>) method.invoke(null);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new ConfigMeException("Could not get section comments from '" + method + "'", e);
-            } catch (ClassCastException e) {
-                throw new ConfigMeException("Could not get section comments from '" + method
-                    + "': Return value must be Map<String, String[]>", e);
-            }
-        }
+    protected void collectSectionComments(Class<? extends SettingsHolder> clazz) {
+        SettingsHolder settingsHolder = createSettingsHolderInstance(clazz);
+        settingsHolder.registerComments(commentsConfiguration);
     }
 
+    protected <T extends SettingsHolder> T createSettingsHolderInstance(Class<T> clazz) {
+        try {
+            Constructor<T> constructor = clazz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            return constructor.newInstance();
+        } catch (NoSuchMethodException e) {
+            throw new ConfigMeException("Expected no-args constructor to be available for " + clazz, e);
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            throw new ConfigMeException("Could not create instance of " + clazz, e);
+        }
+    }
 }

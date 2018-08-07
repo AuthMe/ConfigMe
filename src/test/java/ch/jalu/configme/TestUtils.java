@@ -190,6 +190,7 @@ public final class TestUtils {
             fail("Expected exception of type '" + exceptionType.getName() + "' to be thrown");
         } catch (Exception e) {
             if (!exceptionType.isInstance(e)) {
+                e.printStackTrace();
                 fail("Expected exception of type '" + exceptionType.getName() + "' but got '"
                     + e.getClass().getName() + "': " + e.getMessage());
             }

@@ -1,14 +1,11 @@
 package ch.jalu.configme.samples;
 
 import ch.jalu.configme.Comment;
-import ch.jalu.configme.SectionComments;
 import ch.jalu.configme.SettingsHolder;
-import ch.jalu.configme.properties.IntegerProperty;
+import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
@@ -38,8 +35,8 @@ public final class TestConfiguration implements SettingsHolder {
     @Comment({
         "The version number",
         "This is just a random number" })
-    public static final IntegerProperty VERSION_NUMBER =
-        new IntegerProperty("version", 32046);
+    public static final Property<Integer> VERSION_NUMBER =
+        newProperty("version", 32046);
 
     @Comment("Skip boring features?")
     public static final Property<Boolean> SKIP_BORING_FEATURES =
@@ -65,13 +62,11 @@ public final class TestConfiguration implements SettingsHolder {
     private TestConfiguration() {
     }
 
-    @SectionComments
-    public static Map<String, String[]> getComments() {
-        Map<String, String[]> comments = new HashMap<>();
-        comments.put("sample", new String[]{"Sample section"});
-        comments.put("features.cool", new String[]{"Cool features", "Contains cool settings"});
-        comments.put("features.boring", new String[]{"Plain boring features"});
-        comments.put("test", new String[]{"Test section"});
-        return comments;
+    @Override
+    public void registerComments(CommentsConfiguration conf) {
+        conf.setComment("sample", "Sample section");
+        conf.setComment("features.cool", "Cool features", "Contains cool settings");
+        conf.setComment("features.boring", "Plain boring features");
+        conf.setComment("test", "Test section");
     }
 }

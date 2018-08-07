@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.resource.PropertyReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -14,13 +14,13 @@ import static org.mockito.Mockito.when;
  */
 public class StringPropertyTest {
 
-    private static PropertyResource resource;
+    private static PropertyReader reader;
 
     @BeforeClass
     public static void setUpConfiguration() {
-        resource = mock(PropertyResource.class);
-        when(resource.getString("str.path.test")).thenReturn("Test value");
-        when(resource.getString("str.path.wrong")).thenReturn(null);
+        reader = mock(PropertyReader.class);
+        when(reader.getString("str.path.test")).thenReturn("Test value");
+        when(reader.getString("str.path.wrong")).thenReturn(null);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class StringPropertyTest {
         Property<String> property = new StringProperty("str.path.test", "unused default");
 
         // when
-        String result = property.getValue(resource);
+        String result = property.determineValue(reader);
 
         // then
         assertThat(result, equalTo("Test value"));
@@ -41,9 +41,21 @@ public class StringPropertyTest {
         Property<String> property = new StringProperty("str.path.wrong", "given default value");
 
         // when
-        String result = property.getValue(resource);
+        String result = property.determineValue(reader);
 
         // then
         assertThat(result, equalTo("given default value"));
+    }
+
+    @Test
+    public void shouldDefineExportValue() {
+        // given
+        Property<String> property = new StringProperty("path", "def. value");
+
+        // when
+        Object exportValue = property.toExportValue("some value");
+
+        // then
+        assertThat(exportValue, equalTo("some value"));
     }
 }

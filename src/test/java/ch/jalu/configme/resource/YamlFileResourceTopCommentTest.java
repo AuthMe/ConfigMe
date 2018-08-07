@@ -1,7 +1,6 @@
 package ch.jalu.configme.resource;
 
-import ch.jalu.configme.SettingsManager;
-import ch.jalu.configme.migration.PlainMigrationService;
+import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.configme.resource.rootcommentsamples.GroupPropertyHolder;
 import ch.jalu.configme.resource.rootcommentsamples.TestConfig;
 import org.junit.Before;
@@ -39,15 +38,17 @@ public class YamlFileResourceTopCommentTest {
         PropertyResource resource = new YamlFileResource(file);
 
         // when
-        new SettingsManager(resource, new PlainMigrationService(), GroupPropertyHolder.class);
+        SettingsManagerBuilder.withResource(resource)
+            .configurationData(GroupPropertyHolder.class)
+            .create();
 
         // then
         assertThat(Files.readAllLines(file.toPath()), contains(
             "",
             "# Group configuration number",
-            "default-gamemode: 'CREATIVE'",
+            "default-gamemode: CREATIVE",
             "worlds: ",
-            "- 'world'"
+            "- world"
         ));
     }
 
@@ -57,7 +58,9 @@ public class YamlFileResourceTopCommentTest {
         PropertyResource resource = new YamlFileResource(file);
 
         // when
-        new SettingsManager(resource, new PlainMigrationService(), TestConfig.class);
+        SettingsManagerBuilder.withResource(resource)
+            .configurationData(TestConfig.class)
+            .create();
 
         // then
         assertThat(Files.readAllLines(file.toPath()), contains(
@@ -70,7 +73,7 @@ public class YamlFileResourceTopCommentTest {
             "    test: 4",
             "    # Other header",
             "    other:",
-            "        property: 'hello'"
+            "        property: hello"
         ));
     }
 }

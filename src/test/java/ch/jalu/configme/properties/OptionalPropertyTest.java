@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,17 +18,17 @@ import static org.mockito.Mockito.when;
  */
 public class OptionalPropertyTest {
 
-    private PropertyResource resource;
+    private PropertyReader reader;
 
     @Before
     public void setUpResource() {
-        resource = mock(PropertyResource.class);
-        when(resource.getBoolean("bool.path.test")).thenReturn(true);
-        when(resource.getBoolean("bool.path.wrong")).thenReturn(null);
-        when(resource.getInt("int.path.test")).thenReturn(27);
-        when(resource.getInt("int.path.wrong")).thenReturn(null);
-        when(resource.getObject("enum.path.test")).thenReturn(TestEnum.FOURTH.name());
-        when(resource.getObject("enum.path.wrong")).thenReturn(null);
+        reader = mock(PropertyReader.class);
+        when(reader.getBoolean("bool.path.test")).thenReturn(true);
+        when(reader.getBoolean("bool.path.wrong")).thenReturn(null);
+        when(reader.getInt("int.path.test")).thenReturn(27);
+        when(reader.getInt("int.path.wrong")).thenReturn(null);
+        when(reader.getString("enum.path.test")).thenReturn(TestEnum.FOURTH.name());
+        when(reader.getString("enum.path.wrong")).thenReturn(null);
     }
 
     @Test
@@ -39,9 +39,9 @@ public class OptionalPropertyTest {
         OptionalProperty<TestEnum> enumProp = new OptionalProperty<>(new EnumProperty<>(TestEnum.class, "enum.path.test", TestEnum.SECOND));
 
         // when
-        Optional<Boolean> boolResult = booleanProp.getFromResource(resource);
-        Optional<Integer> intResult = intProp.getFromResource(resource);
-        Optional<TestEnum> enumResult = enumProp.getFromResource(resource);
+        Optional<Boolean> boolResult = booleanProp.getFromResource(reader);
+        Optional<Integer> intResult = intProp.getFromResource(reader);
+        Optional<TestEnum> enumResult = enumProp.getFromResource(reader);
 
         // then
         assertThat(boolResult, equalTo(of(true)));
@@ -57,9 +57,9 @@ public class OptionalPropertyTest {
         OptionalProperty<TestEnum> enumProp = new OptionalProperty<>(new EnumProperty<>(TestEnum.class, "enum.path.wrong", TestEnum.SECOND));
 
         // when
-        Optional<Boolean> boolResult = booleanProp.getFromResource(resource);
-        Optional<Integer> intResult = intProp.getFromResource(resource);
-        Optional<TestEnum> enumResult = enumProp.getFromResource(resource);
+        Optional<Boolean> boolResult = booleanProp.getFromResource(reader);
+        Optional<Integer> intResult = intProp.getFromResource(reader);
+        Optional<TestEnum> enumResult = enumProp.getFromResource(reader);
 
         // then
         assertThat(boolResult, equalTo(Optional.empty()));
@@ -73,9 +73,21 @@ public class OptionalPropertyTest {
         OptionalProperty<Boolean> booleanProp = new OptionalProperty<>(new BooleanProperty("bool", false));
 
         // when
-        boolean isPresent = booleanProp.isPresent(resource);
+        boolean isPresent = booleanProp.isPresent(reader);
 
         // then
         assertThat(isPresent, equalTo(true));
+    }
+
+    @Test
+    public void shouldAllowToDefineDefaultValue() {
+        // given
+        OptionalProperty<Integer> integerProp = new OptionalProperty<>(new IntegerProperty("path", 0), 42);
+
+        // when
+        Optional<Integer> defaultValue = integerProp.getDefaultValue();
+
+        // then
+        assertThat(defaultValue, equalTo(Optional.of(42)));
     }
 }

@@ -2,7 +2,7 @@ package ch.jalu.configme.configurationdata;
 
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.configurationdata.samples.AdditionalTestConfiguration;
-import ch.jalu.configme.configurationdata.samples.SectionCommentsFailClasses;
+import ch.jalu.configme.configurationdata.samples.IllegalSettingsHolderConstructorClasses;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.ClassWithPrivatePropertyField;
@@ -10,12 +10,13 @@ import ch.jalu.configme.samples.TestConfiguration;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 import static ch.jalu.configme.TestUtils.verifyException;
-import static org.hamcrest.Matchers.arrayContaining;
-import static org.hamcrest.Matchers.emptyArray;
+import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
@@ -29,14 +30,14 @@ public class ConfigurationDataBuilderTest {
     @Test
     public void shouldGetAllProperties() {
         // given / when
-        ConfigurationData configurationData = ConfigurationDataBuilder.collectData(
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(
             TestConfiguration.class, AdditionalTestConfiguration.class);
 
         // then
-        assertThat(configurationData.getCommentsForSection("additional"), arrayContaining("Section comment for 'additional'"));
-        assertThat(configurationData.getCommentsForSection("bogus"), arrayContaining("This section does not exist anywhere"));
-        assertThat(configurationData.getCommentsForSection("other.section"), emptyArray());
-        assertThat(configurationData.getCommentsForSection("notDefinedAnywhere"), emptyArray());
+        assertThat(configurationData.getCommentsForSection("additional"), contains("Section comment for 'additional'"));
+        assertThat(configurationData.getCommentsForSection("bogus"), contains("This section does not exist anywhere"));
+        assertThat(configurationData.getCommentsForSection("other.section"), empty());
+        assertThat(configurationData.getCommentsForSection("notDefinedAnywhere"), empty());
 
         // 3 properties in AdditionalTestConfiguration, 10 properties in TestConfiguration
         assertThat(configurationData.getProperties(), hasSize(13));
@@ -51,74 +52,96 @@ public class ConfigurationDataBuilderTest {
 
     @Test
     public void shouldHavePrivateConstructor() {
-        TestUtils.validateHasOnlyPrivateEmptyConstructor(ConfigurationDataBuilder.class);
+        TestUtils.validateHasOnlyProtectedEmptyConstructor(ConfigurationDataBuilder.class);
     }
 
     @Test
-    public void shouldHandleMalformedSectionCommentClasses() {
-        // Wrong return type
+    public void shouldHandleSettingsHolderConstructorIssues() {
+        // Missing no-args constructor
         verifyException(
-            () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.WrongReturnType.class),
+            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.MissingNoArgsConstructor.class),
             ConfigMeException.class,
-            "Return value must be Map<String, String[]>");
+            "Expected no-args constructor to be available");
 
-        // Non-static method
+        // Constructor throws exception
         verifyException(
-            () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.NonStaticMethod.class),
+            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.ThrowingConstructor.class),
             ConfigMeException.class,
-            "must be static");
+            "Could not create instance");
 
-        // Method with parameters
+        // Class is abstract
         verifyException(
-            () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.MethodWithParameters.class),
+            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.AbstractClass.class),
             ConfigMeException.class,
-            "may not have any parameters");
+            "Could not create instance");
 
-        // Throwing method
+        // Class is interface
         verifyException(
-            () -> ConfigurationDataBuilder.collectData(SectionCommentsFailClasses.ThrowingMethod.class),
+            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.InterfaceSettingsHolder.class),
             ConfigMeException.class,
-            "Could not get section comments");
+            "Expected no-args constructor to be available");
     }
 
     @Test
-    public void shouldWrapIllegalAccessExceptionIntoConfigMeException()
-                                                                    throws NoSuchMethodException, NoSuchFieldException {
+    public void shouldWrapIllegalAccessExceptionIntoConfigMeException() throws NoSuchFieldException {
         // given
-        Method getPropertyFieldMethod =
-            ConfigurationDataBuilder.class.getDeclaredMethod("getPropertyField", Field.class);
-        getPropertyFieldMethod.setAccessible(true);
+        ConfigurationDataBuilder configurationDataBuilder = new ConfigurationDataBuilder();
         Field privateProperty = ClassWithPrivatePropertyField.class.getDeclaredField("PRIVATE_INT_PROPERTY");
 
         // when / then
         verifyException(
-            () -> invokeStaticMethod(getPropertyFieldMethod, privateProperty),
+            () -> configurationDataBuilder.getPropertyField(privateProperty),
             ConfigMeException.class,
             "Is it maybe not public?");
+    }
+
+    @Test
+    public void shouldCreateConfigDataWithPropertiesList() {
+        // given
+        List<Property<?>> properties = Arrays.asList(
+            newProperty("test", "t"),
+            newProperty("test.test", "oo"),
+            newProperty("test.int", 4));
+
+        // when
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(properties);
+
+        // then
+        assertThat(configurationData.getProperties(), equalTo(properties));
+        assertThat(configurationData.getCommentsForSection("test.test"), empty());
+    }
+
+    @Test
+    public void shouldCreateConfigDataWithPropertiesListAndCommentsMap() {
+        // given
+        List<Property<?>> properties = Arrays.asList(
+            newProperty("test", "t"),
+            newProperty("test.test", "oo"),
+            newProperty("test.int", 4));
+        CommentsConfiguration commentsConfiguration = new CommentsConfiguration();
+        commentsConfiguration.setComment("test.test", "Comment for 'test.test'", "Two lines here");
+
+        // when
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(properties, commentsConfiguration);
+
+        // then
+        assertThat(configurationData.getProperties(), equalTo(properties));
+        assertThat(configurationData.getCommentsForSection("test.test"), contains("Comment for 'test.test'", "Two lines here"));
+        assertThat(configurationData.getCommentsForSection("test.int"), empty());
     }
 
     private static void assertHasPropertyWithComments(ConfigurationData configurationData, Property<?> property,
                                                       String... comments) {
         for (Property<?> knownProperty : configurationData.getProperties()) {
             if (knownProperty.equals(property)) {
-                assertThat(configurationData.getCommentsForSection(property.getPath()), equalTo(comments));
+                if (comments.length == 0) {
+                    assertThat(configurationData.getCommentsForSection(property.getPath()), empty());
+                } else {
+                    assertThat(configurationData.getCommentsForSection(property.getPath()), contains(comments));
+                }
                 return;
             }
         }
         fail("Not found in property map: " + property);
     }
-
-    private static void invokeStaticMethod(Method method, Object arg) {
-        try {
-            method.invoke(null, arg);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        } catch (InvocationTargetException e) {
-            if (e.getCause() instanceof RuntimeException) {
-                throw (RuntimeException) e.getCause();
-            }
-            throw new IllegalStateException(e);
-        }
-    }
-
 }

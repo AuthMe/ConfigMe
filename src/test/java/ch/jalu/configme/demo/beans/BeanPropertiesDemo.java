@@ -1,10 +1,8 @@
 package ch.jalu.configme.demo.beans;
 
 import ch.jalu.configme.SettingsManager;
+import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
-import ch.jalu.configme.migration.PlainMigrationService;
-import ch.jalu.configme.resource.YamlFileResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,8 +30,8 @@ public class BeanPropertiesDemo {
     }
 
     public String generateUserInfo() {
-        SettingsManager settingsManager = new SettingsManager(new YamlFileResource(configFile),
-            new PlainMigrationService(), ConfigurationDataBuilder.collectData(DemoSettings.class));
+        SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(configFile)
+            .configurationData(DemoSettings.class).create();
         UserBase userBase = settingsManager.getProperty(DemoSettings.USER_BASE);
 
         User richie = userBase.getRichie();

@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newBeanProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
-import static ch.jalu.configme.properties.PropertyInitializer.newLowercaseListProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.newLowercaseStringSetProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalBooleanProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalEnumProperty;
@@ -28,7 +28,7 @@ public class PropertyInitializerTest {
         assertThat(newProperty("my.path", "default"), instanceOf(StringProperty.class));
         assertThat(newProperty(TestEnum.class, "my.path", TestEnum.FIRST), instanceOf(EnumProperty.class));
         assertThat(newListProperty("path", "default", "entries"), instanceOf(StringListProperty.class));
-        assertThat(newLowercaseListProperty("path", "a", "b", "c"), instanceOf(LowercaseStringListProperty.class));
+        assertThat(newLowercaseStringSetProperty("path", "a", "b", "c"), instanceOf(LowercaseStringSetProperty.class));
         assertThat(newBeanProperty(WorldGroupConfig.class, "worlds", new WorldGroupConfig()), instanceOf(BeanProperty.class));
 
         assertThat(optionalBooleanProperty("path"), instanceOf(OptionalProperty.class));

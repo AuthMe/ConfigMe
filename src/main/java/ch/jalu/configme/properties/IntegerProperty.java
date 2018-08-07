@@ -1,18 +1,20 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.resource.PropertyReader;
 
-/**
- * Integer property.
- */
-public class IntegerProperty extends Property<Integer> {
+public class IntegerProperty extends BaseProperty<Integer> {
 
     public IntegerProperty(String path, Integer defaultValue) {
         super(path, defaultValue);
     }
 
     @Override
-    protected Integer getFromResource(PropertyResource resource) {
-        return resource.getInt(getPath());
+    protected Integer getFromResource(PropertyReader reader) {
+        return reader.getInt(getPath());
+    }
+
+    @Override
+    public Object toExportValue(Integer value) {
+        return value;
     }
 }

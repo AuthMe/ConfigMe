@@ -4,15 +4,15 @@ test:
     # Duration in seconds
     duration: 22
     # The system name
-    systemName: 'Custom sys name'
+    systemName: Custom sys name
 # Sample section
 sample:
     ratio:
-        order: 'FIRST'
+        order: FIRST
         fields: 
-        - 'Australia'
-        - 'Burundi'
-        - 'Colombia'
+        - Australia
+        - Burundi
+        - Colombia
 # The version number
 # This is just a random number
 version: 2492
@@ -23,8 +23,8 @@ features:
         skip: false
         # Add some boring colors here (gray, beige, ...)
         colors: 
-        - 'beige'
-        - 'gray'
+        - beige
+        - gray
         dustLevel: 2
     # Cool features
     # Contains cool settings
@@ -33,6 +33,6 @@ features:
         enabled: true
         # List of cool options to use
         options: 
-        - 'Dinosaurs'
-        - 'Explosions'
-        - 'Big trucks'
+        - Dinosaurs
+        - Explosions
+        - Big trucks

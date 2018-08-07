@@ -1,71 +1,19 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.resource.PropertyReader;
 
-import javax.annotation.Nullable;
-import java.util.Objects;
+public interface Property<T> {
 
-/**
- * A property, i.e. a configuration value that is read from a property resource.
- */
-public abstract class Property<T> {
+    String getPath();
 
-    private final String path;
-    private final T defaultValue;
+    T determineValue(PropertyReader propertyReader);
 
-    protected Property(String path, T defaultValue) {
-        Objects.requireNonNull(path);
-        Objects.requireNonNull(defaultValue);
-        this.path = path;
-        this.defaultValue = defaultValue;
-    }
+    T getDefaultValue();
 
-    /**
-     * Gets the property value from the given resource and falls back to the default value if not present.
-     * Guaranteed to never return null.
-     *
-     * @param resource the property resource
-     * @return the value, or default if not present
-     */
-    public T getValue(PropertyResource resource) {
-        T value = getFromResource(resource);
-        return value == null ? defaultValue : value;
-    }
+    boolean isPresent(PropertyReader propertyReader);
 
-    @Nullable
-    protected abstract T getFromResource(PropertyResource resource);
+    boolean isValidValue(Object value);
 
-    /**
-     * Returns whether or not the given resource contains the property.
-     *
-     * @param resource the property resource to check
-     * @return true if the property is present, false otherwise
-     */
-    public boolean isPresent(PropertyResource resource) {
-        return getFromResource(resource) != null;
-    }
-
-    /**
-     * Returns the default value of the property.
-     *
-     * @return the default value
-     */
-    public T getDefaultValue() {
-        return defaultValue;
-    }
-
-    /**
-     * Returns the property path.
-     *
-     * @return the path
-     */
-    public String getPath() {
-        return path;
-    }
-
-    @Override
-    public String toString() {
-        return "Property '" + path + "'";
-    }
+    Object toExportValue(T value);
 
 }

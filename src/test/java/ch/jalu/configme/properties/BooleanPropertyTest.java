@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.resource.PropertyReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -14,13 +14,13 @@ import static org.mockito.Mockito.when;
  */
 public class BooleanPropertyTest {
 
-    private static PropertyResource resource;
+    private static PropertyReader reader;
 
     @BeforeClass
     public static void setUpConfiguration() {
-        resource = mock(PropertyResource.class);
-        when(resource.getBoolean("bool.path.test")).thenReturn(true);
-        when(resource.getBoolean("bool.path.wrong")).thenReturn(null);
+        reader = mock(PropertyReader.class);
+        when(reader.getBoolean("bool.path.test")).thenReturn(true);
+        when(reader.getBoolean("bool.path.wrong")).thenReturn(null);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class BooleanPropertyTest {
         Property<Boolean> property = new BooleanProperty("bool.path.test", false);
 
         // when
-        boolean result = property.getValue(resource);
+        boolean result = property.determineValue(reader);
 
         // then
         assertThat(result, equalTo(true));
@@ -41,9 +41,21 @@ public class BooleanPropertyTest {
         Property<Boolean> property = new BooleanProperty("bool.path.wrong", true);
 
         // when
-        boolean result = property.getValue(resource);
+        boolean result = property.determineValue(reader);
 
         // then
         assertThat(result, equalTo(true));
+    }
+
+    @Test
+    public void shouldReturnExportRepresentation() {
+        // given
+        Property<Boolean> property = new BooleanProperty("bool.path.test", true);
+
+        // when
+        Object exportValue = property.toExportValue(true);
+
+        // then
+        assertThat(exportValue, equalTo(true));
     }
 }

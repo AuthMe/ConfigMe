@@ -1,7 +1,6 @@
 package ch.jalu.configme.resource;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
-import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.utils.CollectionUtils;
 
 import java.util.ArrayList;
@@ -30,11 +29,11 @@ public class PropertyPathTraverser {
     /**
      * Returns all path elements for the given property that have not been traversed yet.
      *
-     * @param property the property
+     * @param path the property path
      * @return the new path elements
      */
-    public List<PathElement> getPathElements(Property<?> property) {
-        List<String> propertyPath = Arrays.asList(property.getPath().split("\\."));
+    public List<PathElement> getPathElements(String path) {
+        List<String> propertyPath = Arrays.asList(path.split("\\."));
         List<String> commonPathParts = CollectionUtils.filterCommonStart(
             parentPathElements, propertyPath.subList(0, propertyPath.size() - 1));
         List<String> newPathParts = CollectionUtils.getRange(propertyPath, commonPathParts.size());
@@ -49,7 +48,8 @@ public class PropertyPathTraverser {
     private List<PathElement> convertToPathElements(int indentation, String prefix, List<String> elements) {
         List<PathElement> pathElements = new ArrayList<>(elements.size());
         for (String element : elements) {
-            String[] comments = isFirstProperty ? getCommentsIncludingRoot(prefix + element)
+            List<String> comments = isFirstProperty
+                ? getCommentsIncludingRoot(prefix + element)
                 : configurationData.getCommentsForSection(prefix + element);
             pathElements.add(new PathElement(indentation, element, comments));
             prefix += element + ".";
@@ -58,32 +58,29 @@ public class PropertyPathTraverser {
         return pathElements;
     }
 
-    private String[] getCommentsIncludingRoot(String path) {
+    private List<String> getCommentsIncludingRoot(String path) {
         isFirstProperty = false;
 
-        String[] rootComments = configurationData.getCommentsForSection("");
-        String[] sectionComments = configurationData.getCommentsForSection(path);
-        // One or the other array might be empty, but we only do this once so we can ignore performance considerations
-        return mergeArrays(rootComments, sectionComments);
-    }
-
-    // http://stackoverflow.com/questions/80476/how-can-i-concatenate-two-arrays-in-java
-    private static String[] mergeArrays(String[] a, String[] b) {
-        final int aLen = a.length;
-        final int bLen = b.length;
-
-        String[] c = new String[aLen + bLen];
-        System.arraycopy(a, 0, c, 0, aLen);
-        System.arraycopy(b, 0, c, aLen, bLen);
-        return c;
+        List<String> rootComments = configurationData.getCommentsForSection("");
+        if ("".equals(path)) {
+            return rootComments;
+        }
+        List<String> sectionComments = configurationData.getCommentsForSection(path);
+        // One or the other list might be empty, but we only do this once so we can ignore performance considerations
+        if (sectionComments.isEmpty()) {
+            return rootComments;
+        }
+        List<String> allComments = new ArrayList<>(rootComments);
+        allComments.addAll(sectionComments);
+        return allComments;
     }
 
     public static final class PathElement {
         public final int indentationLevel;
         public final String name;
-        public final String[] comments;
+        public final List<String> comments;
 
-        public PathElement(int indentationLevel, String name, String[] comments) {
+        public PathElement(int indentationLevel, String name, List<String> comments) {
             this.indentationLevel = indentationLevel;
             this.name = name;
             this.comments = comments;

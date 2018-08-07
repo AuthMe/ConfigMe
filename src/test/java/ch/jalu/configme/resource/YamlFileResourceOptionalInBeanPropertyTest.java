@@ -1,12 +1,14 @@
 package ch.jalu.configme.resource;
 
-import ch.jalu.configme.beanmapper.ConfigMeMapper;
+
 import ch.jalu.configme.beanmapper.Mapper;
+import ch.jalu.configme.beanmapper.MapperImpl;
 import ch.jalu.configme.beanmapper.command.ExecutionDetails;
 import ch.jalu.configme.beanmapper.command.Executor;
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommand;
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommandConfig;
 import ch.jalu.configme.configurationdata.ConfigurationData;
+import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.properties.BeanProperty;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,17 +42,18 @@ public class YamlFileResourceOptionalInBeanPropertyTest {
         // given
         File file = copyFileFromResources("/beanmapper/optionalproperties/complex-commands.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(file);
-        Mapper mapper = ConfigMeMapper.getSingleton();
-        ComplexCommandConfig result = mapper.convertToBean("commandconfig", resource, ComplexCommandConfig.class);
+        Mapper mapper = new MapperImpl();
+        ComplexCommandConfig result = mapper.convertToBean(resource.createReader(), "commandconfig", ComplexCommandConfig.class);
         result.getCommands().put("shutdown", createShutdownCommand());
-        resource.setValue("commandconfig", result);
+        ConfigurationData configurationData = createConfigurationData();
+        configurationData.setValue(commandConfigProperty, result);
 
         // when
-        resource.exportProperties(createConfigurationData());
+        resource.exportProperties(configurationData);
 
         // then
         PropertyResource resourceAfterSave = new YamlFileResource(file);
-        ComplexCommandConfig commandConfig = mapper.convertToBean("commandconfig", resourceAfterSave, ComplexCommandConfig.class);
+        ComplexCommandConfig commandConfig = mapper.convertToBean(resourceAfterSave.createReader(), "commandconfig", ComplexCommandConfig.class);
         assertThat(commandConfig.getCommands().keySet(),
             containsInAnyOrder("shutdown", "greet", "block_invalid", "log_admin", "launch"));
         ComplexCommand shutDownCmd = commandConfig.getCommands().get("shutdown");
@@ -63,7 +66,7 @@ public class YamlFileResourceOptionalInBeanPropertyTest {
     }
 
     private static ConfigurationData createConfigurationData() {
-        return new ConfigurationData(Collections.singletonList(commandConfigProperty));
+        return ConfigurationDataBuilder.createConfiguration(Collections.singletonList(commandConfigProperty));
     }
 
     private static ComplexCommand createShutdownCommand() {

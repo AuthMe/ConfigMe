@@ -2,6 +2,7 @@ package ch.jalu.configme.properties;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Convenience class for instantiating {@link Property} objects. You can use
@@ -76,14 +77,14 @@ public class PropertyInitializer {
     }
 
     /**
-     * Creates a new String list property where all values are lowercase.
+     * Creates a new String set property where all values are lowercase.
      *
      * @param path the property's path
-     * @param defaultValues the items in the default list
-     * @return the created list property
+     * @param defaultValues the items in the default set
+     * @return the created set property
      */
-    public static Property<List<String>> newLowercaseListProperty(String path, String... defaultValues) {
-        return new LowercaseStringListProperty(path, defaultValues);
+    public static Property<Set<String>> newLowercaseStringSetProperty(String path, String... defaultValues) {
+        return new LowercaseStringSetProperty(path, defaultValues);
     }
 
     /**

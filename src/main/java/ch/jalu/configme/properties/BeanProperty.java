@@ -1,50 +1,53 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.beanmapper.BeanPropertyDescription;
-import ch.jalu.configme.beanmapper.ConfigMeMapper;
+import ch.jalu.configme.beanmapper.DefaultMapper;
 import ch.jalu.configme.beanmapper.Mapper;
-import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.resource.PropertyReader;
+import ch.jalu.configme.utils.TypeInformation;
 
-import java.util.Collection;
+public class BeanProperty<T> extends BaseProperty<T> {
 
-/**
- * Property constructed by bean mapping.
- *
- * @param <B> the bean type
- */
-public class BeanProperty<B> extends Property<B> {
-
-    private final Class<B> beanClass;
+    private final TypeInformation beanType;
     private final Mapper mapper;
 
-    public BeanProperty(Class<B> beanClass, String path, B defaultValue) {
-        this(beanClass, path, defaultValue, ConfigMeMapper.getSingleton());
+    public BeanProperty(Class<T> beanType, String path, T defaultValue) {
+        this(beanType, path, defaultValue, DefaultMapper.getInstance());
     }
 
-    public BeanProperty(Class<B> beanClass, String path, B defaultValue, Mapper mapper) {
+    public BeanProperty(Class<T> beanType, String path, T defaultValue, Mapper mapper) {
         super(path, defaultValue);
-        this.beanClass = beanClass;
+        this.beanType = new TypeInformation(beanType);
+        this.mapper = mapper;
+    }
+
+    /**
+     * Constructor. Allows to instantiate bean properties with generic types. Since it is hard to validate that
+     * the default value is actually correct, it is recommended to extend this class with specific type parameters.
+     *
+     * @param beanType the bean type
+     * @param path the path
+     * @param defaultValue the default value
+     * @param mapper the mapper to map with
+     */
+    protected BeanProperty(TypeInformation beanType, String path, T defaultValue, Mapper mapper) {
+        super(path, defaultValue);
+        if (!beanType.getSafeToWriteClass().isInstance(defaultValue)) {
+            throw new ConfigMeException(
+                "Default value for path '" + path + "' does not match bean type '" + beanType + "'");
+        }
+        this.beanType = beanType;
         this.mapper = mapper;
     }
 
     @Override
-    protected B getFromResource(PropertyResource resource) {
-        // Note #22: the property resource contains a bean object if the property's value was set
-        // via the settings manager
-        Object object = resource.getObject(getPath());
-        if (beanClass.isInstance(object)) {
-            return (B) object;
-        }
-        return mapper.convertToBean(getPath(), resource, beanClass);
+    @SuppressWarnings("unchecked")
+    protected T getFromResource(PropertyReader reader) {
+        return (T) mapper.convertToBean(reader, getPath(), beanType);
     }
 
-    /**
-     * Returns the properties of the bean class to consider while creating the object.
-     *
-     * @param clazz the class to check
-     * @return the relevant properties on the class
-     */
-    public Collection<BeanPropertyDescription> getWritableProperties(Class<?> clazz) {
-        return mapper.getWritableProperties(clazz);
+    @Override
+    public Object toExportValue(T value) {
+        return mapper.toExportValue(value);
     }
 }

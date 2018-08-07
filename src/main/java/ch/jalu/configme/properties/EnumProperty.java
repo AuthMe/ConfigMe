@@ -1,14 +1,8 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.resource.PropertyReader;
 
-import ch.jalu.configme.resource.PropertyResource;
-
-/**
- * Enum property.
- *
- * @param <E> The enum class
- */
-public class EnumProperty<E extends Enum<E>> extends Property<E> {
+public class EnumProperty<E extends Enum<E>> extends BaseProperty<E> {
 
     private final Class<E> clazz;
 
@@ -18,18 +12,9 @@ public class EnumProperty<E extends Enum<E>> extends Property<E> {
     }
 
     @Override
-    protected E getFromResource(PropertyResource resource) {
-        // Value is read from file as a String, but when it is set later on it is an enum
-        Object value = resource.getObject(getPath());
-        if (clazz.isInstance(value)) {
-            return clazz.cast(value);
-        }
-
-        if (value instanceof String) {
-            String textValue = (String) value;
-            return mapToEnum(textValue);
-        }
-        return null;
+    protected E getFromResource(PropertyReader reader) {
+        String value = reader.getString(getPath());
+        return value == null ? null : mapToEnum(value);
     }
 
     private E mapToEnum(String value) {
@@ -39,5 +24,10 @@ public class EnumProperty<E extends Enum<E>> extends Property<E> {
             }
         }
         return null;
+    }
+
+    @Override
+    public Object toExportValue(E value) {
+        return value.name();
     }
 }

@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.resource.PropertyReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -14,13 +14,13 @@ import static org.mockito.Mockito.when;
  */
 public class IntegerPropertyTest {
 
-    private static PropertyResource resource;
+    private static PropertyReader reader;
 
     @BeforeClass
     public static void setUpConfiguration() {
-        resource = mock(PropertyResource.class);
-        when(resource.getInt("int.path.test")).thenReturn(27);
-        when(resource.getInt("int.path.wrong")).thenReturn(null);
+        reader = mock(PropertyReader.class);
+        when(reader.getInt("int.path.test")).thenReturn(27);
+        when(reader.getInt("int.path.wrong")).thenReturn(null);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class IntegerPropertyTest {
         Property<Integer> property = new IntegerProperty("int.path.test", 3);
 
         // when
-        int result = property.getValue(resource);
+        int result = property.determineValue(reader);
 
         // then
         assertThat(result, equalTo(27));
@@ -41,9 +41,21 @@ public class IntegerPropertyTest {
         Property<Integer> property = new IntegerProperty("int.path.wrong", -10);
 
         // when
-        int result = property.getValue(resource);
+        int result = property.determineValue(reader);
 
         // then
         assertThat(result, equalTo(-10));
+    }
+
+    @Test
+    public void shouldReturnValueForExport() {
+        // given
+        Property<Integer> property = new IntegerProperty("some.path", -5);
+
+        // when
+        Object exportValue = property.toExportValue(45);
+
+        // then
+        assertThat(exportValue, equalTo(45));
     }
 }

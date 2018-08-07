@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.resource.PropertyReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,18 +18,18 @@ import static org.mockito.Mockito.when;
  */
 public class StringListPropertyTest {
 
-    private static PropertyResource resource;
+    private static PropertyReader reader;
 
     @BeforeClass
     @SuppressWarnings("unchecked")
     public static void setUpConfiguration() {
-        resource = mock(PropertyResource.class);
+        reader = mock(PropertyReader.class);
         // need to have the List objects unchecked so we satisfy the List<?> signature
         List stringList = Arrays.asList("test1", "Test2", "3rd test");
-        when(resource.getList("list.path.test")).thenReturn(stringList);
-        when(resource.getList("list.path.wrong")).thenReturn(null);
+        when(reader.getList("list.path.test")).thenReturn(stringList);
+        when(reader.getList("list.path.wrong")).thenReturn(null);
         List mixedList = Arrays.asList("test1", "toast", 1);
-        when(resource.getList("list.path.mixed")).thenReturn(mixedList);
+        when(reader.getList("list.path.mixed")).thenReturn(mixedList);
     }
 
     @Test
@@ -38,7 +38,7 @@ public class StringListPropertyTest {
         Property<List<String>> property = new StringListProperty("list.path.test", "1", "b");
 
         // when
-        List<String> result = property.getValue(resource);
+        List<String> result = property.determineValue(reader);
 
         // then
         assertThat(result, contains("test1", "Test2", "3rd test"));
@@ -50,7 +50,7 @@ public class StringListPropertyTest {
         Property<List<String>> property = new StringListProperty("list.path.wrong", "default", "list", "elements");
 
         // when
-        List<String> result = property.getValue(resource);
+        List<String> result = property.determineValue(reader);
 
         // then
         assertThat(result, contains("default", "list", "elements"));
@@ -62,7 +62,7 @@ public class StringListPropertyTest {
         Property<List<String>> property = new StringListProperty("list.path.mixed", "My", "default", "values");
 
         // when
-        List<String> result = property.getValue(resource);
+        List<String> result = property.determineValue(reader);
 
         // then
         assertThat(result, contains("My", "default", "values"));
@@ -75,11 +75,24 @@ public class StringListPropertyTest {
         Property<List<String>> property2 = new StringListProperty("list.path.mixed");
 
         // when
-        boolean result1 = property1.isPresent(resource);
-        boolean result2 = property2.isPresent(resource);
+        boolean result1 = property1.isPresent(reader);
+        boolean result2 = property2.isPresent(reader);
 
         // then
         assertThat(result1, equalTo(false));
         assertThat(result2, equalTo(true));
+    }
+
+    @Test
+    public void shouldReturnValueAsExportValue() {
+        // given
+        Property<List<String>> property = new StringListProperty("test.path");
+        List<String> value = Arrays.asList("one", "two");
+
+        // when
+        Object exportValue = property.toExportValue(value);
+
+        // then
+        assertThat(exportValue, equalTo(value));
     }
 }

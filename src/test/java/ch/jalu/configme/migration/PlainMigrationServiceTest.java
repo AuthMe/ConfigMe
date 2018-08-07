@@ -1,12 +1,13 @@
 package ch.jalu.configme.migration;
 
 import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
+import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.properties.IntegerProperty;
 import ch.jalu.configme.properties.Property;
-import ch.jalu.configme.resource.PropertyResource;
-import ch.jalu.configme.resource.YamlFileResource;
+import ch.jalu.configme.resource.PropertyReader;
+import ch.jalu.configme.resource.YamlFileReader;
 import ch.jalu.configme.samples.TestConfiguration;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -16,12 +17,13 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.util.List;
 
+import static ch.jalu.configme.configurationdata.ConfigurationDataBuilder.createConfiguration;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 /**
  * Test for {@link PlainMigrationService}.
@@ -32,8 +34,7 @@ public class PlainMigrationServiceTest {
     private static final String COMPLETE_CONFIG = "/config-sample.yml";
     private static final String INCOMPLETE_CONFIG = "/config-incomplete-sample.yml";
 
-    private static final List<Property<?>> KNOWN_PROPERTIES =
-        ConfigurationDataBuilder.collectData(TestConfiguration.class).getProperties();
+    private ConfigurationData configurationData;
 
     @Spy
     private PlainMigrationService service;
@@ -41,91 +42,140 @@ public class PlainMigrationServiceTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+    @Before
+    public void setUpConfigurationData() {
+        configurationData = createConfiguration(TestConfiguration.class);
+    }
+
     @Test
     public void shouldReturnNoSaveNecessaryForAllPropertiesPresent() {
         // given
-        PropertyResource resource = createResourceSpy(COMPLETE_CONFIG);
+        PropertyReader reader = createReaderSpy(COMPLETE_CONFIG);
 
         // when
-        boolean result = service.checkAndMigrate(resource, KNOWN_PROPERTIES);
+        boolean result = service.checkAndMigrate(reader, configurationData);
 
         // then
         assertThat(result, equalTo(false));
-        verify(service).performMigrations(resource, KNOWN_PROPERTIES);
+        verify(service).performMigrations(reader, configurationData);
     }
 
     @Test
     public void shouldReturnTrueForMissingProperty() {
         // given
-        PropertyResource resource = createResourceSpy(INCOMPLETE_CONFIG);
+        PropertyReader reader = createReaderSpy(INCOMPLETE_CONFIG);
 
         // when
-        boolean result = service.checkAndMigrate(resource, KNOWN_PROPERTIES);
+        boolean result = service.checkAndMigrate(reader, configurationData);
 
         // then
         assertThat(result, equalTo(true));
         // Verify that performMigrations was called; it should be called before our generic property check
-        verify(service).performMigrations(resource, KNOWN_PROPERTIES);
+        verify(service).performMigrations(reader, configurationData);
     }
 
     @Test
     public void shouldPassResourceToExtendedMethod() {
         // given
-        PropertyResource resource = createResourceSpy(COMPLETE_CONFIG);
-        given(resource.contains("old.property")).willReturn(true);
+        PropertyReader reader = createReaderSpy(COMPLETE_CONFIG);
         PlainMigrationServiceTestExtension service = Mockito.spy(new PlainMigrationServiceTestExtension());
 
         // when
-        boolean result = service.checkAndMigrate(resource, KNOWN_PROPERTIES);
+        boolean result = service.checkAndMigrate(reader, configurationData);
 
         // then
         assertThat(result, equalTo(true));
-        verify(service).performMigrations(resource, KNOWN_PROPERTIES);
-        verify(resource).contains("old.property");
+        verify(service).performMigrations(reader, configurationData);
+        verify(reader).contains("old.property");
     }
 
     @Test
     public void shouldResetNegativeIntegerProperties() {
         // given
-        PropertyResource resource = createResourceSpy(COMPLETE_CONFIG);
+        PropertyReader reader = createReaderSpy(COMPLETE_CONFIG);
         PlainMigrationServiceTestExtension service = new PlainMigrationServiceTestExtension();
 
         // when
-        boolean result = service.checkAndMigrate(resource, KNOWN_PROPERTIES);
+        boolean result = service.checkAndMigrate(reader, configurationData);
 
         // then
         assertThat(result, equalTo(true));
-        assertThat(resource.getInt(TestConfiguration.DURATION_IN_SECONDS.getPath()), equalTo(0));
-        verify(resource).setValue(TestConfiguration.DURATION_IN_SECONDS.getPath(), 0);
+        assertThat(configurationData.getValue(TestConfiguration.DURATION_IN_SECONDS), equalTo(0));
     }
 
-    private PropertyResource createResourceSpy(String file) {
+    @Test
+    public void shouldMoveProperty() {
+        // given
+        PropertyReader reader = createReaderSpy(INCOMPLETE_CONFIG);
+        ConfigurationData configurationData = mock(ConfigurationData.class);
+
+        // when
+        boolean result = PlainMigrationService.moveProperty(
+            TestConfiguration.DURATION_IN_SECONDS, TestConfiguration.VERSION_NUMBER, reader, configurationData);
+
+        // then
+        assertThat(result, equalTo(true));
+        verify(configurationData).setValue(TestConfiguration.VERSION_NUMBER, 22);
+    }
+
+    @Test
+    public void shouldNotMovePropertyIfAlreadyExists() {
+        // given
+        PropertyReader reader = createReaderSpy(COMPLETE_CONFIG);
+        ConfigurationData configurationData = mock(ConfigurationData.class);
+
+        // when
+        boolean result = PlainMigrationService.moveProperty(
+            TestConfiguration.DURATION_IN_SECONDS, TestConfiguration.VERSION_NUMBER, reader, configurationData);
+
+        // then
+        assertThat(result, equalTo(true)); // still true because value is present at path
+        verifyZeroInteractions(configurationData);
+    }
+
+    @Test
+    public void shouldReturnFalseIfOldPathDoesNotExist() {
+        // given
+        PropertyReader reader = createReaderSpy(INCOMPLETE_CONFIG);
+        ConfigurationData configurationData = mock(ConfigurationData.class);
+        Property<Integer> oldProperty = new IntegerProperty("path.does.not.exist", 3);
+
+        // when
+        boolean result = PlainMigrationService.moveProperty(
+            oldProperty, TestConfiguration.VERSION_NUMBER, reader, configurationData);
+
+        // then
+        assertThat(result, equalTo(false));
+        verifyZeroInteractions(configurationData);
+    }
+
+    private PropertyReader createReaderSpy(String file) {
         // It's a little difficult to set up mock behavior for all cases, so use a YML file from test/resources
         File copy = TestUtils.copyFileFromResources(file, temporaryFolder);
-        return Mockito.spy(new YamlFileResource(copy));
+        return Mockito.spy(new YamlFileReader(copy));
     }
 
     private static class PlainMigrationServiceTestExtension extends PlainMigrationService {
 
         @Override
-        protected boolean performMigrations(PropertyResource resource, List<Property<?>> properties) {
+        protected boolean performMigrations(PropertyReader reader, ConfigurationData configurationData) {
             // If contains -> return true = migration is necessary
-            if (resource.contains("old.property")) {
-                return true;
+            if (reader.contains("old.property")) {
+                return MIGRATION_REQUIRED;
             }
 
             // Set any int property to 0 if its value is above 20
             boolean hasChange = false;
-            for (Property<?> property : properties) {
+            for (Property<?> property : configurationData.getProperties()) {
                 if (property instanceof IntegerProperty) {
-                    IntegerProperty intProperty = (IntegerProperty) property;
-                    if (intProperty.getValue(resource) > 20) {
-                        resource.setValue(intProperty.getPath(), 0);
+                    Property<Integer> intProperty = (Property<Integer>) property;
+                    if (intProperty.determineValue(reader) > 20) {
+                        configurationData.setValue(intProperty, 0);
                         hasChange = true;
                     }
                 }
             }
-            return hasChange;
+            return hasChange ? MIGRATION_REQUIRED : NO_MIGRATION_NEEDED;
         }
     }
 

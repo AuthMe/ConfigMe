@@ -1,9 +1,7 @@
 package ch.jalu.configme.migration;
 
-import ch.jalu.configme.properties.Property;
-import ch.jalu.configme.resource.PropertyResource;
-
-import java.util.List;
+import ch.jalu.configme.configurationdata.ConfigurationData;
+import ch.jalu.configme.resource.PropertyReader;
 
 /**
  * The migration service is called when the settings manager is instantiated. It allows to
@@ -12,13 +10,20 @@ import java.util.List;
  */
 public interface MigrationService {
 
+    /** Constant for the return value of {@link #checkAndMigrate}, indicating that a migration has been performed. */
+    boolean MIGRATION_REQUIRED = true;
+
+    /** Constant for the return value of {@link #checkAndMigrate}, indicating that no migration was needed. */
+    boolean NO_MIGRATION_NEEDED = false;
+
     /**
-     * Checks the settings and perform any necessary migrations.
+     * Performs the migration, returning whether a migration has been performed or not.
      *
-     * @param resource the property resource
-     * @param properties all existing properties
-     * @return {@code true} if a migration has been performed, {@code false} if the settings are up-to-date
+     * @param reader reader to access the values in the configuration file
+     * @param configurationData configuration data, which knows all properties and manages their associated values
+     * @return true if a migration has been performed, false otherwise. Indicates whether the configuration data should
+     *         be saved to the configuration file or not
      */
-    boolean checkAndMigrate(PropertyResource resource, List<Property<?>> properties);
+    boolean checkAndMigrate(PropertyReader reader, ConfigurationData configurationData);
 
 }
