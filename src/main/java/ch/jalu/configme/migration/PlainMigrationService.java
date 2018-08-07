@@ -21,7 +21,12 @@ public class PlainMigrationService implements MigrationService {
     }
 
     /**
-     * Performs custom migrations. This method exists for extension.
+     * Override this method for custom migrations. This method is executed before checking
+     * if all settings are present. For instance, you could implement deleting obsolete properties
+     * and rename properties in this method.
+     * <p>
+     * Note that the settings manager automatically saves the resource
+     * if the migration service returns {@link #MIGRATION_REQUIRED} from {@link #checkAndMigrate}.
      *
      * @param reader the reader with which the configuration file can be read
      * @param configurationData the configuration data

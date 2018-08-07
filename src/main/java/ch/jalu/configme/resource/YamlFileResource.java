@@ -116,7 +116,7 @@ public class YamlFileResource implements PropertyResource {
     }
 
     /**
-     * Called at the end of {@link #exportProperties}, regardless whteher the execution was successful or not.
+     * Called at the end of {@link #exportProperties}, regardless whether the execution was successful or not.
      */
     protected void onWriteComplete() {
         yamlObject = null;

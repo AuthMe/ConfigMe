@@ -19,6 +19,35 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of {@link Mapper}.
+ * <p>
+ * Maps a section of a property resource to the provided JavaBean class. The mapping is based on the bean's properties,
+ * whose names must correspond with the names in the property resource. For example, if a JavaBean class has a property
+ * {@code length} and should be mapped from the property resource's value at path {@code definition}, the mapper will
+ * look up {@code definition.length} to get the value of the JavaBean property.
+ * <p>
+ * Classes must be JavaBeans. These are simple classes with private fields, accompanied with getters and setters.
+ * <b>The mapper only considers properties which have both a getter and a setter method.</b> Any Java class without
+ * at least one property with both a getter <i>and</i> a setter is not considered as a JavaBean class. Such classes can
+ * be supported by implementing a custom {@link LeafValueHandler} that performs the conversion from the value coming
+ * from the property reader to an object of the class' type.
+ * <p>
+ * <b>Recursion:</b> the mapping of values to a JavaBean is performed recursively, i.e. a JavaBean may have other
+ * JavaBeans as fields and generic types at any arbitrary "depth."
+ * <p>
+ * <b>Collections</b> are only supported if they are explicitly typed, i.e. a field of {@code List<String>}
+ * is supported but {@code List<?>} and {@code List<T extends Number>} are not supported. Specifically, you may
+ * only declare fields of type {@link java.util.List} or {@link java.util.Set}, or a parent type ({@link Collection}
+ * or {@link Iterable}).
+ * Fields of type <b>Map</b> are supported also, with similar limitations. Additionally, maps may only have
+ * {@code String} as key type, but no restrictions are imposed on the value type.
+ * <p>
+ * JavaBeans may have <b>optional fields</b>. If the mapper cannot map the property resource value to the corresponding
+ * field, it only treats it as a failure if the field's value is {@code null}. If the field has a default value assigned
+ * to it on initialization, the default value remains and the mapping process continues. A JavaBean field whose value is
+ * {@code null} signifies a failure and stops the mapping process immediately.
+ */
 public class MapperImpl implements Mapper {
 
     // ---------
