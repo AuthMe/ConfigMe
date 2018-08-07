@@ -16,6 +16,6 @@ public interface BeanDescriptionFactory {
      * @param clazz the class whose properties should be returned
      * @return the relevant properties on the class
      */
-    Collection<BeanPropertyDescription> findAllWritableProperties(Class<?> clazz);
+    Collection<BeanPropertyDescription> getAllProperties(Class<?> clazz);
 
 }

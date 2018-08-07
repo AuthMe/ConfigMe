@@ -11,7 +11,6 @@ import ch.jalu.configme.utils.TypeInformation;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -54,39 +53,28 @@ public class MapperImpl implements Mapper {
     // Fields and general configurable methods
     // ---------
 
-    private final Map<String, Collection<BeanPropertyDescription>> classProperties = new HashMap<>();
-    private BeanDescriptionFactory beanDescriptionFactory = new BeanDescriptionFactoryImpl();
-    private LeafValueHandler leafValueHandler = StandardLeafValueHandlers.getDefaultLeafValueHandler();
+    private final BeanDescriptionFactory beanDescriptionFactory;
+    private final LeafValueHandler leafValueHandler;
+
+    public MapperImpl() {
+        this(new BeanDescriptionFactoryImpl(), StandardLeafValueHandlers.getDefaultLeafValueHandler());
+    }
+
+    public MapperImpl(BeanDescriptionFactory beanDescriptionFactory, LeafValueHandler leafValueHandler) {
+        this.beanDescriptionFactory = beanDescriptionFactory;
+        this.leafValueHandler = leafValueHandler;
+    }
 
     protected final BeanDescriptionFactory getBeanDescriptionFactory() {
         return beanDescriptionFactory;
-    }
-
-    protected void setBeanDescriptionFactory(BeanDescriptionFactory beanDescriptionFactory) {
-        this.beanDescriptionFactory = beanDescriptionFactory;
     }
 
     protected final LeafValueHandler getLeafValueHandler() {
         return leafValueHandler;
     }
 
-    protected void setLeafValueHandler(LeafValueHandler leafValueHandler) {
-        this.leafValueHandler = leafValueHandler;
-    }
-
     protected MappingContext createRootMappingContext(String path, TypeInformation beanType) {
         return MappingContextImpl.createRoot(path, beanType);
-    }
-
-    /**
-     * Returns the properties of the given bean class that need to be considered when constructing objects.
-     *
-     * @param clazz the class to get the bean properties from
-     * @return relevant properties
-     */
-    protected Collection<BeanPropertyDescription> getWritableProperties(Class<?> clazz) {
-        return classProperties.computeIfAbsent(clazz.getCanonicalName(),
-            s -> beanDescriptionFactory.findAllWritableProperties(clazz));
     }
 
 
@@ -112,12 +100,13 @@ public class MapperImpl implements Mapper {
 
         // Step 3: treat as bean
         Map<String, Object> mappedBean = new LinkedHashMap<>();
-        for (BeanPropertyDescription property : getWritableProperties(value.getClass())) {
+        for (BeanPropertyDescription property : beanDescriptionFactory.getAllProperties(value.getClass())) {
             mappedBean.put(property.getName(), toExportValue(property.getValue(value)));
         }
         return mappedBean;
     }
 
+    @Nullable
     protected Object createExportValueForSpecialTypes(Object value) {
         if (value instanceof Collection<?>) {
             return ((Collection<?>) value).stream()
@@ -146,6 +135,7 @@ public class MapperImpl implements Mapper {
     // Bean mapping
     // ---------
 
+    @Nullable
     @Override
     public Object convertToBean(PropertyReader reader, String path, TypeInformation beanType) {
         Object value = reader.getObject(path);
@@ -156,6 +146,7 @@ public class MapperImpl implements Mapper {
         return convertValueForType(createRootMappingContext(path, beanType), value);
     }
 
+    @Nullable
     protected Object convertValueForType(MappingContext context, Object value) {
         Class<?> rawClass = context.getTypeInformation().getSafeToWriteClass();
         if (rawClass == null) {
@@ -178,6 +169,7 @@ public class MapperImpl implements Mapper {
         return createBean(context, value);
     }
 
+    @Nullable
     protected Object handleSpecialTypes(MappingContext context, Object value) {
         final Class<?> rawClass = context.getTypeInformation().getSafeToWriteClass();
         if (Collection.class.isAssignableFrom(rawClass)) {
@@ -277,7 +269,7 @@ public class MapperImpl implements Mapper {
             return null;
         }
 
-        Collection<BeanPropertyDescription> properties = getWritableProperties(
+        Collection<BeanPropertyDescription> properties = beanDescriptionFactory.getAllProperties(
             context.getTypeInformation().getSafeToWriteClass());
         // Check that we have properties (or else we don't have a bean)
         if (properties.isEmpty()) {

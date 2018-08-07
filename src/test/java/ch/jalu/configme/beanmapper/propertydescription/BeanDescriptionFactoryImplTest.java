@@ -34,7 +34,7 @@ public class BeanDescriptionFactoryImplTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanPropertyDescription> descriptions = factory.findAllWritableProperties(SampleBean.class);
+        Collection<BeanPropertyDescription> descriptions = factory.getAllProperties(SampleBean.class);
 
         // then
         assertThat(descriptions, hasSize(2));
@@ -48,7 +48,7 @@ public class BeanDescriptionFactoryImplTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when / then
-        assertThat(factory.findAllWritableProperties(List.class), empty());
+        assertThat(factory.getAllProperties(List.class), empty());
     }
 
     @Test
@@ -57,7 +57,7 @@ public class BeanDescriptionFactoryImplTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanPropertyDescription> properties = factory.findAllWritableProperties(BooleanTestBean.class);
+        Collection<BeanPropertyDescription> properties = factory.getAllProperties(BooleanTestBean.class);
 
         // then
         assertThat(properties, hasSize(4));
@@ -71,7 +71,7 @@ public class BeanDescriptionFactoryImplTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanPropertyDescription> properties = factory.findAllWritableProperties(BeanWithTransientFields.class);
+        Collection<BeanPropertyDescription> properties = factory.getAllProperties(BeanWithTransientFields.class);
 
         // then
         assertThat(properties, hasSize(2));
@@ -84,7 +84,7 @@ public class BeanDescriptionFactoryImplTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanPropertyDescription> properties = factory.findAllWritableProperties(Middle.class);
+        Collection<BeanPropertyDescription> properties = factory.getAllProperties(Middle.class);
 
         // then
         assertThat(properties, hasSize(3));
@@ -97,7 +97,7 @@ public class BeanDescriptionFactoryImplTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanPropertyDescription> properties = factory.findAllWritableProperties(Child.class);
+        Collection<BeanPropertyDescription> properties = factory.getAllProperties(Child.class);
 
         // then
         assertThat(properties, hasSize(5));
@@ -111,7 +111,7 @@ public class BeanDescriptionFactoryImplTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanPropertyDescription> properties = factory.findAllWritableProperties(AnnotatedEntry.class);
+        Collection<BeanPropertyDescription> properties = factory.getAllProperties(AnnotatedEntry.class);
 
         // then
         assertThat(properties, hasSize(2));
@@ -126,7 +126,7 @@ public class BeanDescriptionFactoryImplTest {
 
         // when / then
         verifyException(
-            () -> factory.findAllWritableProperties(BeanWithNameClash.class),
+            () -> factory.getAllProperties(BeanWithNameClash.class),
             ConfigMeMapperException.class,
             "multiple properties with name 'threshold'");
     }
@@ -138,7 +138,7 @@ public class BeanDescriptionFactoryImplTest {
 
         // when / then
         verifyException(
-            () -> factory.findAllWritableProperties(BeanWithEmptyName.class),
+            () -> factory.getAllProperties(BeanWithEmptyName.class),
             ConfigMeMapperException.class,
             "may not be empty");
     }

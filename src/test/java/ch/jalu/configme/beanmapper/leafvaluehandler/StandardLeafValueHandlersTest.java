@@ -5,6 +5,7 @@ import ch.jalu.configme.samples.TestEnum;
 import ch.jalu.configme.utils.TypeInformation;
 import org.junit.Test;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static ch.jalu.configme.TestUtils.transform;
-import static ch.jalu.configme.utils.TypeInformation.of;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
@@ -210,5 +210,9 @@ public class StandardLeafValueHandlersTest {
 
     private void assertExportValueSameAsInput(LeafValueHandler transformer, Object input) {
         assertThat(transformer.toExportValue(input), sameInstance(input));
+    }
+
+    private static TypeInformation of(Type type) {
+        return new TypeInformation(type);
     }
 }

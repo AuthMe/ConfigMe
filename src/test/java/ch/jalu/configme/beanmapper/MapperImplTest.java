@@ -7,6 +7,8 @@ import ch.jalu.configme.beanmapper.command.Executor;
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommand;
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommandConfig;
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexOptionalTypeConfig;
+import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
+import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.typeissues.GenericCollection;
 import ch.jalu.configme.beanmapper.typeissues.MapWithNonStringKeys;
 import ch.jalu.configme.beanmapper.typeissues.UnsupportedCollection;
@@ -44,8 +46,10 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link MapperImpl}.
@@ -380,6 +384,22 @@ public class MapperImplTest {
             assertThat(e.getMessage(), containsString("It is required to have a default constructor"));
             assertThat(e.getCause(), instanceOf(NoSuchMethodException.class));
         }
+    }
+
+    @Test
+    public void shouldReturnFields() {
+        // given
+        BeanDescriptionFactory descriptionFactory = mock(BeanDescriptionFactory.class);
+        LeafValueHandler leafValueHandler = mock(LeafValueHandler.class);
+        MapperImpl mapper = new MapperImpl(descriptionFactory, leafValueHandler);
+
+        // when
+        BeanDescriptionFactory returnedDescriptionFactory = mapper.getBeanDescriptionFactory();
+        LeafValueHandler returnedLeafValueHandler = mapper.getLeafValueHandler();
+
+        // then
+        assertThat(returnedDescriptionFactory, sameInstance(descriptionFactory));
+        assertThat(returnedLeafValueHandler, sameInstance(leafValueHandler));
     }
 
     private static void assertAllOptionalFieldsEmpty(ComplexCommand complexCommand) {

@@ -10,8 +10,11 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,8 @@ import java.util.stream.Collectors;
  */
 public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
 
+    private final Map<Class<?>, List<BeanPropertyDescription>> classProperties = new HashMap<>();
+
     /**
      * Returns all properties of the given bean class for which there exists a getter and setter.
      *
@@ -33,12 +38,16 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @return the bean class' properties to handle
      */
     @Override
-    public Collection<BeanPropertyDescription> findAllWritableProperties(Class<?> clazz) {
+    public Collection<BeanPropertyDescription> getAllProperties(Class<?> clazz) {
+        return classProperties.computeIfAbsent(clazz, this::collectAllProperties);
+    }
+
+    protected List<BeanPropertyDescription> collectAllProperties(Class<?> clazz) {
         List<PropertyDescriptor> descriptors = getWritableProperties(clazz);
 
         List<BeanPropertyDescription> properties = descriptors.stream()
             .map(this::convert)
-            .filter(p -> p != null)
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
         validateProperties(clazz, properties);
