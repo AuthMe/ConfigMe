@@ -31,4 +31,6 @@ checks:
   identical-code:
     enabled: true
 
-exclude_patterns: []
+exclude_patterns:
+  # Don't check test scope
+  - 'src/test/java/**'
