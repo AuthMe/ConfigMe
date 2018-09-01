@@ -28,7 +28,7 @@ public class StringListPropertyTest {
         List stringList = Arrays.asList("test1", "Test2", "3rd test");
         when(reader.getList("list.path.test")).thenReturn(stringList);
         when(reader.getList("list.path.wrong")).thenReturn(null);
-        List mixedList = Arrays.asList("test1", "toast", 1);
+        List mixedList = Arrays.asList("test1", false, "toast", 1);
         when(reader.getList("list.path.mixed")).thenReturn(mixedList);
     }
 
@@ -65,7 +65,7 @@ public class StringListPropertyTest {
         List<String> result = property.determineValue(reader);
 
         // then
-        assertThat(result, contains("My", "default", "values"));
+        assertThat(result, contains("test1", "false", "toast", "1"));
     }
 
     @Test

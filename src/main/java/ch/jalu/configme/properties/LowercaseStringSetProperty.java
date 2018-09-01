@@ -13,6 +13,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Property whose value is a String set all in lowercase. The sets are immutable.
+ */
 public class LowercaseStringSetProperty extends BaseProperty<Set<String>> {
 
     /**
@@ -62,7 +65,7 @@ public class LowercaseStringSetProperty extends BaseProperty<Set<String>> {
         return Objects.toString(value).toLowerCase();
     }
 
-    private static Set<String> toLowercaseLinkedHashSet(Stream<String> valuesStream) {
+    protected static Set<String> toLowercaseLinkedHashSet(Stream<String> valuesStream) {
         Set<String> valuesLowercase = valuesStream
             .map(String::toLowerCase)
             .collect(Collectors.toCollection(LinkedHashSet::new));

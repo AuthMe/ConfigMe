@@ -2,6 +2,9 @@ package ch.jalu.configme.properties;
 
 import ch.jalu.configme.resource.PropertyReader;
 
+/**
+ * String property.
+ */
 public class StringProperty extends BaseProperty<String> {
 
     public StringProperty(String path, String defaultValue) {
@@ -10,7 +13,8 @@ public class StringProperty extends BaseProperty<String> {
 
     @Override
     protected String getFromResource(PropertyReader reader) {
-        return reader.getString(getPath());
+        Object value = reader.getObject(getPath());
+        return value == null ? null : value.toString();
     }
 
     @Override

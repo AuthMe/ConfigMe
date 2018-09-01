@@ -2,26 +2,34 @@ package ch.jalu.configme.properties;
 
 import ch.jalu.configme.resource.PropertyReader;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
+/**
+ * String list property. The lists are immutable.
+ */
 public class StringListProperty extends BaseProperty<List<String>> {
 
     public StringListProperty(String path, String... defaultValue) {
-        super(path, Arrays.asList(defaultValue));
+        this(path, Arrays.asList(defaultValue));
+    }
+
+    public StringListProperty(String path, List<String> defaultValue) {
+        super(path, Collections.unmodifiableList(defaultValue));
     }
 
     @Override
     protected List<String> getFromResource(PropertyReader reader) {
-        List<?> rawList = reader.getList(getPath());
-        if (rawList != null) {
-            for (Object o : rawList) {
-                if (!(o instanceof String)) {
-                    return null;
-                }
+        List<?> listFromReader = reader.getList(getPath());
+        if (listFromReader != null) {
+            List<String> result = new ArrayList<>(listFromReader.size());
+            for (Object o : listFromReader) {
+                result.add(Objects.toString(o));
             }
-            // We checked that every entry is a String
-            return (List<String>) rawList;
+            return Collections.unmodifiableList(result);
         }
         return null;
     }

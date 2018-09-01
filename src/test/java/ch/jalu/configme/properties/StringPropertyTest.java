@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,8 +20,8 @@ public class StringPropertyTest {
     @BeforeClass
     public static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
-        when(reader.getString("str.path.test")).thenReturn("Test value");
-        when(reader.getString("str.path.wrong")).thenReturn(null);
+        when(reader.getObject("str.path.test")).thenReturn("Test value");
+        when(reader.getObject("str.path.wrong")).thenReturn(null);
     }
 
     @Test
@@ -57,5 +58,35 @@ public class StringPropertyTest {
 
         // then
         assertThat(exportValue, equalTo("some value"));
+    }
+
+    @Test
+    public void shouldReturnStringForNumber() {
+        // given
+        Property<String> property1 = new StringProperty("one", "");
+        Property<String> property2 = new StringProperty("two", "");
+        given(reader.getObject(property1.getPath())).willReturn(1);
+        given(reader.getObject(property2.getPath())).willReturn(-5.328);
+
+        // when
+        String value1 = property1.determineValue(reader);
+        String value2 = property2.determineValue(reader);
+
+        // then
+        assertThat(value1, equalTo("1"));
+        assertThat(value2, equalTo("-5.328"));
+    }
+
+    @Test
+    public void shouldReturnStringFromBoolean() {
+        // given
+        Property<String> property = new StringProperty("test", "");
+        given(reader.getObject(property.getPath())).willReturn(false);
+
+        // when
+        String value = property.determineValue(reader);
+
+        // then
+        assertThat(value, equalTo("false"));
     }
 }
