@@ -47,8 +47,8 @@ public final class TestConfiguration implements SettingsHolder {
         newListProperty("features.boring.colors");
 
     // No comment
-    public static final Property<Integer> DUST_LEVEL =
-        newProperty("features.boring.dustLevel", -1);
+    public static final Property<Double> DUST_LEVEL =
+        newProperty("features.boring.dustLevel", -1.1);
 
     @Comment("Enable cool features?")
     public static final Property<Boolean> USE_COOL_FEATURES =

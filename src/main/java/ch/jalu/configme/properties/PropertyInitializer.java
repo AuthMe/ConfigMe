@@ -41,6 +41,17 @@ public class PropertyInitializer {
     }
 
     /**
+     * Creates a new double property.
+     *
+     * @param path the property's path
+     * @param defaultValue the default value
+     * @return the created property
+     */
+    public static Property<Double> newProperty(String path, double defaultValue) {
+        return new DoubleProperty(path, defaultValue);
+    }
+
+    /**
      * Creates a new String property.
      *
      * @param path the property's path

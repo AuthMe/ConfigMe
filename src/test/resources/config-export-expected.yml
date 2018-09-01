@@ -25,7 +25,7 @@ features:
         colors: 
         - beige
         - gray
-        dustLevel: 2
+        dustLevel: 2.4
     # Cool features
     # Contains cool settings
     cool:

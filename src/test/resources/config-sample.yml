@@ -17,7 +17,7 @@ features:
         colors:
             - 'beige'
             - 'gray'
-        dustLevel: 2
+        dustLevel: 2.4
     cool:
         enabled: true
         options:

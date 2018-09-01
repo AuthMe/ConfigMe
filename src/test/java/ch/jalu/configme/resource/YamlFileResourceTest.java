@@ -75,7 +75,7 @@ public class YamlFileResourceTest {
         expected.put(TestConfiguration.VERSION_NUMBER, 32046);
         expected.put(TestConfiguration.SKIP_BORING_FEATURES, false);
         expected.put(TestConfiguration.BORING_COLORS, Collections.EMPTY_LIST);
-        expected.put(TestConfiguration.DUST_LEVEL, -1);
+        expected.put(TestConfiguration.DUST_LEVEL, -1.1);
         expected.put(TestConfiguration.USE_COOL_FEATURES, false);
         expected.put(TestConfiguration.COOL_OPTIONS, asList("Dinosaurs", "Explosions", "Big trucks"));
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
@@ -117,7 +117,7 @@ public class YamlFileResourceTest {
         expected.put(TestConfiguration.VERSION_NUMBER, -1337);
         expected.put(TestConfiguration.SKIP_BORING_FEATURES, false);
         expected.put(TestConfiguration.BORING_COLORS, asList("it's a difficult string!", "gray\nwith new lines\n"));
-        expected.put(TestConfiguration.DUST_LEVEL, -1);
+        expected.put(TestConfiguration.DUST_LEVEL, -1.1);
         expected.put(TestConfiguration.USE_COOL_FEATURES, true);
         expected.put(TestConfiguration.COOL_OPTIONS, Collections.EMPTY_LIST);
         expected.put(properties.get(0), properties.get(0).getDefaultValue());

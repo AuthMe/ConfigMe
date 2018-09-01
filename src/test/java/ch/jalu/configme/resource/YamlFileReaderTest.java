@@ -76,7 +76,7 @@ public class YamlFileReaderTest {
         expected.put(TestConfiguration.VERSION_NUMBER, 2492);
         expected.put(TestConfiguration.SKIP_BORING_FEATURES, false);
         expected.put(TestConfiguration.BORING_COLORS, Arrays.asList("beige", "gray"));
-        expected.put(TestConfiguration.DUST_LEVEL, 2);
+        expected.put(TestConfiguration.DUST_LEVEL, 2.4);
         expected.put(TestConfiguration.USE_COOL_FEATURES, true);
         expected.put(TestConfiguration.COOL_OPTIONS, Arrays.asList("Dinosaurs", "Explosions", "Big trucks"));
 

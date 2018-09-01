@@ -25,6 +25,7 @@ public class PropertyInitializerTest {
     public void shouldInstantiateProperties() {
         assertThat(newProperty("my.path", true), instanceOf(BooleanProperty.class));
         assertThat(newProperty("my.path", 12), instanceOf(IntegerProperty.class));
+        assertThat(newProperty("my.path", -8.4), instanceOf(DoubleProperty.class));
         assertThat(newProperty("my.path", "default"), instanceOf(StringProperty.class));
         assertThat(newProperty(TestEnum.class, "my.path", TestEnum.FIRST), instanceOf(EnumProperty.class));
         assertThat(newListProperty("path", "default", "entries"), instanceOf(StringListProperty.class));
