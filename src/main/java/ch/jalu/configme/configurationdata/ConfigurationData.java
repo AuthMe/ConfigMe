@@ -13,7 +13,7 @@ import java.util.List;
  *  <li>manages the values associated with the properties</li>
  * </ul>
  *
- * Default implementation: {@link ConfigurationDataImpl}.
+ * Create instances with {@link ConfigurationDataBuilder}.
  */
 public interface ConfigurationData {
 

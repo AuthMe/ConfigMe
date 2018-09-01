@@ -76,14 +76,26 @@ public class PropertyPathTraverser {
     }
 
     public static final class PathElement {
-        public final int indentationLevel;
-        public final String name;
-        public final List<String> comments;
+        private final int indentationLevel;
+        private final String name;
+        private final List<String> comments;
 
         public PathElement(int indentationLevel, String name, List<String> comments) {
             this.indentationLevel = indentationLevel;
             this.name = name;
             this.comments = comments;
+        }
+
+        public int getIndentationLevel() {
+            return indentationLevel;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public List<String> getComments() {
+            return comments;
         }
     }
 

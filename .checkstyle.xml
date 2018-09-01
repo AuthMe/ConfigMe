@@ -31,6 +31,8 @@
             <property name="format" value="TODO|FIXME"/>
         </module>
         <module name="GenericWhitespace"/>
+        <module name="WhitespaceBefore"/>
+        <module name="WhitespaceAfter"/>
         <module name="AvoidStarImport"/>
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>

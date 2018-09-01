@@ -17,16 +17,19 @@ import java.util.Map;
  *   are within the broader "DataSource" group.</li>
  *   <li>are ordered by insertion, e.g. if the first "DataSource" property is inserted before the first "security"
  *   property, then "DataSource" properties will come before the "security" ones.</li>
+ *   <li>are unique: if any property is attempted to be added twice, or the addition of a property would remove another
+ *   existing property, an exception is thrown</li>
  * </ul>
  */
 public class PropertyListBuilder {
 
-    private Map<String, Object> rootEntries;
+    private Map<String, Object> rootEntries = new LinkedHashMap<>();
 
-    public PropertyListBuilder() {
-        rootEntries = new LinkedHashMap<>();
-    }
-
+    /**
+     * Adds the property to the list builder.
+     *
+     * @param property the property to add
+     */
     public void add(Property<?> property) {
         String[] paths = property.getPath().split("\\.");
         Map<String, Object> map = rootEntries;
@@ -41,6 +44,12 @@ public class PropertyListBuilder {
         map.put(end, property);
     }
 
+    /**
+     * Creates a list of properties that have been added, by insertion order but grouped by path parents
+     * (see class JavaDoc).
+     *
+     * @return ordered list of registered properties
+     */
     public List<Property<?>> create() {
         List<Property<?>> result = new ArrayList<>();
         collectEntries(rootEntries, result);

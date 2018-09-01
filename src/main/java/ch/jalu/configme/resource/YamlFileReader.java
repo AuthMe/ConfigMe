@@ -4,6 +4,7 @@ import ch.jalu.configme.exception.ConfigMeException;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class YamlFileReader implements PropertyReader {
         Object node = root;
         String[] keys = path.split("\\.");
         for (String key : keys) {
-            node = getIfIsMap(key, node);
+            node = getEntryIfIsMap(key, node);
             if (node == null) {
                 return null;
             }
@@ -108,6 +109,16 @@ public class YamlFileReader implements PropertyReader {
         return root;
     }
 
+    /**
+     * Gets the object at the given path and safely casts it to the given class' type. Returns null
+     * if no value is available or if it cannot be cast.
+     *
+     * @param path the path to retrieve
+     * @param clazz the class to cast to
+     * @param <T> the class type
+     * @return cast value at the given path, null if not applicable
+     */
+    @Nullable
     protected <T> T getTypedObject(String path, Class<T> clazz) {
         Object value = getObject(path);
         if (clazz.isInstance(value)) {
@@ -116,7 +127,8 @@ public class YamlFileReader implements PropertyReader {
         return null;
     }
 
-    private static Object getIfIsMap(String key, Object value) {
+    @Nullable
+    private static Object getEntryIfIsMap(String key, Object value) {
         if (value instanceof Map<?, ?>) {
             return ((Map<?, ?>) value).get(key);
         }

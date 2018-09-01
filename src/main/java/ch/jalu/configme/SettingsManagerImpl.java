@@ -9,7 +9,7 @@ import ch.jalu.configme.resource.PropertyResource;
 import javax.annotation.Nullable;
 
 /**
- * Settings manager.
+ * Default implementation of {@link SettingsManager}. Use the {@link SettingsManagerBuilder} to create instances.
  * <p>
  * The settings manager unites a {@link PropertyResource property resource},
  * a {@link MigrationService migration service} and the list of known properties
@@ -20,10 +20,9 @@ import javax.annotation.Nullable;
  * After initializing the settings manager, it is usually the only class from ConfigMe
  * you interact with.
  *
- * @see <a href="https://github.com/AuthMe/ConfigMe">ConfigMe on Github</a>
  * @see PropertyResource
+ * @see ConfigurationData
  * @see MigrationService
- * @see SettingsHolder
  */
 public class SettingsManagerImpl implements SettingsManager {
 
@@ -32,7 +31,7 @@ public class SettingsManagerImpl implements SettingsManager {
     private final MigrationService migrationService;
 
     /**
-     * Constructor.
+     * Constructor. Use {@link SettingsManagerBuilder} to create instances.
      *
      * @param resource the property resource to read and write properties to
      * @param configurationData the configuration data
@@ -70,9 +69,6 @@ public class SettingsManagerImpl implements SettingsManager {
         configurationData.setValue(property, value);
     }
 
-    /**
-     * Reloads the configuration.
-     */
     @Override
     public void reload() {
         loadFromResourceAndValidate();
@@ -83,6 +79,10 @@ public class SettingsManagerImpl implements SettingsManager {
         resource.exportProperties(configurationData);
     }
 
+    /**
+     * Reads the configuration file and executes the migration service (if present). Saves the file if migrations
+     * have been applied.
+     */
     protected void loadFromResourceAndValidate() {
         final PropertyReader reader = resource.createReader();
         configurationData.initializeValues(reader);
@@ -101,6 +101,7 @@ public class SettingsManagerImpl implements SettingsManager {
         return configurationData;
     }
 
+    @Nullable
     protected final MigrationService getMigrationService() {
         return migrationService;
     }

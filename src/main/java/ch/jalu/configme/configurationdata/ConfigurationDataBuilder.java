@@ -22,7 +22,9 @@ import java.util.List;
  */
 public class ConfigurationDataBuilder {
 
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     protected PropertyListBuilder propertyListBuilder = new PropertyListBuilder();
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     protected CommentsConfiguration commentsConfiguration = new CommentsConfiguration();
 
     protected ConfigurationDataBuilder() {
@@ -61,6 +63,13 @@ public class ConfigurationDataBuilder {
         return new ConfigurationDataImpl(properties, commentsConfiguration.getAllComments());
     }
 
+    /**
+     * Collects property data and comment info from the given class and creates a configuration data
+     * instance with it.
+     *
+     * @param classes the classes to process
+     * @return configuration data with the classes' data
+     */
     protected ConfigurationData collectData(Iterable<Class<? extends SettingsHolder>> classes) {
         for (Class<? extends SettingsHolder> clazz : classes) {
             collectProperties(clazz);
@@ -69,6 +78,11 @@ public class ConfigurationDataBuilder {
         return new ConfigurationDataImpl(propertyListBuilder.create(), commentsConfiguration.getAllComments());
     }
 
+    /**
+     * Registers all property fields of the given class to this instance's property list builder.
+     *
+     * @param clazz the class to process
+     */
     protected void collectProperties(Class<?> clazz) {
         Field[] declaredFields = clazz.getDeclaredFields();
         for (Field field : declaredFields) {
@@ -111,6 +125,13 @@ public class ConfigurationDataBuilder {
         settingsHolder.registerComments(commentsConfiguration);
     }
 
+    /**
+     * Creates an instance of the given settings holder class.
+     *
+     * @param clazz the class to instantiate
+     * @param <T> the class type
+     * @return instance of the class
+     */
     protected <T extends SettingsHolder> T createSettingsHolderInstance(Class<T> clazz) {
         try {
             Constructor<T> constructor = clazz.getDeclaredConstructor();

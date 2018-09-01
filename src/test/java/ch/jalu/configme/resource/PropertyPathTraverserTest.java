@@ -35,12 +35,12 @@ public class PropertyPathTraverserTest {
 
         // then
         assertThat(result, hasSize(2));
-        assertThat(result.get(0).name, equalTo("prop"));
-        assertThat(result.get(0).comments, contains("root comment"));
-        assertThat(result.get(0).indentationLevel, equalTo(0));
-        assertThat(result.get(1).name, equalTo("test"));
-        assertThat(result.get(1).comments, contains("prop.test comment"));
-        assertThat(result.get(1).indentationLevel, equalTo(1));
+        assertThat(result.get(0).getName(), equalTo("prop"));
+        assertThat(result.get(0).getComments(), contains("root comment"));
+        assertThat(result.get(0).getIndentationLevel(), equalTo(0));
+        assertThat(result.get(1).getName(), equalTo("test"));
+        assertThat(result.get(1).getComments(), contains("prop.test comment"));
+        assertThat(result.get(1).getIndentationLevel(), equalTo(1));
     }
 
     @Test
@@ -54,12 +54,12 @@ public class PropertyPathTraverserTest {
 
         // then
         assertThat(result, hasSize(2));
-        assertThat(result.get(0).name, equalTo("prop"));
-        assertThat(result.get(0).comments, contains("root1", "root2", "prop 1"));
-        assertThat(result.get(0).indentationLevel, equalTo(0));
-        assertThat(result.get(1).name, equalTo("test"));
-        assertThat(result.get(1).comments, empty());
-        assertThat(result.get(1).indentationLevel, equalTo(1));
+        assertThat(result.get(0).getName(), equalTo("prop"));
+        assertThat(result.get(0).getComments(), contains("root1", "root2", "prop 1"));
+        assertThat(result.get(0).getIndentationLevel(), equalTo(0));
+        assertThat(result.get(1).getName(), equalTo("test"));
+        assertThat(result.get(1).getComments(), empty());
+        assertThat(result.get(1).getIndentationLevel(), equalTo(1));
     }
 
     @Test
@@ -72,9 +72,9 @@ public class PropertyPathTraverserTest {
 
         // then
         assertThat(result, hasSize(1));
-        assertThat(result.get(0).name, equalTo(""));
-        assertThat(result.get(0).comments, contains("c1", "d2", "e3"));
-        assertThat(result.get(0).indentationLevel, equalTo(0));
+        assertThat(result.get(0).getName(), equalTo(""));
+        assertThat(result.get(0).getComments(), contains("c1", "d2", "e3"));
+        assertThat(result.get(0).getIndentationLevel(), equalTo(0));
     }
 
     @Test
@@ -88,11 +88,11 @@ public class PropertyPathTraverserTest {
 
         // then
         assertThat(result, hasSize(2));
-        assertThat(result.get(0).name, equalTo("path"));
-        assertThat(result.get(0).comments, contains("The comment"));
-        assertThat(result.get(0).indentationLevel, equalTo(2));
-        assertThat(result.get(1).name, equalTo("value"));
-        assertThat(result.get(1).comments, empty());
-        assertThat(result.get(1).indentationLevel, equalTo(3));
+        assertThat(result.get(0).getName(), equalTo("path"));
+        assertThat(result.get(0).getComments(), contains("The comment"));
+        assertThat(result.get(0).getIndentationLevel(), equalTo(2));
+        assertThat(result.get(1).getName(), equalTo("value"));
+        assertThat(result.get(1).getComments(), empty());
+        assertThat(result.get(1).getIndentationLevel(), equalTo(3));
     }
 }

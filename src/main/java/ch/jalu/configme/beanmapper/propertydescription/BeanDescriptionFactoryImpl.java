@@ -42,6 +42,12 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
         return classProperties.computeIfAbsent(clazz, this::collectAllProperties);
     }
 
+    /**
+     * Collects all properties available on the given class.
+     *
+     * @param clazz the class to process
+     * @return properties of the class
+     */
     protected List<BeanPropertyDescription> collectAllProperties(Class<?> clazz) {
         List<PropertyDescriptor> descriptors = getWritableProperties(clazz);
 

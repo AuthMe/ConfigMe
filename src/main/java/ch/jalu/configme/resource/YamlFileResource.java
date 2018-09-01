@@ -20,7 +20,7 @@ public class YamlFileResource implements PropertyResource {
 
     private static final String INDENTATION = "    ";
 
-    protected final File file;
+    private final File file;
     private Yaml yamlObject;
 
     public YamlFileResource(File file) {
@@ -48,6 +48,18 @@ public class YamlFileResource implements PropertyResource {
         }
     }
 
+    protected final File getFile() {
+        return file;
+    }
+
+    /**
+     * Exports the given value at the provided path.
+     *
+     * @param writer the file writer to write with
+     * @param pathTraverser the path traverser (e.g. keeps track of which path elements are new)
+     * @param path the path to export at
+     * @param value the value to export
+     */
     protected void exportValue(Writer writer, PropertyPathTraverser pathTraverser,
                                String path, Object value) throws IOException {
         if (value == null) {
@@ -62,15 +74,15 @@ public class YamlFileResource implements PropertyResource {
         } else {
             List<PathElement> pathElements = pathTraverser.getPathElements(path);
             for (PathElement pathElement : pathElements) {
-                writeComments(writer, pathElement.indentationLevel, pathElement.comments);
+                writeComments(writer, pathElement.getIndentationLevel(), pathElement.getComments());
                 writer.append("\n")
-                    .append(indent(pathElement.indentationLevel))
-                    .append(pathElement.name)
+                    .append(indent(pathElement.getIndentationLevel()))
+                    .append(pathElement.getName())
                     .append(":");
             }
 
             writer.append(" ")
-                .append(toYaml(value, pathElements.get(pathElements.size() - 1).indentationLevel));
+                .append(toYaml(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
         }
     }
 

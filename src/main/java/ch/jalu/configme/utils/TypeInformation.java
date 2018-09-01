@@ -57,7 +57,8 @@ public class TypeInformation {
      * </ul>
      *
      * @return the type as a Class which is safe to use for writing
-     *         (e.g. setting a value to a field or adding to a collection)
+     *         (e.g. setting a value to a field or adding to a collection);
+     *         null if not applicable
      */
     public Class<?> getSafeToWriteClass() {
         return getSafeToWriteClassInternal(type);
