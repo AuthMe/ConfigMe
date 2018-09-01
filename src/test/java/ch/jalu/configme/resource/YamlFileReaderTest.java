@@ -11,6 +11,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -179,6 +180,29 @@ public class YamlFileReaderTest {
         // then
         assertThat(result, sameInstance(file));
         assertThat(reader.getRoot(), anEmptyMap());
+    }
+
+    @Test
+    public void shouldReadWithUtf8() {
+        // given
+        File file = copyFileFromResources("/charsets/utf8_sample.yml");
+        YamlFileReader reader = new YamlFileReader(file);
+
+        // when / then
+        assertThat(reader.getString("first"), equalTo("Санкт-Петербург"));
+        assertThat(reader.getString("second"), equalTo("շերտիկներն"));
+        assertThat(reader.getString("third"), equalTo("错误的密码"));
+    }
+
+    @Test
+    public void shouldReadWithCustomCharset() {
+        // given
+        File file = copyFileFromResources("/charsets/iso-8859-1_sample.yml");
+        YamlFileReader reader = new YamlFileReader(file, StandardCharsets.ISO_8859_1);
+
+        // when / then
+        assertThat(reader.getString("elem.first"), equalTo("test Ã ö û þ"));
+        assertThat(reader.getString("elem.second"), equalTo("øå Æ"));
     }
 
     private File copyFileFromResources(String path) {

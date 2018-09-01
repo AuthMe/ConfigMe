@@ -8,6 +8,9 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +21,7 @@ import java.util.Map;
 public class YamlFileReader implements PropertyReader {
 
     private final File file;
+    private final Charset charset;
     private final Map<String, Object> root;
 
     /**
@@ -26,7 +30,12 @@ public class YamlFileReader implements PropertyReader {
      * @param file the file to load
      */
     public YamlFileReader(File file) {
+        this(file, StandardCharsets.UTF_8);
+    }
+
+    public YamlFileReader(File file, Charset charset) {
         this.file = file;
+        this.charset = charset;
         this.root = loadFile();
     }
 
@@ -89,8 +98,9 @@ public class YamlFileReader implements PropertyReader {
      * @return map with the values from the file
      */
     protected Map<String, Object> loadFile() {
-        try (FileInputStream fis = new FileInputStream(file)) {
-            Object obj = new Yaml().load(fis);
+        try (FileInputStream fis = new FileInputStream(file);
+             InputStreamReader isr = new InputStreamReader(fis, charset)) {
+            Object obj = new Yaml().load(isr);
             return obj == null ? Collections.emptyMap() : (Map<String, Object>) obj;
         } catch (IOException e) {
             throw new ConfigMeException("Could not read file '" + file + "'", e);

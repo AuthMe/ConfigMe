@@ -9,9 +9,12 @@ import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +32,13 @@ public class YamlFileResource implements PropertyResource {
 
     @Override
     public PropertyReader createReader() {
-        return new YamlFileReader(file);
+        return new YamlFileReader(file, getCharset());
     }
 
     @Override
     public void exportProperties(ConfigurationData configurationData) {
-        try (Writer writer = new FileWriter(file)) {
+        try (FileOutputStream fos = new FileOutputStream(file);
+             OutputStreamWriter writer = new OutputStreamWriter(fos, getCharset())) {
             PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
             for (Property<?> property : configurationData.getProperties()) {
                 final Object exportValue = getExportValue(property, configurationData);
@@ -151,6 +155,10 @@ public class YamlFileResource implements PropertyResource {
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setAllowUnicode(true);
         return new Yaml(options);
+    }
+
+    protected Charset getCharset() {
+        return StandardCharsets.UTF_8;
     }
 
     private <T> Object getExportValue(Property<T> property, ConfigurationData configurationData) {

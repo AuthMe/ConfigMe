@@ -13,13 +13,14 @@ import ch.jalu.configme.samples.TestEnum;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Map;
 import static ch.jalu.configme.TestUtils.getJarPath;
 import static ch.jalu.configme.configurationdata.ConfigurationDataBuilder.createConfiguration;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -36,6 +38,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.BDDMockito.given;
 
 /**
  * Test for {@link YamlFileResource}.
@@ -68,13 +71,13 @@ public class YamlFileResourceTest {
         expected.put(TestConfiguration.DURATION_IN_SECONDS, 22);
         expected.put(TestConfiguration.SYSTEM_NAME, "[TestDefaultValue]");
         expected.put(TestConfiguration.RATIO_ORDER, TestEnum.SECOND.name());
-        expected.put(TestConfiguration.RATIO_FIELDS, Arrays.asList("Australia", "Burundi", "Colombia"));
+        expected.put(TestConfiguration.RATIO_FIELDS, asList("Australia", "Burundi", "Colombia"));
         expected.put(TestConfiguration.VERSION_NUMBER, 32046);
         expected.put(TestConfiguration.SKIP_BORING_FEATURES, false);
         expected.put(TestConfiguration.BORING_COLORS, Collections.EMPTY_LIST);
         expected.put(TestConfiguration.DUST_LEVEL, -1);
         expected.put(TestConfiguration.USE_COOL_FEATURES, false);
-        expected.put(TestConfiguration.COOL_OPTIONS, Arrays.asList("Dinosaurs", "Explosions", "Big trucks"));
+        expected.put(TestConfiguration.COOL_OPTIONS, asList("Dinosaurs", "Explosions", "Big trucks"));
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
             // Check with resource#getObject to make sure the values were persisted to the file
             // If we go through Property objects they may fall back to their default values
@@ -92,7 +95,7 @@ public class YamlFileResourceTest {
         YamlFileResource resource = new YamlFileResource(file);
 
         // Properties
-        List<Property<?>> properties = new ArrayList<>(Arrays.asList(
+        List<Property<?>> properties = new ArrayList<>(asList(
             newProperty("more.string1", "it's a text with some \\'apostrophes'"),
             newProperty("more.string2", "\tthis one\nhas some\nnew '' lines-test")));
         properties.addAll(createConfiguration(TestConfiguration.class).getProperties());
@@ -110,10 +113,10 @@ public class YamlFileResourceTest {
         expected.put(TestConfiguration.DURATION_IN_SECONDS, 20);
         expected.put(TestConfiguration.SYSTEM_NAME, "A 'test' name");
         expected.put(TestConfiguration.RATIO_ORDER, "FOURTH");
-        expected.put(TestConfiguration.RATIO_FIELDS, Arrays.asList("Australia\\", "\tBurundi'", "Colombia?\n''"));
+        expected.put(TestConfiguration.RATIO_FIELDS, asList("Australia\\", "\tBurundi'", "Colombia?\n''"));
         expected.put(TestConfiguration.VERSION_NUMBER, -1337);
         expected.put(TestConfiguration.SKIP_BORING_FEATURES, false);
-        expected.put(TestConfiguration.BORING_COLORS, Arrays.asList("it's a difficult string!", "gray\nwith new lines\n"));
+        expected.put(TestConfiguration.BORING_COLORS, asList("it's a difficult string!", "gray\nwith new lines\n"));
         expected.put(TestConfiguration.DUST_LEVEL, -1);
         expected.put(TestConfiguration.USE_COOL_FEATURES, true);
         expected.put(TestConfiguration.COOL_OPTIONS, Collections.EMPTY_LIST);
@@ -185,7 +188,7 @@ public class YamlFileResourceTest {
     @Test
     public void shouldSkipAbsentOptionalProperty() throws IOException {
         // given
-        ConfigurationData configurationData = createConfiguration(Arrays.asList(
+        ConfigurationData configurationData = createConfiguration(asList(
             new OptionalProperty<>(TestConfiguration.DURATION_IN_SECONDS),
             new OptionalProperty<>(TestConfiguration.RATIO_ORDER)));
         File file = copyFileFromResources(INCOMPLETE_FILE);
@@ -207,7 +210,7 @@ public class YamlFileResourceTest {
     @Test
     public void shouldExportAllPresentOptionalProperties() throws IOException {
         // given
-        ConfigurationData configurationData = createConfiguration(Arrays.asList(
+        ConfigurationData configurationData = createConfiguration(asList(
             new OptionalProperty<>(TestConfiguration.DURATION_IN_SECONDS),
             new OptionalProperty<>(TestConfiguration.RATIO_ORDER)));
         File file = copyFileFromResources(COMPLETE_FILE);
@@ -254,6 +257,58 @@ public class YamlFileResourceTest {
             "config:",
             "    commands: {}",
             "    duration: 3"
+        ));
+    }
+
+    @Test
+    public void shouldExportWithUtf8() throws IOException {
+        // given
+        File file = copyFileFromResources("/charsets/utf8_sample.yml");
+        YamlFileResource resource = new YamlFileResource(file);
+
+        Property<String> firstProp = newProperty("first", "");
+        Property<String> secondProp = newProperty("second", "");
+        Property<String> thirdProp = newProperty("third", "");
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(asList(firstProp, secondProp, thirdProp));
+        configurationData.initializeValues(resource.createReader());
+        configurationData.setValue(secondProp, "თბილისი");
+
+        // when
+        resource.exportProperties(configurationData);
+
+        // then
+        List<String> exportedLines = Files.readAllLines(file.toPath());
+        assertThat(exportedLines, contains(
+            "",
+            "first: Санкт-Петербург",
+            "second: თბილისი",
+            "third: 错误的密码"
+        ));
+    }
+
+    @Test
+    public void shouldExportWithIso88591() throws IOException {
+        // given
+        File file = copyFileFromResources("/charsets/iso-8859-1_sample.yml");
+        YamlFileResource resource = Mockito.spy(new YamlFileResource(file));
+        given(resource.getCharset()).willReturn(StandardCharsets.ISO_8859_1);
+
+        Property<String> firstProp = newProperty("elem.first", "");
+        Property<String> secondProp = newProperty("elem.second", "");
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(asList(firstProp, secondProp));
+        configurationData.initializeValues(resource.createReader());
+        configurationData.setValue(secondProp, "awq ôÖ ÿõ 1234");
+
+        // when
+        resource.exportProperties(configurationData);
+
+        // then
+        List<String> exportedLines = Files.readAllLines(file.toPath(), StandardCharsets.ISO_8859_1);
+        assertThat(exportedLines, contains(
+            "",
+            "elem:",
+            "    first: test Ã ö û þ",
+            "    second: awq ôÖ ÿõ 1234"
         ));
     }
 
