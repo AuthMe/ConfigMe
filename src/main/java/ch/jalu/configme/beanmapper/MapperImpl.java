@@ -49,6 +49,9 @@ import java.util.stream.Collectors;
  */
 public class MapperImpl implements Mapper {
 
+    /** Marker object to signal that null is meant to be used as value. */
+    public static final Object RETURN_NULL = new Object();
+
     // ---------
     // Fields and general configurable methods
     // ---------
@@ -86,22 +89,23 @@ public class MapperImpl implements Mapper {
     public Object toExportValue(Object value) {
         // Step 1: attempt simple value transformation
         Object simpleValue = leafValueHandler.toExportValue(value);
-        if (simpleValue != null) {
-            return simpleValue;
-        } else if (value == null) {
-            return null;
+        if (simpleValue != null || value == null) {
+            return unwrapReturnNull(simpleValue);
         }
 
         // Step 2: handle special cases like Collection
         simpleValue = createExportValueForSpecialTypes(value);
         if (simpleValue != null) {
-            return simpleValue;
+            return unwrapReturnNull(simpleValue);
         }
 
         // Step 3: treat as bean
         Map<String, Object> mappedBean = new LinkedHashMap<>();
         for (BeanPropertyDescription property : beanDescriptionFactory.getAllProperties(value.getClass())) {
-            mappedBean.put(property.getName(), toExportValue(property.getValue(value)));
+            Object exportValueOfProperty = toExportValue(property.getValue(value));
+            if (exportValueOfProperty != null) {
+                mappedBean.put(property.getName(), exportValueOfProperty);
+            }
         }
         return mappedBean;
     }
@@ -124,12 +128,15 @@ public class MapperImpl implements Mapper {
 
         if (value instanceof Optional<?>) {
             Optional<?> optional = (Optional<?>) value;
-            return optional.map(this::toExportValue).orElse(null);
+            return optional.map(this::toExportValue).orElse(RETURN_NULL);
         }
 
         return null;
     }
 
+    protected static Object unwrapReturnNull(Object o) {
+        return o == RETURN_NULL ? null : o;
+    }
 
     // ---------
     // Bean mapping

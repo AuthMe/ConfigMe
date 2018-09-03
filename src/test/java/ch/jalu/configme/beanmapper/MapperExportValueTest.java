@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -83,7 +82,7 @@ public class MapperExportValueTest {
     }
 
     @Test
-    public void shouldHandleNullValue() {
+    public void shouldSkipNullValue() {
         // given
         Command command = new Command();
         command.setCommand("ping");
@@ -97,10 +96,9 @@ public class MapperExportValueTest {
         // then
         assertThat(exportValue, instanceOf(Map.class));
         Map<?, ?> values = (Map) exportValue;
-        assertThat(values.keySet(), containsInAnyOrder("command", "arguments", "execution"));
+        assertThat(values.keySet(), containsInAnyOrder("command", "arguments"));
         assertThat(values.get("command"), equalTo(command.getCommand()));
         assertThat(values.get("arguments"), equalTo(command.getArguments()));
-        assertThat(values.get("execution"), nullValue());
     }
 
     @SuppressWarnings("unchecked")
