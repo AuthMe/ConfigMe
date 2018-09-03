@@ -86,11 +86,18 @@ public class YamlFileResource implements PropertyResource {
             }
 
             writer.append(" ")
-                .append(toYaml(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
+                .append(toYamlIndented(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
         }
     }
 
-    private void writeComments(Writer writer, int indentation, List<String> comments) throws IOException {
+    /**
+     * Writes the given comment lines as YAML comments at the given indentation level.
+     *
+     * @param writer the writer to write with
+     * @param indentation the level at which the comment lines should be indented
+     * @param comments the comment lines to write
+     */
+    protected void writeComments(Writer writer, int indentation, List<String> comments) throws IOException {
         if (comments.isEmpty()) {
             return;
         }
@@ -100,8 +107,17 @@ public class YamlFileResource implements PropertyResource {
         }
     }
 
-    private String toYaml(@Nullable Object value, int indent) {
-        String representation = transformValue(value);
+    /**
+     * Returns the value in its YAML representation with an indentation of the given level. Proper indentation
+     * should be applied to all lines except for the first one (such that this method's return value can simply
+     * be appended to a properly indented property prefix like {@code name:}).
+     *
+     * @param value the value to convert to YAML
+     * @param indent level of indentation to use
+     * @return the value as YAML at the given indentation level
+     */
+    protected String toYamlIndented(@Nullable Object value, int indent) {
+        String representation = toYaml(value);
         String[] lines = representation.split("\\n");
         return String.join("\n" + indent(indent), lines);
     }
@@ -114,7 +130,7 @@ public class YamlFileResource implements PropertyResource {
      * @param value the value to transform as YAML
      * @return the YAML representation of the value
      */
-    protected String transformValue(@Nullable Object value) { // TODO: find better name?
+    protected String toYaml(@Nullable Object value) {
         if (value instanceof String) {
             return getYamlObject().dump(value);
         } else if (value instanceof Collection<?>) {
@@ -123,6 +139,12 @@ public class YamlFileResource implements PropertyResource {
         return getYamlObject().dump(value);
     }
 
+    /**
+     * Returns a String of whitespace for indentation in YAML at the given level.
+     *
+     * @param level the desired level of indentation
+     * @return whitespace to prepend to a line for proper indentation
+     */
     protected String indent(int level) {
         String result = "";
         for (int i = 0; i < level; i++) {
