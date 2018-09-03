@@ -5,7 +5,7 @@ import ch.jalu.configme.utils.TypeInformation;
 import javax.annotation.Nullable;
 
 /**
- * A leaf value handler is used in {@link ch.jalu.configme.beanmapper.MapperImpl} to get "simple" values from their
+ * A leaf value handler is used in {@link ch.jalu.configme.beanmapper.MapperImpl} to convert "simple" values from their
  * read values to the desired type.
  * <p>
  * The bean mapper handles complex types such as maps and collections, and recursively calls the bean mapping process
@@ -21,7 +21,7 @@ public interface LeafValueHandler {
      * This method <b>must</b> either return {@code null} or an object of the class type.
      *
      * @param typeInformation the required type
-     * @param value the value to get
+     * @param value the value to convert
      * @return value of the given type, or null if not applicable
      */
     @Nullable
@@ -32,7 +32,7 @@ public interface LeafValueHandler {
      * when {@link ch.jalu.configme.properties.Property#toExportValue} is called on a bean property.
      * Returns null if the leaf value handler cannot handle the value.
      *
-     * @param value the value to get to an export value, if possible
+     * @param value the value to convert to an export value, if possible
      * @return value to use in the export, or null if not applicable
      */
     @Nullable

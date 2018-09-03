@@ -5,7 +5,7 @@ import ch.jalu.configme.resource.PropertyReader;
 import javax.annotation.Nullable;
 
 /**
- * Property interface. A property knows its path, its type, and can get the values from
+ * Property interface. A property knows its path, its type, and can convert the values from
  * a property reader to a value of its type (if the values of the reader are valid).
  * Properties define their path and their behavior but do not keep track of their value.
  * <p>
@@ -75,7 +75,7 @@ public interface Property<T> {
      * types; Map with String keys and values of any of the aforementioned types. Maps and collections can be nested at
      * any arbitrary level. Null signifies that the property/value should be skipped in the export.
      *
-     * @param value the value to get to an export value
+     * @param value the value to convert to an export value
      * @return value to use for export, null to skip the property
      */
     @Nullable
