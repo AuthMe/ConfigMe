@@ -119,6 +119,10 @@ public class YamlFileResource implements PropertyResource {
             return getYamlObject().dump(value);
         } else if (value instanceof Collection<?>) {
             return ((Collection<?>) value).isEmpty() ? "[]" : "\n" + getYamlObject().dump(value);
+        } else if (value instanceof Object[]) {
+            Object[] array = (Object[]) value;
+
+            return array.length == 0 ? "[]" : "\n" + getYamlObject().dump(array);
         }
         return getYamlObject().dump(value);
     }

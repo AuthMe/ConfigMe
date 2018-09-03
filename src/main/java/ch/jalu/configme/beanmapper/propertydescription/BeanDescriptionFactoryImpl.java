@@ -63,7 +63,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
     /**
      * Converts a {@link PropertyDescriptor} to a {@link BeanPropertyDescription} object.
      *
-     * @param descriptor the descriptor to convert
+     * @param descriptor the descriptor to get
      * @return the converted object, or null if the property should be skipped
      */
     @Nullable

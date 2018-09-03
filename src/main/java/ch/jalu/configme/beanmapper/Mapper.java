@@ -45,7 +45,7 @@ public interface Mapper {
      * typically returns a Map of values, or simple types like String / Number for scalar values.
      * Used in the {@link ch.jalu.configme.properties.BeanProperty#toExportValue} method.
      *
-     * @param object the object to convert to its export value
+     * @param object the object to get to its export value
      * @return export value to use
      */
     @Nullable
