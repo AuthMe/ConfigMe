@@ -5,10 +5,17 @@ import ch.jalu.configme.beanmapper.Mapper;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.utils.TypeInformation;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@SuppressWarnings("unchecked")
 public class BeanPropertyType<B> implements PropertyType<B> {
 
     private final TypeInformation beanType;
     private final Mapper mapper;
+
+    // Caching by type and mapper
+    private static final Map<Class<?>, Map<Mapper, BeanPropertyType<?>>> CACHE = new HashMap<>();
 
     private BeanPropertyType(TypeInformation beanType, Mapper mapper) {
         this.beanType = beanType;
@@ -31,10 +38,17 @@ public class BeanPropertyType<B> implements PropertyType<B> {
     }
 
     static <B> BeanPropertyType<B> of(Class<B> type, Mapper mapper) {
-        return new BeanPropertyType<>(new TypeInformation(type), mapper);
+        return (BeanPropertyType<B>) CACHE
+            .computeIfAbsent(type, (key) -> new HashMap<>())
+            .computeIfAbsent(mapper, (key) -> create(type, key));
     }
 
     static <B> BeanPropertyType<B> of(Class<B> type) {
-        return of(type, DefaultMapper.getInstance());
+        return of(type, DefaultMapper.getInstance()); // Create with default mapper
     }
+
+    private static <B> BeanPropertyType<B> create(Class<B> type, Mapper mapper) {
+        return new BeanPropertyType<>(new TypeInformation(type), mapper);
+    }
+
 }

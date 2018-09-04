@@ -35,6 +35,10 @@ public interface PropertyType<T> {
         return EnumPropertyType.of(type);
     }
 
+    static FloatPropertyType floatType() {
+        return FloatPropertyType.INSTANCE;
+    }
+
     static IntegerPropertyType integerType() {
         return IntegerPropertyType.INSTANCE;
     }

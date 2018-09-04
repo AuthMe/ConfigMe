@@ -28,6 +28,7 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
     @Override
     @SuppressWarnings("unchecked")
     protected Map<String, V> getFromResource(PropertyReader reader) {
+        // Get a raw map from reader
         Map<String, ?> rawMap = (Map<String, ?>) reader.getObject(this.getPath());
 
         // If map is null, then return default value.

@@ -27,14 +27,17 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
     @Nullable
     @Override
     protected List<T> getFromResource(PropertyReader reader) {
+        // Get raw list from reader.
         List<?> rawList = reader.getList(this.getPath());
 
+        // If raw list is null, then return default value
         if (rawList == null) {
             return this.getDefaultValue();
         }
 
         List<T> list = new ArrayList<>();
 
+        // Iterate objects from raw list and convert it to T. If converted value is not null, add it to list
         for (Object object : rawList) {
             T t = this.type.convert(object);
 
