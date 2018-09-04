@@ -55,7 +55,7 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
     }
 
     static <E extends Enum<E>> EnumPropertyType<E> of(Class<E> type) {
-        return (EnumPropertyType<E>) CACHE.computeIfAbsent(type, EnumPropertyType::new);
+        return (EnumPropertyType<E>) CACHE.computeIfAbsent(type, key -> new EnumPropertyType<>(type));
     }
 
 }
