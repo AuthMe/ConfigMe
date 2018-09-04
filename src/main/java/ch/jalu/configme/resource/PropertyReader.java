@@ -2,6 +2,7 @@ package ch.jalu.configme.resource;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Set;
 
 public interface PropertyReader {
 
@@ -15,6 +16,15 @@ public interface PropertyReader {
      * @return true if there is a value, false otherwise
      */
     boolean contains(String path);
+
+    /**
+     * Returns the keys available in the file. Depending on the parameter either all keys are returned,
+     * or only the keys of the leaf nodes are considered.
+     *
+     * @param onlyLeafNodes true if only the paths of leaf nodes should be returned (no intermediate paths)
+     * @return set of all existing keys (ordered)
+     */
+    Set<String> getKeys(boolean onlyLeafNodes);
 
     /**
      * Returns the object at the given path, or null if absent.

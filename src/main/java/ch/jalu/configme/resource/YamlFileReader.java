@@ -12,8 +12,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * YAML file reader.
@@ -90,6 +92,39 @@ public class YamlFileReader implements PropertyReader {
     @Override
     public boolean contains(String path) {
         return getObject(path) != null;
+    }
+
+    @Override
+    public Set<String> getKeys(boolean onlyLeafNodes) {
+        Set<String> allKeys = new LinkedHashSet<>();
+        collectKeysIntoSet("", root, allKeys, onlyLeafNodes);
+        return allKeys;
+    }
+
+    /**
+     * Recursively collects keys from maps into the given set.
+     *
+     * @param path the path of the given map
+     * @param map the map to process recursively
+     * @param result set to save keys to
+     * @param onlyLeafNodes whether only leaf nodes should be added to the result set
+     */
+    private void collectKeysIntoSet(String path, Map<String, Object> map, Set<String> result, boolean onlyLeafNodes) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String childPath = path.isEmpty() ? entry.getKey() : path + "." + entry.getKey();
+            if (!onlyLeafNodes || isLeafValue(entry.getValue())) {
+                result.add(childPath);
+            }
+
+            if (entry.getValue() instanceof Map) {
+                collectKeysIntoSet(childPath, (Map) entry.getValue(), result, onlyLeafNodes);
+            }
+        }
+    }
+
+    private static boolean isLeafValue(Object o) {
+        boolean isNonEmptyMap = o instanceof Map && !((Map) o).isEmpty();
+        return !isNonEmptyMap;
     }
 
     /**
