@@ -61,10 +61,9 @@ public class MapperImplTest {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds.yml");
         MapperImpl mapperImpl = new MapperImpl();
-        String path = "";
 
         // when
-        WorldGroupConfig result = mapperImpl.convertToBean(reader, path, WorldGroupConfig.class);
+        WorldGroupConfig result = mapperImpl.convertToBean(reader.getObject(""), WorldGroupConfig.class);
 
         // then
         assertThat(result, not(nullValue()));
@@ -84,7 +83,7 @@ public class MapperImplTest {
         MapperImpl mapperImpl = new MapperImpl();
 
         // when
-        CommandConfig config = mapperImpl.convertToBean(reader, "commandconfig", CommandConfig.class);
+        CommandConfig config = mapperImpl.convertToBean(reader.getObject("commandconfig"), CommandConfig.class);
 
         // then
         assertThat(config.getDuration(), equalTo(13));
@@ -116,7 +115,7 @@ public class MapperImplTest {
         MapperImpl mapperImpl = new MapperImpl();
 
         // when
-        WorldGroupConfig config = mapperImpl.convertToBean(reader, "", WorldGroupConfig.class);
+        WorldGroupConfig config = mapperImpl.convertToBean(reader.getObject(""), WorldGroupConfig.class);
 
         // then
         assertThat(config, not(nullValue()));
@@ -131,7 +130,7 @@ public class MapperImplTest {
         MapperImpl mapper = new MapperImpl();
 
         // when
-        CommandConfig config = mapper.convertToBean(reader, "commandconfig", CommandConfig.class);
+        CommandConfig config = mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class);
 
         // then
         assertThat(config, not(nullValue()));
@@ -144,11 +143,10 @@ public class MapperImplTest {
     @Test
     public void shouldReturnNullForUnavailableSection() {
         // given
-        PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
         MapperImpl mapper = new MapperImpl();
 
         // when
-        CommandConfig result = mapper.convertToBean(reader, "does-not-exist", CommandConfig.class);
+        CommandConfig result = mapper.convertToBean(null, CommandConfig.class);
 
         // then
         assertThat(result, nullValue());
@@ -162,7 +160,7 @@ public class MapperImplTest {
 
         // when / then
         verifyException(
-            () -> mapper.convertToBean(reader, "", MapWithNonStringKeys.class),
+            () -> mapper.convertToBean(reader.getObject(""), MapWithNonStringKeys.class),
             ConfigMeMapperException.class,
             "The key type of maps may only be of String type");
     }
@@ -175,7 +173,7 @@ public class MapperImplTest {
 
         // when / then
         verifyException(
-            () -> mapper.convertToBean(reader, "", UnsupportedCollection.class),
+            () -> mapper.convertToBean(reader.getObject(""), UnsupportedCollection.class),
             ConfigMeMapperException.class,
             "Unsupported collection type");
     }
@@ -188,7 +186,7 @@ public class MapperImplTest {
 
         // when / then
         verifyException(
-            () -> mapper.convertToBean(reader, "", UntypedCollection.class),
+            () -> mapper.convertToBean(reader.getObject(""), UntypedCollection.class),
             ConfigMeMapperException.class,
             "The generic type 0 is not well defined, for mapping of: [Path: 'collection', type: 'interface java.util.List']");
     }
@@ -201,7 +199,7 @@ public class MapperImplTest {
 
         // when / then
         verifyException(
-            () -> mapper.convertToBean(reader, "", UntypedMap.class),
+            () -> mapper.convertToBean(reader.getObject(""), UntypedMap.class),
             ConfigMeMapperException.class,
             "The generic type 1 is not well defined, for mapping of: [Path: 'map', type: 'java.util.Map<java.lang.String, ?>']");
     }
@@ -214,7 +212,7 @@ public class MapperImplTest {
 
         // when / then
         verifyException(
-            () -> mapper.convertToBean(reader, "", GenericCollection.class),
+            () -> mapper.convertToBean(reader.getObject(""), GenericCollection.class),
             ConfigMeMapperException.class,
             "The generic type 0 is not well defined, for mapping of: [Path: 'collection', type: 'java.util.List<? extends java.lang.String>']");
     }
@@ -255,7 +253,7 @@ public class MapperImplTest {
         MapperImpl mapper = new MapperImpl();
 
         // when
-        CommandConfig result = mapper.convertToBean(reader, "commandconfig", CommandConfig.class);
+        CommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class);
 
         // then
         assertThat(result, nullValue());
@@ -268,7 +266,7 @@ public class MapperImplTest {
         MapperImpl mapper = new MapperImpl();
 
         // when
-        CommandConfig result = mapper.convertToBean(reader, "commands", CommandConfig.class);
+        CommandConfig result = mapper.convertToBean(reader.getObject("commands"), CommandConfig.class);
 
         // then
         assertThat(result, nullValue());
@@ -281,7 +279,7 @@ public class MapperImplTest {
         MapperImpl mapper = new MapperImpl();
 
         // when
-        ComplexCommandConfig result = mapper.convertToBean(reader, "commandconfig", ComplexCommandConfig.class);
+        ComplexCommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), ComplexCommandConfig.class);
 
         // then
         assertThat(result, not(nullValue()));
@@ -298,7 +296,7 @@ public class MapperImplTest {
         MapperImpl mapper = new MapperImpl();
 
         // when
-        ComplexCommandConfig result = mapper.convertToBean(reader, "commandconfig", ComplexCommandConfig.class);
+        ComplexCommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), ComplexCommandConfig.class);
 
         // then
         assertThat(result, not(nullValue()));
@@ -335,7 +333,7 @@ public class MapperImplTest {
         MapperImpl mapper = new MapperImpl();
 
         // when
-        ComplexOptionalTypeConfig result = mapper.convertToBean(reader, "", ComplexOptionalTypeConfig.class);
+        ComplexOptionalTypeConfig result = mapper.convertToBean(reader.getObject(""), ComplexOptionalTypeConfig.class);
 
         // then
         assertThat(result, not(nullValue()));
@@ -350,7 +348,7 @@ public class MapperImplTest {
         MapperImpl mapper = new MapperImpl();
 
         // when
-        ComplexOptionalTypeConfig result = mapper.convertToBean(reader, "", ComplexOptionalTypeConfig.class);
+        ComplexOptionalTypeConfig result = mapper.convertToBean(reader.getObject(""), ComplexOptionalTypeConfig.class);
 
         // then
         assertThat(result, not(nullValue()));

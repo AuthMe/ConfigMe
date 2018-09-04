@@ -17,12 +17,13 @@ public class MappingContextImplTest {
     @Test
     public void shouldCreateProperPath() {
         // given
-        MappingContextImpl root1 = MappingContextImpl.createRoot("", new TypeInformation(String.class));
-        MappingContextImpl root2 = MappingContextImpl.createRoot("foo", new TypeInformation(Integer.class));
+        TypeInformation typeInformation = new TypeInformation(Integer.class);
+        MappingContext parent1 = MappingContextImpl.createRoot(typeInformation);
+        MappingContext parent2 = MappingContextImpl.createRoot(typeInformation).createChild("foo", typeInformation);
 
         // when
-        MappingContext child1 = root1.createChild("bar", new TypeInformation(String.class));
-        MappingContext child2 = root2.createChild("bar", new TypeInformation(Integer.class));
+        MappingContext child1 = parent1.createChild("bar", typeInformation);
+        MappingContext child2 = parent2.createChild("bar", typeInformation);
 
         // then
         assertThat(child1.toString(), containsString("Path: 'bar'"));
@@ -32,7 +33,8 @@ public class MappingContextImplTest {
     @Test
     public void shouldCreateDescription() {
         // given
-        MappingContextImpl context = MappingContextImpl.createRoot("oh.em.gee", new TypeInformation(ArrayList.class));
+        MappingContext context = MappingContextImpl.createRoot(new TypeInformation(String.class))
+            .createChild("oh.em.gee", new TypeInformation(ArrayList.class));
 
         // when
         String description = context.createDescription();

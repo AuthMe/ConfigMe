@@ -1,6 +1,5 @@
 package ch.jalu.configme.beanmapper;
 
-import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.utils.TypeInformation;
 
 import javax.annotation.Nullable;
@@ -12,32 +11,30 @@ import javax.annotation.Nullable;
 public interface Mapper {
 
     /**
-     * Creates an object of the given type based on the reader's values at the given path. Returns null if the
-     * conversion is not possible.
+     * Creates an object of the given type from the given value. Returns null if the
+     * conversion is not possible. The value usually stems from a property resource and
+     * is a Map of values.
      *
-     * @param reader the reader to get values from
-     * @param path the path to use
+     * @param value the value to convert (typically a Map)
      * @param typeInformation the required type
      * @return object of the given type, or null if not possible
      */
     @Nullable
-    Object convertToBean(PropertyReader reader, String path, TypeInformation typeInformation);
+    Object convertToBean(@Nullable Object value, TypeInformation typeInformation);
 
     /**
-     * Converts the values of the given reader at the provided path to an object of the given class, if possible.
-     * Returns null otherwise. This is a convenience method as typed alternative to
-     * {@link #convertToBean(PropertyReader, String, TypeInformation)}.
+     * Converts the given value to an object of the given class, if possible. Returns null otherwise.
+     * This is a convenience method as typed alternative to {@link #convertToBean(Object, TypeInformation)}.
      *
-     * @param reader the reader to get values from
-     * @param path the path to use
+     * @param value the value to convert (typically a Map)
      * @param clazz the required class
      * @param <T> the class type
      * @return object of the given type, or null if not possible
      */
     @Nullable
     @SuppressWarnings("unchecked")
-    default <T> T convertToBean(PropertyReader reader, String path, Class<T> clazz) {
-        return (T) convertToBean(reader, path, new TypeInformation(clazz));
+    default <T> T convertToBean(@Nullable Object value, Class<T> clazz) {
+        return (T) convertToBean(value, new TypeInformation(clazz));
     }
 
     /**

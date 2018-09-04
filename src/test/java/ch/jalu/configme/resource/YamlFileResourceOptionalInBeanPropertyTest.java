@@ -42,8 +42,9 @@ public class YamlFileResourceOptionalInBeanPropertyTest {
         // given
         File file = copyFileFromResources("/beanmapper/optionalproperties/complex-commands.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(file);
+        PropertyReader reader = resource.createReader();
         Mapper mapper = new MapperImpl();
-        ComplexCommandConfig result = mapper.convertToBean(resource.createReader(), "commandconfig", ComplexCommandConfig.class);
+        ComplexCommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), ComplexCommandConfig.class);
         result.getCommands().put("shutdown", createShutdownCommand());
         ConfigurationData configurationData = createConfigurationData();
         configurationData.setValue(commandConfigProperty, result);
@@ -53,7 +54,7 @@ public class YamlFileResourceOptionalInBeanPropertyTest {
 
         // then
         PropertyResource resourceAfterSave = new YamlFileResource(file);
-        ComplexCommandConfig commandConfig = mapper.convertToBean(resourceAfterSave.createReader(), "commandconfig", ComplexCommandConfig.class);
+        ComplexCommandConfig commandConfig = mapper.convertToBean(resourceAfterSave.createReader().getObject("commandconfig"), ComplexCommandConfig.class);
         assertThat(commandConfig.getCommands().keySet(),
             containsInAnyOrder("shutdown", "greet", "block_invalid", "log_admin", "launch"));
         ComplexCommand shutDownCmd = commandConfig.getCommands().get("shutdown");

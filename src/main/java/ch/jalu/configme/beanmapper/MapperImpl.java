@@ -76,8 +76,8 @@ public class MapperImpl implements Mapper {
         return leafValueHandler;
     }
 
-    protected MappingContext createRootMappingContext(String path, TypeInformation beanType) {
-        return MappingContextImpl.createRoot(path, beanType);
+    protected MappingContext createRootMappingContext(TypeInformation beanType) {
+        return MappingContextImpl.createRoot(beanType);
     }
 
 
@@ -144,13 +144,12 @@ public class MapperImpl implements Mapper {
 
     @Nullable
     @Override
-    public Object convertToBean(PropertyReader reader, String path, TypeInformation beanType) {
-        Object value = reader.getObject(path);
+    public Object convertToBean(Object value, TypeInformation beanType) {
         if (value == null) {
             return null;
         }
 
-        return convertValueForType(createRootMappingContext(path, beanType), value);
+        return convertValueForType(createRootMappingContext(beanType), value);
     }
 
     @Nullable
