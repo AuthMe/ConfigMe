@@ -31,6 +31,9 @@ public interface LeafValueHandler {
      * Converts the given value to a type more suitable for exporting. Used by the mapper in
      * when {@link ch.jalu.configme.properties.Property#toExportValue} is called on a bean property.
      * Returns null if the leaf value handler cannot handle the value.
+     * <p>
+     * Return {@link ch.jalu.configme.beanmapper.MapperImpl#RETURN_NULL} to signal that null should be used
+     * as the export value (returning {@code null} itself means this leaf value handler cannot handle it).
      *
      * @param value the value to convert to an export value, if possible
      * @return value to use in the export, or null if not applicable
