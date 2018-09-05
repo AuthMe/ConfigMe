@@ -1,18 +1,11 @@
 package ch.jalu.configme.properties.types;
 
-import ch.jalu.configme.resource.PropertyReader;
-
 public class FloatPropertyType implements PropertyType<Float> {
 
     static final FloatPropertyType INSTANCE = new FloatPropertyType();
 
     private FloatPropertyType() {
         // Signleton
-    }
-
-    @Override
-    public Float get(PropertyReader reader, String path) {
-        return reader.getFloat(path);
     }
 
     @Override
@@ -23,6 +16,11 @@ public class FloatPropertyType implements PropertyType<Float> {
     @Override
     public Class<Float> getType() {
         return Float.class;
+    }
+
+    @Override
+    public Object toExportValue(Float value) {
+        return value;
     }
 
 }

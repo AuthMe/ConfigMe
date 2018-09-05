@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties.types;
 
-import ch.jalu.configme.resource.PropertyReader;
+import javax.annotation.Nullable;
 
 public class LowerCaseStringPropertyType extends StringPropertyType {
 
@@ -9,17 +9,20 @@ public class LowerCaseStringPropertyType extends StringPropertyType {
     LowerCaseStringPropertyType() {}
 
     @Override
-    public String get(PropertyReader reader, String path) {
-        String value = reader.getString(path);
+    @Nullable
+    public String convert(Object object) {
+        String string = super.convert(object);
 
-        return value == null
+        return string == null
             ? null
-            : value.toLowerCase();
+            : string.toLowerCase();
     }
 
     @Override
-    public String convert(Object object) {
-        return object.toString();
+    public Object toExportValue(String value) {
+        return value == null
+            ? null
+            : value.toLowerCase();
     }
 
 }

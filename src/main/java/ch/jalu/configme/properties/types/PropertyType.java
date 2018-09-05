@@ -1,19 +1,17 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.beanmapper.Mapper;
-import ch.jalu.configme.resource.PropertyReader;
+
+import javax.annotation.Nullable;
 
 public interface PropertyType<T> {
 
-    T get(PropertyReader reader, String path);
-
+    @Nullable
     T convert(Object object);
 
     Class<T> getType();
 
-    default Object toExportValue(T value) {
-        return value;
-    }
+    Object toExportValue(T value);
 
     static <B> BeanPropertyType<B> beanType(Class<B> type) {
         return BeanPropertyType.of(type);

@@ -1,30 +1,18 @@
 package ch.jalu.configme.properties.types;
 
-import ch.jalu.configme.resource.PropertyReader;
-
-import java.util.HashMap;
-import java.util.Map;
-
 @SuppressWarnings("unchecked")
 public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
 
     private Class<E> enumType;
-
-    private static final Map<Class<? extends Enum<?>>, EnumPropertyType<? extends Enum<?>>> CACHE = new HashMap<>();
 
     private EnumPropertyType(Class<E> enumType) {
         this.enumType = enumType;
     }
 
     @Override
-    public E get(PropertyReader reader, String path) {
-        return this.convert(reader.getString(path));
-    }
-
-    @Override
     public E convert(Object object) {
         // If object is enum, then return this object, casting to E
-        if (object instanceof Enum) {
+        if (!this.enumType.isInstance(object)) {
             return (E) object;
         }
 
@@ -55,7 +43,7 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
     }
 
     static <E extends Enum<E>> EnumPropertyType<E> of(Class<E> type) {
-        return (EnumPropertyType<E>) CACHE.computeIfAbsent(type, key -> new EnumPropertyType<>(type));
+        return new EnumPropertyType<>(type);
     }
 
 }

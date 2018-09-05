@@ -1,6 +1,5 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.types.BeanPropertyType;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 
@@ -24,10 +23,6 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
     public ArrayProperty(String path, T[] defaultValue, PropertyType<T> type) {
         super(path, defaultValue);
 
-        if (type instanceof BeanPropertyType<?>) {
-            throw new IllegalArgumentException("BeanPropertyType not support for array property (maybe, temporarily)");
-        }
-
         this.type = type;
     }
 
@@ -38,9 +33,9 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
         // Get object from reader.
         Object object = reader.getObject(this.getPath());
 
-        // If object is null, then return default value.
+        // If object is null, then return null.
         if (object == null) {
-            return this.getDefaultValue();
+            return null;
         }
 
         // If target type is String and object is string, then return splitted string.

@@ -29,20 +29,22 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
     @SuppressWarnings("unchecked")
     protected Map<String, V> getFromResource(PropertyReader reader) {
         // Get a raw map from reader
-        Map<String, ?> rawMap = (Map<String, ?>) reader.getObject(this.getPath());
+        Object rawObject = reader.getObject(this.getPath());
 
-        // If map is null, then return default value.
-        if (rawMap == null) {
-            return this.getDefaultValue();
+        // If object is null (it checking instanceof) and object is not a map, then return null
+        if (!(rawObject instanceof Map<?, ?>)) {
+            return null;
         }
 
+        Map<?, ?> rawMap = (Map<?, ?>) rawObject;
         Map<String, V> map = new HashMap<>();
 
-        for (Map.Entry<String, ?> entry : rawMap.entrySet()) {
-            V value = this.type.get(reader, this.getPath() + "." + entry.getKey()); // We are find value for key 'this.path + entry.path'
+        for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
+            String path = entry.toString();
+            V value = this.type.convert(entry.getValue());
 
             if (value != null) {
-                map.put(entry.getKey(), value);
+                map.put(path, value);
             }
         }
 

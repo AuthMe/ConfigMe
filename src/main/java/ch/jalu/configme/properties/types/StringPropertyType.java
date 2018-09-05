@@ -1,7 +1,5 @@
 package ch.jalu.configme.properties.types;
 
-import ch.jalu.configme.resource.PropertyReader;
-
 public class StringPropertyType implements PropertyType<String> {
 
     static final StringPropertyType INSTANCE = new StringPropertyType();
@@ -9,18 +7,20 @@ public class StringPropertyType implements PropertyType<String> {
     StringPropertyType() {}
 
     @Override
-    public String get(PropertyReader reader, String path) {
-        return reader.getString(path);
-    }
-
-    @Override
     public String convert(Object object) {
-        return object.toString();
+        return object == null
+            ? null
+            : object.toString();
     }
 
     @Override
     public Class<String> getType() {
         return String.class;
+    }
+
+    @Override
+    public Object toExportValue(String value) {
+        return value;
     }
 
 }

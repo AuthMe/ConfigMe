@@ -27,14 +27,16 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
     @Nullable
     @Override
     protected List<T> getFromResource(PropertyReader reader) {
-        // Get raw list from reader.
-        List<?> rawList = reader.getList(this.getPath());
+        // Get a raw map from reader
+        Object rawObject = reader.getObject(this.getPath());
 
-        // If raw list is null, then return default value
-        if (rawList == null) {
-            return this.getDefaultValue();
+        // If object is null (it checking instanceof) and object is not a list, then return null
+        if (!(rawObject instanceof List<?>)) {
+            return null;
         }
 
+        // Get raw list from reader.
+        List<?> rawList = (List<?>) rawObject;
         List<T> list = new ArrayList<>();
 
         // Iterate objects from raw list and convert it to T. If converted value is not null, add it to list

@@ -25,7 +25,7 @@ public class CommonProperty<T> extends BaseProperty<T> {
     @Nullable
     @Override
     protected T getFromResource(PropertyReader reader) {
-        return this.type.get(reader, this.getPath());
+        return this.type.convert(reader.getObject(this.getPath()));
     }
 
     @Nullable

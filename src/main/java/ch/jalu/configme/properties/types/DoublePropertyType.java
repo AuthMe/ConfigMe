@@ -1,18 +1,11 @@
 package ch.jalu.configme.properties.types;
 
-import ch.jalu.configme.resource.PropertyReader;
-
 public class DoublePropertyType implements PropertyType<Double> {
 
     static final DoublePropertyType INSTANCE = new DoublePropertyType();
 
     private DoublePropertyType() {
         // Signleton
-    }
-
-    @Override
-    public Double get(PropertyReader reader, String path) {
-        return reader.getDouble(path);
     }
 
     @Override
@@ -23,6 +16,11 @@ public class DoublePropertyType implements PropertyType<Double> {
     @Override
     public Class<Double> getType() {
         return Double.class;
+    }
+
+    @Override
+    public Object toExportValue(Double value) {
+        return value;
     }
 
 }
