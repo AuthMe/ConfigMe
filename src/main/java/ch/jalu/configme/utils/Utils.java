@@ -4,6 +4,8 @@ import ch.jalu.configme.exception.ConfigMeException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utilities class.
@@ -39,4 +41,55 @@ public final class Utils {
             }
         }
     }
+
+    public static <T> T applyReplacements(T object, Object... replacements) {
+        if (object instanceof String) {
+            return (T) applyReplacements((String) object, replacements);
+        }
+
+        if (object instanceof List) {
+            List<?> rawList = (List<?>) object;
+
+            if (rawList.isEmpty() || !(rawList.get(0) instanceof String)) {
+                return object;
+            }
+
+            List<String> list = new ArrayList<>();
+            list.replaceAll(s -> applyReplacements(s, replacements));
+
+            return (T) list;
+        }
+
+        if (object instanceof String[]) {
+            String[] array = (String[]) object;
+
+            if (array.length == 0) {
+                return object;
+            }
+
+            for (int i = 0; i < array.length; i++) {
+                array[i] = applyReplacements(array[i], replacements);
+            }
+
+            return (T) array;
+        }
+
+        return object;
+    }
+
+    private static String applyReplacements(String target, Object... replacements) {
+        if (target == null || target.isEmpty())
+            return target;
+
+        if (replacements.length > 1 && replacements.length % 2 == 0) {
+            for (int i = 0; i < replacements.length; i += 2) {
+                String s = replacements[i + 1].toString();
+
+                target = target.replace("{" + replacements[i] + "}", s == null ? "" : s);
+            }
+        }
+
+        return target;
+    }
+
 }
