@@ -16,11 +16,15 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.anEmptyMap;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
@@ -203,6 +207,62 @@ public class YamlFileReaderTest {
         // when / then
         assertThat(reader.getString("elem.first"), equalTo("test Ã ö û þ"));
         assertThat(reader.getString("elem.second"), equalTo("øå Æ"));
+    }
+
+    @Test
+    public void shouldReturnKeysOfFile() {
+        // given
+        File file = copyFileFromResources(COMPLETE_FILE);
+        YamlFileReader reader = new YamlFileReader(file);
+
+        // when
+        Set<String> keys = reader.getKeys(false);
+
+        // then
+        assertThat(keys, contains("test", "test.duration", "test.systemName",
+            "sample", "sample.ratio", "sample.ratio.order", "sample.ratio.fields",
+            "version",
+            "features", "features.boring", "features.boring.skip", "features.boring.colors", "features.boring.dustLevel",
+                        "features.cool", "features.cool.enabled", "features.cool.options"));
+    }
+
+    @Test
+    public void shouldReturnLeafNodeKeysInFile() {
+        // given
+        File file = copyFileFromResources(COMPLETE_FILE);
+        YamlFileReader reader = new YamlFileReader(file);
+
+        // when
+        Set<String> keys = reader.getKeys(true);
+
+        // then
+        assertThat(keys, contains("test.duration", "test.systemName",
+            "sample.ratio.order", "sample.ratio.fields",
+            "version",
+            "features.boring.skip", "features.boring.colors", "features.boring.dustLevel",
+            "features.cool.enabled", "features.cool.options"));
+    }
+
+    @Test
+    public void shouldTreatEmptyMapsAsLeafNodes() {
+        // given
+        File file = copyFileFromResources("/beanmapper/nested_chat_component_complex_expected.yml");
+        YamlFileReader reader = new YamlFileReader(file);
+
+        // when
+        Set<String> keys = reader.getKeys(true);
+
+        // then
+        assertThat(keys, hasSize(24));
+        assertThat(keys, hasItems(
+            "message-key.conditionalElem.conditionals.low.conditionals", // empty map
+            "message-key.conditionalElem.conditionals.med.color",
+            "message-key.conditionalElem.conditionals.high.conditionalElem.bold",
+            "message-key.conditionalElem.conditionals.high.conditionalElem.conditionals", // empty map
+            "message-key.conditionalElem.conditionals.high.conditionalElem.extra", // empty collection
+            "message-key.conditionalElem.extra", // empty collection
+            "message-key.extra", // empty collection
+            "message-key.text"));
     }
 
     private File copyFileFromResources(String path) {

@@ -97,14 +97,14 @@ public class BeanPropertyTest {
         Object value = new Object();
         given(reader.getObject(path)).willReturn(value);
         WorldGroupConfig groupConfig = new WorldGroupConfig();
-        given(mapper.convertToBean(reader, path, new TypeInformation(WorldGroupConfig.class))).willReturn(groupConfig);
+        given(mapper.convertToBean(value, new TypeInformation(WorldGroupConfig.class))).willReturn(groupConfig);
 
         // when
         WorldGroupConfig result = property.determineValue(reader);
 
         // then
         assertThat(result, equalTo(groupConfig));
-        verify(mapper).convertToBean(reader, path, new TypeInformation(WorldGroupConfig.class));
+        verify(mapper).convertToBean(value, new TypeInformation(WorldGroupConfig.class));
     }
 
     @Test

@@ -43,7 +43,7 @@ public class BeanProperty<T> extends BaseProperty<T> {
     @Override
     @SuppressWarnings("unchecked")
     protected T getFromResource(PropertyReader reader) {
-        return (T) mapper.convertToBean(reader, getPath(), beanType);
+        return (T) mapper.convertToBean(reader.getObject(getPath()), beanType);
     }
 
     @Override
