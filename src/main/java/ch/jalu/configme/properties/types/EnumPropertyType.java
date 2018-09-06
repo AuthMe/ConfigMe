@@ -5,14 +5,14 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
 
     private Class<E> enumType;
 
-    private EnumPropertyType(Class<E> enumType) {
+    public EnumPropertyType(Class<E> enumType) {
         this.enumType = enumType;
     }
 
     @Override
     public E convert(Object object) {
         // If object is enum, then return this object, casting to E
-        if (!this.enumType.isInstance(object)) {
+        if (this.enumType.isInstance(object)) {
             return (E) object;
         }
 

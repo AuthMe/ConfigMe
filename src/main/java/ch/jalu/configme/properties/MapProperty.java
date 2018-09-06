@@ -40,7 +40,7 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
         Map<String, V> map = new HashMap<>();
 
         for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
-            String path = entry.toString();
+            String path = entry.getKey().toString();
             V value = this.type.convert(entry.getValue());
 
             if (value != null) {
