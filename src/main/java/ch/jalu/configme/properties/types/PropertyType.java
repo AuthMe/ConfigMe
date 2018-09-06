@@ -21,32 +21,44 @@ public interface PropertyType<T> {
         return BeanPropertyType.of(type, mapper);
     }
 
-    static BooleanPropertyType booleanType() {
-        return BooleanPropertyType.INSTANCE;
-    }
-
-    static DoublePropertyType doubleType() {
-        return DoublePropertyType.INSTANCE;
-    }
-
     static <E extends Enum<E>> EnumPropertyType<E> enumType(Class<E> type) {
         return EnumPropertyType.of(type);
     }
 
-    static FloatPropertyType floatType() {
-        return FloatPropertyType.INSTANCE;
+    static PropertyType<Boolean> booleanType() {
+        return PrimitivePropertyType.BOOLEAN;
     }
 
-    static IntegerPropertyType integerType() {
-        return IntegerPropertyType.INSTANCE;
+    static PropertyType<Double> doubleType() {
+        return PrimitivePropertyType.DOUBLE;
     }
 
-    static LowerCaseStringPropertyType lowerCaseStringType() {
-        return LowerCaseStringPropertyType.INSTANCE;
+    static PropertyType<Float> floatType() {
+        return PrimitivePropertyType.FLOAT;
     }
 
-    static StringPropertyType stringType() {
-        return StringPropertyType.INSTANCE;
+    static PropertyType<Long> longType() {
+        return PrimitivePropertyType.LONG;
+    }
+
+    static PropertyType<Integer> integerType() {
+        return PrimitivePropertyType.INTEGER;
+    }
+
+    static PropertyType<Short> shortType() {
+        return PrimitivePropertyType.SHORT;
+    }
+
+    static PropertyType<Byte> byteType() {
+        return PrimitivePropertyType.BYTE;
+    }
+
+    static PropertyType<String> lowerCaseStringType() {
+        return PrimitivePropertyType.LOWERCASE_STRING;
+    }
+
+    static PropertyType<String> stringType() {
+        return PrimitivePropertyType.STRING;
     }
 
 }

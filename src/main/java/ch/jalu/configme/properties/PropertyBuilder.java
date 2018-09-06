@@ -1,21 +1,22 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.properties.helper.InlineConvertHelper;
 import ch.jalu.configme.properties.types.PropertyType;
 
 import java.util.*;
 
-public class PropertyBuilder<K, T, P extends Property<T>, B extends PropertyBuilder<K, T, P, B>> {
+public class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> {
 
     protected String path;
     protected T defaultValue;
     protected PropertyType<K> type;
-    protected CreateFunction<K, T, P> createFunction;
+    protected CreateFunction<K, T, Property<T>> createFunction;
 
     private PropertyBuilder(PropertyType<K> type) {
         this.type = type;
     }
 
-    public B createFunction(CreateFunction<K, T, P> createFunction) {
+    public B createFunction(CreateFunction<K, T, Property<T>> createFunction) {
         this.createFunction = createFunction;
 
         return (B) this;
@@ -33,7 +34,7 @@ public class PropertyBuilder<K, T, P extends Property<T>, B extends PropertyBuil
         return (B) this;
     }
 
-    public P build() {
+    public Property<T> build() {
         Objects.requireNonNull(this.createFunction);
 
         return this.createFunction.apply(
@@ -43,8 +44,8 @@ public class PropertyBuilder<K, T, P extends Property<T>, B extends PropertyBuil
         );
     }
 
-    public static <T> CommonPropertyBuilder<T, T, CommonProperty<T>> commonProperty(PropertyType<T> type) {
-        return new CommonPropertyBuilder<T, T, CommonProperty<T>>(type).createFunction(CommonProperty::new);
+    public static <T> CommonPropertyBuilder<T, T> commonProperty(PropertyType<T> type) {
+        return new CommonPropertyBuilder<T, T>(type).createFunction(CommonProperty::new);
     }
 
     public static <T> ListPropertyBuilder<T> listProperty(PropertyType<T> type) {
@@ -56,10 +57,10 @@ public class PropertyBuilder<K, T, P extends Property<T>, B extends PropertyBuil
     }
 
     public static <T> ArrayPropertyBuilder<T> arrayProperty(PropertyType<T> type) {
-        return new ArrayPropertyBuilder<>(type).createFunction(ArrayProperty::new);
+        return new ArrayPropertyBuilder<>(type);
     }
 
-    public static class MapPropertyBuilder<T> extends PropertyBuilder<T, Map<String, T>, MapProperty<T>, MapPropertyBuilder<T>> {
+    public static class MapPropertyBuilder<T> extends PropertyBuilder<T, Map<String, T>, MapPropertyBuilder<T>> {
 
         private MapPropertyBuilder(PropertyType<T> type) {
             super(type);
@@ -76,7 +77,7 @@ public class PropertyBuilder<K, T, P extends Property<T>, B extends PropertyBuil
 
     }
 
-    public static class CommonPropertyBuilder<K, T, P extends Property<T>> extends PropertyBuilder<K, T, P, CommonPropertyBuilder<K, T, P>> {
+    public static class CommonPropertyBuilder<K, T> extends PropertyBuilder<K, T, CommonPropertyBuilder<K, T>> {
 
         CommonPropertyBuilder(PropertyType<K> type) {
             super(type);
@@ -84,10 +85,20 @@ public class PropertyBuilder<K, T, P extends Property<T>, B extends PropertyBuil
 
     }
 
-    public static class ArrayPropertyBuilder<T> extends PropertyBuilder<T, T[], ArrayProperty<T>, ArrayPropertyBuilder<T>> {
+    public static class ArrayPropertyBuilder<T> extends PropertyBuilder<T, T[], ArrayPropertyBuilder<T>> {
+
+        private InlineConvertHelper<T> convertHelper;
 
         ArrayPropertyBuilder(PropertyType<T> type) {
             super(type);
+
+            this.createFunction((path, defaultValue, propertyType) -> new ArrayProperty<>(path, defaultValue, propertyType, this.convertHelper));
+        }
+
+        public ArrayPropertyBuilder<T> convertHelper(InlineConvertHelper<T> convertHelper) {
+            this.convertHelper = convertHelper;
+
+            return this;
         }
 
         public ArrayPropertyBuilder<T> defaultValue(T... defaultValue) {
@@ -98,7 +109,7 @@ public class PropertyBuilder<K, T, P extends Property<T>, B extends PropertyBuil
 
     }
 
-    public static class ListPropertyBuilder<T> extends PropertyBuilder<T, List<T>, ListProperty<T>, ListPropertyBuilder<T>> {
+    public static class ListPropertyBuilder<T> extends PropertyBuilder<T, List<T>, ListPropertyBuilder<T>> {
 
         ListPropertyBuilder(PropertyType<T> type) {
             super(type);

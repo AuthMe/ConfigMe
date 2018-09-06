@@ -100,8 +100,11 @@ public final class SettingsManagerBuilder {
      * @return the settings manager
      */
     public SettingsManager create() {
-        Objects.requireNonNull(configurationData, "configurationData");
         Objects.requireNonNull(resource, "resource");
+
+        if (configurationData == null)
+            configurationData = ConfigurationDataBuilder.createConfiguration();
+
         return new SettingsManagerImpl(resource, configurationData, migrationService);
     }
 }

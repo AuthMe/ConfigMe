@@ -3,6 +3,7 @@ package ch.jalu.configme.configurationdata;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
+import ch.jalu.configme.resource.PropertyResource;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,6 +54,26 @@ public class ConfigurationDataImpl implements ConfigurationData {
         } else {
             throw new ConfigMeException("Invalid value for property '" + property + "': " + value);
         }
+    }
+
+    @Override
+    public <T> T getRelativeValue(String rootPath, Property<T> property, PropertyResource resource) {
+        String path = rootPath + "." + property.getPath();
+
+        if (this.values.containsKey(path)) {
+            return (T) this.values.get(path);
+        }
+
+        Property<T> relativeProperty = property.cloneWithNewPath(path);
+
+        if (relativeProperty == null) {
+            return null;
+        }
+
+        T value = relativeProperty.determineValue(resource.createReader());
+        this.setValue(relativeProperty, value);
+
+        return value;
     }
 
     @Override

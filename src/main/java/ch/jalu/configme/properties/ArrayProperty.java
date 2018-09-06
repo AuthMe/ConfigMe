@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.properties.helper.InlineConvertHelper;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 
@@ -13,6 +14,8 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
 
     private final PropertyType<T> type;
 
+    private final InlineConvertHelper<T> convertHelper;
+
     /**
      * Constructor.
      *
@@ -20,10 +23,11 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
      * @param defaultValue the default value of the property
      * @param type         the property type
      */
-    public ArrayProperty(String path, T[] defaultValue, PropertyType<T> type) {
+    public ArrayProperty(String path, T[] defaultValue, PropertyType<T> type, InlineConvertHelper<T> convertHelper) {
         super(path, defaultValue);
 
         this.type = type;
+        this.convertHelper = convertHelper;
     }
 
     @Nullable
@@ -36,6 +40,10 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
         // If object is null, then return null.
         if (object == null) {
             return null;
+        }
+
+        if (String.class.isInstance(object) && this.convertHelper != null) {
+            return this.convertHelper.fromString((String) object);
         }
 
         // If target type is String and object is string, then return splitted string.
@@ -74,40 +82,9 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
     @Nullable
     @Override
     public Object toExportValue(T[] value) {
-        /* If value is string array, then we convert array to common string with '\n'
-         *
-         * I want to see in config this:
-         *
-         * [...]
-         *   string_array: |-
-         *     First line on array
-         *     Second line on array
-         * [...]
-         *
-         * For another arrays (integer for example):
-         *
-         * [...]
-         *   integer_array:
-         *   - 1
-         *   - 2
-         *   - 5
-         *   - 666
-         * [...]
-         */
-        if (value instanceof String[]) {
-            // Maybe, someone can refactor this code block? c:
-            String[] array = (String[]) value;
-            StringBuilder sb = new StringBuilder();
-
-            for (int i = 0; i < array.length; i++) {
-                if (i != 0) {
-                    sb = sb.append("\n");
-                }
-
-                sb = sb.append(array[i]);
-            }
-
-            return sb.toString();
+        // If we have a convert helper, then use him
+        if (this.convertHelper != null) {
+            return this.convertHelper.toExportValue(value);
         }
 
         Object[] array = new Object[value.length];

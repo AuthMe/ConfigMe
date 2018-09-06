@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
  *
  * @param <T> the property type
  */
-public interface Property<T> {
+public interface Property<T> extends Cloneable {
 
     /**
      * @return the path of the property
@@ -80,5 +80,8 @@ public interface Property<T> {
      */
     @Nullable
     Object toExportValue(T value);
+
+    @Nullable
+    Property<T> cloneWithNewPath(String newPath);
 
 }
