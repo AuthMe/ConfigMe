@@ -46,11 +46,6 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
             return this.convertHelper.fromString((String) object);
         }
 
-        // If target type is String and object is string, then return splitted string.
-        if (this.type.getType() == String.class && object instanceof String) {
-            return (T[]) ((String) object).split("\\\\n");
-        }
-
         // If object is not collection, then return singleton array.
         if (!(object instanceof Collection<?>)) {
             T[] array = (T[]) Array.newInstance(this.type.getType(), 1);

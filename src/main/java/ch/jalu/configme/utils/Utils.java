@@ -5,6 +5,7 @@ import ch.jalu.configme.exception.ConfigMeException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -43,8 +44,24 @@ public final class Utils {
     }
 
     public static <T> T applyReplacements(T object, Object... replacements) {
+        if (object == null)
+            return null;
+
         if (object instanceof String) {
-            return (T) applyReplacements((String) object, replacements);
+            String target = (String) object;
+
+            if (target.isEmpty())
+                return object;
+
+            if (replacements.length > 1 && replacements.length % 2 == 0) {
+                for (int i = 0; i < replacements.length; i += 2) {
+                    String s = replacements[i + 1].toString();
+
+                    target = target.replace("{" + replacements[i] + "}", s == null ? "" : s);
+                }
+            }
+
+            return (T) target;
         }
 
         if (object instanceof List) {
@@ -54,10 +71,15 @@ public final class Utils {
                 return object;
             }
 
-            List<String> list = new ArrayList<>();
+            List<String> list = new ArrayList<>((List<String>) rawList);
             list.replaceAll(s -> applyReplacements(s, replacements));
 
             return (T) list;
+        }
+
+        // If object is collection, then create new array list and work with him
+        if (object instanceof Collection) {
+            return (T) applyReplacements(new ArrayList<>((Collection<T>) object), replacements);
         }
 
         if (object instanceof String[]) {
@@ -75,21 +97,6 @@ public final class Utils {
         }
 
         return object;
-    }
-
-    private static String applyReplacements(String target, Object... replacements) {
-        if (target == null || target.isEmpty())
-            return target;
-
-        if (replacements.length > 1 && replacements.length % 2 == 0) {
-            for (int i = 0; i < replacements.length; i += 2) {
-                String s = replacements[i + 1].toString();
-
-                target = target.replace("{" + replacements[i] + "}", s == null ? "" : s);
-            }
-        }
-
-        return target;
     }
 
 }

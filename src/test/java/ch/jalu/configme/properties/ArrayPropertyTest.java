@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.properties.helper.InlineConvertHelper;
 import ch.jalu.configme.properties.helper.PrimitiveConvertHelper;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
@@ -19,6 +20,38 @@ public class ArrayPropertyTest {
 
     @Mock
     private PropertyReader reader;
+
+    @Test
+    public void shouldReturnArrayFromInlineConvertHelper() {
+        ArrayProperty<String> property = new ArrayProperty<>(
+            "inline_value",
+            new String[] {"multiline", "message"},
+            PropertyType.stringType(),
+            InlineConvertHelper.stringHelper()
+        );
+
+        given(reader.getObject("inline_value")).willReturn("hello\\nkek");
+
+        String[] result = property.getFromResource(reader);
+
+        assertThat(result, equalTo(new String[] {"hello", "kek"}));
+    }
+
+    @Test
+    public void shouldReturnArrayFromSingletonValue() {
+        ArrayProperty<String> property = new ArrayProperty<>(
+            "signleton",
+            new String[] {"multiline", "message"},
+            PropertyType.stringType(),
+            null
+        );
+
+        given(reader.getObject("signleton")).willReturn("hello");
+
+        String[] result = property.getFromResource(reader);
+
+        assertThat(result, equalTo(new String[] {"hello"}));
+    }
 
     @Test
     public void shouldReturnArrayFromResource() {

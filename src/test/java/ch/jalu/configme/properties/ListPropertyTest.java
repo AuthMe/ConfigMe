@@ -39,4 +39,13 @@ public class ListPropertyTest {
         assertThat(property.determineValue(reader), equalTo(Arrays.asList("default list", "you are pidor c:")));
     }
 
+    @Test
+    public void shouldReturnValueAsExportValue() {
+        Property<List<String>> property = new ListProperty<>("list", Collections.emptyList(), PropertyType.stringType());
+
+        Object result = property.toExportValue(Arrays.asList("default list", "you are pidor c:"));
+
+        assertThat(result, equalTo(Arrays.asList("default list", "you are pidor c:")));
+    }
+
 }

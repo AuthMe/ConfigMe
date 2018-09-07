@@ -30,7 +30,6 @@ public class PrimitiveConvertHelperTest {
 
     @Test
     public void shouldReturnValueAsExportValue() {
-
         Object exportValue = convertHelper.toExportValue(targetArray);
 
         assertThat(exportValue, equalTo(targetString));

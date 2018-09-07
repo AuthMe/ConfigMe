@@ -20,7 +20,7 @@ public interface Mapper {
      * @return object of the given type, or null if not possible
      */
     @Nullable
-    Object  convertToBean(@Nullable Object value, TypeInformation typeInformation);
+    Object convertToBean(@Nullable Object value, TypeInformation typeInformation);
 
     /**
      * Converts the given value to an object of the given class, if possible. Returns null otherwise.

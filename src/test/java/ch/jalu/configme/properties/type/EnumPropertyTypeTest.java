@@ -14,6 +14,39 @@ import static org.junit.Assert.assertThat;
 public class EnumPropertyTypeTest {
 
     @Test
+    public void shouldReturnNewInstance() {
+        assertThat(EnumPropertyType.of(TimeUnit.class), equalTo(new EnumPropertyType<>(TimeUnit.class)));
+    }
+
+    @Test
+    public void shouldReturnEnumType() {
+        EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
+
+        assertThat(propertyType.getType(), equalTo(TimeUnit.class));
+    }
+
+    @Test
+    public void shouldReturnUnknown() {
+        EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
+
+        assertThat(propertyType.convert("unknown"), equalTo(null));
+    }
+
+    @Test
+    public void shouldReturnNull() {
+        EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
+
+        assertThat(propertyType.convert(new Object()), equalTo(null));
+    }
+
+    @Test
+    public void shouldReturnHimself() {
+        EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
+
+        assertThat(propertyType.convert(TimeUnit.SECONDS), equalTo(TimeUnit.SECONDS));
+    }
+
+    @Test
     public void shouldReturnConvertedValue() {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
