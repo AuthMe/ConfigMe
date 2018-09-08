@@ -1,7 +1,22 @@
 # ConfigMe Changelog
 
+## ConfigMe 1.x
+#### 1.0 (2018-09-08)
+- Large refactoring: see [Migrating from 0.x to 1.x](https://github.com/AuthMe/ConfigMe/wiki/Migrating-from-0.x-to-1.x) for migration guide
+  - Improves codebase, especially the export of values and the bean mapper ([#56](https://github.com/AuthMe/ConfigMe/issues/56))
+  - Fix serialization of nested beans ([#55](https://github.com/AuthMe/ConfigMe/issues/55))
+  - Ensure that classes can be extended properly ([#54](https://github.com/AuthMe/ConfigMe/issues/54))
+  - Replace LowercaseStringListProperty with LowercaseStringSetProperty ([#57](https://github.com/AuthMe/ConfigMe/issues/57))
+- New method: PropertyReader#getKeys
+- Introduce new built-in property type for Doubles ([#60](https://github.com/AuthMe/ConfigMe/issues/60))
+- Improve behavior of String properties (more values mapped to String) ([#58](https://github.com/AuthMe/ConfigMe/issues/58))
+- Use UTF-8 as default charset & allow to override it in YAML resource and reader
+
+:blue_book: [All changes in 1.0](https://github.com/AuthMe/ConfigMe/milestone/8?closed=1)
+
+## ConfigMe 0.x
 #### 0.4.1 (2018-01-14)
-- Fix `Optional` fields not being able to be saved in bean properties ([#51](https://github.com/AuthMe/ConfigMe/issues/51)
+- Fix `Optional` fields not being able to be saved in bean properties ([#51](https://github.com/AuthMe/ConfigMe/issues/51))
 
 :blue_book: [All changes in 0.4.1](https://github.com/AuthMe/ConfigMe/milestone/7?closed=1)
 
