@@ -3,10 +3,10 @@
 ## ConfigMe 1.x
 #### 1.0 (2018-09-08)
 - Large refactoring: see [Migrating from 0.x to 1.x](https://github.com/AuthMe/ConfigMe/wiki/Migrating-from-0.x-to-1.x) for migration guide
-  - Improves codebase, especially the export of values and the bean mapper ([#56](https://github.com/AuthMe/ConfigMe/issues/56))
+  - Improve codebase, especially the export of values and the bean mapper ([#56](https://github.com/AuthMe/ConfigMe/issues/56))
   - Fix serialization of nested beans ([#55](https://github.com/AuthMe/ConfigMe/issues/55))
   - Ensure that classes can be extended properly ([#54](https://github.com/AuthMe/ConfigMe/issues/54))
-  - Replace LowercaseStringListProperty with LowercaseStringSetProperty ([#57](https://github.com/AuthMe/ConfigMe/issues/57))
+  - Replace LowercaseStringListProperty with LowercaseStringSetProperty
 - New method: PropertyReader#getKeys
 - Introduce new built-in property type for Doubles ([#60](https://github.com/AuthMe/ConfigMe/issues/60))
 - Improve behavior of String properties (more values mapped to String) ([#58](https://github.com/AuthMe/ConfigMe/issues/58))
