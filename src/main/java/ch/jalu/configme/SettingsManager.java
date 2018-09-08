@@ -23,10 +23,9 @@ public interface SettingsManager {
      *
      * @param property The property to retrieve
      * @param <T> The property's type
-     * @param replacements The replacements for property
      * @return The property's value
      */
-    <T> T getProperty(Property<T> property, Object... replacements);
+    <T> T getProperty(Property<T> property);
 
     /**
      * Sets a new value for the given property.
