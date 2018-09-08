@@ -4,6 +4,7 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Manages configuration data:
@@ -33,6 +34,15 @@ public interface ConfigurationData {
      * @return list of comments, never null
      */
     List<String> getCommentsForSection(String path);
+
+    /**
+     * Returns all comments registered to this configuration data. Typically for tests and
+     * debugging only. Use {@link #getCommentsForSection(String)} if you are not interested
+     * in the entirety of comments.
+     *
+     * @return read-only view of all comments
+     */
+    Map<String, List<String>> getAllComments();
 
     /**
      * Initializes the values of all {@link #getProperties known properties} based on the provided reader.
