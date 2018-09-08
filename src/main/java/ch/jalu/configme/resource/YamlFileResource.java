@@ -63,6 +63,7 @@ public class YamlFileResource implements PropertyResource {
      * @param pathTraverser the path traverser (e.g. keeps track of which path elements are new)
      * @param path the path to export at
      * @param value the value to export
+     * @throws IOException .
      */
     protected void exportValue(Writer writer, PropertyPathTraverser pathTraverser,
                                String path, Object value) throws IOException {
@@ -96,6 +97,7 @@ public class YamlFileResource implements PropertyResource {
      * @param writer the writer to write with
      * @param indentation the level at which the comment lines should be indented
      * @param comments the comment lines to write
+     * @throws IOException .
      */
     protected void writeComments(Writer writer, int indentation, List<String> comments) throws IOException {
         if (comments.isEmpty()) {
