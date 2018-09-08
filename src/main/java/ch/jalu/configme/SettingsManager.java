@@ -29,18 +29,6 @@ public interface SettingsManager {
     <T> T getProperty(Property<T> property, Object... replacements);
 
     /**
-     * Gets the specified property from the configuration along a relative path.
-     * Final path is: {root_path}.{property_path}
-     *
-     * @param rootPath The root path of property
-     * @param property The property to retrieve
-     * @param <T> The property's type
-     * @param replacements The replacements for property
-     * @return The property's value
-     */
-    <T> T getRelativeProperty(String rootPath, Property<T> property, Object... replacements);
-
-    /**
      * Sets a new value for the given property.
      *
      * @param property The property to modify

@@ -17,5 +17,4 @@ public class DoubleProperty extends BaseProperty<Double> {
     public Object toExportValue(Double value) {
         return value;
     }
-
 }

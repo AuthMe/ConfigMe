@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public abstract class BaseProperty<T> implements Property<T> {
 
-    private String path;
+    private final String path;
     private final T defaultValue;
 
     /**
@@ -66,20 +66,6 @@ public abstract class BaseProperty<T> implements Property<T> {
      */
     @Nullable
     protected abstract T getFromReader(PropertyReader reader);
-
-    @Override
-    @Nullable
-    public Property<T> cloneWithNewPath(String newPath) {
-        try {
-            BaseProperty<T> newProperty = (BaseProperty<T>) this.clone();
-            newProperty.path = newPath;
-
-            return newProperty;
-        } catch (CloneNotSupportedException e) {
-            System.out.println("O.o");
-            return null;
-        }
-    }
 
     @Override
     public String toString() {

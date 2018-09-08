@@ -2,7 +2,6 @@ package ch.jalu.configme.configurationdata;
 
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
-import ch.jalu.configme.resource.PropertyResource;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -54,19 +53,6 @@ public interface ConfigurationData {
      */
     @Nullable
     <T> T getValue(Property<T> property);
-
-    /**
-     * Returns the value associated with the given property and root path.
-     * Final path is: {root_path}.{property_path}
-     *
-     * @param rootPath the root path a property
-     * @param property the relative property
-     * @param resource the resource to create PropertyReader, to be used for determine the property value
-     * @param <T> property type
-     * @return value associated with the property, or null if not present
-     */
-    @Nullable
-    <T> T getRelativeValue(String rootPath, Property<T> property, PropertyResource resource);
 
     /**
      * Sets the given value for the given property. May throw an exception

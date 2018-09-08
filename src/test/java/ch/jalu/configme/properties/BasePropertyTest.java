@@ -1,6 +1,5 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.Test;
 
@@ -11,14 +10,6 @@ import static org.junit.Assert.assertThat;
  * Test for the {@link BaseProperty} abstract type.
  */
 public class BasePropertyTest {
-
-    @Test
-    public void shouldReturnClonedProperty() {
-        Property<String> property = new CommonProperty<>("somepath", "default", PropertyType.stringType());
-        Property<String> cloned = property.cloneWithNewPath("cloned");
-
-        assertThat(cloned.getPath(), equalTo("cloned"));
-    }
 
     @Test(expected = NullPointerException.class)
     public void shouldRejectNullValue() {
