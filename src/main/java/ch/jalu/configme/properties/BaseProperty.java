@@ -43,13 +43,13 @@ public abstract class BaseProperty<T> implements Property<T> {
 
     @Override
     public T determineValue(PropertyReader reader) {
-        T value = getFromResource(reader);
+        T value = getFromReader(reader);
         return value != null ? value : getDefaultValue();
     }
 
     @Override
     public boolean isPresent(PropertyReader reader) {
-        return getFromResource(reader) != null;
+        return getFromReader(reader) != null;
     }
 
     @Override
@@ -65,7 +65,7 @@ public abstract class BaseProperty<T> implements Property<T> {
      * @return value based on the reader, or null if not applicable
      */
     @Nullable
-    protected abstract T getFromResource(PropertyReader reader);
+    protected abstract T getFromReader(PropertyReader reader);
 
     @Override
     @Nullable

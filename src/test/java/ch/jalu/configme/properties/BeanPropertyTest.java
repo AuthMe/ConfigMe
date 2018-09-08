@@ -53,7 +53,7 @@ public class BeanPropertyTest {
         resource.exportProperties(configurationData);
 
         // then
-        CommandConfig config = property.getFromResource(resource.createReader());
+        CommandConfig config = property.getFromReader(resource.createReader());
         assertThat(config.getCommands().keySet(), contains("save", "refresh", "open"));
         Command refreshCommand = config.getCommands().get("refresh");
         assertThat(refreshCommand.getExecution().getPrivileges(), contains("page.view", "action.refresh"));
@@ -79,7 +79,7 @@ public class BeanPropertyTest {
         resource.exportProperties(configurationData);
 
         // then
-        CommandConfig config = property.getFromResource(resource.createReader());
+        CommandConfig config = property.getFromReader(resource.createReader());
         assertThat(config.getCommands().keySet(), contains("save"));
         Command saveCommand = config.getCommands().get("save");
         assertThat(saveCommand.getExecution().getPrivileges(), contains("action.open", "action.save"));

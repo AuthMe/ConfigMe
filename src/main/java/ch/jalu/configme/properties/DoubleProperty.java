@@ -9,7 +9,7 @@ public class DoubleProperty extends BaseProperty<Double> {
     }
 
     @Override
-    protected Double getFromResource(PropertyReader reader) {
+    protected Double getFromReader(PropertyReader reader) {
         return reader.getDouble(getPath());
     }
 

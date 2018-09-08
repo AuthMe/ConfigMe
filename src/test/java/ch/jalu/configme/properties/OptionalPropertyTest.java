@@ -39,9 +39,9 @@ public class OptionalPropertyTest {
         OptionalProperty<TestEnum> enumProp = new OptionalProperty<>(new EnumProperty<>(TestEnum.class, "enum.path.test", TestEnum.SECOND));
 
         // when
-        Optional<Boolean> boolResult = booleanProp.getFromResource(reader);
-        Optional<Integer> intResult = intProp.getFromResource(reader);
-        Optional<TestEnum> enumResult = enumProp.getFromResource(reader);
+        Optional<Boolean> boolResult = booleanProp.getFromReader(reader);
+        Optional<Integer> intResult = intProp.getFromReader(reader);
+        Optional<TestEnum> enumResult = enumProp.getFromReader(reader);
 
         // then
         assertThat(boolResult, equalTo(of(true)));
@@ -57,9 +57,9 @@ public class OptionalPropertyTest {
         OptionalProperty<TestEnum> enumProp = new OptionalProperty<>(new EnumProperty<>(TestEnum.class, "enum.path.wrong", TestEnum.SECOND));
 
         // when
-        Optional<Boolean> boolResult = booleanProp.getFromResource(reader);
-        Optional<Integer> intResult = intProp.getFromResource(reader);
-        Optional<TestEnum> enumResult = enumProp.getFromResource(reader);
+        Optional<Boolean> boolResult = booleanProp.getFromReader(reader);
+        Optional<Integer> intResult = intProp.getFromReader(reader);
+        Optional<TestEnum> enumResult = enumProp.getFromReader(reader);
 
         // then
         assertThat(boolResult, equalTo(Optional.empty()));

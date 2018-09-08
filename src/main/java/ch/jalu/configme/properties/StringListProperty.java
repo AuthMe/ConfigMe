@@ -22,7 +22,7 @@ public class StringListProperty extends BaseProperty<List<String>> {
     }
 
     @Override
-    protected List<String> getFromResource(PropertyReader reader) {
+    protected List<String> getFromReader(PropertyReader reader) {
         List<?> listFromReader = reader.getList(getPath());
         if (listFromReader != null) {
             List<String> result = new ArrayList<>(listFromReader.size());

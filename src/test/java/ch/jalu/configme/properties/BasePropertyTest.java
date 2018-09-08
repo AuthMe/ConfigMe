@@ -52,7 +52,7 @@ public class BasePropertyTest {
         }
 
         @Override
-        protected Byte getFromResource(PropertyReader reader) {
+        protected Byte getFromReader(PropertyReader reader) {
             Integer value = reader.getInt(getPath());
             return value != null && value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE
                 ? value.byteValue()
