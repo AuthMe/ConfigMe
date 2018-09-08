@@ -4,7 +4,7 @@
 [![Javadocs](https://www.javadoc.io/badge/ch.jalu/configme.svg)](https://www.javadoc.io/doc/ch.jalu/configme)
 [![Code Climate](https://codeclimate.com/github/AuthMe/ConfigMe/badges/gpa.svg)](https://codeclimate.com/github/AuthMe/ConfigMe)
 
-A simple configuration management library, initially for but no longer limited to Bukkit plugins.
+A simple configuration management library with out of the box YAML support.
 
 - Lightweight
 - Flexible
@@ -30,7 +30,7 @@ Start using ConfigMe by adding this to your pom.xml:
     <dependency>
         <groupId>ch.jalu</groupId>
         <artifactId>configme</artifactId>
-        <version>1.0</version>
+        <version>1.0.1</version>
     </dependency>
 </dependencies>
 ```
