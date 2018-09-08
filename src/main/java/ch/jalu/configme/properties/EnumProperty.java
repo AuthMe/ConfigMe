@@ -14,6 +14,7 @@ public class EnumProperty<E extends Enum<E>> extends BaseProperty<E> {
     @Override
     protected E getFromResource(PropertyReader reader) {
         String value = reader.getString(getPath());
+
         return value == null ? null : mapToEnum(value);
     }
 

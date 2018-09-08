@@ -8,7 +8,6 @@ import java.util.Objects;
  * Collection utils.
  */
 public final class CollectionUtils {
-
     private CollectionUtils() {
     }
 

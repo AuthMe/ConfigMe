@@ -26,6 +26,19 @@ public final class SettingsManagerBuilder {
     }
 
     /**
+     * Creates a builder, using the given YAML file folder and him name to use as property resource.
+     *
+     * @param folder the folder from which the YAML file will be taken
+     * @param fileName the name of the file to be used as YAML file
+     * @return settings manager builder
+     */
+    public static SettingsManagerBuilder withYamlFile(File folder, String fileName) {
+        folder.mkdirs();
+
+        return withYamlFile(new File(folder, fileName));
+    }
+
+    /**
      * Creates a builder, using the given YAML file to use as property resource.
      *
      * @param file the yaml file to use
@@ -87,8 +100,11 @@ public final class SettingsManagerBuilder {
      * @return the settings manager
      */
     public SettingsManager create() {
-        Objects.requireNonNull(configurationData, "configurationData");
         Objects.requireNonNull(resource, "resource");
+
+        if (configurationData == null)
+            configurationData = ConfigurationDataBuilder.createConfiguration();
+
         return new SettingsManagerImpl(resource, configurationData, migrationService);
     }
 }

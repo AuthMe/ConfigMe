@@ -17,4 +17,5 @@ public class IntegerProperty extends BaseProperty<Integer> {
     public Object toExportValue(Integer value) {
         return value;
     }
+
 }
