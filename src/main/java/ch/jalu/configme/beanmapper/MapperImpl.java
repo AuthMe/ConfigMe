@@ -5,7 +5,6 @@ import ch.jalu.configme.beanmapper.leafvaluehandler.StandardLeafValueHandlers;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
-import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.utils.TypeInformation;
 
 import javax.annotation.Nullable;
@@ -110,6 +109,14 @@ public class MapperImpl implements Mapper {
         return mappedBean;
     }
 
+    /**
+     * Handles values of types which need special handling (such as Optional). Null means the value is not
+     * a special type and that the export value should be built differently. Use {@link #RETURN_NULL} to $
+     * signal that null should be used as the export value of the provided value.
+     *
+     * @param value the value to convert
+     * @return the export value to use or {@link #RETURN_NULL}, or null if not applicable
+     */
     @Nullable
     protected Object createExportValueForSpecialTypes(Object value) {
         if (value instanceof Collection<?>) {
@@ -152,6 +159,13 @@ public class MapperImpl implements Mapper {
         return convertValueForType(createRootMappingContext(beanType), value);
     }
 
+    /**
+     * Main method for converting a value to another type.
+     *
+     * @param context the mapping context
+     * @param value the value to convert from
+     * @return object whose type matches the one in the mapping context, or null if not applicable
+     */
     @Nullable
     protected Object convertValueForType(MappingContext context, Object value) {
         Class<?> rawClass = context.getTypeInformation().getSafeToWriteClass();
@@ -175,6 +189,13 @@ public class MapperImpl implements Mapper {
         return createBean(context, value);
     }
 
+    /**
+     * Handles special types in the bean mapping process which require special handling.
+     *
+     * @param context the mapping context
+     * @param value the value to convert from
+     * @return object whose type matches the one in the mapping context, or null if not applicable
+     */
     @Nullable
     protected Object handleSpecialTypes(MappingContext context, Object value) {
         final Class<?> rawClass = context.getTypeInformation().getSafeToWriteClass();
@@ -190,6 +211,13 @@ public class MapperImpl implements Mapper {
 
     // -- Collection
 
+    /**
+     * Handles the creation of Collection properties.
+     *
+     * @param context the mapping context
+     * @param value the value to map from
+     * @return Collection property from the value, or null if not applicable
+     */
     @Nullable
     protected Collection createCollection(MappingContext context, Object value) {
         if (value instanceof Iterable<?>) {
@@ -205,6 +233,12 @@ public class MapperImpl implements Mapper {
         return null;
     }
 
+    /**
+     * Creates a Collection of a type which can be assigned to the provided type.
+     *
+     * @param typeInformation the required collection type
+     * @return Collection of matching type
+     */
     protected Collection createCollectionMatchingType(TypeInformation typeInformation) {
         Class<?> collectionType = typeInformation.getSafeToWriteClass();
         if (collectionType.isAssignableFrom(ArrayList.class)) {
@@ -218,6 +252,13 @@ public class MapperImpl implements Mapper {
 
     // -- Map
 
+    /**
+     * Handles the creation of a Map property.
+     *
+     * @param context mapping context
+     * @param value value to map from
+     * @return Map property, or null if not applicable
+     */
     @Nullable
     protected Map createMap(MappingContext context, Object value) {
         if (value instanceof Map<?, ?>) {
@@ -240,6 +281,12 @@ public class MapperImpl implements Mapper {
         return null;
     }
 
+    /**
+     * Creates a Map of a type which can be assigned to the provided type.
+     *
+     * @param typeInformation the required map type
+     * @return Map of matching type
+     */
     protected Map createMapMatchingType(TypeInformation typeInformation) {
         Class<?> mapType = typeInformation.getSafeToWriteClass();
         if (mapType.isAssignableFrom(LinkedHashMap.class)) {
