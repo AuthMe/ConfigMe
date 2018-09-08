@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -78,8 +79,9 @@ public class YamlFileResourceTest {
         expected.put(TestConfiguration.DUST_LEVEL, -1.1);
         expected.put(TestConfiguration.USE_COOL_FEATURES, false);
         expected.put(TestConfiguration.COOL_OPTIONS, asList("Dinosaurs", "Explosions", "Big trucks"));
+        expected.put(TestConfiguration.FORBIDDEN_NAMES, Arrays.asList("toto", "africa"));
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
-            // Check with resource#getObject to make sure the values were persisted to the file
+            // Check with reader#getObject to make sure the values were persisted to the file
             // If we go through Property objects they may fall back to their default values
             String propertyPath = entry.getKey().getPath();
             assertThat("Property '" + propertyPath + "' has expected value",

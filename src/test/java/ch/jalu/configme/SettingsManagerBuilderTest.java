@@ -91,7 +91,7 @@ public class SettingsManagerBuilderTest {
 
         // then
         assertThat(settingsManager.getPropertyResource(), equalTo(resource));
-        assertThat(settingsManager.getConfigurationData().getProperties(), hasSize(10));
+        assertThat(settingsManager.getConfigurationData().getProperties(), hasSize(11));
         assertThat(settingsManager.getMigrationService(), nullValue());
     }
 

@@ -15,6 +15,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -136,7 +137,8 @@ public class YamlFileResource implements PropertyResource {
         if (value instanceof String) {
             return getYamlObject().dump(value);
         } else if (value instanceof Collection<?>) {
-            return ((Collection<?>) value).isEmpty() ? "[]" : "\n" + getYamlObject().dump(value);
+            List<?> list = collectionToList((Collection<?>) value);
+            return list.isEmpty() ? "[]" : "\n" + getYamlObject().dump(list);
         }
         return getYamlObject().dump(value);
     }
@@ -187,5 +189,11 @@ public class YamlFileResource implements PropertyResource {
 
     private <T> Object getExportValue(Property<T> property, ConfigurationData configurationData) {
         return property.toExportValue(configurationData.getValue(property));
+    }
+
+    private static List<?> collectionToList(Collection<?> collection) {
+        return collection instanceof List<?>
+            ? (List<?>) collection
+            : new ArrayList<>(collection);
     }
 }

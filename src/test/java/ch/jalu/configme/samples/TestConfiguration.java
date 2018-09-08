@@ -6,8 +6,10 @@ import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
 
 import java.util.List;
+import java.util.Set;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.newLowercaseStringSetProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 
@@ -57,6 +59,10 @@ public final class TestConfiguration implements SettingsHolder {
     @Comment("List of cool options to use")
     public static final Property<List<String>> COOL_OPTIONS =
         newListProperty("features.cool.options", "Sparks", "Sprinkles");
+
+    @Comment("Forbidden names")
+    public static final Property<Set<String>> FORBIDDEN_NAMES =
+        newLowercaseStringSetProperty("security.forbiddenNames", "toto", "africa");
 
 
     private TestConfiguration() {
