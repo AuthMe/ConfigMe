@@ -9,7 +9,7 @@ public class IntegerProperty extends BaseProperty<Integer> {
     }
 
     @Override
-    protected Integer getFromResource(PropertyReader reader) {
+    protected Integer getFromReader(PropertyReader reader) {
         return reader.getInt(getPath());
     }
 

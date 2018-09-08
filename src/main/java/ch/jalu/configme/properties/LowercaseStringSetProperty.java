@@ -39,7 +39,7 @@ public class LowercaseStringSetProperty extends BaseProperty<Set<String>> {
     }
 
     @Override
-    protected Set<String> getFromResource(PropertyReader reader) {
+    protected Set<String> getFromReader(PropertyReader reader) {
         List<?> listFromReader = reader.getList(getPath());
         if (listFromReader != null) {
             Set<String> result = new LinkedHashSet<>(listFromReader.size());

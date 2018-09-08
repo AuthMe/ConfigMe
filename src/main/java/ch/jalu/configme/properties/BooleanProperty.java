@@ -9,7 +9,7 @@ public class BooleanProperty extends BaseProperty<Boolean> {
     }
 
     @Override
-    protected Boolean getFromResource(PropertyReader reader) {
+    protected Boolean getFromReader(PropertyReader reader) {
         return reader.getBoolean(getPath());
     }
 

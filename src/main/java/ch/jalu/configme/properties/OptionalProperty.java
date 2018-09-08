@@ -25,7 +25,7 @@ public class OptionalProperty<T> extends BaseProperty<Optional<T>> {
     }
 
     @Override
-    protected Optional<T> getFromResource(PropertyReader reader) {
+    protected Optional<T> getFromReader(PropertyReader reader) {
         return baseProperty.isPresent(reader)
             ? Optional.ofNullable(baseProperty.determineValue(reader))
             : Optional.empty();

@@ -73,7 +73,7 @@ public class YamlSetPropertyExportTest {
         }
 
         @Override
-        protected Set<TestEnum> getFromResource(PropertyReader reader) {
+        protected Set<TestEnum> getFromReader(PropertyReader reader) {
             List<?> list = reader.getList(getPath());
             if (list == null) {
                 return null;
