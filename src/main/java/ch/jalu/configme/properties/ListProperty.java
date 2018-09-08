@@ -26,7 +26,7 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
 
     @Nullable
     @Override
-    protected List<T> getFromResource(PropertyReader reader) {
+    protected List<T> getFromReader(PropertyReader reader) {
         // Get a raw map from reader
         Object rawObject = reader.getObject(this.getPath());
 
