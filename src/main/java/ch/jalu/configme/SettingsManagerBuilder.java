@@ -19,7 +19,7 @@ public final class SettingsManagerBuilder {
 
     private final PropertyResource resource;
     private ConfigurationData configurationData;
-    private MigrationService migrationService = new PlainMigrationService();
+    private MigrationService migrationService;
 
     private SettingsManagerBuilder(PropertyResource resource) {
         this.resource = resource;
@@ -77,6 +77,17 @@ public final class SettingsManagerBuilder {
      */
     public SettingsManagerBuilder migrationService(@Nullable MigrationService migrationService) {
         this.migrationService = migrationService;
+        return this;
+    }
+
+    /**
+     * Registers the default migration service to the builder, which triggers a rewrite of the
+     * configuration file if a property is missing from it.
+     *
+     * @return this builder
+     */
+    public SettingsManagerBuilder useDefaultMigrationService() {
+        this.migrationService = new PlainMigrationService();
         return this;
     }
 

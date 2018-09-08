@@ -67,6 +67,7 @@ public class SettingsManagerBuilderTest {
         // when
         SettingsManagerImpl settingsManager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(configFile)
             .configurationData(configurationData)
+            .useDefaultMigrationService()
             .create();
 
         // then
@@ -86,7 +87,6 @@ public class SettingsManagerBuilderTest {
         // when
         SettingsManagerImpl settingsManager = (SettingsManagerImpl) SettingsManagerBuilder.withResource(resource)
             .configurationData(TestConfiguration.class)
-            .migrationService(null)
             .create();
 
         // then
@@ -108,6 +108,7 @@ public class SettingsManagerBuilderTest {
         // when
         SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
             .configurationData(TestConfiguration.class)
+            .useDefaultMigrationService()
             .create();
 
         // then
