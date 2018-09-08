@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
  *
  * @param <T> the property type
  */
-public interface Property<T> extends Cloneable {
+public interface Property<T> {
 
     /**
      * @return the path of the property
@@ -25,7 +25,7 @@ public interface Property<T> extends Cloneable {
      * Returns the value, based on the given reader, which should be used for this property. By default
      * this is the value as constructed from the reader, and otherwise the default value. Implementations
      * of {@link BaseProperty} never return null. The return value must be in sync with
-     * {@link #isValidValue(T)}.
+     * {@link #isValidValue(Object)}.
      *
      * @param propertyReader the reader to construct the value from (if possible)
      * @return the value to associate to this property
@@ -80,8 +80,5 @@ public interface Property<T> extends Cloneable {
      */
     @Nullable
     Object toExportValue(T value);
-
-    @Nullable
-    Property<T> cloneWithNewPath(String newPath);
 
 }

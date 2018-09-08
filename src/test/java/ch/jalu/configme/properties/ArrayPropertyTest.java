@@ -32,7 +32,7 @@ public class ArrayPropertyTest {
 
         given(reader.getObject("inline_value")).willReturn("hello\\nkek");
 
-        String[] result = property.getFromResource(reader);
+        String[] result = property.getFromReader(reader);
 
         assertThat(result, equalTo(new String[] {"hello", "kek"}));
     }
@@ -48,7 +48,7 @@ public class ArrayPropertyTest {
 
         given(reader.getObject("signleton")).willReturn("hello");
 
-        String[] result = property.getFromResource(reader);
+        String[] result = property.getFromReader(reader);
 
         assertThat(result, equalTo(new String[] {"hello"}));
     }

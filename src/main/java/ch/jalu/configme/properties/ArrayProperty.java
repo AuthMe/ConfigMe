@@ -33,7 +33,7 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
     @Nullable
     @Override
     @SuppressWarnings("unchecked")
-    protected T[] getFromResource(PropertyReader reader) {
+    protected T[] getFromReader(PropertyReader reader) {
         // Get object from reader.
         Object object = reader.getObject(this.getPath());
 

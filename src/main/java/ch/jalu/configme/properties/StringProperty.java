@@ -12,7 +12,7 @@ public class StringProperty extends BaseProperty<String> {
     }
 
     @Override
-    protected String getFromResource(PropertyReader reader) {
+    protected String getFromReader(PropertyReader reader) {
         Object value = reader.getObject(getPath());
         return value == null ? null : value.toString();
     }

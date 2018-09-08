@@ -5,7 +5,6 @@ import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
-import ch.jalu.configme.utils.Utils;
 
 import javax.annotation.Nullable;
 
@@ -51,27 +50,11 @@ public class SettingsManagerImpl implements SettingsManager {
      *
      * @param property The property to retrieve
      * @param <T> The property's type
-     * @param replacements The replacements for property
      * @return The property's value
      */
     @Override
-    public <T> T getProperty(Property<T> property, Object... replacements) {
-        return Utils.applyReplacements(configurationData.getValue(property), replacements);
-    }
-
-    /**
-     * Gets the specified property from the configuration along a relative path.
-     * Final path is: {root_path}.{property_path}
-     *
-     * @param rootPath The root path of property
-     * @param property The property to retrieve
-     * @param <T> The property's type
-     * @param replacements The replacements for property
-     * @return The property's value
-     */
-    @Override
-    public <T> T getRelativeProperty(String rootPath, Property<T> property, Object... replacements) {
-        return Utils.applyReplacements(configurationData.getRelativeValue(rootPath, property, this.resource), replacements);
+    public <T> T getProperty(Property<T> property) {
+        return configurationData.getValue(property);
     }
 
     /**
