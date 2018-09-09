@@ -41,6 +41,11 @@ public class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
+    public Map<String, List<String>> getAllComments() {
+        return allComments;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getValue(Property<T> property) {
         return (T) values.get(property.getPath());

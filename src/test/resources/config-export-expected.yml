@@ -36,3 +36,9 @@ features:
         - Dinosaurs
         - Explosions
         - Big trucks
+security:
+    # Forbidden names
+    forbiddenNames: 
+    - admin
+    - staff
+    - moderator

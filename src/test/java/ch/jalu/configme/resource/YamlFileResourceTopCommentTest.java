@@ -40,6 +40,7 @@ public class YamlFileResourceTopCommentTest {
         // when
         SettingsManagerBuilder.withResource(resource)
             .configurationData(GroupPropertyHolder.class)
+            .useDefaultMigrationService()
             .create();
 
         // then
@@ -60,6 +61,7 @@ public class YamlFileResourceTopCommentTest {
         // when
         SettingsManagerBuilder.withResource(resource)
             .configurationData(TestConfig.class)
+            .useDefaultMigrationService()
             .create();
 
         // then

@@ -6,11 +6,16 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static ch.jalu.configme.TestUtils.containsAll;
 import static ch.jalu.configme.TestUtils.verifyException;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -55,5 +60,44 @@ public class ConfigurationDataImplTest {
         // when / then
         verifyException(() -> configData.setValue(properties.get(0), null),
             ConfigMeException.class, "Invalid value");
+    }
+
+    @Test
+    public void shouldReturnAllComments() {
+        // given
+        // Explicitly make it a modifiable Map so we can check that it's not afterwards
+        Map<String, List<String>> comments = new HashMap<>(createSampleCommentsMap());
+        ConfigurationData configurationData = new ConfigurationDataImpl(Collections.emptyList(), comments);
+
+        // when
+        Map<String, List<String>> result = configurationData.getAllComments();
+
+        // then
+        assertThat(result, equalTo(comments));
+        assertThat(result.getClass().getName(), equalTo("java.util.Collections$UnmodifiableMap"));
+    }
+
+    @Test
+    public void shouldReturnCommentsForSections() {
+        // given
+        ConfigurationData configurationData = new ConfigurationDataImpl(Collections.emptyList(), createSampleCommentsMap());
+
+        // when
+        List<String> testComments = configurationData.getCommentsForSection("test");
+        List<String> secondComments = configurationData.getCommentsForSection("test.second");
+        List<String> absentComments = configurationData.getCommentsForSection("test.doesNotExist");
+
+        // then
+        assertThat(testComments, contains("test section comment"));
+        assertThat(secondComments, contains("Second thing", "Comes after first"));
+        assertThat(absentComments, empty());
+    }
+
+    private static Map<String, List<String>> createSampleCommentsMap() {
+        CommentsConfiguration commentsConfiguration = new CommentsConfiguration();
+        commentsConfiguration.setComment("test", "test section comment");
+        commentsConfiguration.setComment("test.first", "First thing");
+        commentsConfiguration.setComment("test.second", "Second thing", "Comes after first");
+        return commentsConfiguration.getAllComments();
     }
 }

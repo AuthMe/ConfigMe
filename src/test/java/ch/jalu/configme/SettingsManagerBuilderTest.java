@@ -67,6 +67,7 @@ public class SettingsManagerBuilderTest {
         // when
         SettingsManagerImpl settingsManager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(configFile)
             .configurationData(configurationData)
+            .useDefaultMigrationService()
             .create();
 
         // then
@@ -86,12 +87,11 @@ public class SettingsManagerBuilderTest {
         // when
         SettingsManagerImpl settingsManager = (SettingsManagerImpl) SettingsManagerBuilder.withResource(resource)
             .configurationData(TestConfiguration.class)
-            .migrationService(null)
             .create();
 
         // then
         assertThat(settingsManager.getPropertyResource(), equalTo(resource));
-        assertThat(settingsManager.getConfigurationData().getProperties(), hasSize(10));
+        assertThat(settingsManager.getConfigurationData().getProperties(), hasSize(11));
         assertThat(settingsManager.getMigrationService(), nullValue());
     }
 
@@ -108,6 +108,7 @@ public class SettingsManagerBuilderTest {
         // when
         SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
             .configurationData(TestConfiguration.class)
+            .useDefaultMigrationService()
             .create();
 
         // then
