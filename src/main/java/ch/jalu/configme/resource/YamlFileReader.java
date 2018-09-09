@@ -48,14 +48,34 @@ public class YamlFileReader implements PropertyReader {
         }
 
         Object node = root;
-        String[] keys = path.split("\\.");
-        for (String key : keys) {
-            node = getEntryIfIsMap(key, node);
-            if (node == null) {
-                return null;
+
+        String tempPath = path;
+        int tempPathLength = 0;
+        while (true) {
+            Object tempNode = getEntryIfIsMap(tempPath, node);
+
+            if (tempNode != null) {
+                tempPathLength += tempPath.length() + 1;
+
+                if (tempPathLength < path.length()) {
+                    tempPath = path.substring(tempPathLength);
+                } else {
+                    return tempNode;
+                }
+
+                node = tempNode;
+
+                continue;
             }
+
+            if (!tempPath.contains(".")) {
+                break;
+            }
+
+            tempPath = tempPath.substring(0, tempPath.lastIndexOf("."));
         }
-        return node;
+
+        return null;
     }
 
     @Override
