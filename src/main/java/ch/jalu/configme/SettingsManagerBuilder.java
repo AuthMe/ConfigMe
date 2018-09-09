@@ -11,6 +11,7 @@ import ch.jalu.configme.utils.Utils;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Creates {@link SettingsManager} instances.
@@ -20,6 +21,7 @@ public final class SettingsManagerBuilder {
     private final PropertyResource resource;
     private ConfigurationData configurationData;
     private MigrationService migrationService;
+    private Function<Integer, Integer> indentFunction;
 
     private SettingsManagerBuilder(PropertyResource resource) {
         this.resource = resource;
@@ -105,6 +107,17 @@ public final class SettingsManagerBuilder {
     }
 
     /**
+     * Sets the indent function
+     *
+     * @param indentFunction the indent function
+     * @return this builder
+     */
+    public SettingsManagerBuilder indendFunction(@Nullable Function<Integer, Integer> indentFunction) {
+        this.indentFunction = indentFunction;
+        return this;
+    }
+
+    /**
      * Creates a settings manager instance. It is mandatory that resource and configuration data have been
      * configured beforehand.
      *
@@ -116,6 +129,6 @@ public final class SettingsManagerBuilder {
         if (configurationData == null)
             configurationData = ConfigurationDataBuilder.createConfiguration();
 
-        return new SettingsManagerImpl(resource, configurationData, migrationService);
+        return new SettingsManagerImpl(resource, configurationData, migrationService, indentFunction);
     }
 }

@@ -22,26 +22,17 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static ch.jalu.configme.TestUtils.copyFileFromResources;
 import static ch.jalu.configme.TestUtils.verifyException;
 import static ch.jalu.configme.configurationdata.ConfigurationDataBuilder.createConfiguration;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Test for {@link SettingsManagerImpl}.
@@ -77,7 +68,7 @@ public class SettingsManagerImplTest {
         given(migrationService.checkAndMigrate(reader, configurationData)).willReturn(false);
 
         // when
-        new SettingsManagerImpl(resource, configurationData, migrationService);
+        new SettingsManagerImpl(resource, configurationData, migrationService, null);
 
         // then
         verifyWasMigrationServiceChecked();
@@ -90,11 +81,11 @@ public class SettingsManagerImplTest {
         given(migrationService.checkAndMigrate(reader, configurationData)).willReturn(true);
 
         // when
-        new SettingsManagerImpl(resource, configurationData, migrationService);
+        new SettingsManagerImpl(resource, configurationData, migrationService, null);
 
         // then
         verifyWasMigrationServiceChecked();
-        verify(resource).exportProperties(configurationData);
+        verify(resource).exportProperties(configurationData, null);
     }
 
     @Test
@@ -133,7 +124,7 @@ public class SettingsManagerImplTest {
     public void shouldPerformReload() {
         // given
         ConfigurationData configurationData = mock(ConfigurationData.class);
-        SettingsManager manager = new SettingsManagerImpl(resource, configurationData, migrationService);
+        SettingsManager manager = new SettingsManagerImpl(resource, configurationData, migrationService, null);
         reset(resource, configurationData, migrationService);
         given(resource.createReader()).willReturn(reader);
         given(migrationService.checkAndMigrate(reader, configurationData)).willReturn(false);
@@ -154,7 +145,7 @@ public class SettingsManagerImplTest {
         ConfigurationData configurationData = createConfiguration(properties);
 
         // when
-        SettingsManagerImpl manager = new SettingsManagerImpl(resource, configurationData, null);
+        SettingsManagerImpl manager = new SettingsManagerImpl(resource, configurationData, null, null);
 
         // then
         assertThat(manager.getConfigurationData(), sameInstance(configurationData));
@@ -166,7 +157,7 @@ public class SettingsManagerImplTest {
         BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>(WorldGroupConfig.class, "worlds", new WorldGroupConfig());
         PropertyResource resource = new YamlFileResource(copyFileFromResources("/beanmapper/worlds.yml", temporaryFolder));
         ConfigurationData configurationData = createConfiguration(Collections.singletonList(worldGroups));
-        SettingsManager manager = new SettingsManagerImpl(resource, configurationData, null);
+        SettingsManager manager = new SettingsManagerImpl(resource, configurationData, null, null);
         WorldGroupConfig worldGroupConfig = createTestWorldConfig();
 
         // when
@@ -183,13 +174,13 @@ public class SettingsManagerImplTest {
         File file = copyFileFromResources("/beanmapper/worlds.yml", temporaryFolder);
         ConfigurationData configurationData = createConfiguration(Collections.singletonList(worldGroups));
         SettingsManager manager = new SettingsManagerImpl(
-            new YamlFileResource(file), configurationData, null);
+            new YamlFileResource(file), configurationData, null, null);
         WorldGroupConfig worldGroupConfig = createTestWorldConfig();
         manager.setProperty(worldGroups, worldGroupConfig);
 
         // when
         manager.save();
-        manager = new SettingsManagerImpl(new YamlFileResource(file), configurationData, null);
+        manager = new SettingsManagerImpl(new YamlFileResource(file), configurationData, null, null);
 
         // then
         WorldGroupConfig loadedValue = manager.getProperty(worldGroups);
@@ -204,7 +195,7 @@ public class SettingsManagerImplTest {
         File file = copyFileFromResources("/config-sample.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(file);
         SettingsManager settingsManager =
-            new SettingsManagerImpl(resource, createConfiguration(TestConfiguration.class), null);
+            new SettingsManagerImpl(resource, createConfiguration(TestConfiguration.class), null, null);
         OptionalProperty<Integer> intOptional = new OptionalProperty<>(newProperty("version", 65));
 
         // when
@@ -241,7 +232,7 @@ public class SettingsManagerImplTest {
 
     private SettingsManager createManager() {
         given(migrationService.checkAndMigrate(reader, configurationData)).willReturn(false);
-        SettingsManager manager = new SettingsManagerImpl(resource, configurationData, migrationService);
+        SettingsManager manager = new SettingsManagerImpl(resource, configurationData, migrationService, null);
         reset(migrationService);
         return manager;
     }

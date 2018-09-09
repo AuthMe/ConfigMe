@@ -50,7 +50,7 @@ public class BeanPropertyTest {
         configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData);
+        resource.exportProperties(configurationData, null);
 
         // then
         CommandConfig config = property.getFromReader(resource.createReader());
@@ -76,7 +76,7 @@ public class BeanPropertyTest {
         configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData);
+        resource.exportProperties(configurationData, null);
 
         // then
         CommandConfig config = property.getFromReader(resource.createReader());

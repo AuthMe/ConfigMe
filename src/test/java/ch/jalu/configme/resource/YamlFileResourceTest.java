@@ -21,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +61,7 @@ public class YamlFileResourceTest {
         configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData);
+        resource.exportProperties(configurationData, null);
 
         // then
         // Load file again to make sure what we wrote can be read again
@@ -79,9 +78,8 @@ public class YamlFileResourceTest {
         expected.put(TestConfiguration.DUST_LEVEL, -1.1);
         expected.put(TestConfiguration.USE_COOL_FEATURES, false);
         expected.put(TestConfiguration.COOL_OPTIONS, asList("Dinosaurs", "Explosions", "Big trucks"));
-        expected.put(TestConfiguration.FORBIDDEN_NAMES, Arrays.asList("toto", "africa"));
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
-            // Check with reader#getObject to make sure the values were persisted to the file
+            // Check with resource#getObject to make sure the values were persisted to the file
             // If we go through Property objects they may fall back to their default values
             String propertyPath = entry.getKey().getPath();
             assertThat("Property '" + propertyPath + "' has expected value",
@@ -105,7 +103,7 @@ public class YamlFileResourceTest {
         configData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configData);
+        resource.exportProperties(configData, null);
 
         // then
         PropertyReader reader = resource.createReader();
@@ -162,7 +160,7 @@ public class YamlFileResourceTest {
 
         // when / then
         try {
-            resource.exportProperties(configurationData);
+            resource.exportProperties(configurationData, null);
             fail("Expected ConfigMeException to be thrown");
         } catch (ConfigMeException e) {
             assertThat(e.getCause(), instanceOf(IOException.class));
@@ -178,7 +176,7 @@ public class YamlFileResourceTest {
         configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData);
+        resource.exportProperties(configurationData, null);
 
         // then
         // The IDE likes manipulating the whitespace in the expected file. As long as it's handled outside of an IDE
@@ -198,12 +196,11 @@ public class YamlFileResourceTest {
         configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData);
+        resource.exportProperties(configurationData, null);
 
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
         assertThat(exportedLines, contains(
-            "",
             "test:",
             "    duration: 22"
         ));
@@ -220,12 +217,11 @@ public class YamlFileResourceTest {
         configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData);
+        resource.exportProperties(configurationData, null);
 
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
         assertThat(exportedLines, contains(
-            "",
             "test:",
             "    duration: 22",
             "sample:",
@@ -250,12 +246,11 @@ public class YamlFileResourceTest {
         configurationData.setValue(commandConfigProperty, config);
 
         // when
-        resource.exportProperties(configurationData);
+        resource.exportProperties(configurationData, null);
 
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
         assertThat(exportedLines, contains(
-            "",
             "config:",
             "    commands: {}",
             "    duration: 3"
@@ -276,12 +271,11 @@ public class YamlFileResourceTest {
         configurationData.setValue(secondProp, "თბილისი");
 
         // when
-        resource.exportProperties(configurationData);
+        resource.exportProperties(configurationData, null);
 
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
         assertThat(exportedLines, contains(
-            "",
             "first: Санкт-Петербург",
             "second: თბილისი",
             "third: 错误的密码"
@@ -302,12 +296,11 @@ public class YamlFileResourceTest {
         configurationData.setValue(secondProp, "awq ôÖ ÿõ 1234");
 
         // when
-        resource.exportProperties(configurationData);
+        resource.exportProperties(configurationData, null);
 
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath(), StandardCharsets.ISO_8859_1);
         assertThat(exportedLines, contains(
-            "",
             "elem:",
             "    first: test Ã ö û þ",
             "    second: awq ôÖ ÿõ 1234"

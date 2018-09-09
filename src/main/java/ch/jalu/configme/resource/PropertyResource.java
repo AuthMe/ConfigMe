@@ -2,6 +2,9 @@ package ch.jalu.configme.resource;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
 
+import javax.annotation.Nullable;
+import java.util.function.Function;
+
 /**
  * Represents a medium (typically a file on disk) from which property values should be built and allows to
  * write back to it.
@@ -21,7 +24,8 @@ public interface PropertyResource {
      * Exports the provided configuration data to the medium (typically a file).
      *
      * @param configurationData the configuration data to export
+     * @param indentFunction the function to get indent between properties by nesting property
      */
-    void exportProperties(ConfigurationData configurationData);
+    void exportProperties(ConfigurationData configurationData, @Nullable Function<Integer, Integer> indentFunction);
 
 }

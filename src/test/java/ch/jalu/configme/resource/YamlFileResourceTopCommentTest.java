@@ -45,7 +45,6 @@ public class YamlFileResourceTopCommentTest {
 
         // then
         assertThat(Files.readAllLines(file.toPath()), contains(
-            "",
             "# Group configuration number",
             "default-gamemode: CREATIVE",
             "worlds: ",
@@ -66,7 +65,6 @@ public class YamlFileResourceTopCommentTest {
 
         // then
         assertThat(Files.readAllLines(file.toPath()), contains(
-            "",
             "# Root comment",
             "# 'some' Section",
             "# Explanation for 'some'",
