@@ -1,6 +1,14 @@
 # ConfigMe Changelog
 
 ## ConfigMe 1.x
+#### 1.0.1 (2018-09-08)
+- Support all Collection types for export values (not only lists)
+  - Fixes built-in lowercase String Set property creating output which cannot be read again
+- Add getter on ConfigurationData to get all comments
+- If not defined, SettingsManagerBuilder creates a manager that uses no migration service (instead of the default one)
+
+:blue_book: [All changes in 1.0.1](https://github.com/AuthMe/ConfigMe/milestone/10?closed=1)
+
 #### 1.0 (2018-09-08)
 - Large refactoring: see [Migrating from 0.x to 1.x](https://github.com/AuthMe/ConfigMe/wiki/Migrating-from-0.x-to-1.x) for migration guide
   - Improve codebase, especially the export of values and the bean mapper ([#56](https://github.com/AuthMe/ConfigMe/issues/56))

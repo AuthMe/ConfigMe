@@ -39,8 +39,8 @@ public class ConfigurationDataBuilderTest {
         assertThat(configurationData.getCommentsForSection("other.section"), empty());
         assertThat(configurationData.getCommentsForSection("notDefinedAnywhere"), empty());
 
-        // 3 properties in AdditionalTestConfiguration, 10 properties in TestConfiguration
-        assertThat(configurationData.getProperties(), hasSize(13));
+        // 3 properties in AdditionalTestConfiguration, 11 properties in TestConfiguration
+        assertThat(configurationData.getProperties(), hasSize(14));
         // Take some samples, check for presence & expected comments
         assertHasPropertyWithComments(configurationData, TestConfiguration.SKIP_BORING_FEATURES, "Skip boring features?");
         assertHasPropertyWithComments(configurationData, TestConfiguration.DUST_LEVEL);

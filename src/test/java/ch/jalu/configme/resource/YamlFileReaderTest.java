@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -83,6 +84,7 @@ public class YamlFileReaderTest {
         expected.put(TestConfiguration.DUST_LEVEL, 2.4);
         expected.put(TestConfiguration.USE_COOL_FEATURES, true);
         expected.put(TestConfiguration.COOL_OPTIONS, Arrays.asList("Dinosaurs", "Explosions", "Big trucks"));
+        expected.put(TestConfiguration.FORBIDDEN_NAMES, new LinkedHashSet<>(Arrays.asList("admin", "staff", "moderator")));
 
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
             assertThat("Property '" + entry.getKey().getPath() + "' has expected value",
@@ -145,7 +147,7 @@ public class YamlFileReaderTest {
 
         // then
         assertThat(result, instanceOf(Map.class));
-        assertThat(((Map<String, ?>) result).keySet(), containsInAnyOrder("test", "sample", "version", "features"));
+        assertThat(((Map<String, ?>) result).keySet(), containsInAnyOrder("test", "sample", "version", "features", "security"));
     }
 
     @Test
@@ -157,7 +159,7 @@ public class YamlFileReaderTest {
         // when / then
         assertThat(reader.getObject("sample.ratio.wrong.dunno"), nullValue());
         assertThat(reader.getObject(TestConfiguration.RATIO_ORDER.getPath() + ".child"), nullValue());
-        assertThat(reader.getRoot().keySet(), containsInAnyOrder("test", "sample", "version", "features"));
+        assertThat(reader.getRoot().keySet(), containsInAnyOrder("test", "sample", "version", "features", "security"));
     }
 
     @Test
@@ -223,7 +225,8 @@ public class YamlFileReaderTest {
             "sample", "sample.ratio", "sample.ratio.order", "sample.ratio.fields",
             "version",
             "features", "features.boring", "features.boring.skip", "features.boring.colors", "features.boring.dustLevel",
-                        "features.cool", "features.cool.enabled", "features.cool.options"));
+                        "features.cool", "features.cool.enabled", "features.cool.options",
+            "security", "security.forbiddenNames"));
     }
 
     @Test
@@ -240,7 +243,8 @@ public class YamlFileReaderTest {
             "sample.ratio.order", "sample.ratio.fields",
             "version",
             "features.boring.skip", "features.boring.colors", "features.boring.dustLevel",
-            "features.cool.enabled", "features.cool.options"));
+            "features.cool.enabled", "features.cool.options",
+            "security.forbiddenNames"));
     }
 
     @Test

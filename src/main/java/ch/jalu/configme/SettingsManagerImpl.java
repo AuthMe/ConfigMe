@@ -33,7 +33,7 @@ public class SettingsManagerImpl implements SettingsManager {
     /**
      * Constructor. Use {@link SettingsManagerBuilder} to create instances.
      *
-     * @param resource the property resource to read and write properties to
+     * @param resource the property resource to read from and write to
      * @param configurationData the configuration data
      * @param migrationService migration service to check the property resource with
      */

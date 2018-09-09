@@ -24,3 +24,8 @@ features:
             - 'Dinosaurs'
             - 'Explosions'
             - 'Big trucks'
+security:
+    forbiddenNames:
+        - 'ADMIN'
+        - 'staff'
+        - 'Moderator'
