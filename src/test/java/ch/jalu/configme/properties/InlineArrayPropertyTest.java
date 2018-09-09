@@ -20,10 +20,10 @@ public class InlineArrayPropertyTest {
         BaseProperty<String[]> property = new InlineArrayProperty<>(
             "inline_value",
             new String[] {"multiline", "message"},
-            StandardInlineArrayConverters.DEFAULT_STRING
+            StandardInlineArrayConverters.STRING
         );
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getString("inline_value")).willReturn("hello\\nkek");
+        given(reader.getString("inline_value")).willReturn("hello\nkek");
 
         // when
         String[] result = property.getFromReader(reader);
@@ -38,7 +38,7 @@ public class InlineArrayPropertyTest {
         Property<String[]> property = new InlineArrayProperty<>(
             "array",
             new String[] {},
-            StandardInlineArrayConverters.DEFAULT_STRING
+            StandardInlineArrayConverters.STRING
         );
         String[] given = new String[] {"hello, chert", "how in hell?"};
 
