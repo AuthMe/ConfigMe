@@ -125,10 +125,7 @@ public final class SettingsManagerBuilder {
      */
     public SettingsManager create() {
         Objects.requireNonNull(resource, "resource");
-
-        if (configurationData == null)
-            configurationData = ConfigurationDataBuilder.createConfiguration();
-
+        Objects.requireNonNull(configurationData, "configurationData");
         return new SettingsManagerImpl(resource, configurationData, migrationService, indentFunction);
     }
 }
