@@ -1,4 +1,4 @@
-package ch.jalu.configme.properties.helper;
+package ch.jalu.configme.properties.inlinearray;
 
 /**
  * Converter from a simple String value to an array of multiple values.

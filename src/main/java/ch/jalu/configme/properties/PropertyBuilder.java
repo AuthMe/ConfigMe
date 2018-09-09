@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.helper.InlineArrayConverter;
+import ch.jalu.configme.properties.inlinearray.InlineArrayConverter;
 import ch.jalu.configme.properties.types.PropertyType;
 
 import java.util.Arrays;
@@ -14,13 +14,13 @@ public class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> {
     private String path;
     protected T defaultValue;
     private PropertyType<K> type;
-    private CreateFunction<K, T, Property<T>> createFunction;
+    private CreateFunction<K, T> createFunction;
 
     private PropertyBuilder(PropertyType<K> type) {
         this.type = type;
     }
 
-    public B createFunction(CreateFunction<K, T, Property<T>> createFunction) {
+    public B createFunction(CreateFunction<K, T> createFunction) {
         this.createFunction = createFunction;
 
         return (B) this;
@@ -140,7 +140,7 @@ public class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> {
     }
 
     @FunctionalInterface
-    public interface CreateFunction<K, T, P extends Property<T>> {
+    public interface CreateFunction<K, T> {
 
         Property<T> apply(String path, T defaultValue, PropertyType<K> type);
 

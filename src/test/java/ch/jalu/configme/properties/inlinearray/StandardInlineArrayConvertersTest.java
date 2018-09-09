@@ -1,4 +1,4 @@
-package ch.jalu.configme.properties.helper;
+package ch.jalu.configme.properties.inlinearray;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,8 +71,6 @@ public class StandardInlineArrayConvertersTest {
         // then
         if (converter == StandardInlineArrayConverters.STRING) {
             assertThat(result, equalTo(new String[]{""}));
-        } else if (converter == StandardInlineArrayConverters.BOOLEAN) {
-            assertThat(result, equalTo(new Boolean[]{false})); // TODO: change this
         } else {
             assertThat(result, emptyArray());
         }
@@ -106,28 +104,26 @@ public class StandardInlineArrayConvertersTest {
 
     private static TestData getTestData(StandardInlineArrayConverters converter) {
         TestData testData = new TestData();
-        // TODO: Should include -44
         if (converter == StandardInlineArrayConverters.LONG) {
-            testData.setInputAndExpected("3, 4,  -44", "3, 4", 3L, 4L);
+            testData.setInputAndExpected("3, 4,  -44,", "3, 4, -44", 3L, 4L, -44L);
             testData.setInputWithErrors("3, a, 4.5, 2, -b", 3L, 2L);
         } else if (converter == StandardInlineArrayConverters.INTEGER) {
-            testData.setInputAndExpected("3, 4,  -44", "3, 4", 3, 4);
+            testData.setInputAndExpected("3, 4,  -44,", "3, 4, -44", 3, 4, -44);
             testData.setInputWithErrors("3, a, 4.5, 2, -b", 3, 2);
         } else if (converter == StandardInlineArrayConverters.FLOAT) {
-            testData.setInputAndExpected("3, 4.5,  -445.68233", "3.0, 4.5, -445.68234", 3f, 4.5f, -445.68234f);
+            testData.setInputAndExpected("3, 4.5,  -445.68233,", "3.0, 4.5, -445.68234", 3f, 4.5f, -445.68234f);
             testData.setInputWithErrors("3, a, 4.5, -2, -b", 3f, 4.5f, -2f);
         } else if (converter == StandardInlineArrayConverters.DOUBLE) {
-            testData.setInputAndExpected("3, 4.5,  -445.68234", "3.0, 4.5, -445.68234", 3.0, 4.5, -445.68234);
+            testData.setInputAndExpected("3, 4.5,  -445.68234,", "3.0, 4.5, -445.68234", 3.0, 4.5, -445.68234);
             testData.setInputWithErrors("3, a, 4.5, -2, -b", 3.0, 4.5, -2.0);
         } else if (converter == StandardInlineArrayConverters.SHORT) {
-            testData.setInputAndExpected("3, 4,  -44", "3, 4", (short) 3, (short) 4);
+            testData.setInputAndExpected("3, 4,  -44,", "3, 4, -44", (short) 3, (short) 4, (short) -44);
             testData.setInputWithErrors("3, a, 4.5, 2, -b", (short) 3, (short) 2);
         } else if (converter == StandardInlineArrayConverters.BYTE) {
-            testData.setInputAndExpected("3, 9999, 4,  -44", "3, 4", (byte) 3, (byte) 4);
+            testData.setInputAndExpected("3, 9999, 4,  -44,", "3, 4, -44", (byte) 3, (byte) 4, (byte) -44);
             testData.setInputWithErrors("3, a, 4.5, 2, -b", (byte) 3, (byte) 2);
         } else if (converter == StandardInlineArrayConverters.BOOLEAN) {
-            // TODO: should be "true, false, true"
-            testData.setInputAndExpected("true, false,  true", "true, false, false", true, false, false);
+            testData.setInputAndExpected("true, false, ,, true", "true, false, true", true, false, true);
             testData.setInputWithErrors("TRUE, something, else, 43, true, -1", true, false, false, false, true, false);
         } else if (converter == StandardInlineArrayConverters.STRING) {
             testData.setInputAndExpected("a\nb\nLong test string\nd", "a\nb\nLong test string\nd",

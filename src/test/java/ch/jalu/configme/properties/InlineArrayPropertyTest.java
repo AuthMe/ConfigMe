@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.helper.StandardInlineArrayConverters;
+import ch.jalu.configme.properties.inlinearray.StandardInlineArrayConverters;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.Test;
 
