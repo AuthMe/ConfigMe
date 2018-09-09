@@ -7,10 +7,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+/**
+ * Test for {@link StandardInlineArrayConverters}.
+ */
 @RunWith(MockitoJUnitRunner.class)
-public class PrimitiveConvertHelperTest {
+public class StandardInlineArrayConvertersTest {
 
-    InlineConvertHelper<Float> convertHelper = new PrimitiveConvertHelper<>(", ", Float.class, Float::parseFloat);
+    InlineArrayConverter<Float> convertHelper = new StandardInlineArrayConverters<>(", ", Float.class, Float::parseFloat);
 
     Float[] targetArray = new Float[] {123.223F, 666.111F, (float) Math.PI};
     String targetString;

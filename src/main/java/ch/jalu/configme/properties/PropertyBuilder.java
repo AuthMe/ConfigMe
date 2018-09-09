@@ -1,16 +1,20 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.helper.InlineConvertHelper;
+import ch.jalu.configme.properties.helper.InlineArrayConverter;
 import ch.jalu.configme.properties.types.PropertyType;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> {
 
-    protected String path;
+    private String path;
     protected T defaultValue;
-    protected PropertyType<K> type;
-    protected CreateFunction<K, T, Property<T>> createFunction;
+    private PropertyType<K> type;
+    private CreateFunction<K, T, Property<T>> createFunction;
 
     private PropertyBuilder(PropertyType<K> type) {
         this.type = type;
@@ -60,6 +64,10 @@ public class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> {
         return new ArrayPropertyBuilder<>(type);
     }
 
+    public static <T> InlineArrayPropertyBuilder<T> inlineArrayProperty(InlineArrayConverter<T> inlineConverter) {
+        return new InlineArrayPropertyBuilder<>(inlineConverter);
+    }
+
     public static class MapPropertyBuilder<T> extends PropertyBuilder<T, Map<String, T>, MapPropertyBuilder<T>> {
 
         private MapPropertyBuilder(PropertyType<T> type) {
@@ -67,8 +75,9 @@ public class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> {
         }
 
         public MapPropertyBuilder<T> defaultEntry(String key, T value) {
-            if (this.defaultValue == null)
+            if (this.defaultValue == null) {
                 this.defaultValue = new HashMap<>();
+            }
 
             this.defaultValue.put(key, value);
 
@@ -87,15 +96,14 @@ public class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> {
 
     public static class ArrayPropertyBuilder<T> extends PropertyBuilder<T, T[], ArrayPropertyBuilder<T>> {
 
-        private InlineConvertHelper<T> convertHelper;
+        private InlineArrayConverter<T> convertHelper;
 
         ArrayPropertyBuilder(PropertyType<T> type) {
             super(type);
-
-            this.createFunction((path, defaultValue, propertyType) -> new ArrayProperty<>(path, defaultValue, propertyType, this.convertHelper));
+            this.createFunction(ArrayProperty::new);
         }
 
-        public ArrayPropertyBuilder<T> convertHelper(InlineConvertHelper<T> convertHelper) {
+        public ArrayPropertyBuilder<T> convertHelper(InlineArrayConverter<T> convertHelper) {
             this.convertHelper = convertHelper;
 
             return this;
@@ -106,7 +114,15 @@ public class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> {
 
             return this;
         }
+    }
 
+    public static class InlineArrayPropertyBuilder<T> extends PropertyBuilder<T, T[], InlineArrayPropertyBuilder<T>> {
+
+        private InlineArrayPropertyBuilder(InlineArrayConverter<T> inlineConverter) {
+            super(null);
+            createFunction(
+                (path, defaultValue, type) -> new InlineArrayProperty<>(path, defaultValue, inlineConverter));
+        }
     }
 
     public static class ListPropertyBuilder<T> extends PropertyBuilder<T, List<T>, ListPropertyBuilder<T>> {
@@ -126,7 +142,7 @@ public class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> {
     @FunctionalInterface
     public interface CreateFunction<K, T, P extends Property<T>> {
 
-        P apply(String path, T defaultValue, PropertyType<K> type);
+        Property<T> apply(String path, T defaultValue, PropertyType<K> type);
 
     }
 

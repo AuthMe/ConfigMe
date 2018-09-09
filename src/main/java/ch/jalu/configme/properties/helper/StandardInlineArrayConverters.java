@@ -6,33 +6,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class PrimitiveConvertHelper<T> implements InlineConvertHelper<T> {
+public class StandardInlineArrayConverters<T> implements InlineArrayConverter<T> {
 
-    private final String separator;
+    public static final InlineArrayConverter<Long> DEFAULT_LONG = new StandardInlineArrayConverters<>(", ", Long.class, Long::parseLong);
 
-    private final Class<T> type;
+    public static final InlineArrayConverter<Integer> DEFAULT_INTEGER = new StandardInlineArrayConverters<>(", ", Integer.class, Integer::parseInt);
 
-    private final Function<String, T> convertFunction;
+    public static final InlineArrayConverter<Float> DEFAULT_FLOAT = new StandardInlineArrayConverters<>(", ", Float.class, Float::parseFloat);
 
-    public static final InlineConvertHelper<Long> DEFAULT_LONG = new PrimitiveConvertHelper<>(", ", Long.class, Long::parseLong);
+    public static final InlineArrayConverter<Double> DEFAULT_DOUBLE = new StandardInlineArrayConverters<>(", ", Double.class, Double::parseDouble);
 
-    public static final InlineConvertHelper<Integer> DEFAULT_INTEGER = new PrimitiveConvertHelper<>(", ", Integer.class, Integer::parseInt);
+    public static final InlineArrayConverter<Short> DEFAULT_SHORT = new StandardInlineArrayConverters<>(", ", Short.class, Short::parseShort);
 
-    public static final InlineConvertHelper<Float> DEFAULT_FLOAT = new PrimitiveConvertHelper<>(", ", Float.class, Float::parseFloat);
+    public static final InlineArrayConverter<Byte> DEFAULT_BYTE = new StandardInlineArrayConverters<>(", ", Byte.class, Byte::parseByte);
 
-    public static final InlineConvertHelper<Double> DEFAULT_DOUBLE = new PrimitiveConvertHelper<>(", ", Double.class, Double::parseDouble);
+    public static final InlineArrayConverter<Boolean> DEFAULT_BOOLEAN = new StandardInlineArrayConverters<>(", ", Boolean.class, Boolean::parseBoolean);
 
-    public static final InlineConvertHelper<Short> DEFAULT_SHORT = new PrimitiveConvertHelper<>(", ", Short.class, Short::parseShort);
-
-    public static final InlineConvertHelper<Byte> DEFAULT_BYTE = new PrimitiveConvertHelper<>(", ", Byte.class, Byte::parseByte);
-
-    public static final InlineConvertHelper<Boolean> DEFAULT_BOOLEAN = new PrimitiveConvertHelper<>(", ", Boolean.class, Boolean::parseBoolean);
-
-    public static final InlineConvertHelper<String> DEFAULT_STRING = new PrimitiveConvertHelper<String>("\\\\n", String.class, s -> s) {
+    public static final InlineArrayConverter<String> DEFAULT_STRING = new StandardInlineArrayConverters<String>("\\\\n", String.class, s -> s) {
 
         // We override it, because it using different separators
         @Override
-        public Object toExportValue(String[] value) {
+        public String toExportValue(String[] value) {
             StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i < value.length; i++) {
@@ -48,7 +42,11 @@ public class PrimitiveConvertHelper<T> implements InlineConvertHelper<T> {
 
     };
 
-    public PrimitiveConvertHelper(String separator, Class<T> type, Function<String, T> convertFunction) {
+    private final String separator;
+    private final Class<T> type;
+    private final Function<String, T> convertFunction;
+
+    public StandardInlineArrayConverters(String separator, Class<T> type, Function<String, T> convertFunction) {
         this.separator = separator;
         this.type = type;
         this.convertFunction = convertFunction;
@@ -73,7 +71,7 @@ public class PrimitiveConvertHelper<T> implements InlineConvertHelper<T> {
     }
 
     @Override
-    public Object toExportValue(T[] value) {
+    public String toExportValue(T[] value) {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < value.length; i++) {
