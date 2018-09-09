@@ -8,17 +8,14 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Nullable;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class YamlFileResource implements PropertyResource {
 
@@ -37,14 +34,15 @@ public class YamlFileResource implements PropertyResource {
     }
 
     @Override
-    public void exportProperties(ConfigurationData configurationData) {
+    public void exportProperties(ConfigurationData configurationData, @Nullable Function<Integer, Integer> indentFunction) {
         try (FileOutputStream fos = new FileOutputStream(file);
              OutputStreamWriter writer = new OutputStreamWriter(fos, getCharset())) {
             PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
             for (Property<?> property : configurationData.getProperties()) {
                 final Object exportValue = getExportValue(property, configurationData);
-                exportValue(writer, pathTraverser, property.getPath(), exportValue);
+                exportValue(writer, pathTraverser, property.getPath(), exportValue, indentFunction);
             }
+            writer.append("\n");
             writer.flush();
         } catch (IOException e) {
             throw new ConfigMeException("Could not save config to '" + file.getPath() + "'", e);
@@ -66,29 +64,39 @@ public class YamlFileResource implements PropertyResource {
      * @param value the value to export
      * @throws IOException .
      */
-    protected void exportValue(Writer writer, PropertyPathTraverser pathTraverser,
-                               String path, Object value) throws IOException {
+    protected void exportValue(OutputStreamWriter writer, PropertyPathTraverser pathTraverser,
+                               String path, Object value, Function<Integer, Integer> indentFunction) throws IOException {
         if (value == null) {
             return;
         }
 
         if (value instanceof Map<?, ?> && !((Map) value).isEmpty()) {
             final String pathPrefix = path.isEmpty() ? "" : path + ".";
+
             for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
-                exportValue(writer, pathTraverser, pathPrefix + entry.getKey(), entry.getValue());
+                exportValue(writer, pathTraverser, pathPrefix + entry.getKey(), entry.getValue(), indentFunction);
             }
         } else {
             List<PathElement> pathElements = pathTraverser.getPathElements(path);
-            for (PathElement pathElement : pathElements) {
+
+            for (int i = 0; i < pathElements.size(); i++) {
+                PathElement pathElement = pathElements.get(i);
+
+                if (i == 0) {
+                    writeIndentingBetweenLines(writer, pathElement.getIndentationLevel(), indentFunction);
+                }
+
                 writeComments(writer, pathElement.getIndentationLevel(), pathElement.getComments());
-                writer.append("\n")
+                writer.append(this.getNewLineCheckingFileLength())
                     .append(indent(pathElement.getIndentationLevel()))
                     .append(pathElement.getName())
                     .append(":");
+                writer.flush();
             }
 
             writer.append(" ")
                 .append(toYamlIndented(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
+            writer.flush();
         }
     }
 
@@ -100,14 +108,35 @@ public class YamlFileResource implements PropertyResource {
      * @param comments the comment lines to write
      * @throws IOException .
      */
-    protected void writeComments(Writer writer, int indentation, List<String> comments) throws IOException {
+    protected void writeComments(OutputStreamWriter writer, int indentation, List<String> comments) throws IOException {
         if (comments.isEmpty()) {
             return;
         }
-        String commentStart = "\n" + indent(indentation) + "# ";
-        for (String comment : comments) {
-            writer.append(commentStart).append(comment);
+        String commentStart = indent(indentation) + "# ";
+
+        for (int i = 0; i < comments.size(); i++) {
+            writer.append(i == 0 ? this.getNewLineCheckingFileLength() : "\n").append(commentStart).append(comments.get(i));
         }
+
+        writer.flush();
+    }
+
+    private void writeIndentingBetweenLines(Writer writer, int indent, Function<Integer, Integer> function) throws IOException {
+        if (this.isEmptyFile() || function == null) {
+            return;
+        }
+
+        for (int i = 0; i < function.apply(indent); i++) {
+            writer.append("\n");
+        }
+    }
+
+    private String getNewLineCheckingFileLength() {
+        return this.isEmptyFile() ? "" : "\n";
+    }
+
+    private boolean isEmptyFile() {
+        return this.file.length() == 0;
     }
 
     /**

@@ -14,11 +14,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static ch.jalu.configme.TestUtils.transform;
 import static java.util.Collections.singletonList;
@@ -51,13 +47,12 @@ public class YamlSetPropertyExportTest {
         configurationData.setValue(setProperty, new LinkedHashSet<>(Arrays.asList(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD)));
 
         // when
-        resource.exportProperties(configurationData);
+        resource.exportProperties(configurationData, null);
 
         // then
         assertThat(setProperty.determineValue(resource.createReader()), contains(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD));
 
         assertThat(Files.readAllLines(configFile.toPath()), contains(
-            "",
             "sample:",
             "    ratio:",
             "        fields: ",
