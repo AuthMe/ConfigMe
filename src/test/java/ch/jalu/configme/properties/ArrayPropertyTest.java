@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.types.PropertyType;
+import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ public class ArrayPropertyTest {
         ArrayProperty<String> property = new ArrayProperty<>(
             "singleton",
             new String[] {"multiline", "message"},
-            PropertyType.stringType());
+            PrimitivePropertyType.STRING);
 
         given(reader.getObject("singleton")).willReturn("hello");
 
@@ -44,8 +44,7 @@ public class ArrayPropertyTest {
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {"multiline", "message"},
-            PropertyType.stringType()
-        );
+            PrimitivePropertyType.STRING);
 
         given(reader.getObject("array")).willReturn(Arrays.asList("qwerty", "123"));
 
@@ -57,7 +56,7 @@ public class ArrayPropertyTest {
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {"multiline", "message c:"},
-            PropertyType.stringType()
+            PrimitivePropertyType.STRING
         );
 
         given(reader.getObject("array")).willReturn(null);
@@ -71,7 +70,7 @@ public class ArrayPropertyTest {
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {},
-            PropertyType.stringType());
+            PrimitivePropertyType.STRING);
 
         String[] given = new String[] {"hello, chert", "how in hell?"};
 

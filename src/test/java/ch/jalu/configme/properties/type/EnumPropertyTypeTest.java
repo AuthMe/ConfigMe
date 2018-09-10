@@ -14,11 +14,6 @@ import static org.junit.Assert.assertThat;
 public class EnumPropertyTypeTest {
 
     @Test
-    public void shouldReturnNewInstance() {
-        assertThat(EnumPropertyType.of(TimeUnit.class), equalTo(new EnumPropertyType<>(TimeUnit.class)));
-    }
-
-    @Test
     public void shouldReturnEnumType() {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 

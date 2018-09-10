@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.types.PropertyType;
+import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +19,7 @@ public class CommonPropertyTest {
 
     @Test
     public void shouldReturnValueFromResource() {
-        Property<String> property = new CommonProperty<>("common.path", "default", PropertyType.stringType());
+        Property<String> property = new CommonProperty<>("common.path", "default", PrimitivePropertyType.STRING);
 
         given(reader.getObject("common.path")).willReturn("some string");
 
@@ -28,14 +28,14 @@ public class CommonPropertyTest {
 
     @Test
     public void shouldReturnDefaultValue() {
-        Property<String> property = new CommonProperty<>("common.path", "default", PropertyType.stringType());
+        Property<String> property = new CommonProperty<>("common.path", "default", PrimitivePropertyType.STRING);
 
         assertThat(property.determineValue(reader), equalTo("default"));
     }
 
     @Test
     public void shouldReturnValueAsExportValue() {
-        Property<String> property = new CommonProperty<>("common.path", "default", PropertyType.stringType());
+        Property<String> property = new CommonProperty<>("common.path", "default", PrimitivePropertyType.STRING);
 
         String given = "given string";
 

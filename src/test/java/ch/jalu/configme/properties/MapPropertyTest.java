@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.types.PropertyType;
+import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +22,7 @@ public class MapPropertyTest {
 
     @Test
     public void shouldReturnValueFromResource() {
-        MapProperty<String> property = new MapProperty<>("map", new HashMap<>(), PropertyType.stringType());
+        MapProperty<String> property = new MapProperty<>("map", new HashMap<>(), PrimitivePropertyType.STRING);
 
         given(reader.getObject("map")).willReturn(new HashMap<String, String>() {{
             put("test", "keks");
@@ -37,7 +37,7 @@ public class MapPropertyTest {
     public void shouldReturnDefaultValue() {
         MapProperty<String> property = new MapProperty<>("map", new HashMap<String, String>() {{
             put("test", "keks");
-        }}, PropertyType.stringType());
+        }}, PrimitivePropertyType.STRING);
 
         given(reader.getObject("map")).willReturn(null);
 
@@ -48,7 +48,7 @@ public class MapPropertyTest {
 
     @Test
     public void shouldReturnValueAsExportValue() {
-        MapProperty<String> property = new MapProperty<>("map", new HashMap<>(), PropertyType.stringType());
+        MapProperty<String> property = new MapProperty<>("map", new HashMap<>(), PrimitivePropertyType.STRING);
 
         Map<String, String> given = new HashMap<String, String>() {{
             put("test", "keks");
