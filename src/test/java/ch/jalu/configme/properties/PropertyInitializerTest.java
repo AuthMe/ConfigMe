@@ -2,9 +2,16 @@ package ch.jalu.configme.properties;
 
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
+import ch.jalu.configme.properties.inlinearray.StandardInlineArrayConverters;
+import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.Test;
 
+import static ch.jalu.configme.properties.PropertyInitializer.arrayProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.commonProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.inlineArrayProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.listProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.mapProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newBeanProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newLowercaseStringSetProperty;
@@ -36,6 +43,15 @@ public class PropertyInitializerTest {
         assertThat(optionalIntegerProperty("path"), instanceOf(OptionalProperty.class));
         assertThat(optionalStringProperty("path"), instanceOf(OptionalProperty.class));
         assertThat(optionalEnumProperty(TestEnum.class, "path"), instanceOf(OptionalProperty.class));
+    }
+
+    @Test
+    public void shouldInstantiateBuilders() {
+        assertThat(commonProperty(PrimitivePropertyType.STRING), instanceOf(PropertyBuilder.CommonPropertyBuilder.class));
+        assertThat(listProperty(PrimitivePropertyType.INTEGER), instanceOf(PropertyBuilder.ListPropertyBuilder.class));
+        assertThat(mapProperty(PrimitivePropertyType.DOUBLE), instanceOf(PropertyBuilder.MapPropertyBuilder.class));
+        assertThat(arrayProperty(PrimitivePropertyType.BOOLEAN), instanceOf(PropertyBuilder.ArrayPropertyBuilder.class));
+        assertThat(inlineArrayProperty(StandardInlineArrayConverters.FLOAT), instanceOf(PropertyBuilder.InlineArrayPropertyBuilder.class));
     }
 
     @Test

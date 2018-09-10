@@ -6,6 +6,7 @@ import ch.jalu.configme.resource.PropertyReader;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MapProperty<V> extends BaseProperty<Map<String, V>> {
 
@@ -20,7 +21,7 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
      */
     public MapProperty(String path, Map<String, V> defaultValue, PropertyType<V> type) {
         super(path, defaultValue);
-
+        Objects.requireNonNull(type, "type");
         this.type = type;
     }
 

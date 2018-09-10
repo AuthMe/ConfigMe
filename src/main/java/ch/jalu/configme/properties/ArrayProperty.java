@@ -8,6 +8,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class ArrayProperty<T> extends BaseProperty<T[]> {
 
@@ -22,6 +23,7 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
      */
     public ArrayProperty(String path, T[] defaultValue, PropertyType<T> type) {
         super(path, defaultValue);
+        Objects.requireNonNull(type, "type");
         this.type = type;
     }
 

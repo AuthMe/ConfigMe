@@ -4,141 +4,201 @@ import ch.jalu.configme.properties.inlinearray.InlineArrayConverter;
 import ch.jalu.configme.properties.types.PropertyType;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-public class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> {
+/**
+ * Builder for complex types of properties.
+ *
+ * @param <K> the PropertyType type the builder makes use of
+ * @param <T> the type of Property the builder produces
+ * @param <B> builder extension (concrete class extending this builder)
+ * @see PropertyInitializer
+ */
+public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> {
 
     private String path;
-    protected T defaultValue;
+    private T defaultValue;
     private PropertyType<K> type;
-    private CreateFunction<K, T> createFunction;
 
-    private PropertyBuilder(PropertyType<K> type) {
+    /**
+     * Constructor.
+     *
+     * @param type the property type
+     */
+    public PropertyBuilder(PropertyType<K> type) {
         this.type = type;
     }
 
-    public B createFunction(CreateFunction<K, T> createFunction) {
-        this.createFunction = createFunction;
-
-        return (B) this;
-    }
-
+    /**
+     * Sets the path of the property.
+     *
+     * @param path the path
+     * @return this builder
+     */
     public B path(String path) {
         this.path = path;
-
         return (B) this;
     }
 
+    /**
+     * Sets the default of the property.
+     *
+     * @param defaultValue the default value to set
+     * @return this builder
+     */
     public B defaultValue(T defaultValue) {
         this.defaultValue = defaultValue;
-
         return (B) this;
     }
 
-    public Property<T> build() {
-        Objects.requireNonNull(this.createFunction);
+    /**
+     * Creates a property with the configured details. All mandatory settings must have been set beforehand.
+     *
+     * @return the created property
+     */
+    public abstract Property<T> build();
 
-        return this.createFunction.apply(
-            this.path,
-            this.defaultValue,
-            this.type
-        );
+    protected final String getPath() {
+        return path;
     }
 
-    public static <T> CommonPropertyBuilder<T, T> commonProperty(PropertyType<T> type) {
-        return new CommonPropertyBuilder<T, T>(type).createFunction(CommonProperty::new);
+    protected final T getDefaultValue() {
+        return defaultValue;
     }
 
-    public static <T> ListPropertyBuilder<T> listProperty(PropertyType<T> type) {
-        return new ListPropertyBuilder<>(type).createFunction(ListProperty::new);
+    protected final PropertyType<K> getType() {
+        return type;
     }
 
-    public static <T> MapPropertyBuilder<T> mapProperty(PropertyType<T> type) {
-        return new MapPropertyBuilder<>(type).createFunction(MapProperty::new);
-    }
-
-    public static <T> ArrayPropertyBuilder<T> arrayProperty(PropertyType<T> type) {
-        return new ArrayPropertyBuilder<>(type);
-    }
-
-    public static <T> InlineArrayPropertyBuilder<T> inlineArrayProperty(InlineArrayConverter<T> inlineConverter) {
-        return new InlineArrayPropertyBuilder<>(inlineConverter);
-    }
-
+    /**
+     * Builder for {@link MapProperty}.
+     *
+     * @param <T> the value type of the map
+     */
     public static class MapPropertyBuilder<T> extends PropertyBuilder<T, Map<String, T>, MapPropertyBuilder<T>> {
 
-        private MapPropertyBuilder(PropertyType<T> type) {
+        public MapPropertyBuilder(PropertyType<T> type) {
             super(type);
+            defaultValue(new LinkedHashMap<>());
         }
 
         public MapPropertyBuilder<T> defaultEntry(String key, T value) {
-            if (this.defaultValue == null) {
-                this.defaultValue = new HashMap<>();
-            }
-
-            this.defaultValue.put(key, value);
-
+            getDefaultValue().put(key, value);
             return this;
         }
 
+        @Override
+        public MapProperty<T> build() {
+            return new MapProperty<>(getPath(), getDefaultValue(), getType());
+        }
     }
 
-    public static class CommonPropertyBuilder<K, T> extends PropertyBuilder<K, T, CommonPropertyBuilder<K, T>> {
+    /**
+     * Builder for {@link CommonProperty}.
+     *
+     * @param <T> the value type
+     */
+    public static class CommonPropertyBuilder<T> extends PropertyBuilder<T, T, CommonPropertyBuilder<T>> {
 
-        CommonPropertyBuilder(PropertyType<K> type) {
+        private CreateFunction<T, T> createFunction = CommonProperty::new;
+
+        public CommonPropertyBuilder(PropertyType<T> type) {
             super(type);
         }
 
+        public CommonPropertyBuilder<T> createFunction(CreateFunction<T, T> createFunction) {
+            this.createFunction = createFunction;
+            return this;
+        }
+
+        @Override
+        public Property<T> build() {
+            return createFunction.apply(getPath(), getDefaultValue(), getType());
+        }
     }
 
+    /**
+     * Builder for {@link ArrayProperty}.
+     *
+     * @param <T> the type of the elements in the array
+     */
     public static class ArrayPropertyBuilder<T> extends PropertyBuilder<T, T[], ArrayPropertyBuilder<T>> {
 
-        private InlineArrayConverter<T> convertHelper;
-
-        ArrayPropertyBuilder(PropertyType<T> type) {
+        public ArrayPropertyBuilder(PropertyType<T> type) {
             super(type);
-            this.createFunction(ArrayProperty::new);
         }
 
-        public ArrayPropertyBuilder<T> convertHelper(InlineArrayConverter<T> convertHelper) {
-            this.convertHelper = convertHelper;
-
-            return this;
-        }
-
+        @Override
         public ArrayPropertyBuilder<T> defaultValue(T... defaultValue) {
-            this.defaultValue = defaultValue;
+            return super.defaultValue(defaultValue);
+        }
 
-            return this;
+        @Override
+        public Property<T[]> build() {
+            return new ArrayProperty<>(getPath(), getDefaultValue(), getType());
         }
     }
 
+    /**
+     * Builder for {@link InlineArrayProperty}.
+     *
+     * @param <T> the type of the elements in the array
+     */
     public static class InlineArrayPropertyBuilder<T> extends PropertyBuilder<T, T[], InlineArrayPropertyBuilder<T>> {
 
-        private InlineArrayPropertyBuilder(InlineArrayConverter<T> inlineConverter) {
+        private InlineArrayConverter<T> inlineConverter;
+
+        public InlineArrayPropertyBuilder(InlineArrayConverter<T> inlineConverter) {
             super(null);
-            createFunction(
-                (path, defaultValue, type) -> new InlineArrayProperty<>(path, defaultValue, inlineConverter));
+            this.inlineConverter = inlineConverter;
+        }
+
+        @Override
+        public InlineArrayPropertyBuilder<T> defaultValue(T... defaultValue) {
+            return super.defaultValue(defaultValue);
+        }
+
+        @Override
+        public Property<T[]> build() {
+            return new InlineArrayProperty<>(getPath(), getDefaultValue(), inlineConverter);
         }
     }
 
+    /**
+     * Builder for {@link ListProperty}.
+     *
+     * @param <T> the type of the elements in the list
+     */
     public static class ListPropertyBuilder<T> extends PropertyBuilder<T, List<T>, ListPropertyBuilder<T>> {
 
-        ListPropertyBuilder(PropertyType<T> type) {
+        public ListPropertyBuilder(PropertyType<T> type) {
             super(type);
         }
 
         public ListPropertyBuilder<T> defaultValue(T... defaultValue) {
-            this.defaultValue = Arrays.asList(defaultValue);
-
-            return this;
+            return defaultValue(Arrays.asList(defaultValue));
         }
 
+        @Override
+        public ListPropertyBuilder<T> defaultValue(List<T> defaultValue) {
+            return super.defaultValue(Collections.unmodifiableList(defaultValue));
+        }
+
+        @Override
+        public Property<List<T>> build() {
+            return new ListProperty<>(getPath(), getDefaultValue(), getType());
+        }
     }
 
+    /**
+     * Function taking three arguments, which returns a property of the given type.
+     *
+     * @param <K> the PropertyType used internally by the property
+     * @param <T> the actual value type of the Property
+     */
     @FunctionalInterface
     public interface CreateFunction<K, T> {
 

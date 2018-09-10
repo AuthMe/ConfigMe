@@ -3,6 +3,8 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.properties.inlinearray.InlineArrayConverter;
 import ch.jalu.configme.resource.PropertyReader;
 
+import java.util.Objects;
+
 /**
  * Array property which reads and stores its value as one String in which the elements
  * are separated by a delimiter.
@@ -22,6 +24,7 @@ public class InlineArrayProperty<T> extends BaseProperty<T[]> {
      */
     public InlineArrayProperty(String path, T[] defaultValue, InlineArrayConverter<T> inlineConverter) {
         super(path, defaultValue);
+        Objects.requireNonNull(inlineConverter, "inlineConverter");
         this.inlineConverter = inlineConverter;
     }
 

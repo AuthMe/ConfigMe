@@ -1,5 +1,8 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.properties.inlinearray.InlineArrayConverter;
+import ch.jalu.configme.properties.types.PropertyType;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -109,6 +112,30 @@ public class PropertyInitializer {
      */
     public static <B> Property<B> newBeanProperty(Class<B> beanClass, String path, B defaultValue) {
         return new BeanProperty<>(beanClass, path, defaultValue);
+    }
+
+    // --------------
+    // Property builders
+    // --------------
+    public static <T> PropertyBuilder.CommonPropertyBuilder<T> commonProperty(PropertyType<T> type) {
+        return new PropertyBuilder.CommonPropertyBuilder<>(type);
+    }
+
+    public static <T> PropertyBuilder.ListPropertyBuilder<T> listProperty(PropertyType<T> type) {
+        return new PropertyBuilder.ListPropertyBuilder<>(type);
+    }
+
+    public static <T> PropertyBuilder.MapPropertyBuilder<T> mapProperty(PropertyType<T> type) {
+        return new PropertyBuilder.MapPropertyBuilder<>(type);
+    }
+
+    public static <T> PropertyBuilder.ArrayPropertyBuilder<T> arrayProperty(PropertyType<T> type) {
+        return new PropertyBuilder.ArrayPropertyBuilder<>(type);
+    }
+
+    public static <T> PropertyBuilder.InlineArrayPropertyBuilder<T> inlineArrayProperty(
+        InlineArrayConverter<T> inlineConverter) {
+        return new PropertyBuilder.InlineArrayPropertyBuilder<>(inlineConverter);
     }
 
     // --------------

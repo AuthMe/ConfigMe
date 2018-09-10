@@ -4,6 +4,7 @@ import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class CommonProperty<T> extends BaseProperty<T> {
 
@@ -18,7 +19,7 @@ public class CommonProperty<T> extends BaseProperty<T> {
      */
     public CommonProperty(String path, T defaultValue, PropertyType<T> type) {
         super(path, defaultValue);
-
+        Objects.requireNonNull(type, "type");
         this.type = type;
     }
 
