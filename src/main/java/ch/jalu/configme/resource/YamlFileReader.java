@@ -1,6 +1,7 @@
 package ch.jalu.configme.resource;
 
 import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.utils.Utils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
@@ -163,8 +164,7 @@ public class YamlFileReader implements PropertyReader {
     protected Map<String, Object> loadFile() {
         try (FileInputStream fis = new FileInputStream(file);
              InputStreamReader isr = new InputStreamReader(fis, charset)) {
-            Object obj = new Yaml().load(isr);
-            return obj == null ? Collections.emptyMap() : (Map<String, Object>) obj;
+            return Utils.sanitizeMap((Map<String, Object>) new Yaml().load(isr));
         } catch (IOException e) {
             throw new ConfigMeException("Could not read file '" + file + "'", e);
         } catch (ClassCastException e) {
