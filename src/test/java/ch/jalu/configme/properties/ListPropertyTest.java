@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.types.PropertyType;
+import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ public class ListPropertyTest {
 
     @Test
     public void shouldReturnValueFromResource() {
-        Property<List<String>> property = new ListProperty<>("list", Collections.emptyList(), PropertyType.stringType());
+        Property<List<String>> property = new ListProperty<>("list", Collections.emptyList(), PrimitivePropertyType.STRING);
 
         given(reader.getObject("list")).willReturn(Arrays.asList("hello", "it is list"));
 
@@ -32,7 +32,7 @@ public class ListPropertyTest {
 
     @Test
     public void shouldReturnDefaultValue() {
-        Property<List<String>> property = new ListProperty<>("list", Arrays.asList("default list", "you are pidor c:"), PropertyType.stringType());
+        Property<List<String>> property = new ListProperty<>("list", Arrays.asList("default list", "you are pidor c:"), PrimitivePropertyType.STRING);
 
         given(reader.getObject("list")).willReturn(null);
 
@@ -41,7 +41,7 @@ public class ListPropertyTest {
 
     @Test
     public void shouldReturnValueAsExportValue() {
-        Property<List<String>> property = new ListProperty<>("list", Collections.emptyList(), PropertyType.stringType());
+        Property<List<String>> property = new ListProperty<>("list", Collections.emptyList(), PrimitivePropertyType.STRING);
 
         Object result = property.toExportValue(Arrays.asList("default list", "you are pidor c:"));
 

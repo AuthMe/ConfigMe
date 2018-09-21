@@ -6,6 +6,7 @@ import ch.jalu.configme.resource.PropertyReader;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ListProperty<T> extends BaseProperty<List<T>> {
 
@@ -20,7 +21,7 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
      */
     public ListProperty(String path, List<T> defaultValue, PropertyType<T> type) {
         super(path, defaultValue);
-
+        Objects.requireNonNull(type, "type");
         this.type = type;
     }
 

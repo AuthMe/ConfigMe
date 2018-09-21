@@ -1,33 +1,15 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyReader;
+import ch.jalu.configme.properties.types.EnumPropertyType;
 
-public class EnumProperty<E extends Enum<E>> extends BaseProperty<E> {
-
-    private final Class<E> clazz;
+/**
+ * Enum property.
+ *
+ * @param <E> the enum type
+ */
+public class EnumProperty<E extends Enum<E>> extends CommonProperty<E> {
 
     public EnumProperty(Class<E> clazz, String path, E defaultValue) {
-        super(path, defaultValue);
-        this.clazz = clazz;
-    }
-
-    @Override
-    protected E getFromReader(PropertyReader reader) {
-        String value = reader.getString(getPath());
-        return value == null ? null : mapToEnum(value);
-    }
-
-    private E mapToEnum(String value) {
-        for (E entry : clazz.getEnumConstants()) {
-            if (entry.name().equalsIgnoreCase(value)) {
-                return entry;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Object toExportValue(E value) {
-        return value.name();
+        super(path, defaultValue, EnumPropertyType.of(clazz));
     }
 }

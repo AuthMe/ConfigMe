@@ -1,8 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.helper.InlineConvertHelper;
-import ch.jalu.configme.properties.helper.PrimitiveConvertHelper;
-import ch.jalu.configme.properties.types.PropertyType;
+import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +13,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 
+/**
+ * Test for {@link ArrayProperty}.
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class ArrayPropertyTest {
 
@@ -22,91 +23,66 @@ public class ArrayPropertyTest {
     private PropertyReader reader;
 
     @Test
-    public void shouldReturnArrayFromInlineConvertHelper() {
-        ArrayProperty<String> property = new ArrayProperty<>(
-            "inline_value",
-            new String[] {"multiline", "message"},
-            PropertyType.stringType(),
-            InlineConvertHelper.stringHelper()
-        );
-
-        given(reader.getObject("inline_value")).willReturn("hello\\nkek");
-
-        String[] result = property.getFromReader(reader);
-
-        assertThat(result, equalTo(new String[] {"hello", "kek"}));
-    }
-
-    @Test
     public void shouldReturnArrayFromSingletonValue() {
+        // given
         ArrayProperty<String> property = new ArrayProperty<>(
-            "signleton",
+            "singleton",
             new String[] {"multiline", "message"},
-            PropertyType.stringType(),
-            null
-        );
+            PrimitivePropertyType.STRING);
 
-        given(reader.getObject("signleton")).willReturn("hello");
+        given(reader.getObject("singleton")).willReturn("hello");
 
+        // when
         String[] result = property.getFromReader(reader);
 
+        // then
         assertThat(result, equalTo(new String[] {"hello"}));
     }
 
     @Test
     public void shouldReturnArrayFromResource() {
+        // given
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {"multiline", "message"},
-            PropertyType.stringType(),
-            null
-        );
-
+            PrimitivePropertyType.STRING);
         given(reader.getObject("array")).willReturn(Arrays.asList("qwerty", "123"));
 
-        assertThat(property.determineValue(reader), equalTo(new String[] {"qwerty", "123"}));
+        // when
+        String[] result = property.determineValue(reader);
+
+        // then
+        assertThat(result, equalTo(new String[] {"qwerty", "123"}));
     }
 
     @Test
     public void shouldReturnDefaultValue() {
+        // given
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {"multiline", "message c:"},
-            PropertyType.stringType(),
-            null
-        );
+            PrimitivePropertyType.STRING);
 
         given(reader.getObject("array")).willReturn(null);
 
-        assertThat(property.determineValue(reader), equalTo(new String[] {"multiline", "message c:"}));
+        // when
+        String[] result = property.determineValue(reader);
+
+        // then
+        assertThat(result, equalTo(new String[] {"multiline", "message c:"}));
     }
 
     @Test
     public void shouldReturnValueAsExportValue() {
+        // given
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {},
-            PropertyType.stringType(),
-            null
-        );
+            PrimitivePropertyType.STRING);
 
         String[] given = new String[] {"hello, chert", "how in hell?"};
 
+        // when / then
         assertThat(property.toExportValue(given), equalTo(new String[] {"hello, chert", "how in hell?"}));
     }
-
-    @Test
-    public void shouldReturnConvertedValueAsExportValue() {
-        Property<String[]> property = new ArrayProperty<>(
-            "array",
-            new String[] {},
-            PropertyType.stringType(),
-            PrimitiveConvertHelper.DEFAULT_STRING
-        );
-
-        String[] given = new String[] {"hello, chert", "how in hell?"};
-
-        assertThat(property.toExportValue(given), equalTo("hello, chert\nhow in hell?"));
-    }
-
 }

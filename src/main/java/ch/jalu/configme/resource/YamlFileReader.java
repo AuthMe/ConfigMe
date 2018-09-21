@@ -101,14 +101,6 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    public Float getFloat(String path) {
-        Number n = getTypedObject(path, Number.class);
-        return (n == null)
-            ? null
-            : n.floatValue();
-    }
-
-    @Override
     public Boolean getBoolean(String path) {
         return getTypedObject(path, Boolean.class);
     }

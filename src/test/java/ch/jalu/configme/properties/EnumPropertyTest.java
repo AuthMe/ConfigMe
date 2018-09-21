@@ -18,7 +18,7 @@ public class EnumPropertyTest {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getString(property.getPath())).willReturn("Entry_B");
+        given(reader.getObject(property.getPath())).willReturn("Entry_B");
 
         // when
         TestEnum result = property.determineValue(reader);
@@ -32,7 +32,7 @@ public class EnumPropertyTest {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getString(property.getPath())).willReturn("Bogus");
+        given(reader.getObject(property.getPath())).willReturn("Bogus");
 
         // when
         TestEnum result = property.determineValue(reader);
@@ -46,7 +46,7 @@ public class EnumPropertyTest {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getString(property.getPath())).willReturn(null);
+        given(reader.getObject(property.getPath())).willReturn(null);
 
         // when
         TestEnum result = property.determineValue(reader);
@@ -60,7 +60,7 @@ public class EnumPropertyTest {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getString(property.getPath())).willReturn("ENTRY_B");
+        given(reader.getObject(property.getPath())).willReturn("ENTRY_B");
 
         // when
         boolean result = property.isPresent(reader);
@@ -74,7 +74,7 @@ public class EnumPropertyTest {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getString(property.getPath())).willReturn(null);
+        given(reader.getObject(property.getPath())).willReturn(null);
 
         // when
         boolean result = property.isPresent(reader);
@@ -88,7 +88,7 @@ public class EnumPropertyTest {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_A);
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getString(property.getPath())).willReturn("wrong value");
+        given(reader.getObject(property.getPath())).willReturn("wrong value");
 
         // when
         boolean result = property.isPresent(reader);

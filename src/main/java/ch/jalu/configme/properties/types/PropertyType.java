@@ -1,64 +1,36 @@
 package ch.jalu.configme.properties.types;
 
-import ch.jalu.configme.beanmapper.Mapper;
-
 import javax.annotation.Nullable;
 
+/**
+ * Property type: provides methods for converting between property resource and a defined type
+ * and allows to be used in generic structures such as an array property or map property.
+ *
+ * @param <T> type of the values the property type handles
+ */
 public interface PropertyType<T> {
 
+    /**
+     * Converts the given object (typically read from a property resource) to the given type, if possible.
+     * Returns null otherwise.
+     *
+     * @param object the object to convert
+     * @return the converted value, or null
+     */
     @Nullable
-    T convert(Object object);
+    T convert(@Nullable Object object);
 
+    /**
+     * @return the type of the values handled by this instance
+     */
     Class<T> getType();
 
+    /**
+     * Converts the given value to its export value. (Converts in the opposite way of {@link #convert}.)
+     *
+     * @param value the value to convert
+     * @return the value to use in the property export
+     */
     Object toExportValue(T value);
-
-    static <B> BeanPropertyType<B> beanType(Class<B> type) {
-        return BeanPropertyType.of(type);
-    }
-
-    static <B> BeanPropertyType<B> beanType(Class<B> type, Mapper mapper) {
-        return BeanPropertyType.of(type, mapper);
-    }
-
-    static <E extends Enum<E>> EnumPropertyType<E> enumType(Class<E> type) {
-        return EnumPropertyType.of(type);
-    }
-
-    static PropertyType<Boolean> booleanType() {
-        return PrimitivePropertyType.BOOLEAN;
-    }
-
-    static PropertyType<Double> doubleType() {
-        return PrimitivePropertyType.DOUBLE;
-    }
-
-    static PropertyType<Float> floatType() {
-        return PrimitivePropertyType.FLOAT;
-    }
-
-    static PropertyType<Long> longType() {
-        return PrimitivePropertyType.LONG;
-    }
-
-    static PropertyType<Integer> integerType() {
-        return PrimitivePropertyType.INTEGER;
-    }
-
-    static PropertyType<Short> shortType() {
-        return PrimitivePropertyType.SHORT;
-    }
-
-    static PropertyType<Byte> byteType() {
-        return PrimitivePropertyType.BYTE;
-    }
-
-    static PropertyType<String> lowerCaseStringType() {
-        return PrimitivePropertyType.LOWERCASE_STRING;
-    }
-
-    static PropertyType<String> stringType() {
-        return PrimitivePropertyType.STRING;
-    }
 
 }

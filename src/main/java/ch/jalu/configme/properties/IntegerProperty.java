@@ -1,20 +1,13 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyReader;
+import ch.jalu.configme.properties.types.PrimitivePropertyType;
 
-public class IntegerProperty extends BaseProperty<Integer> {
+/**
+ * Integer property. This extension exists for convenience and backwards compatibility.
+ */
+public class IntegerProperty extends CommonProperty<Integer> {
 
     public IntegerProperty(String path, Integer defaultValue) {
-        super(path, defaultValue);
-    }
-
-    @Override
-    protected Integer getFromReader(PropertyReader reader) {
-        return reader.getInt(getPath());
-    }
-
-    @Override
-    public Object toExportValue(Integer value) {
-        return value;
+        super(path, defaultValue, PrimitivePropertyType.INTEGER);
     }
 }

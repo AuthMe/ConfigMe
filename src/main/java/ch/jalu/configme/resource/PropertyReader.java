@@ -63,15 +63,6 @@ public interface PropertyReader {
     Double getDouble(String path);
 
     /**
-     * Returns the value of the given path as a float if available.
-     *
-     * @param path the path to retrieve a float for
-     * @return the value as a float, or null if not applicable or unavailable
-     */
-    @Nullable
-    Float getFloat(String path);
-
-    /**
      * Returns the value of the given path as a boolean if available.
      *
      * @param path the path to retrieve a boolean for

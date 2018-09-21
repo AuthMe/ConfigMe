@@ -1,14 +1,15 @@
 package ch.jalu.configme.properties.types;
 
-import java.util.Objects;
-
-@SuppressWarnings("unchecked")
 public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
 
     private Class<E> enumType;
 
     public EnumPropertyType(Class<E> enumType) {
         this.enumType = enumType;
+    }
+
+    public static <E extends Enum<E>> EnumPropertyType<E> of(Class<E> type) {
+        return new EnumPropertyType<>(type);
     }
 
     @Override
@@ -40,25 +41,8 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
         return this.enumType;
     }
 
+    @Override
     public Object toExportValue(E value) {
         return value.name();
-    }
-
-    public static <E extends Enum<E>> EnumPropertyType<E> of(Class<E> type) {
-        return new EnumPropertyType<>(type);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EnumPropertyType<?> that = (EnumPropertyType<?>) o;
-        return Objects.equals(enumType, that.enumType);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(enumType);
     }
 }

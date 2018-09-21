@@ -1,6 +1,5 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.helper.InlineConvertHelper;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 
@@ -9,12 +8,11 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class ArrayProperty<T> extends BaseProperty<T[]> {
 
     private final PropertyType<T> type;
-
-    private final InlineConvertHelper<T> convertHelper;
 
     /**
      * Constructor.
@@ -23,11 +21,10 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
      * @param defaultValue the default value of the property
      * @param type         the property type
      */
-    public ArrayProperty(String path, T[] defaultValue, PropertyType<T> type, InlineConvertHelper<T> convertHelper) {
+    public ArrayProperty(String path, T[] defaultValue, PropertyType<T> type) {
         super(path, defaultValue);
-
+        Objects.requireNonNull(type, "type");
         this.type = type;
-        this.convertHelper = convertHelper;
     }
 
     @Nullable
@@ -40,10 +37,6 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
         // If object is null, then return null.
         if (object == null) {
             return null;
-        }
-
-        if (String.class.isInstance(object) && this.convertHelper != null) {
-            return this.convertHelper.fromString((String) object);
         }
 
         // If object is not collection, then return singleton array.
@@ -74,14 +67,8 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
         );
     }
 
-    @Nullable
     @Override
     public Object toExportValue(T[] value) {
-        // If we have a convert helper, then use him
-        if (this.convertHelper != null) {
-            return this.convertHelper.toExportValue(value);
-        }
-
         Object[] array = new Object[value.length];
 
         for (int i = 0; i < array.length; i++) {
