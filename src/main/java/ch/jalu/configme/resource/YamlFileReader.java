@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,34 +48,14 @@ public class YamlFileReader implements PropertyReader {
         }
 
         Object node = root;
-
-        String tempPath = path;
-        int tempPathLength = 0;
-        while (true) {
-            Object tempNode = getEntryIfIsMap(tempPath, node);
-
-            if (tempNode != null) {
-                tempPathLength += tempPath.length() + 1;
-
-                if (tempPathLength < path.length()) {
-                    tempPath = path.substring(tempPathLength);
-                } else {
-                    return tempNode;
-                }
-
-                node = tempNode;
-
-                continue;
+        String[] keys = path.split("\\.");
+        for (String key : keys) {
+            node = getEntryIfIsMap(key, node);
+            if (node == null) {
+                return null;
             }
-
-            if (!tempPath.contains(".")) {
-                break;
-            }
-
-            tempPath = tempPath.substring(0, tempPath.lastIndexOf("."));
         }
-
-        return null;
+        return node;
     }
 
     @Override
