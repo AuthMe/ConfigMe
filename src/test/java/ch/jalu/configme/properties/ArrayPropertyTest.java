@@ -41,27 +41,35 @@ public class ArrayPropertyTest {
 
     @Test
     public void shouldReturnArrayFromResource() {
+        // given
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {"multiline", "message"},
             PrimitivePropertyType.STRING);
-
         given(reader.getObject("array")).willReturn(Arrays.asList("qwerty", "123"));
 
-        assertThat(property.determineValue(reader), equalTo(new String[] {"qwerty", "123"}));
+        // when
+        String[] result = property.determineValue(reader);
+
+        // then
+        assertThat(result, equalTo(new String[] {"qwerty", "123"}));
     }
 
     @Test
     public void shouldReturnDefaultValue() {
+        // given
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {"multiline", "message c:"},
-            PrimitivePropertyType.STRING
-        );
+            PrimitivePropertyType.STRING);
 
         given(reader.getObject("array")).willReturn(null);
 
-        assertThat(property.determineValue(reader), equalTo(new String[] {"multiline", "message c:"}));
+        // when
+        String[] result = property.determineValue(reader);
+
+        // then
+        assertThat(result, equalTo(new String[] {"multiline", "message c:"}));
     }
 
     @Test

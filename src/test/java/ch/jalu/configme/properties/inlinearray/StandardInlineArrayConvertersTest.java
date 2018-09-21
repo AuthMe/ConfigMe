@@ -88,8 +88,6 @@ public class StandardInlineArrayConvertersTest {
         assertThat(result, equalTo(""));
     }
 
-
-
     @Parameterized.Parameters(name = "{0}")
     public static List<Object[]> collectStandardInlineConverters() throws IllegalAccessException {
         List<Object[]> converters = new ArrayList<>();
@@ -159,9 +157,7 @@ public class StandardInlineArrayConvertersTest {
         private static Object[] createArray(Object... values) {
             Class<?> clazz = values[0].getClass();
             Object[] arr = (Object[]) Array.newInstance(clazz, values.length);
-            for (int i = 0; i < values.length; ++i) {
-                arr[i] = values[i];
-            }
+            System.arraycopy(values, 0, arr, 0, values.length);
             return arr;
         }
     }
