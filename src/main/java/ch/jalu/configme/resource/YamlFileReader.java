@@ -1,7 +1,6 @@
 package ch.jalu.configme.resource;
 
 import ch.jalu.configme.exception.ConfigMeException;
-import ch.jalu.configme.utils.Utils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
@@ -135,7 +134,7 @@ public class YamlFileReader implements PropertyReader {
     protected Map<String, Object> loadFile() {
         try (FileInputStream fis = new FileInputStream(file);
              InputStreamReader isr = new InputStreamReader(fis, charset)) {
-            return Utils.sanitizeMap((Map<String, Object>) new Yaml().load(isr));
+            return normalizeMap((Map<Object, Object>) new Yaml().load(isr));
         } catch (IOException e) {
             throw new ConfigMeException("Could not read file '" + file + "'", e);
         } catch (ClassCastException e) {
@@ -143,6 +142,16 @@ public class YamlFileReader implements PropertyReader {
         } catch (YAMLException e) {
             throw new ConfigMeException("YAML error while trying to load file '" + file + "'", e);
         }
+    }
+
+    /**
+     * Processes the map as read from SnakeYAML and may return a new, adjusted one.
+     *
+     * @param map the map to normalize
+     * @return the normalized map (or same map if no changes are needed)
+     */
+    protected Map<String, Object> normalizeMap(@Nullable Map<Object, Object> map) {
+        return new MapNormalizer().normalizeMap(map);
     }
 
     protected final File getFile() {
