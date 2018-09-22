@@ -15,7 +15,7 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
     @Override
     public E convert(Object object) {
         // If object is enum, then return this object, casting to E
-        if (this.enumType.isInstance(object)) {
+        if (enumType.isInstance(object)) {
             return (E) object;
         }
 
@@ -24,21 +24,14 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
             return null;
         }
 
-        String name = object.toString().toLowerCase();
-
-        // Try find enum by name. If successfully find, then return result c:
-        for (E entry : this.enumType.getEnumConstants()) {
+        String name = (String) object;
+        for (E entry : enumType.getEnumConstants()) {
             if (entry.name().equalsIgnoreCase(name)) {
                 return entry;
             }
         }
 
         return null;
-    }
-
-    @Override
-    public Class<E> getType() {
-        return this.enumType;
     }
 
     @Override

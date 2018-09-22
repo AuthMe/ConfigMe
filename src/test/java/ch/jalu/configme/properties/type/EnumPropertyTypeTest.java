@@ -2,57 +2,88 @@ package ch.jalu.configme.properties.type;
 
 import ch.jalu.configme.properties.types.EnumPropertyType;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
+/**
+ * Test for {@link EnumPropertyType}.
+ */
 public class EnumPropertyTypeTest {
 
     @Test
-    public void shouldReturnEnumType() {
-        EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
-
-        assertThat(propertyType.getType(), equalTo(TimeUnit.class));
-    }
-
-    @Test
     public void shouldReturnUnknown() {
+        // given
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
-        assertThat(propertyType.convert("unknown"), equalTo(null));
+        // when
+        TimeUnit result = propertyType.convert("unknown");
+
+        // then
+        assertThat(result, nullValue());
     }
 
     @Test
     public void shouldReturnNull() {
+        // given
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
-        assertThat(propertyType.convert(new Object()), equalTo(null));
+        // when
+        TimeUnit result = propertyType.convert(new Object());
+
+        // then
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void shouldHandleNull() {
+        // given
+        EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
+
+        // when
+        TimeUnit result = propertyType.convert(null);
+
+        // then
+        assertThat(result, nullValue());
     }
 
     @Test
     public void shouldReturnHimself() {
+        // given
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
-        assertThat(propertyType.convert(TimeUnit.SECONDS), equalTo(TimeUnit.SECONDS));
+        // when
+        TimeUnit result = propertyType.convert(TimeUnit.SECONDS);
+
+        // then
+        assertThat(result, equalTo(TimeUnit.SECONDS));
     }
 
     @Test
     public void shouldReturnConvertedValue() {
+        // given
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
-        assertThat(propertyType.convert("SECONDS"), equalTo(TimeUnit.SECONDS));
+        // when
+        TimeUnit result = propertyType.convert("SECONDS");
+
+        // then
+        assertThat(result, equalTo(TimeUnit.SECONDS));
     }
 
     @Test
     public void shouldReturnValueAsExportValue() {
+        // given
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
-        assertThat(propertyType.toExportValue(TimeUnit.DAYS), equalTo("DAYS"));
+        // when
+        Object result = propertyType.toExportValue(TimeUnit.DAYS);
+
+        // then
+        assertThat(result, equalTo("DAYS"));
     }
 
 }

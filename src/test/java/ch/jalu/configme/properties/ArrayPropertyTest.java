@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Arrays;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 
@@ -23,12 +24,12 @@ public class ArrayPropertyTest {
     private PropertyReader reader;
 
     @Test
-    public void shouldReturnArrayFromSingletonValue() {
+    public void shouldReturnNullFornonCollectionTypes() {
         // given
         ArrayProperty<String> property = new ArrayProperty<>(
             "singleton",
             new String[] {"multiline", "message"},
-            PrimitivePropertyType.STRING);
+            PrimitivePropertyType.STRING, String[]::new);
 
         given(reader.getObject("singleton")).willReturn("hello");
 
@@ -36,7 +37,25 @@ public class ArrayPropertyTest {
         String[] result = property.getFromReader(reader);
 
         // then
-        assertThat(result, equalTo(new String[] {"hello"}));
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    public void shouldHandleNull() {
+        // given
+        // given
+        ArrayProperty<String> property = new ArrayProperty<>(
+            "singleton",
+            new String[] {"multiline", "message"},
+            PrimitivePropertyType.STRING, String[]::new);
+
+        given(reader.getObject("singleton")).willReturn(null);
+
+        // when
+        String[] result = property.getFromReader(reader);
+
+        // then
+        assertThat(result, nullValue());
     }
 
     @Test
@@ -45,7 +64,7 @@ public class ArrayPropertyTest {
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {"multiline", "message"},
-            PrimitivePropertyType.STRING);
+            PrimitivePropertyType.STRING, String[]::new);
         given(reader.getObject("array")).willReturn(Arrays.asList("qwerty", "123"));
 
         // when
@@ -61,7 +80,7 @@ public class ArrayPropertyTest {
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {"multiline", "message c:"},
-            PrimitivePropertyType.STRING);
+            PrimitivePropertyType.STRING, String[]::new);
 
         given(reader.getObject("array")).willReturn(null);
 
@@ -78,7 +97,7 @@ public class ArrayPropertyTest {
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {},
-            PrimitivePropertyType.STRING);
+            PrimitivePropertyType.STRING, String[]::new);
 
         String[] given = new String[] {"hello, chert", "how in hell?"};
 

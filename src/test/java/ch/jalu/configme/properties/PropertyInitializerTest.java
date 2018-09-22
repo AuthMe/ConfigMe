@@ -50,7 +50,7 @@ public class PropertyInitializerTest {
         assertThat(commonProperty(PrimitivePropertyType.STRING), instanceOf(PropertyBuilder.CommonPropertyBuilder.class));
         assertThat(listProperty(PrimitivePropertyType.INTEGER), instanceOf(PropertyBuilder.ListPropertyBuilder.class));
         assertThat(mapProperty(PrimitivePropertyType.DOUBLE), instanceOf(PropertyBuilder.MapPropertyBuilder.class));
-        assertThat(arrayProperty(PrimitivePropertyType.BOOLEAN), instanceOf(PropertyBuilder.ArrayPropertyBuilder.class));
+        assertThat(arrayProperty(PrimitivePropertyType.BOOLEAN, Boolean[]::new), instanceOf(PropertyBuilder.ArrayPropertyBuilder.class));
         assertThat(inlineArrayProperty(StandardInlineArrayConverters.FLOAT), instanceOf(PropertyBuilder.InlineArrayPropertyBuilder.class));
     }
 

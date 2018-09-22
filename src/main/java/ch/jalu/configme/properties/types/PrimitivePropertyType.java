@@ -9,54 +9,46 @@ import java.util.function.Function;
  */
 public class PrimitivePropertyType<T> implements PropertyType<T> {
 
-    public static final PropertyType<Long> LONG = fromNumber(Long.class, Number::longValue);
+    public static final PropertyType<Long> LONG = fromNumber(Number::longValue);
 
-    public static final PropertyType<Integer> INTEGER = fromNumber(Integer.class, Number::intValue);
+    public static final PropertyType<Integer> INTEGER = fromNumber(Number::intValue);
 
-    public static final PropertyType<Double> DOUBLE = fromNumber(Double.class, Number::doubleValue);
+    public static final PropertyType<Double> DOUBLE = fromNumber(Number::doubleValue);
 
-    public static final PropertyType<Float> FLOAT = fromNumber(Float.class, Number::floatValue);
+    public static final PropertyType<Float> FLOAT = fromNumber(Number::floatValue);
 
-    public static final PropertyType<Short> SHORT = fromNumber(Short.class, Number::shortValue);
+    public static final PropertyType<Short> SHORT = fromNumber(Number::shortValue);
 
-    public static final PropertyType<Byte> BYTE = fromNumber(Byte.class, Number::byteValue);
+    public static final PropertyType<Byte> BYTE = fromNumber(Number::byteValue);
 
     public static final PropertyType<Boolean> BOOLEAN = new PrimitivePropertyType<>(
-        Boolean.class,
         object -> object instanceof Boolean ? (Boolean) object : null);
 
     public static final PropertyType<String> STRING = new PrimitivePropertyType<>(
-        String.class,
         object -> object == null ? null : object.toString());
 
     public static final PropertyType<String> LOWERCASE_STRING = new PrimitivePropertyType<>(
-        String.class,
         object -> object == null ? null : object.toString().toLowerCase());
 
-    private final Class<T> type;
     private final Function<Object, T> convertFunction;
     private final Function<T, Object> exportValueFunction;
 
     /**
      * Constructor.
      *
-     * @param type the type of the values handled by this property type
      * @param convertFunction function to convert to the given type
      */
-    public PrimitivePropertyType(Class<T> type, Function<Object, T> convertFunction) {
-        this(type, convertFunction, t -> t);
+    public PrimitivePropertyType(Function<Object, T> convertFunction) {
+        this(convertFunction, t -> t);
     }
 
     /**
      * Constructor.
      *
-     * @param type the type of the values handled by this property type
      * @param convertFunction function to convert to the given type
      * @param exportValueFunction function to convert a value to its export value
      */
-    public PrimitivePropertyType(Class<T> type, Function<Object, T> convertFunction,
-                                 Function<T, Object> exportValueFunction) {
-        this.type = type;
+    public PrimitivePropertyType(Function<Object, T> convertFunction, Function<T, Object> exportValueFunction) {
         this.convertFunction = convertFunction;
         this.exportValueFunction = exportValueFunction;
     }
@@ -67,18 +59,12 @@ public class PrimitivePropertyType<T> implements PropertyType<T> {
     }
 
     @Override
-    public Class<T> getType() {
-        return type;
-    }
-
-    @Override
     public Object toExportValue(T value) {
         return exportValueFunction.apply(value);
     }
 
     /* Helper to create property types which convert from a Number object. */
-    private static <T> PrimitivePropertyType<T> fromNumber(Class<T> type, Function<Number, T> function) {
-        return new PrimitivePropertyType<>(type,
-            object -> object instanceof Number ? function.apply((Number) object) : null);
+    private static <T> PrimitivePropertyType<T> fromNumber(Function<Number, T> function) {
+        return new PrimitivePropertyType<>(object -> object instanceof Number ? function.apply((Number) object) : null);
     }
 }

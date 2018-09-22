@@ -6,6 +6,7 @@ import ch.jalu.configme.properties.types.PropertyType;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.IntFunction;
 
 /**
  * Convenience class for instantiating {@link Property} objects. You can use
@@ -129,8 +130,9 @@ public class PropertyInitializer {
         return new PropertyBuilder.MapPropertyBuilder<>(type);
     }
 
-    public static <T> PropertyBuilder.ArrayPropertyBuilder<T> arrayProperty(PropertyType<T> type) {
-        return new PropertyBuilder.ArrayPropertyBuilder<>(type);
+    public static <T> PropertyBuilder.ArrayPropertyBuilder<T> arrayProperty(PropertyType<T> type,
+                                                                            IntFunction<T[]> arrayProducer) {
+        return new PropertyBuilder.ArrayPropertyBuilder<>(type, arrayProducer);
     }
 
     public static <T> PropertyBuilder.InlineArrayPropertyBuilder<T> inlineArrayProperty(

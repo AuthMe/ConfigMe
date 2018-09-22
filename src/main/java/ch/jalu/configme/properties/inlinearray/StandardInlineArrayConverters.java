@@ -1,10 +1,11 @@
 package ch.jalu.configme.properties.inlinearray;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 
 /**
@@ -41,11 +42,11 @@ public class StandardInlineArrayConverters<T> implements InlineArrayConverter<T>
 
 
     private final String separator;
-    private final Function<Integer, T[]> arrayProducer;
+    private final IntFunction<T[]> arrayProducer;
     private final Function<String, T> convertFunction;
     private final boolean useTrimAndSpaces;
 
-    public StandardInlineArrayConverters(String separator, Function<Integer, T[]> arrayProducer,
+    public StandardInlineArrayConverters(String separator, IntFunction<T[]> arrayProducer,
                                          Function<String, T> convertFunction) {
         this(separator, arrayProducer, convertFunction, true);
     }
@@ -59,7 +60,7 @@ public class StandardInlineArrayConverters<T> implements InlineArrayConverter<T>
      * @param useTrimAndSpaces true if a space should be put after the separator in the export and if the split elements
      *                         from the input String should be trimmed before being passed to the convert function
      */
-    public StandardInlineArrayConverters(String separator, Function<Integer, T[]> arrayProducer,
+    public StandardInlineArrayConverters(String separator, IntFunction<T[]> arrayProducer,
                                          Function<String, T> convertFunction, boolean useTrimAndSpaces) {
         this.separator = separator;
         this.arrayProducer = arrayProducer;
@@ -70,17 +71,11 @@ public class StandardInlineArrayConverters<T> implements InlineArrayConverter<T>
     @Override
     public T[] fromString(String input) {
         String[] inputArray = input.split(Pattern.quote(separator));
-        List<T> list = new ArrayList<>(inputArray.length);
 
-        for (String string : inputArray) {
-            T value = convert(string);
-
-            if (value != null) {
-                list.add(value);
-            }
-        }
-
-        return list.toArray(arrayProducer.apply(list.size()));
+        return Arrays.stream(inputArray)
+            .map(this::convert)
+            .filter(Objects::nonNull)
+            .toArray(arrayProducer);
     }
 
     @Override

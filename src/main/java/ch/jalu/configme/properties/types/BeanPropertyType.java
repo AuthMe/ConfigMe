@@ -4,7 +4,6 @@ import ch.jalu.configme.beanmapper.DefaultMapper;
 import ch.jalu.configme.beanmapper.Mapper;
 import ch.jalu.configme.utils.TypeInformation;
 
-@SuppressWarnings("unchecked")
 public class BeanPropertyType<B> implements PropertyType<B> {
 
     private final TypeInformation beanType;
@@ -24,13 +23,9 @@ public class BeanPropertyType<B> implements PropertyType<B> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public B convert(Object object) {
         return (B) mapper.convertToBean(object, beanType);
-    }
-
-    @Override
-    public Class<B> getType() {
-        return (Class<B>) beanType.getSafeToWriteClass();
     }
 
     @Override

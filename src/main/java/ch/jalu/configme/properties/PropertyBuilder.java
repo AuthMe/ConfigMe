@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntFunction;
 
 /**
  * Builder for complex types of properties.
@@ -127,8 +128,11 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
      */
     public static class ArrayPropertyBuilder<T> extends PropertyBuilder<T, T[], ArrayPropertyBuilder<T>> {
 
-        public ArrayPropertyBuilder(PropertyType<T> type) {
+        private final IntFunction<T[]> arrayProducer;
+
+        public ArrayPropertyBuilder(PropertyType<T> type, IntFunction<T[]> arrayProducer) {
             super(type);
+            this.arrayProducer = arrayProducer;
         }
 
         @Override
@@ -138,7 +142,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
 
         @Override
         public Property<T[]> build() {
-            return new ArrayProperty<>(getPath(), getDefaultValue(), getType());
+            return new ArrayProperty<>(getPath(), getDefaultValue(), getType(), arrayProducer);
         }
     }
 

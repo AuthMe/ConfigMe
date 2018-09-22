@@ -128,7 +128,7 @@ public class PropertyBuilderTest {
     @Test
     public void shouldCreateArrayProperty() {
         // given / when
-        Property<Long[]> property = new PropertyBuilder.ArrayPropertyBuilder<>(PrimitivePropertyType.LONG)
+        Property<Long[]> property = new PropertyBuilder.ArrayPropertyBuilder<>(PrimitivePropertyType.LONG, Long[]::new)
             .path("given.path")
             .defaultValue(5L, 11L, 23L)
             .build();

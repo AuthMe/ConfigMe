@@ -21,11 +21,6 @@ public interface PropertyType<T> {
     T convert(@Nullable Object object);
 
     /**
-     * @return the type of the values handled by this instance
-     */
-    Class<T> getType();
-
-    /**
      * Converts the given value to its export value. (Converts in the opposite way of {@link #convert}.)
      *
      * @param value the value to convert
