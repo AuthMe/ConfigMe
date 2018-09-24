@@ -8,13 +8,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 
+/**
+ * Test for {@link ListProperty}.
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class ListPropertyTest {
 
@@ -23,29 +26,39 @@ public class ListPropertyTest {
 
     @Test
     public void shouldReturnValueFromResource() {
-        Property<List<String>> property = new ListProperty<>("list", Collections.emptyList(), PrimitivePropertyType.STRING);
+        // given
+        Property<List<Integer>> property = new ListProperty<>("list", PrimitivePropertyType.INTEGER);
+        given(reader.getList("list")).willReturn((List) Arrays.asList(3, 5, 7.0));
 
-        given(reader.getObject("list")).willReturn(Arrays.asList("hello", "it is list"));
+        // when
+        List<Integer> result = property.determineValue(reader);
 
-        assertThat(property.determineValue(reader), equalTo(Arrays.asList("hello", "it is list")));
+        // then
+        assertThat(result, contains(3, 5, 7));
     }
 
     @Test
     public void shouldReturnDefaultValue() {
-        Property<List<String>> property = new ListProperty<>("list", Arrays.asList("default list", "you are pidor c:"), PrimitivePropertyType.STRING);
+        // given
+        Property<List<Integer>> property = new ListProperty<>("list", PrimitivePropertyType.INTEGER, 8, 9, 10);
+        given(reader.getList("list")).willReturn(null);
 
-        given(reader.getObject("list")).willReturn(null);
+        // when
+        List<Integer> result = property.determineValue(reader);
 
-        assertThat(property.determineValue(reader), equalTo(Arrays.asList("default list", "you are pidor c:")));
+        // then
+        assertThat(result, contains(8, 9, 10));
     }
 
     @Test
     public void shouldReturnValueAsExportValue() {
-        Property<List<String>> property = new ListProperty<>("list", Collections.emptyList(), PrimitivePropertyType.STRING);
+        // given
+        Property<List<Integer>> property = new ListProperty<>("list", PrimitivePropertyType.INTEGER, Arrays.asList(-2, 16));
 
-        Object result = property.toExportValue(Arrays.asList("default list", "you are pidor c:"));
+        // when
+        Object result = property.toExportValue(Arrays.asList(128, -256, 512));
 
-        assertThat(result, equalTo(Arrays.asList("default list", "you are pidor c:")));
+        // then
+        assertThat(result, equalTo(Arrays.asList(128, -256, 512)));
     }
-
 }

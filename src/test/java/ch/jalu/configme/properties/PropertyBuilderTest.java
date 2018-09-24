@@ -169,13 +169,10 @@ public class PropertyBuilderTest {
 
     @Test
     public void shouldThrowForMissingDefaultValue() {
-        // given / when
-        NullPointerException e = catchExceptionOrFail(NullPointerException.class,
+        // given / when / then
+        catchExceptionOrFail(NullPointerException.class,
             () -> new PropertyBuilder.ListPropertyBuilder<>(PrimitivePropertyType.DOUBLE)
                 .path("defined.path")
                 .build());
-
-        // then
-        assertThat(e.getMessage(), equalTo("defaultValue"));
     }
 }

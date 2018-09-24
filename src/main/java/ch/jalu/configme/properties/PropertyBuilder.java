@@ -4,7 +4,6 @@ import ch.jalu.configme.properties.inlinearray.InlineArrayConverter;
 import ch.jalu.configme.properties.types.PropertyType;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -183,17 +182,12 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
         }
 
         public ListPropertyBuilder<T> defaultValue(T... defaultValue) {
-            return defaultValue(Arrays.asList(defaultValue));
-        }
-
-        @Override
-        public ListPropertyBuilder<T> defaultValue(List<T> defaultValue) {
-            return super.defaultValue(Collections.unmodifiableList(defaultValue));
+            return super.defaultValue(Arrays.asList(defaultValue));
         }
 
         @Override
         public Property<List<T>> build() {
-            return new ListProperty<>(getPath(), getDefaultValue(), getType());
+            return new ListProperty<>(getPath(), getType(), getDefaultValue());
         }
     }
 
