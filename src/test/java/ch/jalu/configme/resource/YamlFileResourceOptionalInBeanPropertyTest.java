@@ -50,7 +50,7 @@ public class YamlFileResourceOptionalInBeanPropertyTest {
         configurationData.setValue(commandConfigProperty, result);
 
         // when
-        resource.exportProperties(configurationData, null);
+        resource.exportProperties(configurationData);
 
         // then
         PropertyResource resourceAfterSave = new YamlFileResource(file);

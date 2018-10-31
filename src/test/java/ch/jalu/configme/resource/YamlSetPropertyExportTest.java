@@ -51,7 +51,7 @@ public class YamlSetPropertyExportTest {
         configurationData.setValue(setProperty, new LinkedHashSet<>(Arrays.asList(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD)));
 
         // when
-        resource.exportProperties(configurationData, null);
+        resource.exportProperties(configurationData);
 
         // then
         assertThat(setProperty.determineValue(resource.createReader()), contains(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD));

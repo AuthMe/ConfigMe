@@ -30,7 +30,7 @@ public class BeanPropertiesDemo {
     }
 
     public String generateUserInfo() {
-        SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(configFile)
+        SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(configFile).and()
             .configurationData(DemoSettings.class).create();
         UserBase userBase = settingsManager.getProperty(DemoSettings.USER_BASE);
 

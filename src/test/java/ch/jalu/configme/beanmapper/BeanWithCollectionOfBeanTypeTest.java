@@ -46,6 +46,7 @@ public class BeanWithCollectionOfBeanTypeTest {
         // given
         File file = TestUtils.copyFileFromResources(NESTED_CHAT_COMPONENT_YML, temporaryFolder);
         SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file)
+            .and()
             .configurationData(PropertyHolder.class).create();
 
         // when
@@ -64,7 +65,7 @@ public class BeanWithCollectionOfBeanTypeTest {
     public void shouldSerializeProperly() throws IOException {
         // given
         File file = TestUtils.copyFileFromResources(NESTED_CHAT_COMPONENT_YML, temporaryFolder);
-        SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file)
+        SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file).and()
             .configurationData(PropertyHolder.class).create();
 
         // when
@@ -90,7 +91,7 @@ public class BeanWithCollectionOfBeanTypeTest {
     public void shouldSerializeComplexObject() throws IOException {
         // given
         File file = TestUtils.copyFileFromResources(NESTED_CHAT_COMPONENT_YML, temporaryFolder);
-        SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file)
+        SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file).and()
             .configurationData(PropertyHolder.class).create();
         settingsManager.setProperty(PropertyHolder.TEST, createComplexComponent());
 

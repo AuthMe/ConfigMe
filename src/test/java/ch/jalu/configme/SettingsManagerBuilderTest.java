@@ -66,6 +66,7 @@ public class SettingsManagerBuilderTest {
 
         // when
         SettingsManagerImpl settingsManager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(configFile)
+            .and()
             .configurationData(configurationData)
             .useDefaultMigrationService()
             .create();
@@ -107,6 +108,7 @@ public class SettingsManagerBuilderTest {
 
         // when
         SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
+            .and()
             .configurationData(TestConfiguration.class)
             .useDefaultMigrationService()
             .create();

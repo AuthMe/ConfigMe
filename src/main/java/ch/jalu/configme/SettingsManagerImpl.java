@@ -7,7 +7,6 @@ import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
 
 /**
  * Default implementation of {@link SettingsManager}. Use the {@link SettingsManagerBuilder} to create instances.
@@ -30,7 +29,6 @@ public class SettingsManagerImpl implements SettingsManager {
     private final ConfigurationData configurationData;
     private final PropertyResource resource;
     private final MigrationService migrationService;
-    private final Function<Integer, Integer> indentFunction;
 
     /**
      * Constructor. Use {@link SettingsManagerBuilder} to create instances.
@@ -38,14 +36,12 @@ public class SettingsManagerImpl implements SettingsManager {
      * @param resource the property resource to read from and write to
      * @param configurationData the configuration data
      * @param migrationService migration service to check the property resource with
-     * @param indentFunction the function to get indent between properties by nesting property
      */
     protected SettingsManagerImpl(PropertyResource resource, ConfigurationData configurationData,
-                                  @Nullable MigrationService migrationService, @Nullable Function<Integer, Integer> indentFunction) {
+                                  @Nullable MigrationService migrationService) {
         this.configurationData = configurationData;
         this.resource = resource;
         this.migrationService = migrationService;
-        this.indentFunction = indentFunction;
         loadFromResourceAndValidate();
     }
 
@@ -80,7 +76,7 @@ public class SettingsManagerImpl implements SettingsManager {
 
     @Override
     public void save() {
-        resource.exportProperties(configurationData, this.indentFunction);
+        resource.exportProperties(configurationData);
     }
 
     /**

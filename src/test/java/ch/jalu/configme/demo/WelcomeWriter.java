@@ -58,7 +58,7 @@ public class WelcomeWriter {
     private SettingsManager initSettings() {
         // Copy the demo/config.yml instead of using it directly so it doesn't get overridden
         configFile = copyFileFromJar("/demo/config.yml");
-        return SettingsManagerBuilder.withYamlFile(configFile).configurationData(TitleConfig.class).create();
+        return SettingsManagerBuilder.withYamlFile(configFile).and().configurationData(TitleConfig.class).create();
     }
 
     /**

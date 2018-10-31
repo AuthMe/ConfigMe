@@ -61,7 +61,7 @@ public class YamlFileResourceTest {
         configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData, null);
+        resource.exportProperties(configurationData);
 
         // then
         // Load file again to make sure what we wrote can be read again
@@ -103,7 +103,7 @@ public class YamlFileResourceTest {
         configData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configData, null);
+        resource.exportProperties(configData);
 
         // then
         PropertyReader reader = resource.createReader();
@@ -160,7 +160,7 @@ public class YamlFileResourceTest {
 
         // when / then
         try {
-            resource.exportProperties(configurationData, null);
+            resource.exportProperties(configurationData);
             fail("Expected ConfigMeException to be thrown");
         } catch (ConfigMeException e) {
             assertThat(e.getCause(), instanceOf(IOException.class));
@@ -176,7 +176,7 @@ public class YamlFileResourceTest {
         configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData, null);
+        resource.exportProperties(configurationData);
 
         // then
         // The IDE likes manipulating the whitespace in the expected file. As long as it's handled outside of an IDE
@@ -196,7 +196,7 @@ public class YamlFileResourceTest {
         configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData, null);
+        resource.exportProperties(configurationData);
 
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
@@ -217,7 +217,7 @@ public class YamlFileResourceTest {
         configurationData.initializeValues(resource.createReader());
 
         // when
-        resource.exportProperties(configurationData, null);
+        resource.exportProperties(configurationData);
 
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
@@ -246,7 +246,7 @@ public class YamlFileResourceTest {
         configurationData.setValue(commandConfigProperty, config);
 
         // when
-        resource.exportProperties(configurationData, null);
+        resource.exportProperties(configurationData);
 
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
@@ -271,7 +271,7 @@ public class YamlFileResourceTest {
         configurationData.setValue(secondProp, "თბილისი");
 
         // when
-        resource.exportProperties(configurationData, null);
+        resource.exportProperties(configurationData);
 
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
@@ -296,7 +296,7 @@ public class YamlFileResourceTest {
         configurationData.setValue(secondProp, "awq ôÖ ÿõ 1234");
 
         // when
-        resource.exportProperties(configurationData, null);
+        resource.exportProperties(configurationData);
 
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath(), StandardCharsets.ISO_8859_1);

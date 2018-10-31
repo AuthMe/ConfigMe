@@ -11,7 +11,7 @@ import ch.jalu.configme.utils.Utils;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.function.IntUnaryOperator;
 
 /**
  * Creates {@link SettingsManager} instances.
@@ -21,7 +21,6 @@ public final class SettingsManagerBuilder {
     private final PropertyResource resource;
     private ConfigurationData configurationData;
     private MigrationService migrationService;
-    private Function<Integer, Integer> indentFunction;
 
     private SettingsManagerBuilder(PropertyResource resource) {
         this.resource = resource;
@@ -31,12 +30,10 @@ public final class SettingsManagerBuilder {
      * Creates a builder, using the given YAML file folder and him name to use as property resource.
      *
      * @param folder the folder from which the YAML file will be taken
-     * @param fileName the name of the file to be used as YAML file
-     * @return settings manager builder
+     * @param fileName the name of the YAML file to use
+     * @return yaml resource builder (which then creates a settings manager builder)
      */
-    public static SettingsManagerBuilder withYamlFile(File folder, String fileName) {
-        folder.mkdirs();
-
+    public static YamlResourceBuilder withYamlFile(File folder, String fileName) {
         return withYamlFile(new File(folder, fileName));
     }
 
@@ -44,11 +41,11 @@ public final class SettingsManagerBuilder {
      * Creates a builder, using the given YAML file to use as property resource.
      *
      * @param file the yaml file to use
-     * @return settings manager builder
+     * @return yaml resource builder (which then creates a settings manager builder)
      */
-    public static SettingsManagerBuilder withYamlFile(File file) {
+    public static YamlResourceBuilder withYamlFile(File file) {
         Utils.createFileIfNotExists(file);
-        return new SettingsManagerBuilder(new YamlFileResource(file));
+        return new YamlResourceBuilder(file);
     }
 
     /**
@@ -107,17 +104,6 @@ public final class SettingsManagerBuilder {
     }
 
     /**
-     * Sets the indent function
-     *
-     * @param indentFunction the indent function
-     * @return this builder
-     */
-    public SettingsManagerBuilder indendFunction(@Nullable Function<Integer, Integer> indentFunction) {
-        this.indentFunction = indentFunction;
-        return this;
-    }
-
-    /**
      * Creates a settings manager instance. It is mandatory that resource and configuration data have been
      * configured beforehand.
      *
@@ -126,6 +112,39 @@ public final class SettingsManagerBuilder {
     public SettingsManager create() {
         Objects.requireNonNull(resource, "resource");
         Objects.requireNonNull(configurationData, "configurationData");
-        return new SettingsManagerImpl(resource, configurationData, migrationService, indentFunction);
+        return new SettingsManagerImpl(resource, configurationData, migrationService);
+    }
+
+    /**
+     * Builder to configure a YAML file resource.
+     */
+    public static class YamlResourceBuilder {
+        private final File file;
+        private IntUnaryOperator indentFunction;
+
+        protected YamlResourceBuilder(File file) {
+            this.file = file;
+        }
+
+        /**
+         * Sets the indent function used when exporting data.
+         *
+         * @param indentFunction the indent function to use
+         * @return this builder
+         */
+        public YamlResourceBuilder indentFunction(IntUnaryOperator indentFunction) {
+            this.indentFunction = indentFunction;
+            return this;
+        }
+
+        /**
+         * Creates the YAML file resource according to the builder's configured state and registers it
+         * with a new settings manager builder instance.
+         *
+         * @return settings manager builder with configured yaml file resource
+         */
+        public SettingsManagerBuilder and() {
+            return new SettingsManagerBuilder(new YamlFileResource(file, indentFunction));
+        }
     }
 }

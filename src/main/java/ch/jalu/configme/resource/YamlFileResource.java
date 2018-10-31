@@ -19,17 +19,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.IntUnaryOperator;
 
 public class YamlFileResource implements PropertyResource {
 
     private static final String INDENTATION = "    ";
 
     private final File file;
+    private final IntUnaryOperator indentFunction;
     private Yaml yamlObject;
 
     public YamlFileResource(File file) {
+        this(file, null);
+    }
+
+    public YamlFileResource(File file, @Nullable IntUnaryOperator indentFunction) {
         this.file = file;
+        this.indentFunction = indentFunction;
     }
 
     @Override
@@ -38,13 +44,13 @@ public class YamlFileResource implements PropertyResource {
     }
 
     @Override
-    public void exportProperties(ConfigurationData configurationData, @Nullable Function<Integer, Integer> indentFunction) {
+    public void exportProperties(ConfigurationData configurationData) {
         try (FileOutputStream fos = new FileOutputStream(file);
              OutputStreamWriter writer = new OutputStreamWriter(fos, getCharset())) {
             PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
             for (Property<?> property : configurationData.getProperties()) {
                 final Object exportValue = getExportValue(property, configurationData);
-                exportValue(writer, pathTraverser, property.getPath(), exportValue, indentFunction);
+                exportValue(writer, pathTraverser, property.getPath(), exportValue);
             }
             writer.append("\n");
             writer.flush();
@@ -69,7 +75,7 @@ public class YamlFileResource implements PropertyResource {
      * @throws IOException .
      */
     protected void exportValue(OutputStreamWriter writer, PropertyPathTraverser pathTraverser,
-                               String path, Object value, Function<Integer, Integer> indentFunction) throws IOException {
+                               String path, Object value) throws IOException {
         if (value == null) {
             return;
         }
@@ -78,7 +84,7 @@ public class YamlFileResource implements PropertyResource {
             final String pathPrefix = path.isEmpty() ? "" : path + ".";
 
             for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
-                exportValue(writer, pathTraverser, pathPrefix + entry.getKey(), entry.getValue(), indentFunction);
+                exportValue(writer, pathTraverser, pathPrefix + entry.getKey(), entry.getValue());
             }
         } else {
             List<PathElement> pathElements = pathTraverser.getPathElements(path);
@@ -87,7 +93,7 @@ public class YamlFileResource implements PropertyResource {
                 PathElement pathElement = pathElements.get(i);
 
                 if (i == 0) {
-                    writeIndentingBetweenLines(writer, pathElement.getIndentationLevel(), indentFunction);
+                    writeIndentingBetweenLines(writer, pathElement.getIndentationLevel());
                 }
 
                 writeComments(writer, pathElement.getIndentationLevel(), pathElement.getComments());
@@ -119,18 +125,18 @@ public class YamlFileResource implements PropertyResource {
         String commentStart = indent(indentation) + "# ";
 
         for (int i = 0; i < comments.size(); i++) {
-            writer.append(i == 0 ? this.getNewLineCheckingFileLength() : "\n").append(commentStart).append(comments.get(i));
+            writer.append(i == 0 ? getNewLineCheckingFileLength() : "\n").append(commentStart).append(comments.get(i));
         }
 
         writer.flush();
     }
 
-    private void writeIndentingBetweenLines(Writer writer, int indent, Function<Integer, Integer> function) throws IOException {
-        if (this.isEmptyFile() || function == null) {
+    private void writeIndentingBetweenLines(Writer writer, int indent) throws IOException {
+        if (indentFunction == null || isEmptyFile()) {
             return;
         }
 
-        for (int i = 0; i < function.apply(indent); i++) {
+        for (int i = 0; i < indentFunction.applyAsInt(indent); i++) {
             writer.append("\n");
         }
     }
@@ -140,7 +146,7 @@ public class YamlFileResource implements PropertyResource {
     }
 
     private boolean isEmptyFile() {
-        return this.file.length() == 0;
+        return file.length() == 0;
     }
 
     /**
