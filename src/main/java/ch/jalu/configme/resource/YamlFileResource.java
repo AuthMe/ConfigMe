@@ -13,40 +13,37 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.IntUnaryOperator;
 
 public class YamlFileResource implements PropertyResource {
 
     private static final String INDENTATION = "    ";
 
     private final File file;
-    private final IntUnaryOperator indentFunction;
+    private final YamlFileResourceOptions options;
     private Yaml yamlObject;
 
     public YamlFileResource(File file) {
-        this(file, null);
+        this(file, YamlFileResourceOptions.builder().build());
     }
 
-    public YamlFileResource(File file, @Nullable IntUnaryOperator indentFunction) {
+    public YamlFileResource(File file, YamlFileResourceOptions options) {
         this.file = file;
-        this.indentFunction = indentFunction;
+        this.options = options;
     }
 
     @Override
     public PropertyReader createReader() {
-        return new YamlFileReader(file, getCharset());
+        return new YamlFileReader(file, options.getCharset());
     }
 
     @Override
     public void exportProperties(ConfigurationData configurationData) {
         try (FileOutputStream fos = new FileOutputStream(file);
-             OutputStreamWriter writer = new OutputStreamWriter(fos, getCharset())) {
+             OutputStreamWriter writer = new OutputStreamWriter(fos, options.getCharset())) {
             PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
             for (Property<?> property : configurationData.getProperties()) {
                 final Object exportValue = getExportValue(property, configurationData);
@@ -74,7 +71,7 @@ public class YamlFileResource implements PropertyResource {
      * @param value the value to export
      * @throws IOException .
      */
-    protected void exportValue(OutputStreamWriter writer, PropertyPathTraverser pathTraverser,
+    protected void exportValue(Writer writer, PropertyPathTraverser pathTraverser,
                                String path, Object value) throws IOException {
         if (value == null) {
             return;
@@ -118,7 +115,7 @@ public class YamlFileResource implements PropertyResource {
      * @param comments the comment lines to write
      * @throws IOException .
      */
-    protected void writeComments(OutputStreamWriter writer, int indentation, List<String> comments) throws IOException {
+    protected void writeComments(Writer writer, int indentation, List<String> comments) throws IOException {
         if (comments.isEmpty()) {
             return;
         }
@@ -132,12 +129,10 @@ public class YamlFileResource implements PropertyResource {
     }
 
     private void writeIndentingBetweenLines(Writer writer, int indent) throws IOException {
-        if (indentFunction == null || isEmptyFile()) {
-            return;
-        }
-
-        for (int i = 0; i < indentFunction.applyAsInt(indent); i++) {
-            writer.append("\n");
+        if (!isEmptyFile()) {
+            for (int i = 0; i < options.getNumberOfEmptyLines(indent); i++) {
+                writer.append("\n");
+            }
         }
     }
 
@@ -226,8 +221,8 @@ public class YamlFileResource implements PropertyResource {
         return new Yaml(options);
     }
 
-    protected Charset getCharset() {
-        return StandardCharsets.UTF_8;
+    protected final YamlFileResourceOptions getOptions() {
+        return options;
     }
 
     private <T> Object getExportValue(Property<T> property, ConfigurationData configurationData) {

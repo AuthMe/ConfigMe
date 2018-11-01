@@ -13,7 +13,6 @@ import ch.jalu.configme.samples.TestEnum;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +37,6 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.BDDMockito.given;
 
 /**
  * Test for {@link YamlFileResource}.
@@ -286,8 +284,11 @@ public class YamlFileResourceTest {
     public void shouldExportWithIso88591() throws IOException {
         // given
         File file = copyFileFromResources("/charsets/iso-8859-1_sample.yml");
-        YamlFileResource resource = Mockito.spy(new YamlFileResource(file));
-        given(resource.getCharset()).willReturn(StandardCharsets.ISO_8859_1);
+
+        YamlFileResourceOptions options = YamlFileResourceOptions.builder()
+            .charset(StandardCharsets.ISO_8859_1)
+            .build();
+        YamlFileResource resource = new YamlFileResource(file, options);
 
         Property<String> firstProp = newProperty("elem.first", "");
         Property<String> secondProp = newProperty("elem.second", "");

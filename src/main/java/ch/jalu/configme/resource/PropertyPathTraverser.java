@@ -75,7 +75,7 @@ public class PropertyPathTraverser {
         return allComments;
     }
 
-    public static final class PathElement {
+    public static class PathElement {
         private final int indentationLevel;
         private final String name;
         private final List<String> comments;

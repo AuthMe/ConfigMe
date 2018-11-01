@@ -6,12 +6,12 @@ import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.migration.PlainMigrationService;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
+import ch.jalu.configme.resource.YamlFileResourceOptions;
 import ch.jalu.configme.utils.Utils;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Objects;
-import java.util.function.IntUnaryOperator;
 
 /**
  * Creates {@link SettingsManager} instances.
@@ -27,25 +27,18 @@ public final class SettingsManagerBuilder {
     }
 
     /**
-     * Creates a builder, using the given YAML file folder and him name to use as property resource.
-     *
-     * @param folder the folder from which the YAML file will be taken
-     * @param fileName the name of the YAML file to use
-     * @return yaml resource builder (which then creates a settings manager builder)
-     */
-    public static YamlResourceBuilder withYamlFile(File folder, String fileName) {
-        return withYamlFile(new File(folder, fileName));
-    }
-
-    /**
      * Creates a builder, using the given YAML file to use as property resource.
      *
      * @param file the yaml file to use
-     * @return yaml resource builder (which then creates a settings manager builder)
+     * @return settings manager builder
      */
-    public static YamlResourceBuilder withYamlFile(File file) {
+    public static SettingsManagerBuilder withYamlFile(File file) {
+        return withYamlFile(file, YamlFileResourceOptions.builder().build());
+    }
+
+    public static SettingsManagerBuilder withYamlFile(File file, YamlFileResourceOptions resourceOptions) {
         Utils.createFileIfNotExists(file);
-        return new YamlResourceBuilder(file);
+        return new SettingsManagerBuilder(new YamlFileResource(file, resourceOptions));
     }
 
     /**
@@ -113,38 +106,5 @@ public final class SettingsManagerBuilder {
         Objects.requireNonNull(resource, "resource");
         Objects.requireNonNull(configurationData, "configurationData");
         return new SettingsManagerImpl(resource, configurationData, migrationService);
-    }
-
-    /**
-     * Builder to configure a YAML file resource.
-     */
-    public static class YamlResourceBuilder {
-        private final File file;
-        private IntUnaryOperator indentFunction;
-
-        protected YamlResourceBuilder(File file) {
-            this.file = file;
-        }
-
-        /**
-         * Sets the indent function used when exporting data.
-         *
-         * @param indentFunction the indent function to use
-         * @return this builder
-         */
-        public YamlResourceBuilder indentFunction(IntUnaryOperator indentFunction) {
-            this.indentFunction = indentFunction;
-            return this;
-        }
-
-        /**
-         * Creates the YAML file resource according to the builder's configured state and registers it
-         * with a new settings manager builder instance.
-         *
-         * @return settings manager builder with configured yaml file resource
-         */
-        public SettingsManagerBuilder and() {
-            return new SettingsManagerBuilder(new YamlFileResource(file, indentFunction));
-        }
     }
 }
