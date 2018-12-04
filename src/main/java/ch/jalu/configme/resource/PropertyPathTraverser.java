@@ -56,6 +56,7 @@ public class PropertyPathTraverser {
             prefix += element + ".";
             ++indentation;
         }
+        pathElements.get(0).setFirstOfGroup(true);
         return pathElements;
     }
 
@@ -84,6 +85,7 @@ public class PropertyPathTraverser {
         private final String name;
         private final List<String> comments;
         private final boolean isFirstElement;
+        private boolean isFirstOfGroup;
 
         public PathElement(int indentationLevel, String name, List<String> comments, boolean isFirstElement) {
             this.indentationLevel = indentationLevel;
@@ -106,6 +108,14 @@ public class PropertyPathTraverser {
 
         public boolean isFirstElement() {
             return isFirstElement;
+        }
+
+        public boolean isFirstOfGroup() {
+            return isFirstOfGroup;
+        }
+
+        void setFirstOfGroup(boolean firstOfGroup) {
+            isFirstOfGroup = firstOfGroup;
         }
     }
 

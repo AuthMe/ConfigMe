@@ -35,8 +35,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link YamlFileResource}.
@@ -308,6 +310,21 @@ public class YamlFileResourceTest {
         ));
     }
 
+    @Test
+    public void shouldReturnFieldsOfResource() {
+        // given
+        File file = mock(File.class);
+        YamlFileResourceOptions options = mock(YamlFileResourceOptions.class);
+        YamlFileResource resource = new YamlFileResource(file, options);
+
+        // when
+        File returnedFile = resource.getFile();
+        YamlFileResourceOptions returnedOptions = resource.getOptions();
+
+        // then
+        assertThat(returnedFile, sameInstance(file));
+        assertThat(returnedOptions, sameInstance(options));
+    }
 
     private File copyFileFromResources(String path) {
         return TestUtils.copyFileFromResources(path, temporaryFolder);
