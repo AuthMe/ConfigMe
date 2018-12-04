@@ -86,24 +86,17 @@ public class YamlFileResource implements PropertyResource {
         } else {
             List<PathElement> pathElements = pathTraverser.getPathElements(path);
 
-            for (int i = 0; i < pathElements.size(); i++) {
-                PathElement pathElement = pathElements.get(i);
-
-                if (i == 0) {
-                    writeIndentingBetweenLines(writer, pathElement.getIndentationLevel());
-                }
-
-                writeComments(writer, pathElement.getIndentationLevel(), pathElement.getComments());
-                writer.append(this.getNewLineCheckingFileLength())
+            for (PathElement pathElement : pathElements) {
+                writeIndentingBetweenLines(writer, pathElement);
+                writeComments(writer, pathElement.getIndentationLevel(), pathElement);
+                writer.append(getNewLineCheckingFileLength(pathElement))
                     .append(indent(pathElement.getIndentationLevel()))
                     .append(pathElement.getName())
                     .append(":");
-                writer.flush();
             }
 
             writer.append(" ")
                 .append(toYamlIndented(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
-            writer.flush();
         }
     }
 
@@ -112,36 +105,32 @@ public class YamlFileResource implements PropertyResource {
      *
      * @param writer the writer to write with
      * @param indentation the level at which the comment lines should be indented
-     * @param comments the comment lines to write
+     * @param pathElement the path element for which the comments are being generated
      * @throws IOException .
      */
-    protected void writeComments(Writer writer, int indentation, List<String> comments) throws IOException {
-        if (comments.isEmpty()) {
+    protected void writeComments(Writer writer, int indentation, PathElement pathElement) throws IOException {
+        if (pathElement.getComments().isEmpty()) {
             return;
         }
+
+        String lineStart = pathElement.isFirstElement() ? "" : "\n";
         String commentStart = indent(indentation) + "# ";
-
-        for (int i = 0; i < comments.size(); i++) {
-            writer.append(i == 0 ? getNewLineCheckingFileLength() : "\n").append(commentStart).append(comments.get(i));
-        }
-
-        writer.flush();
-    }
-
-    private void writeIndentingBetweenLines(Writer writer, int indent) throws IOException {
-        if (!isEmptyFile()) {
-            for (int i = 0; i < options.getNumberOfEmptyLines(indent); i++) {
-                writer.append("\n");
-            }
+        for (String comment : pathElement.getComments()) {
+            writer.append(lineStart)
+                .append(commentStart)
+                .append(comment);
+            lineStart = "\n";
         }
     }
 
-    private String getNewLineCheckingFileLength() {
-        return this.isEmptyFile() ? "" : "\n";
+    private void writeIndentingBetweenLines(Writer writer, PathElement pathElement) throws IOException {
+        for (int i = 0; i < options.getNumberOfEmptyLinesBefore(pathElement); ++i) {
+            writer.append("\n");
+        }
     }
 
-    private boolean isEmptyFile() {
-        return file.length() == 0;
+    private String getNewLineCheckingFileLength(PathElement pathElement) {
+        return pathElement.isFirstElement() && pathElement.getComments().isEmpty() ? "" : "\n";
     }
 
     /**

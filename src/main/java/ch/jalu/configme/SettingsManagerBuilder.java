@@ -36,6 +36,13 @@ public final class SettingsManagerBuilder {
         return withYamlFile(file, YamlFileResourceOptions.builder().build());
     }
 
+    /**
+     * Creates a builder, using the given YAML file to use as property resource with the given options.
+     *
+     * @param file the yaml file to use
+     * @param resourceOptions the resource options
+     * @return settings manager builder
+     */
     public static SettingsManagerBuilder withYamlFile(File file, YamlFileResourceOptions resourceOptions) {
         Utils.createFileIfNotExists(file);
         return new SettingsManagerBuilder(new YamlFileResource(file, resourceOptions));

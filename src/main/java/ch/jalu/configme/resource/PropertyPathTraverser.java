@@ -51,7 +51,8 @@ public class PropertyPathTraverser {
             List<String> comments = isFirstProperty
                 ? getCommentsIncludingRoot(prefix + element)
                 : configurationData.getCommentsForSection(prefix + element);
-            pathElements.add(new PathElement(indentation, element, comments));
+            pathElements.add(new PathElement(indentation, element, comments, isFirstProperty));
+            isFirstProperty = false;
             prefix += element + ".";
             ++indentation;
         }
@@ -59,8 +60,6 @@ public class PropertyPathTraverser {
     }
 
     private List<String> getCommentsIncludingRoot(String path) {
-        isFirstProperty = false;
-
         List<String> rootComments = configurationData.getCommentsForSection("");
         if ("".equals(path)) {
             return rootComments;
@@ -75,15 +74,22 @@ public class PropertyPathTraverser {
         return allComments;
     }
 
+    /**
+     * Represents the current element of a path which is currently being handled. This consists of a part of a
+     * property's path or may be a property's full path.
+     */
     public static class PathElement {
+
         private final int indentationLevel;
         private final String name;
         private final List<String> comments;
+        private final boolean isFirstElement;
 
-        public PathElement(int indentationLevel, String name, List<String> comments) {
+        public PathElement(int indentationLevel, String name, List<String> comments, boolean isFirstElement) {
             this.indentationLevel = indentationLevel;
             this.name = name;
             this.comments = comments;
+            this.isFirstElement = isFirstElement;
         }
 
         public int getIndentationLevel() {
@@ -96,6 +102,10 @@ public class PropertyPathTraverser {
 
         public List<String> getComments() {
             return comments;
+        }
+
+        public boolean isFirstElement() {
+            return isFirstElement;
         }
     }
 
