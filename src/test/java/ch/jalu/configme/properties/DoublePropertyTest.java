@@ -23,7 +23,7 @@ public class DoublePropertyTest {
     public void shouldReturnDoubleFromResource() {
         // given
         Property<Double> property = new DoubleProperty("test.path", 3.4);
-        given(reader.getDouble("test.path")).willReturn(-2508.346);
+        given(reader.getObject("test.path")).willReturn(-2508.346);
 
         // when
         double result = property.determineValue(reader);
@@ -36,7 +36,7 @@ public class DoublePropertyTest {
     public void shouldReturnDefaultValue() {
         // given
         Property<Double> property = new DoubleProperty("property.path", 5.9);
-        given(reader.getDouble("property.path")).willReturn(null);
+        given(reader.getObject("property.path")).willReturn(null);
 
         // when
         double result = property.determineValue(reader);

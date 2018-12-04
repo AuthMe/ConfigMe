@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -135,8 +134,7 @@ public class YamlFileReader implements PropertyReader {
     protected Map<String, Object> loadFile() {
         try (FileInputStream fis = new FileInputStream(file);
              InputStreamReader isr = new InputStreamReader(fis, charset)) {
-            Object obj = new Yaml().load(isr);
-            return obj == null ? Collections.emptyMap() : (Map<String, Object>) obj;
+            return normalizeMap((Map<Object, Object>) new Yaml().load(isr));
         } catch (IOException e) {
             throw new ConfigMeException("Could not read file '" + file + "'", e);
         } catch (ClassCastException e) {
@@ -144,6 +142,16 @@ public class YamlFileReader implements PropertyReader {
         } catch (YAMLException e) {
             throw new ConfigMeException("YAML error while trying to load file '" + file + "'", e);
         }
+    }
+
+    /**
+     * Processes the map as read from SnakeYAML and may return a new, adjusted one.
+     *
+     * @param map the map to normalize
+     * @return the normalized map (or same map if no changes are needed)
+     */
+    protected Map<String, Object> normalizeMap(@Nullable Map<Object, Object> map) {
+        return new MapNormalizer().normalizeMap(map);
     }
 
     protected final File getFile() {

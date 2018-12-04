@@ -19,8 +19,8 @@ public class BooleanPropertyTest {
     @BeforeClass
     public static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
-        when(reader.getBoolean("bool.path.test")).thenReturn(true);
-        when(reader.getBoolean("bool.path.wrong")).thenReturn(null);
+        when(reader.getObject("bool.path.test")).thenReturn(true);
+        when(reader.getObject("bool.path.wrong")).thenReturn(null);
     }
 
     @Test

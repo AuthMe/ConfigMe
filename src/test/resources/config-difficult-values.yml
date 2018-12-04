@@ -1,5 +1,4 @@
 # Test config file with some "difficult" values
-
 test:
     duration: 20.102
     systemName: 'A ''test'' name'

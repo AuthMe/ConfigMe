@@ -73,7 +73,6 @@ public class BeanWithCollectionOfBeanTypeTest {
         // then
         List<String> lines = Files.readAllLines(file.toPath());
         assertThat(lines, contains(
-            "",
             "message-key:",
             "    color: blue",
             "    extra: ",

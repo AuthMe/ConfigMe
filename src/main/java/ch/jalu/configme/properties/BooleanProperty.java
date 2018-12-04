@@ -1,20 +1,13 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyReader;
+import ch.jalu.configme.properties.types.PrimitivePropertyType;
 
-public class BooleanProperty extends BaseProperty<Boolean> {
+/**
+ * Boolean property. This extension exists for convenience and backwards compatibility.
+ */
+public class BooleanProperty extends CommonProperty<Boolean> {
 
     public BooleanProperty(String path, Boolean defaultValue) {
-        super(path, defaultValue);
-    }
-
-    @Override
-    protected Boolean getFromReader(PropertyReader reader) {
-        return reader.getBoolean(getPath());
-    }
-
-    @Override
-    public Object toExportValue(Boolean value) {
-        return value;
+        super(path, defaultValue, PrimitivePropertyType.BOOLEAN);
     }
 }

@@ -13,7 +13,6 @@ import ch.jalu.configme.samples.TestEnum;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,9 +35,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link YamlFileResource}.
@@ -79,9 +78,8 @@ public class YamlFileResourceTest {
         expected.put(TestConfiguration.DUST_LEVEL, -1.1);
         expected.put(TestConfiguration.USE_COOL_FEATURES, false);
         expected.put(TestConfiguration.COOL_OPTIONS, asList("Dinosaurs", "Explosions", "Big trucks"));
-        expected.put(TestConfiguration.FORBIDDEN_NAMES, Arrays.asList("toto", "africa"));
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
-            // Check with reader#getObject to make sure the values were persisted to the file
+            // Check with resource#getObject to make sure the values were persisted to the file
             // If we go through Property objects they may fall back to their default values
             String propertyPath = entry.getKey().getPath();
             assertThat("Property '" + propertyPath + "' has expected value",
@@ -203,7 +201,6 @@ public class YamlFileResourceTest {
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
         assertThat(exportedLines, contains(
-            "",
             "test:",
             "    duration: 22"
         ));
@@ -225,7 +222,6 @@ public class YamlFileResourceTest {
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
         assertThat(exportedLines, contains(
-            "",
             "test:",
             "    duration: 22",
             "sample:",
@@ -255,7 +251,6 @@ public class YamlFileResourceTest {
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
         assertThat(exportedLines, contains(
-            "",
             "config:",
             "    commands: {}",
             "    duration: 3"
@@ -281,7 +276,6 @@ public class YamlFileResourceTest {
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath());
         assertThat(exportedLines, contains(
-            "",
             "first: Санкт-Петербург",
             "second: თბილისი",
             "third: 错误的密码"
@@ -292,8 +286,11 @@ public class YamlFileResourceTest {
     public void shouldExportWithIso88591() throws IOException {
         // given
         File file = copyFileFromResources("/charsets/iso-8859-1_sample.yml");
-        YamlFileResource resource = Mockito.spy(new YamlFileResource(file));
-        given(resource.getCharset()).willReturn(StandardCharsets.ISO_8859_1);
+
+        YamlFileResourceOptions options = YamlFileResourceOptions.builder()
+            .charset(StandardCharsets.ISO_8859_1)
+            .build();
+        YamlFileResource resource = new YamlFileResource(file, options);
 
         Property<String> firstProp = newProperty("elem.first", "");
         Property<String> secondProp = newProperty("elem.second", "");
@@ -307,13 +304,27 @@ public class YamlFileResourceTest {
         // then
         List<String> exportedLines = Files.readAllLines(file.toPath(), StandardCharsets.ISO_8859_1);
         assertThat(exportedLines, contains(
-            "",
             "elem:",
             "    first: test Ã ö û þ",
             "    second: awq ôÖ ÿõ 1234"
         ));
     }
 
+    @Test
+    public void shouldReturnFieldsOfResource() {
+        // given
+        File file = mock(File.class);
+        YamlFileResourceOptions options = mock(YamlFileResourceOptions.class);
+        YamlFileResource resource = new YamlFileResource(file, options);
+
+        // when
+        File returnedFile = resource.getFile();
+        YamlFileResourceOptions returnedOptions = resource.getOptions();
+
+        // then
+        assertThat(returnedFile, sameInstance(file));
+        assertThat(returnedOptions, sameInstance(options));
+    }
 
     private File copyFileFromResources(String path) {
         return TestUtils.copyFileFromResources(path, temporaryFolder);

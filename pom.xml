@@ -135,6 +135,7 @@
     </profiles>
 
     <build>
+        <defaultGoal>clean install</defaultGoal>
         <finalName>${project.name}-${project.version}</finalName>
 
         <plugins>
@@ -222,7 +223,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
-            <version>2.21.0</version>
+            <version>2.23.4</version>
             <exclusions>
                 <exclusion>
                     <artifactId>hamcrest-core</artifactId>

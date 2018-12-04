@@ -19,8 +19,8 @@ public class IntegerPropertyTest {
     @BeforeClass
     public static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
-        when(reader.getInt("int.path.test")).thenReturn(27);
-        when(reader.getInt("int.path.wrong")).thenReturn(null);
+        when(reader.getObject("int.path.test")).thenReturn(27);
+        when(reader.getObject("int.path.wrong")).thenReturn(null);
     }
 
     @Test

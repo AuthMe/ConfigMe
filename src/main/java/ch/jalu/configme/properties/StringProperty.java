@@ -1,24 +1,13 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyReader;
+import ch.jalu.configme.properties.types.PrimitivePropertyType;
 
 /**
- * String property.
+ * String property. This extension exists for convenience and backwards compatibility.
  */
-public class StringProperty extends BaseProperty<String> {
+public class StringProperty extends CommonProperty<String> {
 
     public StringProperty(String path, String defaultValue) {
-        super(path, defaultValue);
-    }
-
-    @Override
-    protected String getFromReader(PropertyReader reader) {
-        Object value = reader.getObject(getPath());
-        return value == null ? null : value.toString();
-    }
-
-    @Override
-    public Object toExportValue(String value) {
-        return value;
+        super(path, defaultValue, PrimitivePropertyType.STRING);
     }
 }

@@ -88,7 +88,7 @@ public class SettingsManagerImpl implements SettingsManager {
         configurationData.initializeValues(reader);
 
         if (migrationService != null
-                && migrationService.checkAndMigrate(reader, configurationData) == MigrationService.MIGRATION_REQUIRED) {
+            && migrationService.checkAndMigrate(reader, configurationData) == MigrationService.MIGRATION_REQUIRED) {
             save();
         }
     }

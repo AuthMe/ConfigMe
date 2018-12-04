@@ -1,20 +1,13 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.resource.PropertyReader;
+import ch.jalu.configme.properties.types.PrimitivePropertyType;
 
-public class DoubleProperty extends BaseProperty<Double> {
+/**
+ * Double property. This extension exists for convenience and backwards compatibility.
+ */
+public class DoubleProperty extends CommonProperty<Double> {
 
     public DoubleProperty(String path, double defaultValue) {
-        super(path, defaultValue);
-    }
-
-    @Override
-    protected Double getFromReader(PropertyReader reader) {
-        return reader.getDouble(getPath());
-    }
-
-    @Override
-    public Object toExportValue(Double value) {
-        return value;
+        super(path, defaultValue, PrimitivePropertyType.DOUBLE);
     }
 }

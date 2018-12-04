@@ -3,6 +3,7 @@ package ch.jalu.configme.configurationdata;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +61,7 @@ public interface ConfigurationData {
      * @param <T> property type
      * @return value associated with the property, or null if not present
      */
+    @Nullable
     <T> T getValue(Property<T> property);
 
     /**

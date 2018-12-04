@@ -185,19 +185,34 @@ public final class TestUtils {
      */
     public static void verifyException(Runnable runnable, Class<? extends Exception> exceptionType,
                                        String messageExcerpt) {
+        Exception e = catchExceptionOrFail(exceptionType, runnable);
+        if (!messageExcerpt.isEmpty()) {
+            assertThat(e.getMessage(), containsString(messageExcerpt));
+        }
+    }
+
+    /**
+     * Runs the given runnable and expects an exception of the given class to be thrown, returning it from the method.
+     * This method throws an assertion error if an exception of another type or no exception is thrown.
+     *
+     * @param exceptionClass the exception type expected to be thrown from the runnable
+     * @param runnable the runnable to run
+     * @param <X> the exception type
+     * @return the caught exception
+     */
+    public static <X extends Exception> X catchExceptionOrFail(Class<X> exceptionClass, Runnable runnable) {
         try {
             runnable.run();
-            fail("Expected exception of type '" + exceptionType.getName() + "' to be thrown");
+            fail("Expected exception of type '" + exceptionClass.getSimpleName() + "' to be thrown");
         } catch (Exception e) {
-            if (!exceptionType.isInstance(e)) {
-                e.printStackTrace();
-                fail("Expected exception of type '" + exceptionType.getName() + "' but got '"
-                    + e.getClass().getName() + "': " + e.getMessage());
+            if (exceptionClass.isInstance(e)) {
+                return (X) e;
             }
-            if (!messageExcerpt.isEmpty()) {
-                assertThat(e.getMessage(), containsString(messageExcerpt));
-            }
+            e.printStackTrace();
+            fail("Got exception of type '" + e.getClass().getSimpleName()
+                + "' but wanted '" + exceptionClass.getSimpleName() + "'");
         }
+        throw new IllegalStateException("should never happen"); // fail() throws an exception
     }
 
     // -------------

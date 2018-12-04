@@ -13,8 +13,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,26 +23,33 @@ public class YamlFileResource implements PropertyResource {
     private static final String INDENTATION = "    ";
 
     private final File file;
+    private final YamlFileResourceOptions options;
     private Yaml yamlObject;
 
     public YamlFileResource(File file) {
+        this(file, YamlFileResourceOptions.builder().build());
+    }
+
+    public YamlFileResource(File file, YamlFileResourceOptions options) {
         this.file = file;
+        this.options = options;
     }
 
     @Override
     public PropertyReader createReader() {
-        return new YamlFileReader(file, getCharset());
+        return new YamlFileReader(file, options.getCharset());
     }
 
     @Override
     public void exportProperties(ConfigurationData configurationData) {
         try (FileOutputStream fos = new FileOutputStream(file);
-             OutputStreamWriter writer = new OutputStreamWriter(fos, getCharset())) {
+             OutputStreamWriter writer = new OutputStreamWriter(fos, options.getCharset())) {
             PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
             for (Property<?> property : configurationData.getProperties()) {
                 final Object exportValue = getExportValue(property, configurationData);
                 exportValue(writer, pathTraverser, property.getPath(), exportValue);
             }
+            writer.append("\n");
             writer.flush();
         } catch (IOException e) {
             throw new ConfigMeException("Could not save config to '" + file.getPath() + "'", e);
@@ -74,14 +79,17 @@ public class YamlFileResource implements PropertyResource {
 
         if (value instanceof Map<?, ?> && !((Map) value).isEmpty()) {
             final String pathPrefix = path.isEmpty() ? "" : path + ".";
+
             for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
                 exportValue(writer, pathTraverser, pathPrefix + entry.getKey(), entry.getValue());
             }
         } else {
             List<PathElement> pathElements = pathTraverser.getPathElements(path);
+
             for (PathElement pathElement : pathElements) {
-                writeComments(writer, pathElement.getIndentationLevel(), pathElement.getComments());
-                writer.append("\n")
+                writeIndentingBetweenLines(writer, pathElement);
+                writeComments(writer, pathElement.getIndentationLevel(), pathElement);
+                writer.append(getNewLineCheckingFileLength(pathElement))
                     .append(indent(pathElement.getIndentationLevel()))
                     .append(pathElement.getName())
                     .append(":");
@@ -97,17 +105,32 @@ public class YamlFileResource implements PropertyResource {
      *
      * @param writer the writer to write with
      * @param indentation the level at which the comment lines should be indented
-     * @param comments the comment lines to write
+     * @param pathElement the path element for which the comments are being generated
      * @throws IOException .
      */
-    protected void writeComments(Writer writer, int indentation, List<String> comments) throws IOException {
-        if (comments.isEmpty()) {
+    protected void writeComments(Writer writer, int indentation, PathElement pathElement) throws IOException {
+        if (pathElement.getComments().isEmpty()) {
             return;
         }
-        String commentStart = "\n" + indent(indentation) + "# ";
-        for (String comment : comments) {
-            writer.append(commentStart).append(comment);
+
+        String lineStart = pathElement.isFirstElement() ? "" : "\n";
+        String commentStart = indent(indentation) + "# ";
+        for (String comment : pathElement.getComments()) {
+            writer.append(lineStart)
+                .append(commentStart)
+                .append(comment);
+            lineStart = "\n";
         }
+    }
+
+    private void writeIndentingBetweenLines(Writer writer, PathElement pathElement) throws IOException {
+        for (int i = 0; i < options.getNumberOfEmptyLinesBefore(pathElement); ++i) {
+            writer.append("\n");
+        }
+    }
+
+    private String getNewLineCheckingFileLength(PathElement pathElement) {
+        return pathElement.isFirstElement() && pathElement.getComments().isEmpty() ? "" : "\n";
     }
 
     /**
@@ -139,6 +162,10 @@ public class YamlFileResource implements PropertyResource {
         } else if (value instanceof Collection<?>) {
             List<?> list = collectionToList((Collection<?>) value);
             return list.isEmpty() ? "[]" : "\n" + getYamlObject().dump(list);
+        } else if (value instanceof Object[]) {
+            Object[] array = (Object[]) value;
+
+            return array.length == 0 ? "[]" : "\n" + getYamlObject().dump(array);
         }
         return getYamlObject().dump(value);
     }
@@ -183,8 +210,8 @@ public class YamlFileResource implements PropertyResource {
         return new Yaml(options);
     }
 
-    protected Charset getCharset() {
-        return StandardCharsets.UTF_8;
+    protected final YamlFileResourceOptions getOptions() {
+        return options;
     }
 
     private <T> Object getExportValue(Property<T> property, ConfigurationData configurationData) {

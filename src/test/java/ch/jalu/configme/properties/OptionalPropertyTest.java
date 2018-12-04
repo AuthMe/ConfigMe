@@ -23,12 +23,12 @@ public class OptionalPropertyTest {
     @Before
     public void setUpResource() {
         reader = mock(PropertyReader.class);
-        when(reader.getBoolean("bool.path.test")).thenReturn(true);
-        when(reader.getBoolean("bool.path.wrong")).thenReturn(null);
-        when(reader.getInt("int.path.test")).thenReturn(27);
-        when(reader.getInt("int.path.wrong")).thenReturn(null);
-        when(reader.getString("enum.path.test")).thenReturn(TestEnum.FOURTH.name());
-        when(reader.getString("enum.path.wrong")).thenReturn(null);
+        when(reader.getObject("bool.path.test")).thenReturn(true);
+        when(reader.getObject("bool.path.wrong")).thenReturn(null);
+        when(reader.getObject("int.path.test")).thenReturn(27);
+        when(reader.getObject("int.path.wrong")).thenReturn(null);
+        when(reader.getObject("enum.path.test")).thenReturn(TestEnum.FOURTH.name());
+        when(reader.getObject("enum.path.wrong")).thenReturn(null);
     }
 
     @Test

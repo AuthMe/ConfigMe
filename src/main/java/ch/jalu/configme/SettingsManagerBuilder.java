@@ -6,6 +6,7 @@ import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.migration.PlainMigrationService;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
+import ch.jalu.configme.resource.YamlFileResourceOptions;
 import ch.jalu.configme.utils.Utils;
 
 import javax.annotation.Nullable;
@@ -32,8 +33,19 @@ public final class SettingsManagerBuilder {
      * @return settings manager builder
      */
     public static SettingsManagerBuilder withYamlFile(File file) {
+        return withYamlFile(file, YamlFileResourceOptions.builder().build());
+    }
+
+    /**
+     * Creates a builder, using the given YAML file to use as property resource with the given options.
+     *
+     * @param file the yaml file to use
+     * @param resourceOptions the resource options
+     * @return settings manager builder
+     */
+    public static SettingsManagerBuilder withYamlFile(File file, YamlFileResourceOptions resourceOptions) {
         Utils.createFileIfNotExists(file);
-        return new SettingsManagerBuilder(new YamlFileResource(file));
+        return new SettingsManagerBuilder(new YamlFileResource(file, resourceOptions));
     }
 
     /**
@@ -98,8 +110,8 @@ public final class SettingsManagerBuilder {
      * @return the settings manager
      */
     public SettingsManager create() {
-        Objects.requireNonNull(configurationData, "configurationData");
         Objects.requireNonNull(resource, "resource");
+        Objects.requireNonNull(configurationData, "configurationData");
         return new SettingsManagerImpl(resource, configurationData, migrationService);
     }
 }
