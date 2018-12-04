@@ -2,17 +2,20 @@ package ch.jalu.configme.properties.type;
 
 import ch.jalu.configme.beanmapper.DefaultMapper;
 import ch.jalu.configme.beanmapper.Mapper;
+import ch.jalu.configme.beanmapper.command.Command;
 import ch.jalu.configme.demo.beans.CoordinateSystem;
 import ch.jalu.configme.demo.beans.Location;
 import ch.jalu.configme.properties.types.BeanPropertyType;
 import ch.jalu.configme.utils.TypeInformation;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -60,5 +63,17 @@ public class BeanPropertyTypeTest {
         assertThat(map.get("latitude"), equalTo(360f));
         assertThat(map.get("longitude"), equalTo(123f));
         assertThat(map.get("coordinateType"), equalTo("NAD"));
+    }
+
+    @Test
+    public void shouldInitializeWithDefaultMapper() throws NoSuchFieldException, IllegalAccessException {
+        // given / when
+        BeanPropertyType<Command> type = BeanPropertyType.of(Command.class);
+
+        // then
+        Field field = BeanPropertyType.class.getDeclaredField("mapper");
+        field.setAccessible(true);
+        Object mapperValue = field.get(type);
+        assertThat(mapperValue, sameInstance(DefaultMapper.getInstance()));
     }
 }

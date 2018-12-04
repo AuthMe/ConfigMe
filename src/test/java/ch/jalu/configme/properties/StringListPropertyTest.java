@@ -4,6 +4,7 @@ import ch.jalu.configme.resource.PropertyReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -94,5 +95,25 @@ public class StringListPropertyTest {
 
         // then
         assertThat(exportValue, equalTo(value));
+    }
+
+    @Test
+    public void shouldHaveImmutableListAsDefaultValue() {
+        // given
+        List<String> list = new ArrayList<>();
+        list.add("Two");
+        list.add("Three");
+        StringListProperty propertyCreatedWithList = new StringListProperty("test.path", list);
+        StringListProperty propertyCreatedWithVarargs = new StringListProperty("test.path", "One", "Two");
+
+        // when
+        List<String> default1 = propertyCreatedWithList.getDefaultValue();
+        List<String> default2 = propertyCreatedWithVarargs.getDefaultValue();
+
+        // then
+        assertThat(default1, contains("Two", "Three"));
+        assertThat(default1.getClass().getName(), equalTo("java.util.Collections$UnmodifiableRandomAccessList"));
+        assertThat(default2, contains("One", "Two"));
+        assertThat(default2.getClass().getName(), equalTo("java.util.Collections$UnmodifiableRandomAccessList"));
     }
 }
