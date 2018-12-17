@@ -118,8 +118,8 @@ public class PropertyInitializer {
     // --------------
     // Property builders
     // --------------
-    public static <T> PropertyBuilder.CommonPropertyBuilder<T> commonProperty(PropertyType<T> type) {
-        return new PropertyBuilder.CommonPropertyBuilder<>(type);
+    public static <T> PropertyBuilder.TypeBasedPropertyBuilder<T> typeBasedProperty(PropertyType<T> type) {
+        return new PropertyBuilder.TypeBasedPropertyBuilder<>(type);
     }
 
     public static <T> PropertyBuilder.ListPropertyBuilder<T> listProperty(PropertyType<T> type) {

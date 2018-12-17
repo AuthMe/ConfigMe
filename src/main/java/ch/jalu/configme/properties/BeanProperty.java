@@ -6,7 +6,7 @@ import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.types.BeanPropertyType;
 import ch.jalu.configme.utils.TypeInformation;
 
-public class BeanProperty<T> extends CommonProperty<T> {
+public class BeanProperty<T> extends TypeBasedProperty<T> {
 
     public BeanProperty(Class<T> beanType, String path, T defaultValue) {
         this(beanType, path, defaultValue, DefaultMapper.getInstance());

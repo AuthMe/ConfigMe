@@ -25,13 +25,13 @@ public class PropertyBuilderTest {
     @Test
     public void shouldCreateCommonProperty() {
         // given / when
-        Property<Integer> result = new PropertyBuilder.CommonPropertyBuilder<>(PrimitivePropertyType.INTEGER)
+        Property<Integer> result = new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.INTEGER)
             .path("my.path.test")
             .defaultValue(3)
             .build();
 
         // then
-        assertThat(result, instanceOf(CommonProperty.class));
+        assertThat(result, instanceOf(TypeBasedProperty.class));
         assertThat(result.getPath(), equalTo("my.path.test"));
         assertThat(result.getDefaultValue(), equalTo(3));
     }
@@ -39,7 +39,7 @@ public class PropertyBuilderTest {
     @Test
     public void shouldCreateCommonPropertyWithCustomFunction() {
         // given / when
-        Property<String> result = new PropertyBuilder.CommonPropertyBuilder<>(PrimitivePropertyType.STRING)
+        Property<String> result = new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
             .path("my.path")
             .defaultValue("seven")
             .createFunction((path, val, type) -> new StringProperty(path, val))
@@ -53,7 +53,7 @@ public class PropertyBuilderTest {
     public void shouldThrowForMissingPathInCommonPropertyBuilder() {
         // given / when
         NullPointerException e = catchExceptionOrFail(NullPointerException.class,
-            () -> new PropertyBuilder.CommonPropertyBuilder<>(PrimitivePropertyType.STRING)
+            () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
                 .defaultValue("Hello")
                 .build());
 
@@ -65,7 +65,7 @@ public class PropertyBuilderTest {
     public void shouldThrowForMissingDefaultValueInCommonPropertyBuilder() {
         // given / when
         NullPointerException e = catchExceptionOrFail(NullPointerException.class,
-            () -> new PropertyBuilder.CommonPropertyBuilder<>(PrimitivePropertyType.STRING)
+            () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
                 .path("a.path")
                 .createFunction((path, val, type) -> new StringProperty(path, val))
                 .build());
@@ -78,7 +78,7 @@ public class PropertyBuilderTest {
     public void shouldThrowForMissingPropertyTypeInCommonPropertyBuilder() {
         // given / when
         NullPointerException e = catchExceptionOrFail(NullPointerException.class,
-            () -> new PropertyBuilder.CommonPropertyBuilder<>(null)
+            () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(null)
                 .path("random.path")
                 .defaultValue("Hello")
                 .build());

@@ -97,19 +97,19 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
     }
 
     /**
-     * Builder for {@link CommonProperty}.
+     * Builder for {@link TypeBasedProperty}.
      *
      * @param <T> the value type
      */
-    public static class CommonPropertyBuilder<T> extends PropertyBuilder<T, T, CommonPropertyBuilder<T>> {
+    public static class TypeBasedPropertyBuilder<T> extends PropertyBuilder<T, T, TypeBasedPropertyBuilder<T>> {
 
-        private CreateFunction<T, T> createFunction = CommonProperty::new;
+        private CreateFunction<T, T> createFunction = TypeBasedProperty::new;
 
-        public CommonPropertyBuilder(PropertyType<T> type) {
+        public TypeBasedPropertyBuilder(PropertyType<T> type) {
             super(type);
         }
 
-        public CommonPropertyBuilder<T> createFunction(CreateFunction<T, T> createFunction) {
+        public TypeBasedPropertyBuilder<T> createFunction(CreateFunction<T, T> createFunction) {
             this.createFunction = createFunction;
             return this;
         }

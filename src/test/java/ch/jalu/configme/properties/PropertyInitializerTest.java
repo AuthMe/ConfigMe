@@ -8,7 +8,7 @@ import ch.jalu.configme.samples.TestEnum;
 import org.junit.Test;
 
 import static ch.jalu.configme.properties.PropertyInitializer.arrayProperty;
-import static ch.jalu.configme.properties.PropertyInitializer.commonProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.typeBasedProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.inlineArrayProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.listProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.mapProperty;
@@ -47,7 +47,7 @@ public class PropertyInitializerTest {
 
     @Test
     public void shouldInstantiateBuilders() {
-        assertThat(commonProperty(PrimitivePropertyType.STRING), instanceOf(PropertyBuilder.CommonPropertyBuilder.class));
+        assertThat(typeBasedProperty(PrimitivePropertyType.STRING), instanceOf(PropertyBuilder.TypeBasedPropertyBuilder.class));
         assertThat(listProperty(PrimitivePropertyType.INTEGER), instanceOf(PropertyBuilder.ListPropertyBuilder.class));
         assertThat(mapProperty(PrimitivePropertyType.DOUBLE), instanceOf(PropertyBuilder.MapPropertyBuilder.class));
         assertThat(arrayProperty(PrimitivePropertyType.BOOLEAN, Boolean[]::new), instanceOf(PropertyBuilder.ArrayPropertyBuilder.class));

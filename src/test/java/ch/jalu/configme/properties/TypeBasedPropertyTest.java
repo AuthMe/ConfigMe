@@ -12,10 +12,10 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 
 /**
- * Test for {@link CommonProperty}.
+ * Test for {@link TypeBasedProperty}.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CommonPropertyTest {
+public class TypeBasedPropertyTest {
 
     @Mock
     private PropertyReader reader;
@@ -23,7 +23,7 @@ public class CommonPropertyTest {
     @Test
     public void shouldReturnValueFromResource() {
         // given
-        Property<String> property = new CommonProperty<>("common.path", "default", PrimitivePropertyType.STRING);
+        Property<String> property = new TypeBasedProperty<>("common.path", "default", PrimitivePropertyType.STRING);
         given(reader.getObject("common.path")).willReturn("some string");
 
         // when / then
@@ -33,7 +33,7 @@ public class CommonPropertyTest {
     @Test
     public void shouldReturnDefaultValue() {
         // given
-        Property<String> property = new CommonProperty<>("common.path", "default", PrimitivePropertyType.STRING);
+        Property<String> property = new TypeBasedProperty<>("common.path", "default", PrimitivePropertyType.STRING);
 
         // when / then
         assertThat(property.determineValue(reader), equalTo("default"));
@@ -42,7 +42,7 @@ public class CommonPropertyTest {
     @Test
     public void shouldReturnValueAsExportValue() {
         // given
-        Property<String> property = new CommonProperty<>("common.path", "default", PrimitivePropertyType.STRING);
+        Property<String> property = new TypeBasedProperty<>("common.path", "default", PrimitivePropertyType.STRING);
         String given = "given string";
 
         // when / then
