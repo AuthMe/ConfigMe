@@ -75,14 +75,14 @@ public class BeanWithCollectionOfBeanTypeTest {
         assertThat(lines, contains(
             "message-key:",
             "    color: blue",
+            "    text: outside",
             "    extra: ",
             "    - color: green",
-            "      extra: []",
             "      text: inner1",
-            "    - color: blue",
             "      extra: []",
+            "    - color: blue",
             "      text: inner2",
-            "    text: outside"
+            "      extra: []"
         ));
     }
 

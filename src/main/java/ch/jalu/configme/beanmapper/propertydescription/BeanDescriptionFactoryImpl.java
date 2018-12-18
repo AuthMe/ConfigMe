@@ -8,8 +8,11 @@ import javax.annotation.Nullable;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -137,6 +140,63 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
                 writableProperties.add(descriptor);
             }
         }
-        return writableProperties;
+        return sortPropertiesList(clazz, writableProperties);
+    }
+
+    /**
+     * Returns a sorted list of the given properties which will be used for further processing and whose
+     * order will be maintained. May return the same list.
+     *
+     * @param clazz the class from which the properties come from
+     * @param properties the properties to sort
+     * @return sorted properties
+     */
+    protected List<PropertyDescriptor> sortPropertiesList(Class<?> clazz, List<PropertyDescriptor> properties) {
+        Map<String, Integer> fieldNameByIndex = createFieldNameOrderMap(clazz);
+        int maxIndex = fieldNameByIndex.size();
+
+        properties.sort(Comparator.comparing(property -> {
+            Integer index = fieldNameByIndex.get(property.getName());
+            return index == null ? maxIndex : index;
+        }));
+        return properties;
+    }
+
+    /**
+     * Creates a map of index (encounter number) by field name for all fields of the given class,
+     * including its superclasses. Fields are sorted by declaration order in the classes; sorted
+     * by top-most class in the inheritance hierarchy to the lowest (the class provided as parameter).
+     *
+     * @param clazz the class to create the field index map for
+     * @return map with all field names as keys and its index as value
+     */
+    protected Map<String, Integer> createFieldNameOrderMap(Class<?> clazz) {
+        Map<String, Integer> nameByIndex = new HashMap<>();
+        int i = 0;
+        for (Class currentClass : collectClassAndAllParents(clazz)) {
+            for (Field field : currentClass.getDeclaredFields()) {
+                nameByIndex.put(field.getName(), i);
+                ++i;
+            }
+        }
+        return nameByIndex;
+    }
+
+    /**
+     * Returns a list of the class' parents, including the given class itself, with the top-most parent
+     * coming first. Does not include the Object class.
+     *
+     * @param clazz the class whose parents should be collected
+     * @return list of all of the class' parents, sorted by highest class in the hierarchy to lowest
+     */
+    protected List<Class<?>> collectClassAndAllParents(Class<?> clazz) {
+        List<Class<?>> parents = new ArrayList<>();
+        Class<?> curClass = clazz;
+        while (curClass != null && curClass != Object.class) {
+            parents.add(curClass);
+            curClass = curClass.getSuperclass();
+        }
+        Collections.reverse(parents);
+        return parents;
     }
 }

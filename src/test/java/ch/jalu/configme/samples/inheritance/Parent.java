@@ -8,7 +8,7 @@ import java.beans.Transient;
 public class Parent {
 
     private long id;
-    private transient boolean isTemporary;
+    private transient boolean temporary;
 
     public long getId() {
         return id;
@@ -19,11 +19,11 @@ public class Parent {
     }
 
     public boolean isTemporary() {
-        return isTemporary;
+        return temporary;
     }
 
     @Transient
     public void setTemporary(boolean temporary) {
-        isTemporary = temporary;
+        this.temporary = temporary;
     }
 }

@@ -11,12 +11,14 @@ import ch.jalu.configme.utils.TypeInformation;
 import org.junit.Test;
 
 import java.beans.Transient;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 import static ch.jalu.configme.TestUtils.transform;
 import static ch.jalu.configme.TestUtils.verifyException;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
@@ -57,12 +59,16 @@ public class BeanDescriptionFactoryImplTest {
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
         // when
-        Collection<BeanPropertyDescription> properties = factory.getAllProperties(BooleanTestBean.class);
+        List<BeanPropertyDescription> properties = new ArrayList<>(factory.getAllProperties(BooleanTestBean.class));
 
         // then
         assertThat(properties, hasSize(4));
         assertThat(transform(properties, BeanPropertyDescription::getName),
-            containsInAnyOrder("empty", "active", "isField", "isNotMatched"));
+            containsInAnyOrder("active", "isField", "empty", "isNotMatched"));
+
+        // First two elements can be mapped to fields, so check their order. For the two unknown ones, we don't make any guarantees
+        assertThat(properties.get(0).getName(), equalTo("active"));
+        assertThat(properties.get(1).getName(), equalTo("isField"));
     }
 
     @Test
@@ -75,11 +81,11 @@ public class BeanDescriptionFactoryImplTest {
 
         // then
         assertThat(properties, hasSize(2));
-        assertThat(transform(properties, BeanPropertyDescription::getName), containsInAnyOrder("name", "mandatory"));
+        assertThat(transform(properties, BeanPropertyDescription::getName), contains("name", "mandatory"));
     }
 
     @Test
-    public void shouldBeAwareOfInheritance() {
+    public void shouldBeAwareOfInheritanceAndRespectOrder() {
         // given
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
@@ -88,7 +94,7 @@ public class BeanDescriptionFactoryImplTest {
 
         // then
         assertThat(properties, hasSize(3));
-        assertThat(transform(properties, BeanPropertyDescription::getName), containsInAnyOrder("id", "ratio", "name"));
+        assertThat(transform(properties, BeanPropertyDescription::getName), contains("id", "name", "ratio"));
     }
 
     @Test
@@ -102,7 +108,7 @@ public class BeanDescriptionFactoryImplTest {
         // then
         assertThat(properties, hasSize(5));
         assertThat(transform(properties, BeanPropertyDescription::getName),
-            containsInAnyOrder("temporary", "importance", "ratio", "name", "id"));
+            contains("id", "temporary", "name", "ratio", "importance"));
     }
 
     @Test
@@ -116,7 +122,7 @@ public class BeanDescriptionFactoryImplTest {
         // then
         assertThat(properties, hasSize(2));
         assertThat(transform(properties, BeanPropertyDescription::getName),
-            containsInAnyOrder("id", "has-id"));
+            contains("id", "has-id"));
     }
 
     @Test

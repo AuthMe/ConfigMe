@@ -46,9 +46,9 @@ public class YamlFileResourceTopCommentTest {
         // then
         assertThat(Files.readAllLines(file.toPath()), contains(
             "# Group configuration number",
-            "default-gamemode: CREATIVE",
             "worlds: ",
-            "- world"
+            "- world",
+            "default-gamemode: CREATIVE"
         ));
     }
 

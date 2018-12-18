@@ -1,43 +1,43 @@
 message-key:
     color: green
+    text: outside
+    extra: 
+    - color: yellow
+      text: inner1
+      extra: []
+    - color: blue
+      text: inner2
+      extra:
+      - color: red
+        text: level2 text
+        extra: []
     conditionalElem:
         color: orange
+        text: orange extension
+        extra: []
         conditionals:
             low:
                 color: white
-                conditionals: {}
-                extra: []
                 text: low text
+                extra: []
+                conditionals: {}
             med:
                 color: gray
-                conditionals: {}
+                text: med text
                 extra: 
                 - color: green
-                  extra: []
                   text: med child
-                text: med text
+                  extra: []
+                conditionals: {}
             high:
                 color: black
-                conditionalElem:
-                    bold: true
-                    color: teal
-                    conditionals: {}
-                    extra: []
-                    italic: false
-                    text: teal addition
-                conditionals: {}
-                extra: []
                 text: high text
-        extra: []
-        text: orange extension
-    extra: 
-    - color: yellow
-      extra: []
-      text: inner1
-    - color: blue
-      extra:
-      - color: red
-        extra: []
-        text: level2 text
-      text: inner2
-    text: outside
+                extra: []
+                conditionalElem:
+                    color: teal
+                    text: teal addition
+                    extra: []
+                    conditionals: {}
+                    italic: false
+                    bold: true
+                conditionals: {}
