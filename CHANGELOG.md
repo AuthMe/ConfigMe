@@ -1,6 +1,16 @@
 # ConfigMe Changelog
 
 ## ConfigMe 1.x
+#### 1.1.0 (2019-02-27)
+- New property structure allowing to easily define maps and lists, see PropertyInitializer
+- Support paths written together (e.g. "path.foo") in YML files
+- Fix bug in which paths with special sequences (like numbers) cannot be read
+- Allow to pass options into YamlReader to define how many empty lines should separate properties
+  - Files now no longer have an empty line at the top and none at the end by default
+- Write the properties of bean properties in the same order as the fields in the Java class
+
+:blue_book: [All changes in 1.1.0](https://github.com/AuthMe/ConfigMe/milestone/6?closed=1)
+
 #### 1.0.1 (2018-09-08)
 - Support all Collection types for export values (not only lists)
   - Fixes built-in lowercase String Set property creating output which cannot be read again
