@@ -1,0 +1,15 @@
+tiers:
+  list:
+    1:
+      level: 1
+    2:
+      level: 2
+roles:
+  0:
+    name: 'Initial role'
+    change-home: false
+  1:
+    name: 'Expert role'
+    change-home: true
+  false:
+    -5: SECOND
