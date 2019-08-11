@@ -3,6 +3,7 @@ package ch.jalu.configme.configurationdata;
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.configurationdata.samples.AdditionalTestConfiguration;
 import ch.jalu.configme.configurationdata.samples.IllegalSettingsHolderConstructorClasses;
+import ch.jalu.configme.configurationdata.samples.inheritance.ChildInheritanceSettingsHolder;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.ClassWithPrivatePropertyField;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ch.jalu.configme.TestUtils.verifyException;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
@@ -128,6 +130,18 @@ public class ConfigurationDataBuilderTest {
         assertThat(configurationData.getProperties(), equalTo(properties));
         assertThat(configurationData.getCommentsForSection("test.test"), contains("Comment for 'test.test'", "Two lines here"));
         assertThat(configurationData.getCommentsForSection("test.int"), empty());
+    }
+
+    @Test
+    public void shouldCollectPropertiesAlsoFromParentClasses() {
+        // given / when
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(ChildInheritanceSettingsHolder.class);
+
+        // then
+        List<String> propertyPaths = configurationData.getProperties().stream()
+            .map(Property::getPath).collect(Collectors.toList());
+        assertThat(propertyPaths, contains("top.string", "middle.version", "sample.name", "sample.subtitle", "child.double"));
+        assertThat(configurationData.getCommentsForSection("middle"), contains("Comes from the holder in the middle"));
     }
 
     private static void assertHasPropertyWithComments(ConfigurationData configurationData, Property<?> property,
