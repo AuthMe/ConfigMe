@@ -27,6 +27,15 @@ public interface PropertyReader {
     Set<String> getKeys(boolean onlyLeafNodes);
 
     /**
+     * Returns the direct children of the given path which are available in the file. Returns an empty set
+     * if the path does not exist in the file (never null).
+     *
+     * @param path the path whose direct child paths should be looked up
+     * @return set of all direct children (ordered, never null)
+     */
+    Set<String> getChildKeys(String path);
+
+    /**
      * Returns the object at the given path, or null if absent.
      *
      * @param path the path to retrieve the value for
