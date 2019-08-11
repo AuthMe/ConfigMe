@@ -54,7 +54,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
         Object value = values.get(property.getPath());
         if (value == null) {
             throw new ConfigMeException(format("No value exists for property with path '%s'. This may happen if "
-                                + " the property belongs to a %s class which was not passed to the settings manager.",
+                                + "the property belongs to a %s class which was not passed to the settings manager.",
                 property.getPath(), SettingsHolder.class.getSimpleName()));
         }
         return (T) value;

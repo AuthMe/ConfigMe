@@ -59,7 +59,6 @@ public interface Property<T> {
      * values encountered in the property reader should be preferably handled in {@link #determineValue},
      * or in an extension of {@link ch.jalu.configme.migration.MigrationService}.
      *
-     *
      * @param value the value to check
      * @return true if the value can be used for the property, false otherwise
      */
