@@ -93,6 +93,32 @@ public class ConfigurationDataImplTest {
         assertThat(absentComments, empty());
     }
 
+    @Test
+    public void shouldThrowForUnknownProperty() {
+        // given
+        List<Property<?>> properties = Collections.singletonList(newProperty("test", "Test"));
+        ConfigurationData configurationData = new ConfigurationDataImpl(properties, Collections.emptyMap());
+        Property<Integer> nonExistentProperty = newProperty("my.bogus.path", 5);
+
+        // when / then
+        verifyException(() -> configurationData.getValue(nonExistentProperty), ConfigMeException.class,
+            "No value exists for property with path 'my.bogus.path'");
+    }
+
+    @Test
+    public void shouldReturnValuesMap() {
+        // given
+        ConfigurationDataImpl configurationData = new ConfigurationDataImpl(Collections.emptyList(), Collections.emptyMap());
+
+        // when
+        int initialValuesSize = configurationData.getValues().size();
+        configurationData.setValue(newProperty("test", "foo"), "bar");
+
+        // then
+        assertThat(initialValuesSize, equalTo(0));
+        assertThat(configurationData.getValues().keySet(), contains("test"));
+    }
+
     private static Map<String, List<String>> createSampleCommentsMap() {
         CommentsConfiguration commentsConfiguration = new CommentsConfiguration();
         commentsConfiguration.setComment("test", "test section comment");

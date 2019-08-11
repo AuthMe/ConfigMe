@@ -56,8 +56,8 @@ public interface Property<T> {
      * This method is used in {@link ch.jalu.configme.configurationdata.ConfigurationDataImpl#setValue}, which
      * throws an exception if this method returns {@code false}. Therefore, this method is intended as a last catch
      * for invalid values and to ensure that programmatically no invalid value can be set. Extended validation of
-     * values encountered in the property reader should be preferably handled {@link #determineValue} or
-     * in a {@link ch.jalu.configme.migration.MigrationService}.
+     * values encountered in the property reader should be preferably handled in {@link #determineValue},
+     * or in an extension of {@link ch.jalu.configme.migration.MigrationService}.
      *
      *
      * @param value the value to check

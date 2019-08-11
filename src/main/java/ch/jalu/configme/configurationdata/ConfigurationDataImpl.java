@@ -1,5 +1,6 @@
 package ch.jalu.configme.configurationdata;
 
+import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
@@ -8,6 +9,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.String.format;
 
 /**
  * Contains information about the available properties and their associated comments.
@@ -48,7 +51,13 @@ public class ConfigurationDataImpl implements ConfigurationData {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getValue(Property<T> property) {
-        return (T) values.get(property.getPath());
+        Object value = values.get(property.getPath());
+        if (value == null) {
+            throw new ConfigMeException(format("No value exists for property with path '%s'. This may happen if "
+                                + " the property belongs to a %s class which was not passed to the settings manager.",
+                property.getPath(), SettingsHolder.class.getSimpleName()));
+        }
+        return (T) value;
     }
 
     @Override
@@ -65,5 +74,9 @@ public class ConfigurationDataImpl implements ConfigurationData {
     public void initializeValues(PropertyReader reader) {
         values.clear();
         getProperties().forEach(property -> setValue((Property) property, property.determineValue(reader)));
+    }
+
+    protected Map<String, Object> getValues() {
+        return values;
     }
 }
