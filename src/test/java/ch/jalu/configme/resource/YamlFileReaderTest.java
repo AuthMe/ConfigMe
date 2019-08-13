@@ -19,6 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.contains;
@@ -89,7 +90,7 @@ public class YamlFileReaderTest {
 
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
             assertThat("Property '" + entry.getKey().getPath() + "' has expected value",
-                entry.getKey().determineValue(reader), equalTo(entry.getValue()));
+                entry.getKey().determineValue(reader), isValidValueOf(entry.getValue()));
         }
     }
 

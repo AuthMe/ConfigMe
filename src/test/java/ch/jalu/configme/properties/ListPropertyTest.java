@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.Test;
@@ -10,7 +11,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.contains;
+import static ch.jalu.configme.TestUtils.isErrorValueOf;
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -31,10 +33,10 @@ public class ListPropertyTest {
         given(reader.getList("list")).willReturn((List) Arrays.asList(3, 5, 7.0));
 
         // when
-        List<Integer> result = property.determineValue(reader);
+        PropertyValue<List<Integer>> result = property.determineValue(reader);
 
         // then
-        assertThat(result, contains(3, 5, 7));
+        assertThat(result, isValidValueOf(Arrays.asList(3, 5, 7)));
     }
 
     @Test
@@ -44,10 +46,10 @@ public class ListPropertyTest {
         given(reader.getList("list")).willReturn(null);
 
         // when
-        List<Integer> result = property.determineValue(reader);
+        PropertyValue<List<Integer>> result = property.determineValue(reader);
 
         // then
-        assertThat(result, contains(8, 9, 10));
+        assertThat(result, isErrorValueOf(Arrays.asList(8, 9, 10)));
     }
 
     @Test

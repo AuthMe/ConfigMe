@@ -1,10 +1,9 @@
 package ch.jalu.configme.migration;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
+import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
-
-import java.util.List;
 
 /**
  * Simple migration service that can be extended.
@@ -14,7 +13,7 @@ public class PlainMigrationService implements MigrationService {
     @Override
     public boolean checkAndMigrate(PropertyReader reader, ConfigurationData configurationData) {
         if (performMigrations(reader, configurationData) == MIGRATION_REQUIRED
-            || checkAreAllSettingsPresent(reader, configurationData.getProperties()) == MIGRATION_REQUIRED) {
+            || !configurationData.areAllValuesValidInResource()) {
             return MIGRATION_REQUIRED;
         }
         return NO_MIGRATION_NEEDED;
@@ -52,21 +51,11 @@ public class PlainMigrationService implements MigrationService {
                                               PropertyReader reader, ConfigurationData configurationData) {
         if (reader.contains(oldProperty.getPath())) {
             if (!reader.contains(newProperty.getPath())) {
-                T value = oldProperty.determineValue(reader);
-                configurationData.setValue(newProperty, value);
+                PropertyValue<T> value = oldProperty.determineValue(reader);
+                configurationData.setValue(newProperty, value.getValue());
             }
             return true;
         }
         return false;
     }
-
-    private static boolean checkAreAllSettingsPresent(PropertyReader reader, List<Property<?>> properties) {
-        for (Property<?> property : properties) {
-            if (!property.isPresent(reader)) {
-                return MIGRATION_REQUIRED;
-            }
-        }
-        return NO_MIGRATION_NEEDED;
-    }
-
 }

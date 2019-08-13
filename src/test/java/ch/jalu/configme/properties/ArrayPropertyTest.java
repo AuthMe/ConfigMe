@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.Test;
@@ -9,6 +10,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 
+import static ch.jalu.configme.TestUtils.isErrorValueOf;
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -68,10 +71,10 @@ public class ArrayPropertyTest {
         given(reader.getObject("array")).willReturn(Arrays.asList("qwerty", "123"));
 
         // when
-        String[] result = property.determineValue(reader);
+        PropertyValue<String[]> result = property.determineValue(reader);
 
         // then
-        assertThat(result, equalTo(new String[] {"qwerty", "123"}));
+        assertThat(result, isValidValueOf(new String[] {"qwerty", "123"}));
     }
 
     @Test
@@ -85,10 +88,10 @@ public class ArrayPropertyTest {
         given(reader.getObject("array")).willReturn(null);
 
         // when
-        String[] result = property.determineValue(reader);
+        PropertyValue<String[]> result = property.determineValue(reader);
 
         // then
-        assertThat(result, equalTo(new String[] {"multiline", "message c:"}));
+        assertThat(result, isErrorValueOf(new String[] {"multiline", "message c:"}));
     }
 
     @Test
@@ -99,9 +102,9 @@ public class ArrayPropertyTest {
             new String[] {},
             PrimitivePropertyType.STRING, String[]::new);
 
-        String[] given = new String[] {"hello, chert", "how in hell?"};
+        String[] givenArray = new String[] {"hello, chert", "how in hell?"};
 
         // when / then
-        assertThat(property.toExportValue(given), equalTo(new String[] {"hello, chert", "how in hell?"}));
+        assertThat(property.toExportValue(givenArray), equalTo(givenArray));
     }
 }

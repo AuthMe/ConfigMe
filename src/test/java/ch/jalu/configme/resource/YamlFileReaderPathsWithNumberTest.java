@@ -10,8 +10,8 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -32,13 +32,13 @@ public class YamlFileReaderPathsWithNumberTest {
         PropertyReader reader = yamlFileResource.createReader();
 
         // when / then
-        assertThat(PathsWithNumbers.ONE_LEVEL.determineValue(reader), equalTo(1));
-        assertThat(PathsWithNumbers.TWO_LEVEL.determineValue(reader), equalTo(2));
-        assertThat(PathsWithNumbers.ROLE_ZERO_NAME.determineValue(reader), equalTo("Initial role"));
-        assertThat(PathsWithNumbers.ROLE_ZERO_CHANGE_HOME.determineValue(reader), equalTo(false));
-        assertThat(PathsWithNumbers.ROLE_ONE_NAME.determineValue(reader), equalTo("Expert role"));
-        assertThat(PathsWithNumbers.ROLE_ONE_CHANGE_HOME.determineValue(reader), equalTo(true));
-        assertThat(PathsWithNumbers.ROLE_FALSE_ENUM.determineValue(reader), equalTo(TestEnum.SECOND));
+        assertThat(PathsWithNumbers.ONE_LEVEL.determineValue(reader), isValidValueOf(1));
+        assertThat(PathsWithNumbers.TWO_LEVEL.determineValue(reader), isValidValueOf(2));
+        assertThat(PathsWithNumbers.ROLE_ZERO_NAME.determineValue(reader), isValidValueOf("Initial role"));
+        assertThat(PathsWithNumbers.ROLE_ZERO_CHANGE_HOME.determineValue(reader), isValidValueOf(false));
+        assertThat(PathsWithNumbers.ROLE_ONE_NAME.determineValue(reader), isValidValueOf("Expert role"));
+        assertThat(PathsWithNumbers.ROLE_ONE_CHANGE_HOME.determineValue(reader), isValidValueOf(true));
+        assertThat(PathsWithNumbers.ROLE_FALSE_ENUM.determineValue(reader), isValidValueOf(TestEnum.SECOND));
     }
 
     /** Test configuration. */

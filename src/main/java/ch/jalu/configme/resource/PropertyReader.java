@@ -8,7 +8,7 @@ public interface PropertyReader {
 
     /**
      * Returns whether a value is present for the given path. When applicable,
-     * {@link ch.jalu.configme.properties.Property#isPresent(PropertyReader)} should be favored over
+     * {@link ch.jalu.configme.properties.Property#determineValue(PropertyReader)} should be favored over
      * calling this method as it may make more type-aware checks. This method simply returns whether <i>some value</i>
      * exists under the given path.
      *

@@ -51,6 +51,7 @@ public class PlainMigrationServiceTest {
     public void shouldReturnNoSaveNecessaryForAllPropertiesPresent() {
         // given
         PropertyReader reader = createReaderSpy(COMPLETE_CONFIG);
+        configurationData.initializeValues(reader);
 
         // when
         boolean result = service.checkAndMigrate(reader, configurationData);
@@ -169,7 +170,7 @@ public class PlainMigrationServiceTest {
             for (Property<?> property : configurationData.getProperties()) {
                 if (property instanceof IntegerProperty) {
                     Property<Integer> intProperty = (Property<Integer>) property;
-                    if (intProperty.determineValue(reader) > 20) {
+                    if (intProperty.determineValue(reader).getValue() > 20) {
                         configurationData.setValue(intProperty, 0);
                         hasChange = true;
                     }

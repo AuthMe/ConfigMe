@@ -68,18 +68,6 @@ public class OptionalPropertyTest {
     }
 
     @Test
-    public void shouldAlwaysReturnThatIsPresent() {
-        // given
-        OptionalProperty<Boolean> booleanProp = new OptionalProperty<>(new BooleanProperty("bool", false));
-
-        // when
-        boolean isPresent = booleanProp.isPresent(reader);
-
-        // then
-        assertThat(isPresent, equalTo(true));
-    }
-
-    @Test
     public void shouldAllowToDefineDefaultValue() {
         // given
         OptionalProperty<Integer> integerProp = new OptionalProperty<>(new IntegerProperty("path", 0), 42);

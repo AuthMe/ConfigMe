@@ -1,9 +1,12 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static ch.jalu.configme.TestUtils.isErrorValueOf;
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -29,10 +32,10 @@ public class BooleanPropertyTest {
         Property<Boolean> property = new BooleanProperty("bool.path.test", false);
 
         // when
-        boolean result = property.determineValue(reader);
+        PropertyValue<Boolean> result = property.determineValue(reader);
 
         // then
-        assertThat(result, equalTo(true));
+        assertThat(result, isValidValueOf(true));
     }
 
     @Test
@@ -41,10 +44,10 @@ public class BooleanPropertyTest {
         Property<Boolean> property = new BooleanProperty("bool.path.wrong", true);
 
         // when
-        boolean result = property.determineValue(reader);
+        PropertyValue<Boolean> result = property.determineValue(reader);
 
         // then
-        assertThat(result, equalTo(true));
+        assertThat(result, isErrorValueOf(true));
     }
 
     @Test

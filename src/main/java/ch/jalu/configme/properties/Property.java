@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 
 import javax.annotation.Nullable;
@@ -30,7 +31,7 @@ public interface Property<T> {
      * @param propertyReader the reader to construct the value from (if possible)
      * @return the value to associate to this property
      */
-    T determineValue(PropertyReader propertyReader);
+    PropertyValue<T> determineValue(PropertyReader propertyReader);
 
     /**
      * Returns the default value of this property.
@@ -38,16 +39,6 @@ public interface Property<T> {
      * @return the default value
      */
     T getDefaultValue();
-
-    /**
-     * Returns true if a valid value for this property is present in the property reader, i.e. true if and
-     * only if there is a value at the property's path in the reader <b>and</b> it can be used to construct
-     * a value for the property.
-     *
-     * @param propertyReader the reader to use
-     * @return true if a valid value is present in the reader, false otherwise
-     */
-    boolean isPresent(PropertyReader propertyReader);
 
     /**
      * Returns whether the value can be associated to the given property, i.e. whether it fulfills all

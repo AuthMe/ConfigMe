@@ -13,8 +13,8 @@ import org.junit.Test;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static ch.jalu.configme.TestUtils.transform;
 import static ch.jalu.configme.TestUtils.verifyException;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static org.hamcrest.Matchers.contains;
@@ -138,8 +138,7 @@ public class ConfigurationDataBuilderTest {
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(ChildInheritanceSettingsHolder.class);
 
         // then
-        List<String> propertyPaths = configurationData.getProperties().stream()
-            .map(Property::getPath).collect(Collectors.toList());
+        List<String> propertyPaths = transform(configurationData.getProperties(), Property::getPath);
         assertThat(propertyPaths, contains("top.string", "middle.version", "sample.name", "sample.subtitle", "child.double"));
         assertThat(configurationData.getCommentsForSection("middle"), contains("Comes from the holder in the middle"));
     }

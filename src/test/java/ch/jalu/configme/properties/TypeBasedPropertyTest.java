@@ -7,6 +7,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static ch.jalu.configme.TestUtils.isErrorValueOf;
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -27,7 +29,7 @@ public class TypeBasedPropertyTest {
         given(reader.getObject("common.path")).willReturn("some string");
 
         // when / then
-        assertThat(property.determineValue(reader), equalTo("some string"));
+        assertThat(property.determineValue(reader), isValidValueOf("some string"));
     }
 
     @Test
@@ -36,7 +38,7 @@ public class TypeBasedPropertyTest {
         Property<String> property = new TypeBasedProperty<>("common.path", "default", PrimitivePropertyType.STRING);
 
         // when / then
-        assertThat(property.determineValue(reader), equalTo("default"));
+        assertThat(property.determineValue(reader), isErrorValueOf("default"));
     }
 
     @Test

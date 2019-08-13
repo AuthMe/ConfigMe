@@ -1,8 +1,11 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.Test;
 
+import static ch.jalu.configme.TestUtils.isErrorValueOf;
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -21,10 +24,10 @@ public class EnumPropertyTest {
         given(reader.getObject(property.getPath())).willReturn("Entry_B");
 
         // when
-        TestEnum result = property.determineValue(reader);
+        PropertyValue<TestEnum> result = property.determineValue(reader);
 
         // then
-        assertThat(result, equalTo(TestEnum.ENTRY_B));
+        assertThat(result, isValidValueOf(TestEnum.ENTRY_B));
     }
 
     @Test
@@ -35,10 +38,10 @@ public class EnumPropertyTest {
         given(reader.getObject(property.getPath())).willReturn("Bogus");
 
         // when
-        TestEnum result = property.determineValue(reader);
+        PropertyValue<TestEnum> result = property.determineValue(reader);
 
         // then
-        assertThat(result, equalTo(TestEnum.ENTRY_C));
+        assertThat(result, isErrorValueOf(TestEnum.ENTRY_C));
     }
 
     @Test
@@ -49,52 +52,10 @@ public class EnumPropertyTest {
         given(reader.getObject(property.getPath())).willReturn(null);
 
         // when
-        TestEnum result = property.determineValue(reader);
+        PropertyValue<TestEnum> result = property.determineValue(reader);
 
         // then
-        assertThat(result, equalTo(TestEnum.ENTRY_C));
-    }
-
-    @Test
-    public void shouldReturnTrueForContainsCheck() {
-        // given
-        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
-        PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject(property.getPath())).willReturn("ENTRY_B");
-
-        // when
-        boolean result = property.isPresent(reader);
-
-        // then
-        assertThat(result, equalTo(true));
-    }
-
-    @Test
-    public void shouldReturnFalseForFileWithoutConfig() {
-        // given
-        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_C);
-        PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject(property.getPath())).willReturn(null);
-
-        // when
-        boolean result = property.isPresent(reader);
-
-        // then
-        assertThat(result, equalTo(false));
-    }
-
-    @Test
-    public void shouldReturnFalseForUnknownValue() {
-        // given
-        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_A);
-        PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject(property.getPath())).willReturn("wrong value");
-
-        // when
-        boolean result = property.isPresent(reader);
-
-        // then
-        assertThat(result, equalTo(false));
+        assertThat(result, isErrorValueOf(TestEnum.ENTRY_C));
     }
 
     @Test

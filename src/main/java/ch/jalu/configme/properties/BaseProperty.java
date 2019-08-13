@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 
 import javax.annotation.Nullable;
@@ -42,14 +43,9 @@ public abstract class BaseProperty<T> implements Property<T> {
     }
 
     @Override
-    public T determineValue(PropertyReader reader) {
+    public PropertyValue<T> determineValue(PropertyReader reader) {
         T value = getFromReader(reader);
-        return value != null ? value : getDefaultValue();
-    }
-
-    @Override
-    public boolean isPresent(PropertyReader reader) {
-        return getFromReader(reader) != null;
+        return PropertyValue.defaultIfInvalid(value, this);
     }
 
     @Override

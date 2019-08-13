@@ -10,10 +10,17 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.HashMap;
 import java.util.Map;
 
+import static ch.jalu.configme.TestUtils.isErrorValueOf;
+import static ch.jalu.configme.TestUtils.isValidValueOf;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 
+/**
+ * Test for {@link MapProperty}.
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class MapPropertyTest {
 
@@ -22,39 +29,44 @@ public class MapPropertyTest {
 
     @Test
     public void shouldReturnValueFromResource() {
+        // given
         MapProperty<String> property = new MapProperty<>("map", new HashMap<>(), PrimitivePropertyType.STRING);
+        Map<String, String> mapFromReader = createSampleMap();
+        given(reader.getObject("map")).willReturn(mapFromReader);
 
-        given(reader.getObject("map")).willReturn(new HashMap<String, String>() {{
-            put("test", "keks");
-        }});
-
-        assertThat(property.determineValue(reader), equalTo(new HashMap<String, String>() {{
-            put("test", "keks");
-        }}));
+        // when / then
+        assertThat(property.determineValue(reader), isValidValueOf(mapFromReader));
     }
 
     @Test
     public void shouldReturnDefaultValue() {
-        MapProperty<String> property = new MapProperty<>("map", new HashMap<String, String>() {{
-            put("test", "keks");
-        }}, PrimitivePropertyType.STRING);
-
+        // given
+        MapProperty<String> property = new MapProperty<>("map", createSampleMap(), PrimitivePropertyType.STRING);
         given(reader.getObject("map")).willReturn(null);
 
-        assertThat(property.determineValue(reader), equalTo(new HashMap<String, String>() {{
-            put("test", "keks");
-        }}));
+        // when / then
+        assertThat(property.determineValue(reader), isErrorValueOf(property.getDefaultValue()));
     }
 
     @Test
     public void shouldReturnValueAsExportValue() {
+        // given
         MapProperty<String> property = new MapProperty<>("map", new HashMap<>(), PrimitivePropertyType.STRING);
+        Map<String, String> givenMap = createSampleMap();
 
-        Map<String, String> given = new HashMap<String, String>() {{
-            put("test", "keks");
-        }};
+        // when
+        Object exportValue = property.toExportValue(givenMap);
 
-        assertThat(property.toExportValue(given), equalTo(given));
+        // then
+        assertThat(exportValue, instanceOf(Map.class));
+        Map<String, String> resultMap = (Map) exportValue;
+        assertThat(resultMap.keySet(), contains("test"));
+        assertThat(resultMap.get("test"), equalTo("keks"));
     }
 
+    private static Map<String, String> createSampleMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put("test", "keks");
+        return map;
+    }
 }

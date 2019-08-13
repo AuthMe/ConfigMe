@@ -1,5 +1,6 @@
 package ch.jalu.configme;
 
+import ch.jalu.configme.configurationdata.PropertyValue;
 import org.hamcrest.Matcher;
 import org.junit.rules.TemporaryFolder;
 
@@ -21,9 +22,11 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -230,5 +233,33 @@ public final class TestUtils {
      */
     public static <T, R> List<R> transform(Collection<T> coll, Function<? super T, ? extends R> transformer) {
         return coll.stream().map(transformer).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a matcher for {@link PropertyValue} which evaluates successfully only if the property value contains
+     * the given value and its validity flag is set to true.
+     *
+     * @param expectedValue the value expected to be contained in the property value
+     * @return matcher for fully valid property value
+     */
+    public static Matcher<PropertyValue> isValidValueOf(Object expectedValue) {
+        return isPropertyValueOf(expectedValue, true);
+    }
+
+    /**
+     * Returns a matcher for {@link PropertyValue} which evaluates successfully only if the property value contains
+     * the given value and its validity flag is set to false.
+     *
+     * @param expectedValue the value expected to be contained in the property value
+     * @return matcher for property value with error
+     */
+    public static Matcher<PropertyValue> isErrorValueOf(Object expectedValue) {
+        return isPropertyValueOf(expectedValue, false);
+    }
+
+    private static Matcher<PropertyValue> isPropertyValueOf(Object expectedValue, boolean expectedValid) {
+        Matcher<PropertyValue> valueMatcher = hasProperty("value", equalTo(expectedValue));
+        Matcher<PropertyValue> validFlagMatcher = hasProperty("validInResource", equalTo(expectedValid));
+        return both(valueMatcher).and(validFlagMatcher);
     }
 }
