@@ -52,11 +52,6 @@ public class LowercaseStringSetProperty extends BaseProperty<Set<String>> {
     }
 
     @Override
-    public boolean isPresent(PropertyReader reader) {
-        return reader.getList(getPath()) != null;
-    }
-
-    @Override
     public Object toExportValue(Set<String> value) {
         return value;
     }

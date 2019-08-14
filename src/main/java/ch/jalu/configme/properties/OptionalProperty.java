@@ -26,16 +26,16 @@ public class OptionalProperty<T> extends BaseProperty<Optional<T>> {
 
     @Override
     protected Optional<T> getFromReader(PropertyReader reader) {
-        return baseProperty.isPresent(reader)
-            ? Optional.ofNullable(baseProperty.determineValue(reader))
+        return isBasePropertyPresent(reader)
+            ? Optional.ofNullable(baseProperty.determineValue(reader).getValue())
             : Optional.empty();
     }
 
-    @Override
-    public boolean isPresent(PropertyReader reader) {
-        // getFromResource will never return null, and always returning true here prevents this
-        // optional(!) property from triggering migrations
-        return true;
+    protected boolean isBasePropertyPresent(PropertyReader reader) {
+        if (baseProperty instanceof BaseProperty<?>) {
+            return ((BaseProperty<?>) baseProperty).getFromReader(reader) != null;
+        }
+        return reader.contains(baseProperty.getPath());
     }
 
     @Override

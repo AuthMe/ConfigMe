@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static ch.jalu.configme.TestUtils.copyFileFromResources;
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
@@ -117,8 +118,8 @@ public class SettingsManagerBuilderTest {
 
         PropertyReader reader = manager.getPropertyResource().createReader();
         // Value which already existed in file
-        assertThat(TestConfiguration.DURATION_IN_SECONDS.determineValue(reader), equalTo(22));
+        assertThat(TestConfiguration.DURATION_IN_SECONDS.determineValue(reader).getValue(), equalTo(22));
         // Value which has newly been written to -> check with Property#determineValue to make sure it was saved in the config file
-        assertThat(TestConfiguration.RATIO_ORDER.determineValue(reader), equalTo(TestConfiguration.RATIO_ORDER.getDefaultValue()));
+        assertThat(TestConfiguration.RATIO_ORDER.determineValue(reader), isValidValueOf(TestConfiguration.RATIO_ORDER.getDefaultValue()));
     }
 }

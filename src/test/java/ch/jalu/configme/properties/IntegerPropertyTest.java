@@ -1,9 +1,12 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static ch.jalu.configme.TestUtils.isErrorValueOf;
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -29,10 +32,10 @@ public class IntegerPropertyTest {
         Property<Integer> property = new IntegerProperty("int.path.test", 3);
 
         // when
-        int result = property.determineValue(reader);
+        PropertyValue<Integer> result = property.determineValue(reader);
 
         // then
-        assertThat(result, equalTo(27));
+        assertThat(result, isValidValueOf(27));
     }
 
     @Test
@@ -41,10 +44,10 @@ public class IntegerPropertyTest {
         Property<Integer> property = new IntegerProperty("int.path.wrong", -10);
 
         // when
-        int result = property.determineValue(reader);
+        PropertyValue<Integer> result = property.determineValue(reader);
 
         // then
-        assertThat(result, equalTo(-10));
+        assertThat(result, isErrorValueOf(-10));
     }
 
     @Test

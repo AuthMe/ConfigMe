@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 
 import javax.annotation.Nullable;
@@ -30,7 +31,7 @@ public interface Property<T> {
      * @param propertyReader the reader to construct the value from (if possible)
      * @return the value to associate to this property
      */
-    T determineValue(PropertyReader propertyReader);
+    PropertyValue<T> determineValue(PropertyReader propertyReader);
 
     /**
      * Returns the default value of this property.
@@ -40,25 +41,14 @@ public interface Property<T> {
     T getDefaultValue();
 
     /**
-     * Returns true if a valid value for this property is present in the property reader, i.e. true if and
-     * only if there is a value at the property's path in the reader <b>and</b> it can be used to construct
-     * a value for the property.
-     *
-     * @param propertyReader the reader to use
-     * @return true if a valid value is present in the reader, false otherwise
-     */
-    boolean isPresent(PropertyReader propertyReader);
-
-    /**
      * Returns whether the value can be associated to the given property, i.e. whether it fulfills all
      * requirements which may be imposed by the property type.
      * <p>
      * This method is used in {@link ch.jalu.configme.configurationdata.ConfigurationDataImpl#setValue}, which
      * throws an exception if this method returns {@code false}. Therefore, this method is intended as a last catch
      * for invalid values and to ensure that programmatically no invalid value can be set. Extended validation of
-     * values encountered in the property reader should be preferably handled {@link #determineValue} or
-     * in a {@link ch.jalu.configme.migration.MigrationService}.
-     *
+     * values encountered in the property reader should be preferably handled in {@link #determineValue},
+     * or in an extension of {@link ch.jalu.configme.migration.MigrationService}.
      *
      * @param value the value to check
      * @return true if the value can be used for the property, false otherwise

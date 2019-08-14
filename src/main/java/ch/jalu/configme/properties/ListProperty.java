@@ -59,11 +59,6 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
     }
 
     @Override
-    public boolean isPresent(PropertyReader reader) {
-        return reader.getList(getPath()) != null;
-    }
-
-    @Override
     public Object toExportValue(List<T> value) {
         return value.stream()
             .map(type::toExportValue)

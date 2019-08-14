@@ -11,10 +11,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * YAML file reader.
@@ -98,6 +100,18 @@ public class YamlFileReader implements PropertyReader {
         Set<String> allKeys = new LinkedHashSet<>();
         collectKeysIntoSet("", root, allKeys, onlyLeafNodes);
         return allKeys;
+    }
+
+    @Override
+    public Set<String> getChildKeys(String path) {
+        Object object = getObject(path);
+        if (object instanceof Map) {
+            String pathPrefix = path.isEmpty() ? "" : path + ".";
+            return ((Map<String, Object>) object).keySet().stream()
+                .map(childPath -> pathPrefix + childPath)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+        return Collections.emptySet();
     }
 
     /**

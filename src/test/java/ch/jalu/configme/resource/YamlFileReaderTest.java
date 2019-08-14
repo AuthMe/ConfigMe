@@ -19,10 +19,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
@@ -88,7 +90,7 @@ public class YamlFileReaderTest {
 
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
             assertThat("Property '" + entry.getKey().getPath() + "' has expected value",
-                entry.getKey().determineValue(reader), equalTo(entry.getValue()));
+                entry.getKey().determineValue(reader), isValidValueOf(entry.getValue()));
         }
     }
 
@@ -267,6 +269,47 @@ public class YamlFileReaderTest {
             "message-key.conditionalElem.extra", // empty collection
             "message-key.extra", // empty collection
             "message-key.text"));
+    }
+
+    @Test
+    public void shouldReturnChildrenPathsOfGivenPath() {
+        // given
+        File file = copyFileFromResources(COMPLETE_FILE);
+        YamlFileReader reader = new YamlFileReader(file);
+
+        // when
+        Set<String> keys = reader.getChildKeys("features.boring");
+
+        // then
+        assertThat(keys, contains("features.boring.skip", "features.boring.colors", "features.boring.dustLevel"));
+    }
+
+    @Test
+    public void shouldReturnChildrenPathsOfRoot() {
+        // given
+        File file = copyFileFromResources(COMPLETE_FILE);
+        YamlFileReader reader = new YamlFileReader(file);
+
+        // when
+        Set<String> keys = reader.getChildKeys("");
+
+        // then
+        assertThat(keys, contains("test", "sample", "version", "features", "security"));
+    }
+
+    @Test
+    public void shouldReturnEmptySetForNonExistentOrLeafValue() {
+        // given
+        File file = copyFileFromResources(COMPLETE_FILE);
+        YamlFileReader reader = new YamlFileReader(file);
+
+        // when
+        Set<String> bogusChildren = reader.getChildKeys("bogus");
+        Set<String> leafChildren = reader.getChildKeys("features.boring.colors");
+
+        // then
+        assertThat(bogusChildren, empty());
+        assertThat(leafChildren, empty());
     }
 
     private File copyFileFromResources(String path) {

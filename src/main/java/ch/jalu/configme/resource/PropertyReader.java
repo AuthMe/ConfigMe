@@ -8,7 +8,7 @@ public interface PropertyReader {
 
     /**
      * Returns whether a value is present for the given path. When applicable,
-     * {@link ch.jalu.configme.properties.Property#isPresent(PropertyReader)} should be favored over
+     * {@link ch.jalu.configme.properties.Property#determineValue(PropertyReader)} should be favored over
      * calling this method as it may make more type-aware checks. This method simply returns whether <i>some value</i>
      * exists under the given path.
      *
@@ -25,6 +25,15 @@ public interface PropertyReader {
      * @return set of all existing keys (ordered)
      */
     Set<String> getKeys(boolean onlyLeafNodes);
+
+    /**
+     * Returns the direct children of the given path which are available in the file. Returns an empty set
+     * if the path does not exist in the file (never null).
+     *
+     * @param path the path whose direct child paths should be looked up
+     * @return set of all direct children (ordered, never null)
+     */
+    Set<String> getChildKeys(String path);
 
     /**
      * Returns the object at the given path, or null if absent.

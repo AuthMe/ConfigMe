@@ -54,7 +54,8 @@ public class YamlSetPropertyExportTest {
         resource.exportProperties(configurationData);
 
         // then
-        assertThat(setProperty.determineValue(resource.createReader()), contains(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD));
+        assertThat(setProperty.determineValue(resource.createReader()).getValue(),
+            contains(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD));
 
         assertThat(Files.readAllLines(configFile.toPath()), contains(
             "sample:",

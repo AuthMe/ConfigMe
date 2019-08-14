@@ -30,7 +30,7 @@ public class StringPropertyTest {
         Property<String> property = new StringProperty("str.path.test", "unused default");
 
         // when
-        String result = property.determineValue(reader);
+        String result = property.determineValue(reader).getValue();
 
         // then
         assertThat(result, equalTo("Test value"));
@@ -42,7 +42,7 @@ public class StringPropertyTest {
         Property<String> property = new StringProperty("str.path.wrong", "given default value");
 
         // when
-        String result = property.determineValue(reader);
+        String result = property.determineValue(reader).getValue();
 
         // then
         assertThat(result, equalTo("given default value"));
@@ -69,8 +69,8 @@ public class StringPropertyTest {
         given(reader.getObject(property2.getPath())).willReturn(-5.328);
 
         // when
-        String value1 = property1.determineValue(reader);
-        String value2 = property2.determineValue(reader);
+        String value1 = property1.determineValue(reader).getValue();
+        String value2 = property2.determineValue(reader).getValue();
 
         // then
         assertThat(value1, equalTo("1"));
@@ -84,7 +84,7 @@ public class StringPropertyTest {
         given(reader.getObject(property.getPath())).willReturn(false);
 
         // when
-        String value = property.determineValue(reader);
+        String value = property.determineValue(reader).getValue();
 
         // then
         assertThat(value, equalTo("false"));

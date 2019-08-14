@@ -100,7 +100,7 @@ public class BeanPropertyTest {
         given(mapper.convertToBean(value, new TypeInformation(WorldGroupConfig.class))).willReturn(groupConfig);
 
         // when
-        WorldGroupConfig result = property.determineValue(reader);
+        WorldGroupConfig result = property.determineValue(reader).getValue();
 
         // then
         assertThat(result, equalTo(groupConfig));

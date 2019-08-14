@@ -74,4 +74,14 @@ public interface ConfigurationData {
      */
     <T> void setValue(Property<T> property, T value);
 
+    /**
+     * Returns if the last call of {@link #initializeValues} had fully valid values in the resource
+     * for all known properties. If false, at least one property was either not present in the resource, or the data
+     * under its path was not fully acceptable for the property type.
+     *
+     * @return true if all properties are represented in a fully valid way in the resource, false otherwise
+     * @see PropertyValue#isValidInResource()
+     */
+    boolean areAllValuesValidInResource();
+
 }

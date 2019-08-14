@@ -10,9 +10,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Utility class responsible for retrieving all {@link Property} fields
@@ -84,14 +86,13 @@ public class ConfigurationDataBuilder {
      * @param clazz the class to process
      */
     protected void collectProperties(Class<?> clazz) {
-        Field[] declaredFields = clazz.getDeclaredFields();
-        for (Field field : declaredFields) {
+        findFieldsToProcess(clazz).forEach(field -> {
             Property<?> property = getPropertyField(field);
             if (property != null) {
                 propertyListBuilder.add(property);
                 setCommentForPropertyField(field, property.getPath());
             }
-        }
+        });
     }
 
     protected void setCommentForPropertyField(Field field, String path) {
@@ -142,5 +143,31 @@ public class ConfigurationDataBuilder {
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new ConfigMeException("Could not create instance of " + clazz, e);
         }
+    }
+
+    /**
+     * Returns all fields of the class which should be considered as potential {@link Property} definitions.
+     * Considers the class' parents.
+     *
+     * @param clazz the class whose fields should be returned
+     * @return stream of all the fields to process
+     */
+    protected Stream<Field> findFieldsToProcess(Class<?> clazz) {
+        // In most cases we expect the class not to have any parent, so we check here and "fast track" this case
+        if (Object.class.equals(clazz.getSuperclass())) {
+            return Arrays.stream(clazz.getDeclaredFields());
+        }
+
+        List<Class<?>> classes = new ArrayList<>();
+        Class<?> currentClass = clazz;
+        while (currentClass != null && !currentClass.equals(Object.class)) {
+            classes.add(currentClass);
+            currentClass = currentClass.getSuperclass();
+        }
+        Collections.reverse(classes);
+
+        return classes.stream()
+            .map(Class::getDeclaredFields)
+            .flatMap(Arrays::stream);
     }
 }

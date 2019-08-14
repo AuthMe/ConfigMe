@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -10,6 +11,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static ch.jalu.configme.TestUtils.isErrorValueOf;
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -43,10 +46,10 @@ public class LowercaseStringSetPropertyTest {
         Property<Set<String>> property = new LowercaseStringSetProperty("lowercaselist.path.test", "1", "b");
 
         // when
-        Set<String> result = property.determineValue(reader);
+        PropertyValue<Set<String>> result = property.determineValue(reader);
 
         // then
-        assertThat(result, contains("test1", "test2", "3rd test"));
+        assertThat(result, isValidValueOf(newLinkedHashSet("test1", "test2", "3rd test")));
     }
 
     @Test
@@ -56,10 +59,10 @@ public class LowercaseStringSetPropertyTest {
             new LowercaseStringSetProperty("lowercaselist.path.wrong", "default", "list", "elements");
 
         // when
-        Set<String> result = property.determineValue(reader);
+        PropertyValue<Set<String>> result = property.determineValue(reader);
 
         // then
-        assertThat(result, contains("default", "list", "elements"));
+        assertThat(result, isErrorValueOf(newLinkedHashSet("default", "list", "elements")));
     }
 
     @Test
@@ -69,10 +72,10 @@ public class LowercaseStringSetPropertyTest {
             new LowercaseStringSetProperty("lowercaselist.path.mixed", "my", "default", "values");
 
         // when
-        Set<String> result = property.determineValue(reader);
+        PropertyValue<Set<String>> result = property.determineValue(reader);
 
         // then
-        assertThat(result, contains("b", "test", "1"));
+        assertThat(result, isValidValueOf(newLinkedHashSet("b", "test", "1")));
     }
 
     @Test
@@ -83,10 +86,10 @@ public class LowercaseStringSetPropertyTest {
         given(reader.getList(property.getPath())).willReturn(list);
 
         // when
-        Set<String> result = property.determineValue(reader);
+        PropertyValue<Set<String>> result = property.determineValue(reader);
 
         // then
-        assertThat(result, contains("null", "test"));
+        assertThat(result, isValidValueOf(newLinkedHashSet("null", "test")));
     }
 
     @Test
@@ -95,7 +98,7 @@ public class LowercaseStringSetPropertyTest {
         Property<Set<String>> property = new LowercaseStringSetProperty("path");
 
         // when
-        Object exportValue = property.toExportValue(new LinkedHashSet<>(Arrays.asList("first", "second", "third", "fourth")));
+        Object exportValue = property.toExportValue(newLinkedHashSet("first", "second", "third", "fourth"));
 
         // then
         assertThat(exportValue, instanceOf(Collection.class));
@@ -115,14 +118,7 @@ public class LowercaseStringSetPropertyTest {
         assertThat(property2.getDefaultValue(), contains("111", "222", "33"));
     }
 
-    @Test
-    public void shouldSpecifyWhetherIsPresentOrNot() {
-        // given
-        LowercaseStringSetProperty property1 = new LowercaseStringSetProperty("lowercaselist.path.test");
-        LowercaseStringSetProperty property2 = new LowercaseStringSetProperty("lowercaselist.path.wrong");
-
-        // when / then
-        assertThat(property1.isPresent(reader), equalTo(true));
-        assertThat(property2.isPresent(reader), equalTo(false));
+    private static Set<String> newLinkedHashSet(String... values) {
+        return new LinkedHashSet<>(Arrays.asList(values));
     }
 }

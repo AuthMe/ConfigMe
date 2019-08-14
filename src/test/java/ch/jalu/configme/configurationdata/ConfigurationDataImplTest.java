@@ -2,6 +2,7 @@ package ch.jalu.configme.configurationdata;
 
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.resource.PropertyReader;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -17,6 +18,10 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link ConfigurationDataImpl}.
@@ -36,6 +41,7 @@ public class ConfigurationDataImplTest {
 
         // then
         assertThat(configData.getProperties(), containsAll(properties));
+        assertThat(configData.areAllValuesValidInResource(), equalTo(false)); // false until the values are initialized
     }
 
     @Test
@@ -91,6 +97,74 @@ public class ConfigurationDataImplTest {
         assertThat(testComments, contains("test section comment"));
         assertThat(secondComments, contains("Second thing", "Comes after first"));
         assertThat(absentComments, empty());
+    }
+
+    @Test
+    public void shouldThrowForUnknownProperty() {
+        // given
+        List<Property<?>> properties = Collections.singletonList(newProperty("test", "Test"));
+        ConfigurationData configurationData = new ConfigurationDataImpl(properties, Collections.emptyMap());
+        Property<Integer> nonExistentProperty = newProperty("my.bogus.path", 5);
+
+        // when / then
+        verifyException(() -> configurationData.getValue(nonExistentProperty), ConfigMeException.class,
+            "No value exists for property with path 'my.bogus.path'");
+    }
+
+    @Test
+    public void shouldReturnValuesMap() {
+        // given
+        ConfigurationDataImpl configurationData = new ConfigurationDataImpl(Collections.emptyList(), Collections.emptyMap());
+
+        // when
+        int initialValuesSize = configurationData.getValues().size();
+        configurationData.setValue(newProperty("test", "foo"), "bar");
+
+        // then
+        assertThat(initialValuesSize, equalTo(0));
+        assertThat(configurationData.getValues().keySet(), contains("test"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldInitializeAllPropertiesAndSetAllValuesValidToTrue() {
+        // given
+        PropertyReader reader = mock(PropertyReader.class);
+        Property<String> property1 = mock(Property.class);
+        given(property1.determineValue(reader)).willReturn(PropertyValue.withValidValue("test"));
+        given(property1.isValidValue(anyString())).willReturn(true);
+        Property<Double> property2 = mock(Property.class);
+        given(property2.determineValue(reader)).willReturn(PropertyValue.withValidValue(3.14159));
+        given(property2.isValidValue(anyDouble())).willReturn(true);
+
+        ConfigurationData configurationData = new ConfigurationDataImpl(Arrays.asList(property1, property2), Collections.emptyMap());
+
+        // when
+        configurationData.initializeValues(reader);
+
+        // then
+        assertThat(configurationData.areAllValuesValidInResource(), equalTo(true));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldInitializeAllPropertiesAndSetAllValuesValidToFalse() {
+        // given
+        PropertyReader reader = mock(PropertyReader.class);
+        Property<String> property1 = mock(Property.class);
+        given(property1.determineValue(reader)).willReturn(PropertyValue.withValidValue("test"));
+        given(property1.isValidValue(anyString())).willReturn(true);
+        Property<Double> property2 = mock(Property.class);
+        given(property2.determineValue(reader)).willReturn(PropertyValue.withValueRequiringRewrite(3.14159));
+        given(property2.isValidValue(anyDouble())).willReturn(true);
+
+        ConfigurationData configurationData = new ConfigurationDataImpl(Arrays.asList(property1, property2), Collections.emptyMap());
+
+        // when
+        configurationData.initializeValues(reader);
+
+        // then
+        assertThat(configurationData.areAllValuesValidInResource(), equalTo(false));
     }
 
     private static Map<String, List<String>> createSampleCommentsMap() {

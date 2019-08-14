@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import static ch.jalu.configme.TestUtils.getJarPath;
+import static ch.jalu.configme.TestUtils.isErrorValueOf;
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static ch.jalu.configme.configurationdata.ConfigurationDataBuilder.createConfiguration;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static java.util.Arrays.asList;
@@ -141,8 +143,8 @@ public class YamlFileResourceTest {
         PropertyReader readerAfterCopy = resource.createReader();
 
         // then
-        assertThat(TestConfiguration.RATIO_ORDER.determineValue(readerBeforeCopy), equalTo(TestEnum.SECOND)); // default value
-        assertThat(TestConfiguration.RATIO_ORDER.determineValue(readerAfterCopy), equalTo(TestEnum.FIRST));
+        assertThat(TestConfiguration.RATIO_ORDER.determineValue(readerBeforeCopy), isErrorValueOf(TestEnum.SECOND)); // default value
+        assertThat(TestConfiguration.RATIO_ORDER.determineValue(readerAfterCopy), isValidValueOf(TestEnum.FIRST));
     }
 
 

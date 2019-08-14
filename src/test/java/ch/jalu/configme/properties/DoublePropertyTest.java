@@ -1,11 +1,14 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static ch.jalu.configme.TestUtils.isErrorValueOf;
+import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -26,10 +29,10 @@ public class DoublePropertyTest {
         given(reader.getObject("test.path")).willReturn(-2508.346);
 
         // when
-        double result = property.determineValue(reader);
+        PropertyValue<Double> result = property.determineValue(reader);
 
         // then
-        assertThat(result, equalTo(-2508.346));
+        assertThat(result, isValidValueOf(-2508.346));
     }
 
     @Test
@@ -39,10 +42,10 @@ public class DoublePropertyTest {
         given(reader.getObject("property.path")).willReturn(null);
 
         // when
-        double result = property.determineValue(reader);
+        PropertyValue<Double> result = property.determineValue(reader);
 
         // then
-        assertThat(result, equalTo(5.9));
+        assertThat(result, isErrorValueOf(5.9));
     }
 
     @Test
