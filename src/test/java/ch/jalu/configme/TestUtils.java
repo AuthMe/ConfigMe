@@ -6,9 +6,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -95,53 +92,6 @@ public final class TestUtils {
             return new URI(url.toString());
         } catch (URISyntaxException e) {
             throw new IllegalStateException("File '" + path + "' cannot be converted to a URI", e);
-        }
-    }
-
-    // -------------
-    // Constructor validation
-    // -------------
-
-    /**
-     * Checks that a class only has a private, zero-argument constructor, preventing the
-     * instantiation of such classes (utility classes). Invokes the hidden constructor
-     * as to register the code coverage.
-     *
-     * @param clazz the class to validate
-     */
-    public static void validateHasOnlyPrivateEmptyConstructor(Class<?> clazz) {
-        validateHasOnlyEmptyConstructorWithVisibility(clazz, Modifier.PRIVATE);
-    }
-
-    /**
-     * Checks that a class only has a protected, zero-argument constructor, preventing the
-     * instantiation of such classes (utility classes). Invokes the hidden constructor
-     * as to register the code coverage.
-     *
-     * @param clazz the class to validate
-     */
-    public static void validateHasOnlyProtectedEmptyConstructor(Class<?> clazz) {
-        validateHasOnlyEmptyConstructorWithVisibility(clazz, Modifier.PROTECTED);
-    }
-
-    private static void validateHasOnlyEmptyConstructorWithVisibility(Class<?> clazz,
-                                                                     int visibilityModifierFlag) {
-        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-        if (constructors.length > 1) {
-            throw new IllegalStateException("Class " + clazz.getSimpleName() + " has more than one constructor");
-        } else if (constructors[0].getParameterTypes().length != 0) {
-            throw new IllegalStateException("Constructor of " + clazz + " does not have empty parameter list");
-        } else if ((constructors[0].getModifiers() & visibilityModifierFlag) != visibilityModifierFlag) {
-            throw new IllegalStateException("Constructor of " + clazz + " does not have the desired visibility");
-        }
-
-        // Ugly hack to get coverage on the private constructors
-        // http://stackoverflow.com/questions/14077842/how-to-test-a-private-constructor-in-java-application
-        try {
-            constructors[0].setAccessible(true);
-            constructors[0].newInstance();
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new UnsupportedOperationException(e);
         }
     }
 

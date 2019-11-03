@@ -1,6 +1,5 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
 import ch.jalu.configme.properties.inlinearray.StandardInlineArrayConverters;
 import ch.jalu.configme.properties.types.PrimitivePropertyType;
@@ -8,7 +7,6 @@ import ch.jalu.configme.samples.TestEnum;
 import org.junit.Test;
 
 import static ch.jalu.configme.properties.PropertyInitializer.arrayProperty;
-import static ch.jalu.configme.properties.PropertyInitializer.typeBasedProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.inlineArrayProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.listProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.mapProperty;
@@ -20,6 +18,7 @@ import static ch.jalu.configme.properties.PropertyInitializer.optionalBooleanPro
 import static ch.jalu.configme.properties.PropertyInitializer.optionalEnumProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalIntegerProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalStringProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.typeBasedProperty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
@@ -55,7 +54,10 @@ public class PropertyInitializerTest {
     }
 
     @Test
-    public void shouldHaveProtectedConstructor() {
-        TestUtils.validateHasOnlyProtectedEmptyConstructor(PropertyInitializer.class);
+    public void shouldHaveAccessibleNoArgsConstructorForExtensions() {
+        // given / when
+        new PropertyInitializer() { };
+
+        // then - no exception
     }
 }

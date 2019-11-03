@@ -1,6 +1,5 @@
 package ch.jalu.configme.utils;
 
-import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.exception.ConfigMeException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -51,11 +50,6 @@ public class UtilsTest {
             () -> Utils.createFileIfNotExists(folder),
             ConfigMeException.class,
             "Expected file");
-    }
-
-    @Test
-    public void shouldHaveHiddenConstructor() {
-        TestUtils.validateHasOnlyPrivateEmptyConstructor(Utils.class);
     }
 
     @Test

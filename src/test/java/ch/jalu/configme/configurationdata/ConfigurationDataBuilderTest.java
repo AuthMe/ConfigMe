@@ -1,6 +1,5 @@
 package ch.jalu.configme.configurationdata;
 
-import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.configurationdata.samples.AdditionalTestConfiguration;
 import ch.jalu.configme.configurationdata.samples.IllegalSettingsHolderConstructorClasses;
 import ch.jalu.configme.configurationdata.samples.inheritance.ChildInheritanceSettingsHolder;
@@ -50,11 +49,6 @@ public class ConfigurationDataBuilderTest {
             "The version number", "This is just a random number");
         assertHasPropertyWithComments(configurationData, AdditionalTestConfiguration.NAME, "Additional name");
         assertHasPropertyWithComments(configurationData, AdditionalTestConfiguration.SLEEP, "Seconds to sleep");
-    }
-
-    @Test
-    public void shouldHavePrivateConstructor() {
-        TestUtils.validateHasOnlyProtectedEmptyConstructor(ConfigurationDataBuilder.class);
     }
 
     @Test

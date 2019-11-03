@@ -1,6 +1,5 @@
 package ch.jalu.configme.utils;
 
-import ch.jalu.configme.TestUtils;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -49,10 +48,5 @@ public class CollectionUtilsTest {
         assertThat(result2, contains("test", "1", "2", "3", "4"));
         assertThat(result3, empty());
         assertThat(result4, contains("abc", null));
-    }
-
-    @Test
-    public void shouldHaveHiddenConstructor() {
-        TestUtils.validateHasOnlyPrivateEmptyConstructor(CollectionUtils.class);
     }
 }

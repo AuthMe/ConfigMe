@@ -1,6 +1,5 @@
 package ch.jalu.configme.beanmapper;
 
-import ch.jalu.configme.TestUtils;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.sameInstance;
@@ -21,10 +20,5 @@ public class DefaultMapperTest {
 
         // then
         assertThat(instance, sameInstance(givenInstance));
-    }
-
-    @Test
-    public void shouldHaveHiddenConstructor() {
-        TestUtils.validateHasOnlyPrivateEmptyConstructor(DefaultMapper.class);
     }
 }
