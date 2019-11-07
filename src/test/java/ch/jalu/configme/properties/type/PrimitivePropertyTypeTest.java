@@ -17,11 +17,11 @@ import static org.hamcrest.Matchers.nullValue;
 /**
  * Test for {@link PrimitivePropertyType}.
  */
-public class PrimitivePropertyTypeTest {
+class PrimitivePropertyTypeTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    public void shouldConvertValue1(String name, PropertyType propertyType, TestData testData) {
+    void shouldConvertValue1(String name, PropertyType propertyType, TestData testData) {
         // given
         Object object = testData.object1;
 
@@ -34,7 +34,7 @@ public class PrimitivePropertyTypeTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    public void shouldConvertValue2(String name, PropertyType propertyType, TestData testData) {
+    void shouldConvertValue2(String name, PropertyType propertyType, TestData testData) {
         // given
         Object object = testData.object2;
 
@@ -47,7 +47,7 @@ public class PrimitivePropertyTypeTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    public void shouldReturnNullForInvalidValue(String name, PropertyType propertyType, TestData testData) {
+    void shouldReturnNullForInvalidValue(String name, PropertyType propertyType, TestData testData) {
         // given
         Object object = testData.invalid;
 
@@ -60,7 +60,7 @@ public class PrimitivePropertyTypeTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    public void shouldHandleNull(String name, PropertyType propertyType, TestData testData) {
+    void shouldHandleNull(String name, PropertyType propertyType, TestData testData) {
         // given / when
         Object result = propertyType.convert(null);
 
@@ -68,7 +68,7 @@ public class PrimitivePropertyTypeTest {
         assertThat(result, nullValue());
     }
 
-    public static List<Object[]> data() throws IllegalAccessException {
+    private static List<Object[]> data() throws IllegalAccessException {
         List<Object[]> converters = new ArrayList<>();
         for (Field field : PrimitivePropertyType.class.getDeclaredFields()) {
             if (Modifier.isPublic(field.getModifiers()) && Modifier.isStatic(field.getModifiers())) {

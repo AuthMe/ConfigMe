@@ -17,12 +17,12 @@ import static org.hamcrest.Matchers.sameInstance;
 /**
  * Test for {@link MapNormalizer}.
  */
-public class MapNormalizerTest {
+class MapNormalizerTest {
 
     private MapNormalizer mapNormalizer = new MapNormalizer();
 
     @Test
-    public void shouldReturnEmptyMapForNull() {
+    void shouldReturnEmptyMapForNull() {
         // given / when
         Map<String, Object> result = mapNormalizer.normalizeMap(null);
 
@@ -31,7 +31,7 @@ public class MapNormalizerTest {
     }
 
     @Test
-    public void shouldHandleEmptyMap() {
+    void shouldHandleEmptyMap() {
         // given
         Map<Object, Object> map = new HashMap<>();
 
@@ -44,7 +44,7 @@ public class MapNormalizerTest {
     }
 
     @Test
-    public void shouldKeepNormalizedMap() {
+    void shouldKeepNormalizedMap() {
         // given
         Map<Object, Object> map1 = new HashMap<>();
         Map<Object, Object> map2 = new HashMap<>();
@@ -70,7 +70,7 @@ public class MapNormalizerTest {
     }
 
     @Test
-    public void shouldExpandPathsWithPeriod() {
+    void shouldExpandPathsWithPeriod() {
         // given
         Map<Object, Object> fruits = new LinkedHashMap<>();
         fruits.put("orange", "oranges");
@@ -97,7 +97,7 @@ public class MapNormalizerTest {
     }
 
     @Test
-    public void shouldConvertKeysToStrings() {
+    void shouldConvertKeysToStrings() {
         // given
         Map<Object, Object> map = new LinkedHashMap<>();
         map.put("test", "test");
@@ -122,7 +122,7 @@ public class MapNormalizerTest {
     }
 
     @Test
-    public void shouldOverrideEntriesOnClash() {
+    void shouldOverrideEntriesOnClash() {
         // given
         Map<Object, Object> map = new LinkedHashMap<>();
         map.put("test", "a test");

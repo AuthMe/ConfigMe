@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 public class EnumPropertyTest {
 
     @Test
-    public void shouldReturnCorrectEnumValue() {
+    void shouldReturnCorrectEnumValue() {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
         PropertyReader reader = mock(PropertyReader.class);
@@ -31,7 +31,7 @@ public class EnumPropertyTest {
     }
 
     @Test
-    public void shouldFallBackToDefaultForInvalidValue() {
+    void shouldFallBackToDefaultForInvalidValue() {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
         PropertyReader reader = mock(PropertyReader.class);
@@ -45,7 +45,7 @@ public class EnumPropertyTest {
     }
 
     @Test
-    public void shouldFallBackToDefaultForNonExistentValue() {
+    void shouldFallBackToDefaultForNonExistentValue() {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
         PropertyReader reader = mock(PropertyReader.class);
@@ -59,7 +59,7 @@ public class EnumPropertyTest {
     }
 
     @Test
-    public void shouldExportAsEnumName() {
+    void shouldExportAsEnumName() {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_A);
 

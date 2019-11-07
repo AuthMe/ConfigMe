@@ -45,7 +45,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link YamlFileResource}.
  */
-public class YamlFileResourceTest {
+class YamlFileResourceTest {
 
     private static final String COMPLETE_FILE = "/config-sample.yml";
     private static final String INCOMPLETE_FILE = "/config-incomplete-sample.yml";
@@ -55,7 +55,7 @@ public class YamlFileResourceTest {
     public Path temporaryFolder;
 
     @Test
-    public void shouldWriteMissingProperties() {
+    void shouldWriteMissingProperties() {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
         YamlFileResource resource = new YamlFileResource(file);
@@ -91,7 +91,7 @@ public class YamlFileResourceTest {
 
     /** Verifies that "difficult cases" such as apostrophes in strings etc. are handled properly. */
     @Test
-    public void shouldProperlyExportAnyValues() {
+    void shouldProperlyExportAnyValues() {
         // given
         File file = copyFileFromResources(DIFFICULT_FILE);
         YamlFileResource resource = new YamlFileResource(file);
@@ -132,7 +132,7 @@ public class YamlFileResourceTest {
     }
 
     @Test
-    public void shouldReloadValues() throws IOException {
+    void shouldReloadValues() throws IOException {
         // given
         Path file = temporaryFolder.resolve("file");
         Files.createFile(file);
@@ -150,7 +150,7 @@ public class YamlFileResourceTest {
 
 
     @Test
-    public void shouldWrapIoExceptionInConfigMeException() throws IOException {
+    void shouldWrapIoExceptionInConfigMeException() throws IOException {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
@@ -172,7 +172,7 @@ public class YamlFileResourceTest {
     }
 
     @Test
-    public void shouldExportConfigurationWithExpectedComments() throws IOException {
+    void shouldExportConfigurationWithExpectedComments() throws IOException {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
@@ -190,7 +190,7 @@ public class YamlFileResourceTest {
     }
 
     @Test
-    public void shouldSkipAbsentOptionalProperty() throws IOException {
+    void shouldSkipAbsentOptionalProperty() throws IOException {
         // given
         ConfigurationData configurationData = createConfiguration(asList(
             new OptionalProperty<>(TestConfiguration.DURATION_IN_SECONDS),
@@ -211,7 +211,7 @@ public class YamlFileResourceTest {
     }
 
     @Test
-    public void shouldExportAllPresentOptionalProperties() throws IOException {
+    void shouldExportAllPresentOptionalProperties() throws IOException {
         // given
         ConfigurationData configurationData = createConfiguration(asList(
             new OptionalProperty<>(TestConfiguration.DURATION_IN_SECONDS),
@@ -235,7 +235,7 @@ public class YamlFileResourceTest {
     }
 
     @Test
-    public void shouldExportEmptyMap() throws IOException {
+    void shouldExportEmptyMap() throws IOException {
         // given
         CommandConfig config = new CommandConfig();
         config.setDuration(3);
@@ -262,7 +262,7 @@ public class YamlFileResourceTest {
     }
 
     @Test
-    public void shouldExportWithUtf8() throws IOException {
+    void shouldExportWithUtf8() throws IOException {
         // given
         File file = copyFileFromResources("/charsets/utf8_sample.yml");
         YamlFileResource resource = new YamlFileResource(file);
@@ -287,7 +287,7 @@ public class YamlFileResourceTest {
     }
 
     @Test
-    public void shouldExportWithIso88591() throws IOException {
+    void shouldExportWithIso88591() throws IOException {
         // given
         File file = copyFileFromResources("/charsets/iso-8859-1_sample.yml");
 
@@ -315,7 +315,7 @@ public class YamlFileResourceTest {
     }
 
     @Test
-    public void shouldReturnFieldsOfResource() {
+    void shouldReturnFieldsOfResource() {
         // given
         File file = mock(File.class);
         YamlFileResourceOptions options = mock(YamlFileResourceOptions.class);

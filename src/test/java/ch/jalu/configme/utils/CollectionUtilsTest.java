@@ -12,10 +12,10 @@ import static org.hamcrest.Matchers.empty;
 /**
  * Test for {@link CollectionUtils}.
  */
-public class CollectionUtilsTest {
+class CollectionUtilsTest {
 
     @Test
-    public void shouldGetRangesFromList() {
+    void shouldGetRangesFromList() {
         // given
         List<String> list = Arrays.asList("test", "1", "2", "3", "4");
 
@@ -29,7 +29,7 @@ public class CollectionUtilsTest {
     }
 
     @Test
-    public void shouldFindCommonEntries() {
+    void shouldFindCommonEntries() {
         // given
         List<String> list1 = Arrays.asList("test", "1", "2", "3", "4");
         List<String> list2 = Arrays.asList("test", "1", "2", "xxx", "xxx");

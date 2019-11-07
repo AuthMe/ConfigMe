@@ -13,19 +13,19 @@ import static org.mockito.Mockito.when;
 /**
  * Test for {@link StringProperty}.
  */
-public class StringPropertyTest {
+class StringPropertyTest {
 
     private static PropertyReader reader;
 
     @BeforeAll
-    public static void setUpConfiguration() {
+    static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
         when(reader.getObject("str.path.test")).thenReturn("Test value");
         when(reader.getObject("str.path.wrong")).thenReturn(null);
     }
 
     @Test
-    public void shouldGetStringValue() {
+    void shouldGetStringValue() {
         // given
         Property<String> property = new StringProperty("str.path.test", "unused default");
 
@@ -37,7 +37,7 @@ public class StringPropertyTest {
     }
 
     @Test
-    public void shouldGetStringDefault() {
+    void shouldGetStringDefault() {
         // given
         Property<String> property = new StringProperty("str.path.wrong", "given default value");
 
@@ -49,7 +49,7 @@ public class StringPropertyTest {
     }
 
     @Test
-    public void shouldDefineExportValue() {
+    void shouldDefineExportValue() {
         // given
         Property<String> property = new StringProperty("path", "def. value");
 
@@ -61,7 +61,7 @@ public class StringPropertyTest {
     }
 
     @Test
-    public void shouldReturnStringForNumber() {
+    void shouldReturnStringForNumber() {
         // given
         Property<String> property1 = new StringProperty("one", "");
         Property<String> property2 = new StringProperty("two", "");
@@ -78,7 +78,7 @@ public class StringPropertyTest {
     }
 
     @Test
-    public void shouldReturnStringFromBoolean() {
+    void shouldReturnStringFromBoolean() {
         // given
         Property<String> property = new StringProperty("test", "");
         given(reader.getObject(property.getPath())).willReturn(false);

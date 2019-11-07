@@ -22,13 +22,13 @@ import static org.mockito.BDDMockito.given;
  * Test for {@link MapProperty}.
  */
 @ExtendWith(MockitoExtension.class)
-public class MapPropertyTest {
+class MapPropertyTest {
 
     @Mock
     private PropertyReader reader;
 
     @Test
-    public void shouldReturnValueFromResource() {
+    void shouldReturnValueFromResource() {
         // given
         MapProperty<String> property = new MapProperty<>("map", new HashMap<>(), PrimitivePropertyType.STRING);
         Map<String, String> mapFromReader = createSampleMap();
@@ -39,7 +39,7 @@ public class MapPropertyTest {
     }
 
     @Test
-    public void shouldReturnDefaultValue() {
+    void shouldReturnDefaultValue() {
         // given
         MapProperty<String> property = new MapProperty<>("map", createSampleMap(), PrimitivePropertyType.STRING);
         given(reader.getObject("map")).willReturn(null);
@@ -49,7 +49,7 @@ public class MapPropertyTest {
     }
 
     @Test
-    public void shouldReturnValueAsExportValue() {
+    void shouldReturnValueAsExportValue() {
         // given
         MapProperty<String> property = new MapProperty<>("map", new HashMap<>(), PrimitivePropertyType.STRING);
         Map<String, String> givenMap = createSampleMap();

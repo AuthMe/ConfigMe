@@ -24,13 +24,13 @@ import static org.mockito.Mockito.when;
 /**
  * Test for {@link LowercaseStringSetProperty}.
  */
-public class LowercaseStringSetPropertyTest {
+class LowercaseStringSetPropertyTest {
 
     private static PropertyReader reader;
 
     @BeforeAll
     @SuppressWarnings("unchecked")
-    public static void setUpConfiguration() {
+    static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
         // need to have the List objects unchecked so we satisfy the List<?> signature
         List stringList = Arrays.asList("test1", "Test2", "3rd TEST");
@@ -41,7 +41,7 @@ public class LowercaseStringSetPropertyTest {
     }
 
     @Test
-    public void shouldGetLowercaseStringListValue() {
+    void shouldGetLowercaseStringListValue() {
         // given
         Property<Set<String>> property = new LowercaseStringSetProperty("lowercaselist.path.test", "1", "b");
 
@@ -53,7 +53,7 @@ public class LowercaseStringSetPropertyTest {
     }
 
     @Test
-    public void shouldGetLowercaseStringListDefault() {
+    void shouldGetLowercaseStringListDefault() {
         // given
         Property<Set<String>> property =
             new LowercaseStringSetProperty("lowercaselist.path.wrong", "default", "list", "elements");
@@ -66,7 +66,7 @@ public class LowercaseStringSetPropertyTest {
     }
 
     @Test
-    public void shouldGetStringListDefaultForMixedListFromResource() {
+    void shouldGetStringListDefaultForMixedListFromResource() {
         // given
         Property<Set<String>> property =
             new LowercaseStringSetProperty("lowercaselist.path.mixed", "my", "default", "values");
@@ -79,7 +79,7 @@ public class LowercaseStringSetPropertyTest {
     }
 
     @Test
-    public void shouldHandleNull() {
+    void shouldHandleNull() {
         // given
         Property<Set<String>> property = new LowercaseStringSetProperty("path");
         List list = Arrays.asList(null, "test", null, "test");
@@ -93,7 +93,7 @@ public class LowercaseStringSetPropertyTest {
     }
 
     @Test
-    public void shouldDefineExportValue() {
+    void shouldDefineExportValue() {
         // given
         Property<Set<String>> property = new LowercaseStringSetProperty("path");
 
@@ -106,7 +106,7 @@ public class LowercaseStringSetPropertyTest {
     }
 
     @Test
-    public void shouldCreateImmutableSetForDefaultValue() {
+    void shouldCreateImmutableSetForDefaultValue() {
         // given / when
         LowercaseStringSetProperty property1 = new LowercaseStringSetProperty("test.path", "abc", "def", "ghi");
         LowercaseStringSetProperty property2 = new LowercaseStringSetProperty("other.path", Arrays.asList("111", "222", "33"));

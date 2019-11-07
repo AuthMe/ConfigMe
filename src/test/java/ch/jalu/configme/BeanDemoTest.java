@@ -11,10 +11,10 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Test for {@link BeanPropertiesDemo}.
  */
-public class BeanDemoTest {
+class BeanDemoTest {
 
     @Test
-    public void shouldOutputExpectedText() {
+    void shouldOutputExpectedText() {
         // given
         BeanPropertiesDemo beanDemo = new BeanPropertiesDemo();
 

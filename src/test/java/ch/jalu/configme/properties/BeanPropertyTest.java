@@ -34,13 +34,13 @@ import static org.mockito.Mockito.verify;
 /**
  * Test for {@link BeanProperty} and its integration with {@link YamlFileResource}.
  */
-public class BeanPropertyTest {
+class BeanPropertyTest {
 
     @TempDir
     public Path temporaryFolder;
 
     @Test
-    public void shouldExportPropertyAndReimport() {
+    void shouldExportPropertyAndReimport() {
         // given
         BeanProperty<CommandConfig> property =
             new BeanProperty<>(CommandConfig.class, "commandconfig", new CommandConfig());
@@ -66,7 +66,7 @@ public class BeanPropertyTest {
     }
 
     @Test
-    public void shouldExportBeanPropertyAtRootProperly() {
+    void shouldExportBeanPropertyAtRootProperly() {
         // given
         BeanProperty<CommandConfig> property =
             new BeanProperty<>(CommandConfig.class, "", new CommandConfig());
@@ -87,7 +87,7 @@ public class BeanPropertyTest {
     }
 
     @Test
-    public void shouldUseCustomMapper() {
+    void shouldUseCustomMapper() {
         // given
         Mapper mapper = mock(Mapper.class);
         String path = "cnf";
@@ -108,7 +108,7 @@ public class BeanPropertyTest {
     }
 
     @Test
-    public void shouldAllowInstantiationWithGenerics() throws NoSuchFieldException {
+    void shouldAllowInstantiationWithGenerics() throws NoSuchFieldException {
         // given
         Type stringComparable = TestFields.class.getDeclaredField("comparable").getGenericType();
 
@@ -122,7 +122,7 @@ public class BeanPropertyTest {
     }
 
     @Test
-    public void shouldThrowForObviouslyWrongDefaultValue() throws NoSuchFieldException {
+    void shouldThrowForObviouslyWrongDefaultValue() throws NoSuchFieldException {
         // given
         Type stringComparable = TestFields.class.getDeclaredField("comparable").getGenericType();
 

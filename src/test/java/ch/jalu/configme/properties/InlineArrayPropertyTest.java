@@ -12,10 +12,10 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link InlineArrayProperty}.
  */
-public class InlineArrayPropertyTest {
+class InlineArrayPropertyTest {
 
     @Test
-    public void shouldReturnArrayFromInlineConvertHelper() {
+    void shouldReturnArrayFromInlineConvertHelper() {
         // given
         BaseProperty<String[]> property = new InlineArrayProperty<>(
             "inline_value",
@@ -33,7 +33,7 @@ public class InlineArrayPropertyTest {
     }
 
     @Test
-    public void shouldReturnConvertedValueAsExportValue() {
+    void shouldReturnConvertedValueAsExportValue() {
         // given
         Property<String[]> property = new InlineArrayProperty<>(
             "array",

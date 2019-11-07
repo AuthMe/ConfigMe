@@ -10,24 +10,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Test for the {@link BaseProperty} abstract type.
  */
-public class BasePropertyTest {
+class BasePropertyTest {
 
     @Test
-    public void shouldRejectNullValue() {
+    void shouldRejectNullValue() {
         // given / when / then
         assertThrows(NullPointerException.class,
             () -> new PropertyTestImpl("my.path", null));
     }
 
     @Test
-    public void shouldRejectNullPath() {
+    void shouldRejectNullPath() {
         // given / when / then
         assertThrows(NullPointerException.class,
             () -> new PropertyTestImpl(null, (byte) 123));
     }
 
     @Test
-    public void shouldContainPathInToString() {
+    void shouldContainPathInToString() {
         // given
         String path = "some.test.path.byte";
         Property<Byte> property = new PropertyTestImpl(path, (byte) -89);

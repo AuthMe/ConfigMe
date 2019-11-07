@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
  * Test for {@link PlainMigrationService}.
  */
 @ExtendWith(MockitoExtension.class)
-public class PlainMigrationServiceTest {
+class PlainMigrationServiceTest {
 
     private static final String COMPLETE_CONFIG = "/config-sample.yml";
     private static final String INCOMPLETE_CONFIG = "/config-incomplete-sample.yml";
@@ -43,12 +43,12 @@ public class PlainMigrationServiceTest {
     public Path temporaryFolder;
 
     @BeforeEach
-    public void setUpConfigurationData() {
+    void setUpConfigurationData() {
         configurationData = createConfiguration(TestConfiguration.class);
     }
 
     @Test
-    public void shouldReturnNoSaveNecessaryForAllPropertiesPresent() {
+    void shouldReturnNoSaveNecessaryForAllPropertiesPresent() {
         // given
         PropertyReader reader = createReaderSpy(COMPLETE_CONFIG);
         configurationData.initializeValues(reader);
@@ -62,7 +62,7 @@ public class PlainMigrationServiceTest {
     }
 
     @Test
-    public void shouldReturnTrueForMissingProperty() {
+    void shouldReturnTrueForMissingProperty() {
         // given
         PropertyReader reader = createReaderSpy(INCOMPLETE_CONFIG);
 
@@ -76,7 +76,7 @@ public class PlainMigrationServiceTest {
     }
 
     @Test
-    public void shouldPassResourceToExtendedMethod() {
+    void shouldPassResourceToExtendedMethod() {
         // given
         PropertyReader reader = createReaderSpy(COMPLETE_CONFIG);
         PlainMigrationServiceTestExtension service = Mockito.spy(new PlainMigrationServiceTestExtension());
@@ -91,7 +91,7 @@ public class PlainMigrationServiceTest {
     }
 
     @Test
-    public void shouldResetNegativeIntegerProperties() {
+    void shouldResetNegativeIntegerProperties() {
         // given
         PropertyReader reader = createReaderSpy(COMPLETE_CONFIG);
         PlainMigrationServiceTestExtension service = new PlainMigrationServiceTestExtension();
@@ -105,7 +105,7 @@ public class PlainMigrationServiceTest {
     }
 
     @Test
-    public void shouldMoveProperty() {
+    void shouldMoveProperty() {
         // given
         PropertyReader reader = createReaderSpy(INCOMPLETE_CONFIG);
         ConfigurationData configurationData = mock(ConfigurationData.class);
@@ -120,7 +120,7 @@ public class PlainMigrationServiceTest {
     }
 
     @Test
-    public void shouldNotMovePropertyIfAlreadyExists() {
+    void shouldNotMovePropertyIfAlreadyExists() {
         // given
         PropertyReader reader = createReaderSpy(COMPLETE_CONFIG);
         ConfigurationData configurationData = mock(ConfigurationData.class);
@@ -135,7 +135,7 @@ public class PlainMigrationServiceTest {
     }
 
     @Test
-    public void shouldReturnFalseIfOldPathDoesNotExist() {
+    void shouldReturnFalseIfOldPathDoesNotExist() {
         // given
         PropertyReader reader = createReaderSpy(INCOMPLETE_CONFIG);
         ConfigurationData configurationData = mock(ConfigurationData.class);

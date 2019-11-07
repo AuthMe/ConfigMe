@@ -17,13 +17,13 @@ import static org.mockito.BDDMockito.given;
  * Test for {@link TypeBasedProperty}.
  */
 @ExtendWith(MockitoExtension.class)
-public class TypeBasedPropertyTest {
+class TypeBasedPropertyTest {
 
     @Mock
     private PropertyReader reader;
 
     @Test
-    public void shouldReturnValueFromResource() {
+    void shouldReturnValueFromResource() {
         // given
         Property<String> property = new TypeBasedProperty<>("common.path", "default", PrimitivePropertyType.STRING);
         given(reader.getObject("common.path")).willReturn("some string");
@@ -33,7 +33,7 @@ public class TypeBasedPropertyTest {
     }
 
     @Test
-    public void shouldReturnDefaultValue() {
+    void shouldReturnDefaultValue() {
         // given
         Property<String> property = new TypeBasedProperty<>("common.path", "default", PrimitivePropertyType.STRING);
 
@@ -42,7 +42,7 @@ public class TypeBasedPropertyTest {
     }
 
     @Test
-    public void shouldReturnValueAsExportValue() {
+    void shouldReturnValueAsExportValue() {
         // given
         Property<String> property = new TypeBasedProperty<>("common.path", "default", PrimitivePropertyType.STRING);
         String given = "given string";

@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.contains;
  *
  * @see <a href="https://github.com/AuthMe/ConfigMe/issues/25">Issue #25</a>
  */
-public class YamlFileResourceTopCommentTest {
+class YamlFileResourceTopCommentTest {
 
     @TempDir
     public Path temporaryFolder;
@@ -28,12 +28,12 @@ public class YamlFileResourceTopCommentTest {
     private Path file;
 
     @BeforeEach
-    public void initEmptyFile() {
+    void initEmptyFile() {
         file = createTemporaryFile(temporaryFolder);
     }
 
     @Test
-    public void shouldIncludeCommentFromAnnotation() throws IOException {
+    void shouldIncludeCommentFromAnnotation() throws IOException {
         // given
         PropertyResource resource = new YamlFileResource(file.toFile());
 
@@ -53,7 +53,7 @@ public class YamlFileResourceTopCommentTest {
     }
 
     @Test
-    public void shouldIncludeRootCommentFromSectionCommentsMethod() throws IOException {
+    void shouldIncludeRootCommentFromSectionCommentsMethod() throws IOException {
         // given
         PropertyResource resource = new YamlFileResource(file.toFile());
 

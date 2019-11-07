@@ -24,10 +24,10 @@ import static org.hamcrest.Matchers.instanceOf;
 /**
  * Test for {@link MapperImpl}, specifically for {@link MapperImpl#toExportValue}.
  */
-public class MapperExportValueTest {
+class MapperExportValueTest {
 
     @Test
-    public void shouldCreatePropertyEntriesForCommandConfig() {
+    void shouldCreatePropertyEntriesForCommandConfig() {
         // given
         ExecutionDetails kickExecution = createExecution(CONSOLE, 0.4, true, "player.kick", "is.admin");
         Command kickCommand = createCommand("kick", kickExecution, "name");
@@ -62,7 +62,7 @@ public class MapperExportValueTest {
     }
 
     @Test
-    public void shouldAddEmptyMapAsLeafProperty() {
+    void shouldAddEmptyMapAsLeafProperty() {
         // given
         CommandConfig config = new CommandConfig();
         config.setCommands(new HashMap<>());
@@ -82,7 +82,7 @@ public class MapperExportValueTest {
     }
 
     @Test
-    public void shouldSkipNullValue() {
+    void shouldSkipNullValue() {
         // given
         Command command = new Command();
         command.setCommand("ping");

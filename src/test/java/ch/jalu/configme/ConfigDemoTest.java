@@ -11,10 +11,10 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Test for {@link WelcomeWriter}.
  */
-public class ConfigDemoTest {
+class ConfigDemoTest {
 
     @Test
-    public void shouldGenerateExpectedHtml() {
+    void shouldGenerateExpectedHtml() {
         // given
         WelcomeWriter writer = new WelcomeWriter();
 

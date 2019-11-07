@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class BeanPropertyDescriptionImplTest {
 
     @Test
-    public void shouldGetAndSetProperties() {
+    void shouldGetAndSetProperties() {
         // given
         BeanPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
         SampleBean bean = new SampleBean();
@@ -34,7 +34,7 @@ public class BeanPropertyDescriptionImplTest {
     }
 
     @Test
-    public void shouldHandlePropertySetError() {
+    void shouldHandlePropertySetError() {
         // given
         BeanPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
         SampleBean bean = new ThrowingBean();
@@ -45,7 +45,7 @@ public class BeanPropertyDescriptionImplTest {
     }
 
     @Test
-    public void shouldHandlePropertyGetError() {
+    void shouldHandlePropertyGetError() {
         // given
         BeanPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
         SampleBean bean = new ThrowingBean();
@@ -56,7 +56,7 @@ public class BeanPropertyDescriptionImplTest {
     }
 
     @Test
-    public void shouldHaveAppropriateStringRepresentation() {
+    void shouldHaveAppropriateStringRepresentation() {
         // given
         Collection<BeanPropertyDescription> properties = new BeanDescriptionFactoryImpl()
             .collectAllProperties(AnnotatedEntry.class);

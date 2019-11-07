@@ -19,13 +19,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  * @see <a href="https://github.com/AuthMe/ConfigMe/issues/77">Issue #77</a>
  */
-public class YamlFileReaderPathsWithNumberTest {
+class YamlFileReaderPathsWithNumberTest {
 
     @TempDir
     public Path temporaryFolder;
 
     @Test
-    public void shouldReadPropertiesFromFile() {
+    void shouldReadPropertiesFromFile() {
         // given
         File file = TestUtils.copyFileFromResources("/configurationfiles/config-with-number-paths.yml", temporaryFolder);
         YamlFileResource yamlFileResource = new YamlFileResource(file);
@@ -42,27 +42,27 @@ public class YamlFileReaderPathsWithNumberTest {
     }
 
     /** Test configuration. */
-    public static final class PathsWithNumbers implements SettingsHolder {
+    static final class PathsWithNumbers implements SettingsHolder {
 
-        public static final Property<Integer> ONE_LEVEL =
+        static final Property<Integer> ONE_LEVEL =
             newProperty("tiers.list.1.level", 999);
 
-        public static final Property<Integer> TWO_LEVEL =
+        static final Property<Integer> TWO_LEVEL =
             newProperty("tiers.list.2.level", 999);
 
-        public static final Property<String> ROLE_ZERO_NAME =
+        static final Property<String> ROLE_ZERO_NAME =
             newProperty("roles.0.name", "");
 
-        public static final Property<Boolean> ROLE_ZERO_CHANGE_HOME =
+        static final Property<Boolean> ROLE_ZERO_CHANGE_HOME =
             newProperty("roles.0.change-home", false);
 
-        public static final Property<String> ROLE_ONE_NAME =
+        static final Property<String> ROLE_ONE_NAME =
             newProperty("roles.1.name", "");
 
-        public static final Property<Boolean> ROLE_ONE_CHANGE_HOME =
+        static final Property<Boolean> ROLE_ONE_CHANGE_HOME =
             newProperty("roles.1.change-home", false);
 
-        public static final Property<TestEnum> ROLE_FALSE_ENUM =
+        static final Property<TestEnum> ROLE_FALSE_ENUM =
             newProperty(TestEnum.class, "roles.false.-5", TestEnum.FOURTH);
 
         private PathsWithNumbers() {

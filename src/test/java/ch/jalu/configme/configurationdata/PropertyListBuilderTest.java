@@ -20,10 +20,10 @@ import static org.mockito.Mockito.when;
 /**
  * Test for {@link PropertyListBuilder}.
  */
-public class PropertyListBuilderTest {
+class PropertyListBuilderTest {
 
     @Test
-    public void shouldKeepEntriesByInsertionAndGroup() {
+    void shouldKeepEntriesByInsertionAndGroup() {
         // given
         List<String> paths = Arrays.asList("japan.toyota", "indonesia.jakarta.koja", "japan.tokyo.sumida",
             "china.shanghai", "egypt.cairo", "china.shenzhen", "china.tianjin", "indonesia.jakarta.tugu",
@@ -48,7 +48,7 @@ public class PropertyListBuilderTest {
     }
 
     @Test
-    public void shouldThrowForSamePropertyAdded() {
+    void shouldThrowForSamePropertyAdded() {
         // given
         PropertyListBuilder properties = new PropertyListBuilder();
         properties.add(createPropertyWithPath("test.version"));
@@ -65,7 +65,7 @@ public class PropertyListBuilderTest {
      * e.g. {@code test.version.major}.
      */
     @Test
-    public void shouldThrowForPropertyHavingIllegalChild() {
+    void shouldThrowForPropertyHavingIllegalChild() {
         // given
         PropertyListBuilder properties = new PropertyListBuilder();
         properties.add(createPropertyWithPath("test.version"));
@@ -78,7 +78,7 @@ public class PropertyListBuilderTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldThrowForUnknownInternalEntry() throws ReflectiveOperationException {
+    void shouldThrowForUnknownInternalEntry() throws ReflectiveOperationException {
         // given
         PropertyListBuilder properties = new PropertyListBuilder();
         properties.add(createPropertyWithPath("test.name"));

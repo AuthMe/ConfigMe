@@ -12,10 +12,10 @@ import static org.hamcrest.Matchers.nullValue;
 /**
  * Test for {@link EnumPropertyType}.
  */
-public class EnumPropertyTypeTest {
+class EnumPropertyTypeTest {
 
     @Test
-    public void shouldReturnUnknown() {
+    void shouldReturnUnknown() {
         // given
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
@@ -27,7 +27,7 @@ public class EnumPropertyTypeTest {
     }
 
     @Test
-    public void shouldReturnNull() {
+    void shouldReturnNull() {
         // given
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
@@ -39,7 +39,7 @@ public class EnumPropertyTypeTest {
     }
 
     @Test
-    public void shouldHandleNull() {
+    void shouldHandleNull() {
         // given
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
@@ -51,7 +51,7 @@ public class EnumPropertyTypeTest {
     }
 
     @Test
-    public void shouldReturnHimself() {
+    void shouldReturnHimself() {
         // given
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
@@ -63,7 +63,7 @@ public class EnumPropertyTypeTest {
     }
 
     @Test
-    public void shouldReturnConvertedValue() {
+    void shouldReturnConvertedValue() {
         // given
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
@@ -75,7 +75,7 @@ public class EnumPropertyTypeTest {
     }
 
     @Test
-    public void shouldReturnValueAsExportValue() {
+    void shouldReturnValueAsExportValue() {
         // given
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 

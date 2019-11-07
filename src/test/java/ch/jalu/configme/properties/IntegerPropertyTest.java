@@ -15,19 +15,19 @@ import static org.mockito.Mockito.when;
 /**
  * Test for {@link IntegerProperty}.
  */
-public class IntegerPropertyTest {
+class IntegerPropertyTest {
 
     private static PropertyReader reader;
 
     @BeforeAll
-    public static void setUpConfiguration() {
+    static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
         when(reader.getObject("int.path.test")).thenReturn(27);
         when(reader.getObject("int.path.wrong")).thenReturn(null);
     }
 
     @Test
-    public void shouldGetIntValue() {
+    void shouldGetIntValue() {
         // given
         Property<Integer> property = new IntegerProperty("int.path.test", 3);
 
@@ -39,7 +39,7 @@ public class IntegerPropertyTest {
     }
 
     @Test
-    public void shouldGetIntDefault() {
+    void shouldGetIntDefault() {
         // given
         Property<Integer> property = new IntegerProperty("int.path.wrong", -10);
 
@@ -51,7 +51,7 @@ public class IntegerPropertyTest {
     }
 
     @Test
-    public void shouldReturnValueForExport() {
+    void shouldReturnValueForExport() {
         // given
         Property<Integer> property = new IntegerProperty("some.path", -5);
 

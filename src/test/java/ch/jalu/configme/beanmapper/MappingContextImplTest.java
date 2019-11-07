@@ -12,10 +12,10 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Test for {@link MappingContextImpl}.
  */
-public class MappingContextImplTest {
+class MappingContextImplTest {
 
     @Test
-    public void shouldCreateProperPath() {
+    void shouldCreateProperPath() {
         // given
         TypeInformation typeInformation = new TypeInformation(Integer.class);
         MappingContext parent1 = MappingContextImpl.createRoot(typeInformation);
@@ -31,7 +31,7 @@ public class MappingContextImplTest {
     }
 
     @Test
-    public void shouldCreateDescription() {
+    void shouldCreateDescription() {
         // given
         MappingContext context = MappingContextImpl.createRoot(new TypeInformation(String.class))
             .createChild("oh.em.gee", new TypeInformation(ArrayList.class));

@@ -15,19 +15,19 @@ import static org.mockito.Mockito.when;
 /**
  * Test for {@link BooleanProperty}.
  */
-public class BooleanPropertyTest {
+class BooleanPropertyTest {
 
     private static PropertyReader reader;
 
     @BeforeAll
-    public static void setUpConfiguration() {
+    static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
         when(reader.getObject("bool.path.test")).thenReturn(true);
         when(reader.getObject("bool.path.wrong")).thenReturn(null);
     }
 
     @Test
-    public void shouldGetBoolValue() {
+    void shouldGetBoolValue() {
         // given
         Property<Boolean> property = new BooleanProperty("bool.path.test", false);
 
@@ -39,7 +39,7 @@ public class BooleanPropertyTest {
     }
 
     @Test
-    public void shouldGetBoolDefault() {
+    void shouldGetBoolDefault() {
         // given
         Property<Boolean> property = new BooleanProperty("bool.path.wrong", true);
 
@@ -51,7 +51,7 @@ public class BooleanPropertyTest {
     }
 
     @Test
-    public void shouldReturnExportRepresentation() {
+    void shouldReturnExportRepresentation() {
         // given
         Property<Boolean> property = new BooleanProperty("bool.path.test", true);
 

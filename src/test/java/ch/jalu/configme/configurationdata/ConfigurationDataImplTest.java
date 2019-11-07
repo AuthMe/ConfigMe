@@ -26,10 +26,10 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link ConfigurationDataImpl}.
  */
-public class ConfigurationDataImplTest {
+class ConfigurationDataImplTest {
 
     @Test
-    public void shouldAcceptListWithTypedProperty() {
+    void shouldAcceptListWithTypedProperty() {
         // given
         List<Property<?>> properties = Arrays.asList(
             newProperty("test", "Test"),
@@ -45,7 +45,7 @@ public class ConfigurationDataImplTest {
     }
 
     @Test
-    public void shouldHaveImmutablePropertyList() {
+    void shouldHaveImmutablePropertyList() {
         // given
         List<Property<?>> properties = Collections.singletonList(newProperty("test", ""));
         ConfigurationData configData = new ConfigurationDataImpl(properties, Collections.emptyMap());
@@ -55,7 +55,7 @@ public class ConfigurationDataImplTest {
     }
 
     @Test
-    public void shouldThrowForInvalidValue() {
+    void shouldThrowForInvalidValue() {
         // given
         List<Property<?>> properties = Arrays.asList(
             newProperty("test", "Test"),
@@ -69,7 +69,7 @@ public class ConfigurationDataImplTest {
     }
 
     @Test
-    public void shouldReturnAllComments() {
+    void shouldReturnAllComments() {
         // given
         // Explicitly make it a modifiable Map so we can check that it's not afterwards
         Map<String, List<String>> comments = new HashMap<>(createSampleCommentsMap());
@@ -84,7 +84,7 @@ public class ConfigurationDataImplTest {
     }
 
     @Test
-    public void shouldReturnCommentsForSections() {
+    void shouldReturnCommentsForSections() {
         // given
         ConfigurationData configurationData = new ConfigurationDataImpl(Collections.emptyList(), createSampleCommentsMap());
 
@@ -100,7 +100,7 @@ public class ConfigurationDataImplTest {
     }
 
     @Test
-    public void shouldThrowForUnknownProperty() {
+    void shouldThrowForUnknownProperty() {
         // given
         List<Property<?>> properties = Collections.singletonList(newProperty("test", "Test"));
         ConfigurationData configurationData = new ConfigurationDataImpl(properties, Collections.emptyMap());
@@ -112,7 +112,7 @@ public class ConfigurationDataImplTest {
     }
 
     @Test
-    public void shouldReturnValuesMap() {
+    void shouldReturnValuesMap() {
         // given
         ConfigurationDataImpl configurationData = new ConfigurationDataImpl(Collections.emptyList(), Collections.emptyMap());
 
@@ -127,7 +127,7 @@ public class ConfigurationDataImplTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldInitializeAllPropertiesAndSetAllValuesValidToTrue() {
+    void shouldInitializeAllPropertiesAndSetAllValuesValidToTrue() {
         // given
         PropertyReader reader = mock(PropertyReader.class);
         Property<String> property1 = mock(Property.class);
@@ -148,7 +148,7 @@ public class ConfigurationDataImplTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldInitializeAllPropertiesAndSetAllValuesValidToFalse() {
+    void shouldInitializeAllPropertiesAndSetAllValuesValidToFalse() {
         // given
         PropertyReader reader = mock(PropertyReader.class);
         Property<String> property1 = mock(Property.class);

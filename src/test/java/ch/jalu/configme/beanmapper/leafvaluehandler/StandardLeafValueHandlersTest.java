@@ -23,10 +23,10 @@ import static org.hamcrest.Matchers.sameInstance;
 /**
  * Test for {@link StandardLeafValueHandlers}.
  */
-public class StandardLeafValueHandlersTest {
+class StandardLeafValueHandlersTest {
 
     @Test
-    public void shouldReturnDefaultTransformerAsSingleton() {
+    void shouldReturnDefaultTransformerAsSingleton() {
         // given
         LeafValueHandler defaultTransformer = StandardLeafValueHandlers.getDefaultLeafValueHandler();
 
@@ -38,7 +38,7 @@ public class StandardLeafValueHandlersTest {
     }
 
     @Test
-    public void shouldUseAllContainedClassInDefaultTransformer() {
+    void shouldUseAllContainedClassInDefaultTransformer() {
         // given
         Class<?>[] innerClasses = StandardLeafValueHandlers.class.getDeclaredClasses();
 
@@ -52,7 +52,7 @@ public class StandardLeafValueHandlersTest {
     }
 
     @Test
-    public void shouldMapToEnum() {
+    void shouldMapToEnum() {
         // given
         String input1 = TestEnum.SECOND.name();
         String input2 = TestEnum.SECOND.name() + "bogus";
@@ -66,7 +66,7 @@ public class StandardLeafValueHandlersTest {
     }
 
     @Test
-    public void shouldMapToString() {
+    void shouldMapToString() {
         // given
         Object input1 = "str";
         Object input2 = Collections.emptyMap();
@@ -80,7 +80,7 @@ public class StandardLeafValueHandlersTest {
     }
 
     @Test
-    public void shouldMapToBoolean() {
+    void shouldMapToBoolean() {
         // given
         Object input1 = true;
         Object input2 = Collections.emptyMap();
@@ -98,7 +98,7 @@ public class StandardLeafValueHandlersTest {
     }
 
     @Test
-    public void shouldMapToObject() {
+    void shouldMapToObject() {
         // given
         Object input1 = "str";
         Object input2 = Collections.emptyMap();
@@ -112,7 +112,7 @@ public class StandardLeafValueHandlersTest {
     }
 
     @Test
-    public void shouldMapToNumbers() {
+    void shouldMapToNumbers() {
         // given
         Object input1 = 3;
         Object input2 = Collections.emptyMap();
@@ -171,7 +171,7 @@ public class StandardLeafValueHandlersTest {
     }
 
     @Test
-    public void shouldNotMapUnknownValue() {
+    void shouldNotMapUnknownValue() {
         // given
         LeafValueHandler transformer = StandardLeafValueHandlers.getDefaultLeafValueHandler();
 
@@ -183,7 +183,7 @@ public class StandardLeafValueHandlersTest {
     }
 
     @Test
-    public void shouldExportSimpleValues() {
+    void shouldExportSimpleValues() {
         // given
         LeafValueHandler transformer = StandardLeafValueHandlers.getDefaultLeafValueHandler();
 
@@ -197,7 +197,7 @@ public class StandardLeafValueHandlersTest {
     }
 
     @Test
-    public void shouldNotExportOtherValues() {
+    void shouldNotExportOtherValues() {
         // given
         LeafValueHandler transformer = StandardLeafValueHandlers.getDefaultLeafValueHandler();
 

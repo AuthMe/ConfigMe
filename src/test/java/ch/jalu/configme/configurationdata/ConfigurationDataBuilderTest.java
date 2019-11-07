@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test for {@link ConfigurationDataBuilder}.
  */
-public class ConfigurationDataBuilderTest {
+class ConfigurationDataBuilderTest {
 
     @Test
-    public void shouldGetAllProperties() {
+    void shouldGetAllProperties() {
         // given / when
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(
             TestConfiguration.class, AdditionalTestConfiguration.class);
@@ -52,7 +52,7 @@ public class ConfigurationDataBuilderTest {
     }
 
     @Test
-    public void shouldHandleSettingsHolderConstructorIssues() {
+    void shouldHandleSettingsHolderConstructorIssues() {
         // Missing no-args constructor
         verifyException(
             () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.MissingNoArgsConstructor.class),
@@ -79,7 +79,7 @@ public class ConfigurationDataBuilderTest {
     }
 
     @Test
-    public void shouldWrapIllegalAccessExceptionIntoConfigMeException() throws NoSuchFieldException {
+    void shouldWrapIllegalAccessExceptionIntoConfigMeException() throws NoSuchFieldException {
         // given
         ConfigurationDataBuilder configurationDataBuilder = new ConfigurationDataBuilder();
         Field privateProperty = ClassWithPrivatePropertyField.class.getDeclaredField("PRIVATE_INT_PROPERTY");
@@ -92,7 +92,7 @@ public class ConfigurationDataBuilderTest {
     }
 
     @Test
-    public void shouldCreateConfigDataWithPropertiesList() {
+    void shouldCreateConfigDataWithPropertiesList() {
         // given
         List<Property<?>> properties = Arrays.asList(
             newProperty("test", "t"),
@@ -108,7 +108,7 @@ public class ConfigurationDataBuilderTest {
     }
 
     @Test
-    public void shouldCreateConfigDataWithPropertiesListAndCommentsMap() {
+    void shouldCreateConfigDataWithPropertiesListAndCommentsMap() {
         // given
         List<Property<?>> properties = Arrays.asList(
             newProperty("test", "t"),
@@ -127,7 +127,7 @@ public class ConfigurationDataBuilderTest {
     }
 
     @Test
-    public void shouldCollectPropertiesAlsoFromParentClasses() {
+    void shouldCollectPropertiesAlsoFromParentClasses() {
         // given / when
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(ChildInheritanceSettingsHolder.class);
 

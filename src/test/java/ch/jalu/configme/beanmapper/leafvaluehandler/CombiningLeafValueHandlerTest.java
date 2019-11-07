@@ -11,10 +11,10 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Test for {@link CombiningLeafValueHandler}. See also {@link StandardLeafValueHandlersTest}.
  */
-public class CombiningLeafValueHandlerTest {
+class CombiningLeafValueHandlerTest {
 
     @Test
-    public void shouldRespectOrderOfTransformers() {
+    void shouldRespectOrderOfTransformers() {
         // given
         LeafValueHandler t1 = new TestValueTransformerImpl("1");
         LeafValueHandler t2 = new TestValueTransformerImpl("2");
@@ -31,7 +31,7 @@ public class CombiningLeafValueHandlerTest {
     }
 
     @Test
-    public void shouldGetFirstNonNullResult() {
+    void shouldGetFirstNonNullResult() {
         // given
         LeafValueHandler t1 = new TestValueTransformerImpl(null);
         LeafValueHandler t2 = new TestValueTransformerImpl("2");

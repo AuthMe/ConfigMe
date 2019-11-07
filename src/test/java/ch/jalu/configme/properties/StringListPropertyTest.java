@@ -20,13 +20,13 @@ import static org.mockito.Mockito.when;
 /**
  * Test for {@link StringListProperty}.
  */
-public class StringListPropertyTest {
+class StringListPropertyTest {
 
     private static PropertyReader reader;
 
     @BeforeAll
     @SuppressWarnings("unchecked")
-    public static void setUpConfiguration() {
+    static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
         // need to have the List objects unchecked so we satisfy the List<?> signature
         List stringList = Arrays.asList("test1", "Test2", "3rd test");
@@ -37,7 +37,7 @@ public class StringListPropertyTest {
     }
 
     @Test
-    public void shouldGetStringListValue() {
+    void shouldGetStringListValue() {
         // given
         Property<List<String>> property = new StringListProperty("list.path.test", "1", "b");
 
@@ -49,7 +49,7 @@ public class StringListPropertyTest {
     }
 
     @Test
-    public void shouldGetStringListDefault() {
+    void shouldGetStringListDefault() {
         // given
         Property<List<String>> property = new StringListProperty("list.path.wrong", "default", "list", "elements");
 
@@ -61,7 +61,7 @@ public class StringListPropertyTest {
     }
 
     @Test
-    public void shouldGetStringListDefaultForMixedListFromResource() {
+    void shouldGetStringListDefaultForMixedListFromResource() {
         // given
         Property<List<String>> property = new StringListProperty("list.path.mixed", "My", "default", "values");
 
@@ -73,7 +73,7 @@ public class StringListPropertyTest {
     }
 
     @Test
-    public void shouldReturnValueAsExportValue() {
+    void shouldReturnValueAsExportValue() {
         // given
         Property<List<String>> property = new StringListProperty("test.path");
         List<String> value = Arrays.asList("one", "two");
@@ -86,7 +86,7 @@ public class StringListPropertyTest {
     }
 
     @Test
-    public void shouldHaveImmutableListAsDefaultValue() {
+    void shouldHaveImmutableListAsDefaultValue() {
         // given
         List<String> list = new ArrayList<>();
         list.add("Two");

@@ -18,13 +18,13 @@ import static org.mockito.Mockito.doThrow;
 /**
  * Test for {@link Utils}.
  */
-public class UtilsTest {
+class UtilsTest {
 
     @TempDir
     public File temporaryFolder;
 
     @Test
-    public void shouldCreateFile() {
+    void shouldCreateFile() {
         // given
         File file = new File(temporaryFolder, "hello.txt");
         File otherFile = new File(temporaryFolder, "big/path/in/middle/toFile.png");
@@ -39,7 +39,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void shouldThrowForFolderAsFile() {
+    void shouldThrowForFolderAsFile() {
         // given / when / then
         verifyException(
             () -> Utils.createFileIfNotExists(temporaryFolder),
@@ -48,7 +48,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void shouldThrowIfDirsCannotBeCreated() {
+    void shouldThrowIfDirsCannotBeCreated() {
         // given
         File parent = new File(temporaryFolder, "parent");
         File parentSpy = Mockito.spy(parent);
@@ -64,7 +64,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void shouldThrowIfFileCannotBeCreated() throws IOException {
+    void shouldThrowIfFileCannotBeCreated() throws IOException {
         // given
         File parent = new File(temporaryFolder, "parent");
         File fileSpy = Mockito.spy(new File(parent, "file.txt"));
@@ -78,7 +78,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void shouldWrapException() throws IOException {
+    void shouldWrapException() throws IOException {
         // given
         File parent = new File(temporaryFolder, "parent");
         File fileSpy = Mockito.spy(new File(parent, "file.txt"));

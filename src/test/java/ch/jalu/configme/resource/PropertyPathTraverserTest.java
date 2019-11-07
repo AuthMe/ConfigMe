@@ -18,14 +18,14 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link PropertyPathTraverser}.
  */
-public class PropertyPathTraverserTest {
+class PropertyPathTraverserTest {
 
     private ConfigurationData configurationData = mock(ConfigurationData.class);
 
     private PropertyPathTraverser propertyPathTraverser = new PropertyPathTraverser(configurationData);
 
     @Test
-    public void shouldReturnPathElements() {
+    void shouldReturnPathElements() {
         // given
         given(configurationData.getCommentsForSection("")).willReturn(Collections.singletonList("root comment"));
         given(configurationData.getCommentsForSection("prop.test")).willReturn(Collections.singletonList("prop.test comment"));
@@ -44,7 +44,7 @@ public class PropertyPathTraverserTest {
     }
 
     @Test
-    public void shouldCombineRootCommentWithThatOfParent() {
+    void shouldCombineRootCommentWithThatOfParent() {
         // given
         given(configurationData.getCommentsForSection("")).willReturn(Arrays.asList("root1", "root2"));
         given(configurationData.getCommentsForSection("prop")).willReturn(Collections.singletonList("prop 1"));
@@ -63,7 +63,7 @@ public class PropertyPathTraverserTest {
     }
 
     @Test
-    public void shouldHandleEmptyStringPath() {
+    void shouldHandleEmptyStringPath() {
         // given
         given(configurationData.getCommentsForSection("")).willReturn(Arrays.asList("c1", "d2", "e3"));
 
@@ -78,7 +78,7 @@ public class PropertyPathTraverserTest {
     }
 
     @Test
-    public void shouldReturnOnlyNewElements() {
+    void shouldReturnOnlyNewElements() {
         // given
         given(configurationData.getCommentsForSection("some.longer.path")).willReturn(Collections.singletonList("The comment"));
         propertyPathTraverser.getPathElements("some.longer.test");

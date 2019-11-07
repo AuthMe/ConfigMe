@@ -14,10 +14,10 @@ import static org.hamcrest.Matchers.nullValue;
 /**
  * Test for {@link YamlFileResourceOptions}.
  */
-public class YamlFileResourceOptionsTest {
+class YamlFileResourceOptionsTest {
 
     @Test
-    public void shouldKeepConfiguredValues() {
+    void shouldKeepConfiguredValues() {
         // given
         ToIntFunction<PathElement> lineFunction = PathElement::getIndentationLevel;
 
@@ -35,7 +35,7 @@ public class YamlFileResourceOptionsTest {
     }
 
     @Test
-    public void shouldCreateOptionsWithDefaults() {
+    void shouldCreateOptionsWithDefaults() {
         // given / when
         YamlFileResourceOptions options = YamlFileResourceOptions.builder().build();
 

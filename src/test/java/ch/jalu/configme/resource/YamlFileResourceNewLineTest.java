@@ -22,13 +22,13 @@ import static org.hamcrest.Matchers.contains;
  * Tests the integration of comments and configurable new lines
  * ({@link YamlFileResourceOptions#numberOfLinesBeforeFunction}) in {@link YamlFileResource}.
  */
-public class YamlFileResourceNewLineTest {
+class YamlFileResourceNewLineTest {
 
     @TempDir
     public Path temporaryFolder;
 
     @Test
-    public void shouldExportWithRootAndFirstComment() throws IOException {
+    void shouldExportWithRootAndFirstComment() throws IOException {
         // given
         Path file = createTemporaryFile(temporaryFolder);
         YamlFileResource resource = new YamlFileResource(file.toFile(), optionsWithLinesFunction());
@@ -52,7 +52,7 @@ public class YamlFileResourceNewLineTest {
     }
 
     @Test
-    public void shouldExportWithoutRootAndWithFirstComment() throws IOException {
+    void shouldExportWithoutRootAndWithFirstComment() throws IOException {
         // given
         Path file = createTemporaryFile(temporaryFolder);
         YamlFileResource resource = new YamlFileResource(file.toFile(), optionsWithLinesFunction());
@@ -75,7 +75,7 @@ public class YamlFileResourceNewLineTest {
     }
 
     @Test
-    public void shouldExportWithRootAndWithoutFirstComment() throws IOException {
+    void shouldExportWithRootAndWithoutFirstComment() throws IOException {
         // given
         Path file = createTemporaryFile(temporaryFolder);
         YamlFileResource resource = new YamlFileResource(file.toFile(), optionsWithLinesFunction());
@@ -97,7 +97,7 @@ public class YamlFileResourceNewLineTest {
     }
 
     @Test
-    public void shouldExportWithoutRootAndFirstComment() throws IOException {
+    void shouldExportWithoutRootAndFirstComment() throws IOException {
         // given
         Path file = createTemporaryFile(temporaryFolder);
         YamlFileResource resource = new YamlFileResource(file.toFile(), optionsWithLinesFunction());
@@ -118,7 +118,7 @@ public class YamlFileResourceNewLineTest {
     }
 
     @Test
-    public void shouldExportWithRootCommentAndNewLineEverywhere() throws IOException {
+    void shouldExportWithRootCommentAndNewLineEverywhere() throws IOException {
         // given
         Path file = createTemporaryFile(temporaryFolder);
         YamlFileResourceOptions options = YamlFileResourceOptions.builder()
@@ -164,7 +164,7 @@ public class YamlFileResourceNewLineTest {
         return ConfigurationDataBuilder.createConfiguration(properties, commentsConfiguration);
     }
 
-    public static class TestConfiguration implements SettingsHolder {
+    private static class TestConfiguration implements SettingsHolder {
 
         public static final Property<Integer> FIRST = newProperty("first", 1);
 

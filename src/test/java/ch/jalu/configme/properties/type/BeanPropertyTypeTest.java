@@ -23,10 +23,10 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link BeanPropertyType}.
  */
-public class BeanPropertyTypeTest {
+class BeanPropertyTypeTest {
 
     @Test
-    public void shouldReturnConvertedValue() {
+    void shouldReturnConvertedValue() {
         // given
         TypeInformation typeInformation = new TypeInformation(Location.class);
         Mapper mapper = mock(Mapper.class);
@@ -44,7 +44,7 @@ public class BeanPropertyTypeTest {
     }
 
     @Test
-    public void shouldReturnValueAsExportValue() {
+    void shouldReturnValueAsExportValue() {
         // given
         TypeInformation typeInformation = new TypeInformation(Location.class);
         Location location = new Location();
@@ -66,7 +66,7 @@ public class BeanPropertyTypeTest {
     }
 
     @Test
-    public void shouldInitializeWithDefaultMapper() throws NoSuchFieldException, IllegalAccessException {
+    void shouldInitializeWithDefaultMapper() throws NoSuchFieldException, IllegalAccessException {
         // given / when
         BeanPropertyType<Command> type = BeanPropertyType.of(Command.class);
 

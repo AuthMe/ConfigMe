@@ -37,7 +37,7 @@ import static org.hamcrest.Matchers.sameInstance;
 /**
  * Test for {@link YamlFileReader}.
  */
-public class YamlFileReaderTest {
+class YamlFileReaderTest {
 
     private static final String COMPLETE_FILE = "/config-sample.yml";
     private static final String INCOMPLETE_FILE = "/config-incomplete-sample.yml";
@@ -46,7 +46,7 @@ public class YamlFileReaderTest {
     public Path temporaryFolder;
 
     @Test
-    public void shouldThrowForAbsentYamlMap() throws IOException {
+    void shouldThrowForAbsentYamlMap() throws IOException {
         // given
         File file = new File(temporaryFolder.toFile(), "temp-file");
         Files.write(file.toPath(), "123".getBytes());
@@ -57,7 +57,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldWrapIOException() {
+    void shouldWrapIOException() {
         // given
         File file = new File(temporaryFolder.toFile(), "test");
 
@@ -67,7 +67,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldReadAllProperties() {
+    void shouldReadAllProperties() {
         // given
         File config = copyFileFromResources(COMPLETE_FILE);
 
@@ -95,7 +95,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldRetrieveTypedValues() {
+    void shouldRetrieveTypedValues() {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
         PropertyReader reader = new YamlFileReader(file);
@@ -108,7 +108,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldReadValuesAndHandleAbsentOnes() {
+    void shouldReadValuesAndHandleAbsentOnes() {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
 
@@ -123,7 +123,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldReturnIfReaderContainsValue() {
+    void shouldReturnIfReaderContainsValue() {
         // given
         File file = copyFileFromResources(INCOMPLETE_FILE);
         PropertyReader reader = new YamlFileReader(file);
@@ -139,7 +139,7 @@ public class YamlFileReaderTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldReturnRootForEmptyString() {
+    void shouldReturnRootForEmptyString() {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
         PropertyReader reader = new YamlFileReader(file);
@@ -153,7 +153,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldReturnNullForUnknownPath() {
+    void shouldReturnNullForUnknownPath() {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
@@ -165,7 +165,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldWrapYamlException() throws IOException {
+    void shouldWrapYamlException() throws IOException {
         // given
         String invalidYaml = "test:\n   'broken quote";
         Path file = createTemporaryFile(temporaryFolder);
@@ -177,7 +177,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldHandleEmptyFile() {
+    void shouldHandleEmptyFile() {
         // given
         Path file = createTemporaryFile(temporaryFolder);
         File pathAsFile = file.toFile();
@@ -192,7 +192,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldReadWithUtf8() {
+    void shouldReadWithUtf8() {
         // given
         File file = copyFileFromResources("/charsets/utf8_sample.yml");
         YamlFileReader reader = new YamlFileReader(file);
@@ -204,7 +204,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldReadWithCustomCharset() {
+    void shouldReadWithCustomCharset() {
         // given
         File file = copyFileFromResources("/charsets/iso-8859-1_sample.yml");
         YamlFileReader reader = new YamlFileReader(file, StandardCharsets.ISO_8859_1);
@@ -215,7 +215,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldReturnKeysOfFile() {
+    void shouldReturnKeysOfFile() {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
@@ -233,7 +233,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldReturnLeafNodeKeysInFile() {
+    void shouldReturnLeafNodeKeysInFile() {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
@@ -251,7 +251,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldTreatEmptyMapsAsLeafNodes() {
+    void shouldTreatEmptyMapsAsLeafNodes() {
         // given
         File file = copyFileFromResources("/beanmapper/nested_chat_component_complex_expected.yml");
         YamlFileReader reader = new YamlFileReader(file);
@@ -273,7 +273,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldReturnChildrenPathsOfGivenPath() {
+    void shouldReturnChildrenPathsOfGivenPath() {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
@@ -286,7 +286,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldReturnChildrenPathsOfRoot() {
+    void shouldReturnChildrenPathsOfRoot() {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
@@ -299,7 +299,7 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldReturnEmptySetForNonExistentOrLeafValue() {
+    void shouldReturnEmptySetForNonExistentOrLeafValue() {
         // given
         File file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);

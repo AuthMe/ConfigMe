@@ -21,13 +21,13 @@ import static org.mockito.BDDMockito.given;
  * Test for {@link ListProperty}.
  */
 @ExtendWith(MockitoExtension.class)
-public class ListPropertyTest {
+class ListPropertyTest {
 
     @Mock
     private PropertyReader reader;
 
     @Test
-    public void shouldReturnValueFromResource() {
+    void shouldReturnValueFromResource() {
         // given
         Property<List<Integer>> property = new ListProperty<>("list", PrimitivePropertyType.INTEGER);
         given(reader.getList("list")).willReturn((List) Arrays.asList(3, 5, 7.0));
@@ -40,7 +40,7 @@ public class ListPropertyTest {
     }
 
     @Test
-    public void shouldReturnDefaultValue() {
+    void shouldReturnDefaultValue() {
         // given
         Property<List<Integer>> property = new ListProperty<>("list", PrimitivePropertyType.INTEGER, 8, 9, 10);
         given(reader.getList("list")).willReturn(null);
@@ -53,7 +53,7 @@ public class ListPropertyTest {
     }
 
     @Test
-    public void shouldReturnValueAsExportValue() {
+    void shouldReturnValueAsExportValue() {
         // given
         Property<List<Integer>> property = new ListProperty<>("list", PrimitivePropertyType.INTEGER, Arrays.asList(-2, 16));
 

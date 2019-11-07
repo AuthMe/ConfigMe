@@ -25,10 +25,10 @@ import static org.hamcrest.Matchers.instanceOf;
 /**
  * Test for {@link PropertyInitializer}.
  */
-public class PropertyInitializerTest {
+class PropertyInitializerTest {
 
     @Test
-    public void shouldInstantiateProperties() {
+    void shouldInstantiateProperties() {
         assertThat(newProperty("my.path", true), instanceOf(BooleanProperty.class));
         assertThat(newProperty("my.path", 12), instanceOf(IntegerProperty.class));
         assertThat(newProperty("my.path", -8.4), instanceOf(DoubleProperty.class));
@@ -45,7 +45,7 @@ public class PropertyInitializerTest {
     }
 
     @Test
-    public void shouldInstantiateBuilders() {
+    void shouldInstantiateBuilders() {
         assertThat(typeBasedProperty(PrimitivePropertyType.STRING), instanceOf(PropertyBuilder.TypeBasedPropertyBuilder.class));
         assertThat(listProperty(PrimitivePropertyType.INTEGER), instanceOf(PropertyBuilder.ListPropertyBuilder.class));
         assertThat(mapProperty(PrimitivePropertyType.DOUBLE), instanceOf(PropertyBuilder.MapPropertyBuilder.class));
@@ -54,7 +54,7 @@ public class PropertyInitializerTest {
     }
 
     @Test
-    public void shouldHaveAccessibleNoArgsConstructorForExtensions() {
+    void shouldHaveAccessibleNoArgsConstructorForExtensions() {
         // given / when
         new PropertyInitializer() { };
 

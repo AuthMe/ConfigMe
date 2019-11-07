@@ -28,7 +28,7 @@ import static org.hamcrest.Matchers.contains;
 /**
  * Tests that {@link YamlFileResource} exports Sets in a nice way (cf. issue #27).
  */
-public class YamlSetPropertyExportTest {
+class YamlSetPropertyExportTest {
 
     private static final String SAMPLE_FILE = "/empty_file.yml";
 
@@ -38,12 +38,12 @@ public class YamlSetPropertyExportTest {
     private File configFile;
 
     @BeforeEach
-    public void copyConfigFile() {
+    void copyConfigFile() {
         configFile = TestUtils.copyFileFromResources(SAMPLE_FILE, temporaryFolder);
     }
 
     @Test
-    public void shouldLoadAndExportProperly() throws IOException {
+    void shouldLoadAndExportProperly() throws IOException {
         // given
         PropertyResource resource = new YamlFileResource(configFile);
         Property<Set<TestEnum>> setProperty = new EnumSetProperty("sample.ratio.fields", Collections.emptySet());

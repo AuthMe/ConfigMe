@@ -47,7 +47,7 @@ import static org.mockito.Mockito.verify;
  * Test for {@link SettingsManagerImpl}.
  */
 @ExtendWith(MockitoExtension.class)
-public class SettingsManagerImplTest {
+class SettingsManagerImplTest {
 
     private final ConfigurationData configurationData = createConfiguration(Arrays.asList(
         newProperty("demo.prop", 3),
@@ -67,7 +67,7 @@ public class SettingsManagerImplTest {
     public Path temporaryFolder;
 
     @Test
-    public void shouldCheckMigrationServiceOnStartup() {
+    void shouldCheckMigrationServiceOnStartup() {
         // given
         given(resource.createReader()).willReturn(reader);
         given(migrationService.checkAndMigrate(reader, configurationData)).willReturn(false);
@@ -81,7 +81,7 @@ public class SettingsManagerImplTest {
     }
 
     @Test
-    public void shouldSaveAfterPerformingMigrations() {
+    void shouldSaveAfterPerformingMigrations() {
         // given
         given(resource.createReader()).willReturn(reader);
         given(migrationService.checkAndMigrate(reader, configurationData)).willReturn(true);
@@ -95,7 +95,7 @@ public class SettingsManagerImplTest {
     }
 
     @Test
-    public void shouldGetProperty() {
+    void shouldGetProperty() {
         // given
         given(resource.createReader()).willReturn(reader);
         SettingsManager manager = createManager();
@@ -112,7 +112,7 @@ public class SettingsManagerImplTest {
     }
 
     @Test
-    public void shouldSetProperty() {
+    void shouldSetProperty() {
         // given
         given(resource.createReader()).willReturn(reader);
         SettingsManager manager = createManager();
@@ -129,7 +129,7 @@ public class SettingsManagerImplTest {
     }
 
     @Test
-    public void shouldPerformReload() {
+    void shouldPerformReload() {
         // given
         ConfigurationData configurationData = mock(ConfigurationData.class);
         SettingsManager manager = new SettingsManagerImpl(resource, configurationData, migrationService);
@@ -147,7 +147,7 @@ public class SettingsManagerImplTest {
     }
 
     @Test
-    public void shouldHandleNullMigrationService() {
+    void shouldHandleNullMigrationService() {
         // given
         given(resource.createReader()).willReturn(reader);
         List<Property<?>> properties = configurationData.getProperties();
@@ -161,7 +161,7 @@ public class SettingsManagerImplTest {
     }
 
     @Test
-    public void shouldAllowToSetBeanPropertyValue() {
+    void shouldAllowToSetBeanPropertyValue() {
         // given
         BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>(WorldGroupConfig.class, "worlds", new WorldGroupConfig());
         PropertyResource resource = new YamlFileResource(copyFileFromResources("/beanmapper/worlds.yml", temporaryFolder));
@@ -177,7 +177,7 @@ public class SettingsManagerImplTest {
     }
 
     @Test
-    public void shouldProperlySaveBeanPropertyValueSetAfterwards() {
+    void shouldProperlySaveBeanPropertyValueSetAfterwards() {
         // given
         BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>(WorldGroupConfig.class, "groups", new WorldGroupConfig());
         File file = copyFileFromResources("/beanmapper/worlds.yml", temporaryFolder);
@@ -199,7 +199,7 @@ public class SettingsManagerImplTest {
     }
 
     @Test
-    public void shouldSetOptionalPropertyCorrectly() {
+    void shouldSetOptionalPropertyCorrectly() {
         // given
         File file = copyFileFromResources("/config-sample.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(file);
@@ -221,7 +221,7 @@ public class SettingsManagerImplTest {
     }
 
     @Test
-    public void shouldThrowExceptionForInvalidValue() {
+    void shouldThrowExceptionForInvalidValue() {
         // given
         given(resource.createReader()).willReturn(reader);
         Property<String> property = typedMock();

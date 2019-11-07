@@ -54,10 +54,10 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link MapperImpl}.
  */
-public class MapperImplTest {
+class MapperImplTest {
 
     @Test
-    public void shouldCreateWorldGroups() {
+    void shouldCreateWorldGroups() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds.yml");
         MapperImpl mapperImpl = new MapperImpl();
@@ -77,7 +77,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldCreateCommands() {
+    void shouldCreateCommands() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
         MapperImpl mapperImpl = new MapperImpl();
@@ -109,7 +109,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldSkipInvalidEntry() {
+    void shouldSkipInvalidEntry() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds_invalid.yml");
         MapperImpl mapperImpl = new MapperImpl();
@@ -124,7 +124,7 @@ public class MapperImplTest {
 
 
     @Test
-    public void shouldHandleInvalidErrors() {
+    void shouldHandleInvalidErrors() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid.yml");
         MapperImpl mapper = new MapperImpl();
@@ -141,7 +141,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldReturnNullForUnavailableSection() {
+    void shouldReturnNullForUnavailableSection() {
         // given
         MapperImpl mapper = new MapperImpl();
 
@@ -153,7 +153,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldThrowForMapWithNonStringKeyType() {
+    void shouldThrowForMapWithNonStringKeyType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/mapconfig.yml");
         MapperImpl mapper = new MapperImpl();
@@ -166,7 +166,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldThrowForUnsupportedCollectionType() {
+    void shouldThrowForUnsupportedCollectionType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
         MapperImpl mapper = new MapperImpl();
@@ -179,7 +179,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldThrowForUntypedCollection() {
+    void shouldThrowForUntypedCollection() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
         MapperImpl mapper = new MapperImpl();
@@ -192,7 +192,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldThrowForUntypedMap() {
+    void shouldThrowForUntypedMap() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/mapconfig.yml");
         MapperImpl mapper = new MapperImpl();
@@ -205,7 +205,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldThrowForCollectionWithGenerics() {
+    void shouldThrowForCollectionWithGenerics() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
         MapperImpl mapper = new MapperImpl();
@@ -218,7 +218,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldThrowForUnsupportedMapType() {
+    void shouldThrowForUnsupportedMapType() {
         // given
         MapperImpl mapper = new MapperImpl();
         TypeInformation invalidMapType = new TypeInformation(new HashMap() {}.getClass());
@@ -231,7 +231,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldCreateCorrectMapType() {
+    void shouldCreateCorrectMapType() {
         // given
         MapperImpl mapper = new MapperImpl();
         TypeInformation interfaceType = new TypeInformation(Map.class);
@@ -247,7 +247,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldReturnNullForUnmappableMandatoryField() {
+    void shouldReturnNullForUnmappableMandatoryField() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid_2.yml");
         MapperImpl mapper = new MapperImpl();
@@ -260,7 +260,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldReturnNullForMissingSection() {
+    void shouldReturnNullForMissingSection() {
         // given
         PropertyReader reader = createReaderFromFile("/empty_file.yml");
         MapperImpl mapper = new MapperImpl();
@@ -273,7 +273,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldHandleEmptyOptionalFields() {
+    void shouldHandleEmptyOptionalFields() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
         MapperImpl mapper = new MapperImpl();
@@ -290,7 +290,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldLoadConfigWithOptionalProperties() {
+    void shouldLoadConfigWithOptionalProperties() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/optionalproperties/complex-commands.yml");
         MapperImpl mapper = new MapperImpl();
@@ -327,7 +327,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldHandleComplexOptionalType() {
+    void shouldHandleComplexOptionalType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
         MapperImpl mapper = new MapperImpl();
@@ -342,7 +342,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldReturnEmptyOptionalForEmptyFile() {
+    void shouldReturnEmptyOptionalForEmptyFile() {
         // given
         PropertyReader reader = createReaderFromFile("/empty_file.yml");
         MapperImpl mapper = new MapperImpl();
@@ -356,7 +356,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldInvokeDefaultConstructor() {
+    void shouldInvokeDefaultConstructor() {
         // given
         MapperImpl mapper = new MapperImpl();
 
@@ -368,7 +368,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldForwardException() {
+    void shouldForwardException() {
         // given
         MapperImpl mapper = new MapperImpl();
 
@@ -385,7 +385,7 @@ public class MapperImplTest {
     }
 
     @Test
-    public void shouldReturnFields() {
+    void shouldReturnFields() {
         // given
         BeanDescriptionFactory descriptionFactory = mock(BeanDescriptionFactory.class);
         LeafValueHandler leafValueHandler = mock(LeafValueHandler.class);

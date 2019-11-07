@@ -20,10 +20,10 @@ import static org.hamcrest.Matchers.instanceOf;
 /**
  * Test for {@link PropertyBuilder}.
  */
-public class PropertyBuilderTest {
+class PropertyBuilderTest {
 
     @Test
-    public void shouldCreateCommonProperty() {
+    void shouldCreateCommonProperty() {
         // given / when
         Property<Integer> result = new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.INTEGER)
             .path("my.path.test")
@@ -37,7 +37,7 @@ public class PropertyBuilderTest {
     }
 
     @Test
-    public void shouldCreateCommonPropertyWithCustomFunction() {
+    void shouldCreateCommonPropertyWithCustomFunction() {
         // given / when
         Property<String> result = new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
             .path("my.path")
@@ -50,7 +50,7 @@ public class PropertyBuilderTest {
     }
 
     @Test
-    public void shouldThrowForMissingPathInCommonPropertyBuilder() {
+    void shouldThrowForMissingPathInCommonPropertyBuilder() {
         // given / when
         NullPointerException e = catchExceptionOrFail(NullPointerException.class,
             () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
@@ -62,7 +62,7 @@ public class PropertyBuilderTest {
     }
 
     @Test
-    public void shouldThrowForMissingDefaultValueInCommonPropertyBuilder() {
+    void shouldThrowForMissingDefaultValueInCommonPropertyBuilder() {
         // given / when
         NullPointerException e = catchExceptionOrFail(NullPointerException.class,
             () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
@@ -75,7 +75,7 @@ public class PropertyBuilderTest {
     }
 
     @Test
-    public void shouldThrowForMissingPropertyTypeInCommonPropertyBuilder() {
+    void shouldThrowForMissingPropertyTypeInCommonPropertyBuilder() {
         // given / when
         NullPointerException e = catchExceptionOrFail(NullPointerException.class,
             () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(null)
@@ -88,7 +88,7 @@ public class PropertyBuilderTest {
     }
 
     @Test
-    public void shouldCreateMapProperty() {
+    void shouldCreateMapProperty() {
         // given / when
         MapProperty<Double> result = new PropertyBuilder.MapPropertyBuilder<>(PrimitivePropertyType.DOUBLE)
             .path("the.path")
@@ -105,7 +105,7 @@ public class PropertyBuilderTest {
     }
 
     @Test
-    public void shouldCreateMapPropertyWithEmptyMapAsDefault() {
+    void shouldCreateMapPropertyWithEmptyMapAsDefault() {
         // given / when
         MapProperty<Double> result = new PropertyBuilder.MapPropertyBuilder<>(PrimitivePropertyType.DOUBLE)
             .path("some.path")
@@ -116,7 +116,7 @@ public class PropertyBuilderTest {
     }
 
     @Test
-    public void shouldThrowForMissingPathInMapBuilder() {
+    void shouldThrowForMissingPathInMapBuilder() {
         // given / when
         NullPointerException e = catchExceptionOrFail(NullPointerException.class,
             () -> new PropertyBuilder.MapPropertyBuilder<>(PrimitivePropertyType.DOUBLE).build());
@@ -126,7 +126,7 @@ public class PropertyBuilderTest {
     }
 
     @Test
-    public void shouldCreateArrayProperty() {
+    void shouldCreateArrayProperty() {
         // given / when
         Property<Long[]> property = new PropertyBuilder.ArrayPropertyBuilder<>(PrimitivePropertyType.LONG, Long[]::new)
             .path("given.path")
@@ -140,7 +140,7 @@ public class PropertyBuilderTest {
     }
 
     @Test
-    public void shouldCreateInlineArrayProperty() {
+    void shouldCreateInlineArrayProperty() {
         // given / when
         Property<Float[]> property = new PropertyBuilder.InlineArrayPropertyBuilder<>(StandardInlineArrayConverters.FLOAT)
             .path("one.path")
@@ -154,7 +154,7 @@ public class PropertyBuilderTest {
     }
 
     @Test
-    public void shouldCreateListProperty() {
+    void shouldCreateListProperty() {
         // given / when
         Property<List<TestEnum>> property = new PropertyBuilder.ListPropertyBuilder<>(EnumPropertyType.of(TestEnum.class))
             .path("enum.path")
@@ -168,7 +168,7 @@ public class PropertyBuilderTest {
     }
 
     @Test
-    public void shouldThrowForMissingDefaultValue() {
+    void shouldThrowForMissingDefaultValue() {
         // given / when / then
         catchExceptionOrFail(NullPointerException.class,
             () -> new PropertyBuilder.ListPropertyBuilder<>(PrimitivePropertyType.DOUBLE)

@@ -21,13 +21,13 @@ import static org.mockito.BDDMockito.given;
  * Test for {@link ArrayProperty}.
  */
 @ExtendWith(MockitoExtension.class)
-public class ArrayPropertyTest {
+class ArrayPropertyTest {
 
     @Mock
     private PropertyReader reader;
 
     @Test
-    public void shouldReturnNullFornonCollectionTypes() {
+    void shouldReturnNullFornonCollectionTypes() {
         // given
         ArrayProperty<String> property = new ArrayProperty<>(
             "singleton",
@@ -44,7 +44,7 @@ public class ArrayPropertyTest {
     }
 
     @Test
-    public void shouldHandleNull() {
+    void shouldHandleNull() {
         // given
         // given
         ArrayProperty<String> property = new ArrayProperty<>(
@@ -62,7 +62,7 @@ public class ArrayPropertyTest {
     }
 
     @Test
-    public void shouldReturnArrayFromResource() {
+    void shouldReturnArrayFromResource() {
         // given
         Property<String[]> property = new ArrayProperty<>(
             "array",
@@ -78,7 +78,7 @@ public class ArrayPropertyTest {
     }
 
     @Test
-    public void shouldReturnDefaultValue() {
+    void shouldReturnDefaultValue() {
         // given
         Property<String[]> property = new ArrayProperty<>(
             "array",
@@ -95,7 +95,7 @@ public class ArrayPropertyTest {
     }
 
     @Test
-    public void shouldReturnValueAsExportValue() {
+    void shouldReturnValueAsExportValue() {
         // given
         Property<String[]> property = new ArrayProperty<>(
             "array",

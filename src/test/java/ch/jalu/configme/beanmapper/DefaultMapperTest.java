@@ -8,10 +8,10 @@ import static org.hamcrest.Matchers.sameInstance;
 /**
  * Test for {@link DefaultMapper}.
  */
-public class DefaultMapperTest {
+class DefaultMapperTest {
 
     @Test
-    public void shouldReturnSameInstance() {
+    void shouldReturnSameInstance() {
         // given
         Mapper givenInstance = DefaultMapper.getInstance();
 

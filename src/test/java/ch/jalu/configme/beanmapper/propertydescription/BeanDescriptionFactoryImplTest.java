@@ -28,10 +28,10 @@ import static org.hamcrest.Matchers.hasSize;
 /**
  * Test for {@link BeanDescriptionFactoryImpl}.
  */
-public class BeanDescriptionFactoryImplTest {
+class BeanDescriptionFactoryImplTest {
 
     @Test
-    public void shouldReturnWritableProperties() {
+    void shouldReturnWritableProperties() {
         // given
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
@@ -45,7 +45,7 @@ public class BeanDescriptionFactoryImplTest {
     }
 
     @Test
-    public void shouldReturnEmptyListForNonBeanClass() {
+    void shouldReturnEmptyListForNonBeanClass() {
         // given
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
@@ -54,7 +54,7 @@ public class BeanDescriptionFactoryImplTest {
     }
 
     @Test
-    public void shouldHandleBooleanMethodsAndMatchWithFields() {
+    void shouldHandleBooleanMethodsAndMatchWithFields() {
         // given
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
@@ -72,7 +72,7 @@ public class BeanDescriptionFactoryImplTest {
     }
 
     @Test
-    public void shouldNotConsiderTransientFields() {
+    void shouldNotConsiderTransientFields() {
         // given
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
@@ -85,7 +85,7 @@ public class BeanDescriptionFactoryImplTest {
     }
 
     @Test
-    public void shouldBeAwareOfInheritanceAndRespectOrder() {
+    void shouldBeAwareOfInheritanceAndRespectOrder() {
         // given
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
@@ -98,7 +98,7 @@ public class BeanDescriptionFactoryImplTest {
     }
 
     @Test
-    public void shouldLetChildFieldsOverrideParentFields() {
+    void shouldLetChildFieldsOverrideParentFields() {
         // given
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
@@ -112,7 +112,7 @@ public class BeanDescriptionFactoryImplTest {
     }
 
     @Test
-    public void shouldUseExportName() {
+    void shouldUseExportName() {
         // given
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
@@ -126,7 +126,7 @@ public class BeanDescriptionFactoryImplTest {
     }
 
     @Test
-    public void shouldThrowForMultiplePropertiesWithSameName() {
+    void shouldThrowForMultiplePropertiesWithSameName() {
         // given
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
@@ -138,7 +138,7 @@ public class BeanDescriptionFactoryImplTest {
     }
 
     @Test
-    public void shouldThrowForWhenExportNameIsNullForProperty() {
+    void shouldThrowForWhenExportNameIsNullForProperty() {
         // given
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 

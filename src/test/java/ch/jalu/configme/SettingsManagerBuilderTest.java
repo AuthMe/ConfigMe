@@ -29,13 +29,13 @@ import static org.mockito.Mockito.verify;
 /**
  * Test for {@link SettingsManagerBuilder}.
  */
-public class SettingsManagerBuilderTest {
+class SettingsManagerBuilderTest {
 
     @TempDir
     public Path temporaryFolder;
 
     @Test
-    public void shouldCreateSettingsManager() {
+    void shouldCreateSettingsManager() {
         // given
         PropertyResource resource = mock(PropertyResource.class);
         PropertyReader reader = mock(PropertyReader.class);
@@ -58,7 +58,7 @@ public class SettingsManagerBuilderTest {
     }
 
     @Test
-    public void shouldCreateSettingsManagerWithYamlFileAndDefaultMigrationService() {
+    void shouldCreateSettingsManagerWithYamlFileAndDefaultMigrationService() {
         // given
         File configFile = new File(temporaryFolder.toFile(), "config.yml");
         ConfigurationData configurationData = mock(ConfigurationData.class);
@@ -78,7 +78,7 @@ public class SettingsManagerBuilderTest {
     }
 
     @Test
-    public void shouldSupportNullAsMigrationServiceAndCreateConfigurationDataFromClasses() {
+    void shouldSupportNullAsMigrationServiceAndCreateConfigurationDataFromClasses() {
         // given
         PropertyResource resource = mock(PropertyResource.class);
         given(resource.createReader()).willReturn(mock(PropertyReader.class));
@@ -99,7 +99,7 @@ public class SettingsManagerBuilderTest {
      * but also checks the writing and everything.
      */
     @Test
-    public void shouldCreateManagerWithYamlShorthandAndMigrateConfigFile() {
+    void shouldCreateManagerWithYamlShorthandAndMigrateConfigFile() {
         // given
         File file = copyFileFromResources("/config-incomplete-sample.yml", temporaryFolder);
         long fileLength = file.length();

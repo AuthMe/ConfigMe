@@ -17,13 +17,13 @@ import static org.mockito.BDDMockito.given;
  * Test for {@link DoubleProperty}.
  */
 @ExtendWith(MockitoExtension.class)
-public class DoublePropertyTest {
+class DoublePropertyTest {
 
     @Mock
     private PropertyReader reader;
 
     @Test
-    public void shouldReturnDoubleFromResource() {
+    void shouldReturnDoubleFromResource() {
         // given
         Property<Double> property = new DoubleProperty("test.path", 3.4);
         given(reader.getObject("test.path")).willReturn(-2508.346);
@@ -36,7 +36,7 @@ public class DoublePropertyTest {
     }
 
     @Test
-    public void shouldReturnDefaultValue() {
+    void shouldReturnDefaultValue() {
         // given
         Property<Double> property = new DoubleProperty("property.path", 5.9);
         given(reader.getObject("property.path")).willReturn(null);
@@ -49,7 +49,7 @@ public class DoublePropertyTest {
     }
 
     @Test
-    public void shouldReturnValueAsExportValue() {
+    void shouldReturnValueAsExportValue() {
         // given
         Property<Double> property = new DoubleProperty("property.path", 4);
         double givenValue = 4.3456;

@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.equalTo;
  *
  * @see <a href="https://github.com/AuthMe/ConfigMe/issues/51">Issue #51</a>
  */
-public class YamlFileResourceOptionalInBeanPropertyTest {
+class YamlFileResourceOptionalInBeanPropertyTest {
 
     private static BeanProperty<ComplexCommandConfig> commandConfigProperty = new BeanProperty<>(
         ComplexCommandConfig.class, "commandconfig", new ComplexCommandConfig());
@@ -38,7 +38,7 @@ public class YamlFileResourceOptionalInBeanPropertyTest {
     public Path temporaryFolder;
 
     @Test
-    public void shouldSaveOptionalFieldsProperly() {
+    void shouldSaveOptionalFieldsProperly() {
         // given
         File file = copyFileFromResources("/beanmapper/optionalproperties/complex-commands.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(file);

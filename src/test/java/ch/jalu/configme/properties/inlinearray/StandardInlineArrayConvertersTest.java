@@ -16,11 +16,11 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Test for {@link StandardInlineArrayConverters}.
  */
-public class StandardInlineArrayConvertersTest {
+class StandardInlineArrayConvertersTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    public void shouldConvertValueFromString(String name, InlineArrayConverter converter, TestData testData) {
+    void shouldConvertValueFromString(String name, InlineArrayConverter converter, TestData testData) {
         // given
         String input = testData.inputValue;
 
@@ -33,7 +33,7 @@ public class StandardInlineArrayConvertersTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    public void shouldExportValue(String name, InlineArrayConverter converter, TestData testData) {
+    void shouldExportValue(String name, InlineArrayConverter converter, TestData testData) {
         // given
         Object[] values = testData.expectedValue;
 
@@ -46,7 +46,7 @@ public class StandardInlineArrayConvertersTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    public void shouldNotThrowErrorForInvalidValues(String name, InlineArrayConverter converter, TestData testData) {
+    void shouldNotThrowErrorForInvalidValues(String name, InlineArrayConverter converter, TestData testData) {
         // given
         String input = testData.inputWithErrors;
 
@@ -59,7 +59,7 @@ public class StandardInlineArrayConvertersTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    public void shouldConvertFromEmptyString(String name, InlineArrayConverter converter, TestData testData) {
+    void shouldConvertFromEmptyString(String name, InlineArrayConverter converter, TestData testData) {
         // given / when
         Object[] result = converter.fromString("");
 
@@ -73,7 +73,7 @@ public class StandardInlineArrayConvertersTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    public void shouldExportEmptyArray(String name, InlineArrayConverter converter, TestData testData) {
+    void shouldExportEmptyArray(String name, InlineArrayConverter converter, TestData testData) {
         // given
         Object[] input = converter == StandardInlineArrayConverters.STRING ? new String[0] : new Object[0];
 
@@ -84,7 +84,7 @@ public class StandardInlineArrayConvertersTest {
         assertThat(result, equalTo(""));
     }
 
-    public static List<Object[]> data() throws IllegalAccessException {
+    private static List<Object[]> data() throws IllegalAccessException {
         List<Object[]> converters = new ArrayList<>();
         for (Field field : StandardInlineArrayConverters.class.getDeclaredFields()) {
             if (Modifier.isPublic(field.getModifiers()) && Modifier.isStatic(field.getModifiers())) {

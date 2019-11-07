@@ -23,10 +23,10 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link TypeInformation}.
  */
-public class TypeInformationTest {
+class TypeInformationTest {
 
     @Test
-    public void shouldHandleSimpleClassFields() {
+    void shouldHandleSimpleClassFields() {
         // given
         TypeInformation typeInfo = createTypeFromSampleField("str");
 
@@ -40,7 +40,7 @@ public class TypeInformationTest {
     }
 
     @Test
-    public void shouldHandleReadTypeInCollectionFields() {
+    void shouldHandleReadTypeInCollectionFields() {
         // given
         Map<String, Class<?>> expectedReadClasses = new HashMap<>();
         expectedReadClasses.put("strList", String.class);
@@ -58,7 +58,7 @@ public class TypeInformationTest {
     }
 
     @Test
-    public void shouldHandleWriteTypeInCollectionFields() {
+    void shouldHandleWriteTypeInCollectionFields() {
         // given
         Map<String, Class<?>> expectedReadClasses = new HashMap<>();
         expectedReadClasses.put("strList", String.class);
@@ -79,7 +79,7 @@ public class TypeInformationTest {
 
 
     @Test
-    public void shouldHandleSimpleFieldsOfTypeVariable() {
+    void shouldHandleSimpleFieldsOfTypeVariable() {
         // given
         TypeInformation typeInfoT = createTypeFromTypeVarField("tValue");
         TypeInformation typeInfoD = createTypeFromTypeVarField("dValue");
@@ -95,7 +95,7 @@ public class TypeInformationTest {
     }
 
     @Test
-    public void shouldHandleReadTypeInCollectionFieldsWithTypeVariables() {
+    void shouldHandleReadTypeInCollectionFieldsWithTypeVariables() {
         // given
         Map<String, Class<?>> expectedReadClasses = new HashMap<>();
         expectedReadClasses.put("listOfT", Comparable.class);
@@ -112,7 +112,7 @@ public class TypeInformationTest {
     }
 
     @Test
-    public void shouldHandleWriteTypeInCollectionFieldsWithTypeVariables() {
+    void shouldHandleWriteTypeInCollectionFieldsWithTypeVariables() {
         // given
         List<String> fieldNames = Arrays.asList("listOfT", "listOfD", "optionalU", "mapSU");
 
@@ -125,7 +125,7 @@ public class TypeInformationTest {
     }
 
     @Test
-    public void shouldHandleMapType() {
+    void shouldHandleMapType() {
         // given
         TypeInformation typeForMapField = createTypeFromTypeVarField("mapSU");
 
@@ -138,7 +138,7 @@ public class TypeInformationTest {
     }
 
     @Test
-    public void shouldReturnNullForTypesWithTooFewGenericTypes() {
+    void shouldReturnNullForTypesWithTooFewGenericTypes() {
         // given
         TypeInformation strType = createTypeFromSampleField("str");
         TypeInformation listType = createTypeFromSampleField("strList");
@@ -156,7 +156,7 @@ public class TypeInformationTest {
     }
 
     @Test
-    public void shouldReturnObjectClassAsReadClassForUnknownType() {
+    void shouldReturnObjectClassAsReadClassForUnknownType() {
         // given
         Type type = mock(Type.class);
 
@@ -170,7 +170,7 @@ public class TypeInformationTest {
     }
 
     @Test
-    public void shouldHaveTypeInfoInToString() {
+    void shouldHaveTypeInfoInToString() {
         // given
         TypeInformation type = new TypeInformation(String.class);
 
@@ -182,7 +182,7 @@ public class TypeInformationTest {
     }
 
     @Test
-    public void shouldDefineHashCodeFromType() {
+    void shouldDefineHashCodeFromType() {
         // given
         TypeInformation type1 = new TypeInformation(String.class);
         TypeInformation type2 = createTypeFromSampleField("str");
@@ -195,7 +195,7 @@ public class TypeInformationTest {
     }
 
     @Test
-    public void shouldBaseEqualsOnWrappedType() {
+    void shouldBaseEqualsOnWrappedType() {
         // given
         TypeInformation type1 = createTypeFromSampleField("listExStr");
         TypeInformation type2 = createTypeFromSampleField("listExStr");

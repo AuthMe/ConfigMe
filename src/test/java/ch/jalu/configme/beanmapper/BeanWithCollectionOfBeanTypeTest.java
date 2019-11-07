@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.hasSize;
  *
  * @see <a href="https://github.com/AuthMe/ConfigMe/issues/55">#55: Nested bean serialization</a>
  */
-public class BeanWithCollectionOfBeanTypeTest {
+class BeanWithCollectionOfBeanTypeTest {
 
     private static final String NESTED_CHAT_COMPONENT_YML = "/beanmapper/nested_chat_component.yml";
 
@@ -42,7 +42,7 @@ public class BeanWithCollectionOfBeanTypeTest {
     public Path temporaryFolder;
 
     @Test
-    public void shouldLoadValue() {
+    void shouldLoadValue() {
         // given
         File file = TestUtils.copyFileFromResources(NESTED_CHAT_COMPONENT_YML, temporaryFolder);
         SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file)
@@ -61,7 +61,7 @@ public class BeanWithCollectionOfBeanTypeTest {
     }
 
     @Test
-    public void shouldSerializeProperly() throws IOException {
+    void shouldSerializeProperly() throws IOException {
         // given
         File file = TestUtils.copyFileFromResources(NESTED_CHAT_COMPONENT_YML, temporaryFolder);
         SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file)
@@ -87,7 +87,7 @@ public class BeanWithCollectionOfBeanTypeTest {
     }
 
     @Test
-    public void shouldSerializeComplexObject() throws IOException {
+    void shouldSerializeComplexObject() throws IOException {
         // given
         File file = TestUtils.copyFileFromResources(NESTED_CHAT_COMPONENT_YML, temporaryFolder);
         SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file)
@@ -145,23 +145,23 @@ public class BeanWithCollectionOfBeanTypeTest {
         return comp;
     }
 
-    public static final class PropertyHolder implements SettingsHolder {
+    static final class PropertyHolder implements SettingsHolder {
 
-        public static final Property<ChatComponent> TEST =
+        static final Property<ChatComponent> TEST =
             newBeanProperty(ChatComponent.class, "message-key", new ChatComponent());
     }
 
-    public static class ChatComponent {
+    static class ChatComponent {
 
         private String color;
         private String text;
         private List<ChatComponent> extra = new ArrayList<>();
         private Optional<ExtendedChatComponent> conditionalElem = Optional.empty();
 
-        public ChatComponent() {
+        ChatComponent() {
         }
 
-        public ChatComponent(String color, String text) {
+        ChatComponent(String color, String text) {
             this.color = color;
             this.text = text;
         }
@@ -182,7 +182,7 @@ public class BeanWithCollectionOfBeanTypeTest {
             this.text = text;
         }
 
-        public List<ChatComponent> getExtra() {
+        List<ChatComponent> getExtra() {
             return extra;
         }
 
@@ -196,16 +196,16 @@ public class BeanWithCollectionOfBeanTypeTest {
                 + TestUtils.transform(extra, Object::toString) + "]";
         }
 
-        public Optional<ExtendedChatComponent> getConditionalElem() {
+        Optional<ExtendedChatComponent> getConditionalElem() {
             return conditionalElem;
         }
 
-        public void setConditionalElem(Optional<ExtendedChatComponent> conditionalElem) {
+        void setConditionalElem(Optional<ExtendedChatComponent> conditionalElem) {
             this.conditionalElem = conditionalElem;
         }
     }
 
-    public static class ExtendedChatComponent extends ChatComponent {
+    static class ExtendedChatComponent extends ChatComponent {
 
         private Map<String, ChatComponent> conditionals = new LinkedHashMap<>();
         private Optional<Boolean> italic = Optional.empty();
@@ -214,11 +214,11 @@ public class BeanWithCollectionOfBeanTypeTest {
         public ExtendedChatComponent() {
         }
 
-        public ExtendedChatComponent(String color, String text) {
+        ExtendedChatComponent(String color, String text) {
             super(color, text);
         }
 
-        public Map<String, ChatComponent> getConditionals() {
+        Map<String, ChatComponent> getConditionals() {
             return conditionals;
         }
 
@@ -226,19 +226,19 @@ public class BeanWithCollectionOfBeanTypeTest {
             this.conditionals = conditionals;
         }
 
-        public Optional<Boolean> getItalic() {
+        Optional<Boolean> getItalic() {
             return italic;
         }
 
-        public void setItalic(Optional<Boolean> italic) {
+        void setItalic(Optional<Boolean> italic) {
             this.italic = italic;
         }
 
-        public Optional<Boolean> getBold() {
+        Optional<Boolean> getBold() {
             return bold;
         }
 
-        public void setBold(Optional<Boolean> bold) {
+        void setBold(Optional<Boolean> bold) {
             this.bold = bold;
         }
     }

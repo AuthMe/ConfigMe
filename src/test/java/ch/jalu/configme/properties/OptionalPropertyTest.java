@@ -24,12 +24,12 @@ import static org.mockito.Mockito.when;
 /**
  * Test for {@link OptionalProperty}.
  */
-public class OptionalPropertyTest {
+class OptionalPropertyTest {
 
     private PropertyReader reader;
 
     @BeforeEach
-    public void setUpResource() {
+    void setUpResource() {
         reader = mock(PropertyReader.class);
         when(reader.getObject("bool.path.test")).thenReturn(true);
         when(reader.getObject("bool.path.wrong")).thenReturn(null);
@@ -40,7 +40,7 @@ public class OptionalPropertyTest {
     }
 
     @Test
-    public void shouldReturnPresentValues() {
+    void shouldReturnPresentValues() {
         // given
         OptionalProperty<Boolean> booleanProp = new OptionalProperty<>(new BooleanProperty("bool.path.test", false));
         OptionalProperty<Integer> intProp = new OptionalProperty<>(new IntegerProperty("int.path.test", 0));
@@ -58,7 +58,7 @@ public class OptionalPropertyTest {
     }
 
     @Test
-    public void shouldReturnEmptyOptional() {
+    void shouldReturnEmptyOptional() {
         // given
         OptionalProperty<Boolean> booleanProp = new OptionalProperty<>(new BooleanProperty("bool.path.wrong", false));
         OptionalProperty<Integer> intProp = new OptionalProperty<>(new IntegerProperty("int.path.wrong", 0));
@@ -76,7 +76,7 @@ public class OptionalPropertyTest {
     }
 
     @Test
-    public void shouldAllowToDefineDefaultValue() {
+    void shouldAllowToDefineDefaultValue() {
         // given
         OptionalProperty<Integer> integerProp = new OptionalProperty<>(new IntegerProperty("path", 0), 42);
 
@@ -88,7 +88,7 @@ public class OptionalPropertyTest {
     }
 
     @Test
-    public void shouldReturnValueWithInvalidFlagIfReturnedFromReader() {
+    void shouldReturnValueWithInvalidFlagIfReturnedFromReader() {
         // given
         StringProperty baseProperty = spy(new StringProperty("the.path", "DEFAULT"));
         doReturn(PropertyValue.withValueRequiringRewrite("this should be discarded")).when(baseProperty).determineValue(reader);
@@ -103,7 +103,7 @@ public class OptionalPropertyTest {
     }
 
     @Test
-    public void shouldDelegateToBasePropertyAndHaveEmptyOptionalAsDefault() {
+    void shouldDelegateToBasePropertyAndHaveEmptyOptionalAsDefault() {
         // given
         StringProperty baseProperty = new StringProperty("some.path", "Def");
         OptionalProperty<String> property = new OptionalProperty<>(baseProperty);
@@ -118,7 +118,7 @@ public class OptionalPropertyTest {
     }
 
     @Test
-    public void shouldValidateWithBasePropertyNullSafe() {
+    void shouldValidateWithBasePropertyNullSafe() {
         // given
         StringProperty baseProperty = spy(new StringProperty("some.path", "Def"));
         OptionalProperty<String> property = new OptionalProperty<>(baseProperty);

@@ -12,10 +12,10 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Test for {@link PropertyValue}.
  */
-public class PropertyValueTest {
+class PropertyValueTest {
 
     @Test
-    public void shouldCreateValidInstance() {
+    void shouldCreateValidInstance() {
         // given / when
         PropertyValue<String> value = PropertyValue.withValidValue("test");
 
@@ -25,7 +25,7 @@ public class PropertyValueTest {
     }
 
     @Test
-    public void shouldCreateInvalidInstance() {
+    void shouldCreateInvalidInstance() {
         // given / when
         PropertyValue<Integer> value = PropertyValue.withValueRequiringRewrite(33);
 
@@ -35,7 +35,7 @@ public class PropertyValueTest {
     }
 
     @Test
-    public void shouldCreateValidValueAsDefinedByProperty() {
+    void shouldCreateValidValueAsDefinedByProperty() {
         // given
         Property<String> property = new Min10LengthStringProperty();
         String givenValue = "1234567890test";
@@ -48,7 +48,7 @@ public class PropertyValueTest {
     }
 
     @Test
-    public void shouldCreateInvalidValueAsDefinedByProperty() {
+    void shouldCreateInvalidValueAsDefinedByProperty() {
         // given
         Property<String> property = new Min10LengthStringProperty();
 
@@ -60,7 +60,7 @@ public class PropertyValueTest {
     }
 
     @Test
-    public void shouldIncludeValuesInToString() {
+    void shouldIncludeValuesInToString() {
         // given
         PropertyValue<Double> value = PropertyValue.withValidValue(-3.254);
 
@@ -73,7 +73,7 @@ public class PropertyValueTest {
 
     private static final class Min10LengthStringProperty extends StringProperty {
 
-        public Min10LengthStringProperty() {
+        Min10LengthStringProperty() {
             super("path.irrelevant", "my default value");
         }
 

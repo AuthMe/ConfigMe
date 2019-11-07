@@ -15,10 +15,10 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Test for {@link CommentsConfiguration}.
  */
-public class CommentsConfigurationTest {
+class CommentsConfigurationTest {
 
     @Test
-    public void shouldOverrideExistingComment() {
+    void shouldOverrideExistingComment() {
         // given
         CommentsConfiguration conf = new CommentsConfiguration();
         conf.setComment("com.acme", "Acme comment test");
@@ -35,7 +35,7 @@ public class CommentsConfigurationTest {
     }
 
     @Test
-    public void shouldReturnReadOnlyMap() {
+    void shouldReturnReadOnlyMap() {
         // given
         CommentsConfiguration conf = new CommentsConfiguration();
         conf.setComment("one", "hello", "moto");
@@ -51,7 +51,7 @@ public class CommentsConfigurationTest {
     }
 
     @Test
-    public void shouldPreserveCommentsFromInputMap() {
+    void shouldPreserveCommentsFromInputMap() {
         // given
         Map<String, List<String>> originalMap = new HashMap<>();
         originalMap.put("one", Arrays.asList("one", "1"));
