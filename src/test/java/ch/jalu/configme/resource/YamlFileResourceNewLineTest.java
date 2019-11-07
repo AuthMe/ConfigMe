@@ -164,7 +164,7 @@ class YamlFileResourceNewLineTest {
         return ConfigurationDataBuilder.createConfiguration(properties, commentsConfiguration);
     }
 
-    private static class TestConfiguration implements SettingsHolder {
+    public static class TestConfiguration implements SettingsHolder {
 
         public static final Property<Integer> FIRST = newProperty("first", 1);
 

@@ -145,23 +145,23 @@ class BeanWithCollectionOfBeanTypeTest {
         return comp;
     }
 
-    static final class PropertyHolder implements SettingsHolder {
+    public static final class PropertyHolder implements SettingsHolder {
 
-        static final Property<ChatComponent> TEST =
+        public static final Property<ChatComponent> TEST =
             newBeanProperty(ChatComponent.class, "message-key", new ChatComponent());
     }
 
-    static class ChatComponent {
+    public static class ChatComponent {
 
         private String color;
         private String text;
         private List<ChatComponent> extra = new ArrayList<>();
         private Optional<ExtendedChatComponent> conditionalElem = Optional.empty();
 
-        ChatComponent() {
+        public ChatComponent() {
         }
 
-        ChatComponent(String color, String text) {
+        public ChatComponent(String color, String text) {
             this.color = color;
             this.text = text;
         }
@@ -182,7 +182,7 @@ class BeanWithCollectionOfBeanTypeTest {
             this.text = text;
         }
 
-        List<ChatComponent> getExtra() {
+        public List<ChatComponent> getExtra() {
             return extra;
         }
 
@@ -196,16 +196,16 @@ class BeanWithCollectionOfBeanTypeTest {
                 + TestUtils.transform(extra, Object::toString) + "]";
         }
 
-        Optional<ExtendedChatComponent> getConditionalElem() {
+        public Optional<ExtendedChatComponent> getConditionalElem() {
             return conditionalElem;
         }
 
-        void setConditionalElem(Optional<ExtendedChatComponent> conditionalElem) {
+        public void setConditionalElem(Optional<ExtendedChatComponent> conditionalElem) {
             this.conditionalElem = conditionalElem;
         }
     }
 
-    static class ExtendedChatComponent extends ChatComponent {
+    public static class ExtendedChatComponent extends ChatComponent {
 
         private Map<String, ChatComponent> conditionals = new LinkedHashMap<>();
         private Optional<Boolean> italic = Optional.empty();
@@ -214,11 +214,11 @@ class BeanWithCollectionOfBeanTypeTest {
         public ExtendedChatComponent() {
         }
 
-        ExtendedChatComponent(String color, String text) {
+        public ExtendedChatComponent(String color, String text) {
             super(color, text);
         }
 
-        Map<String, ChatComponent> getConditionals() {
+        public Map<String, ChatComponent> getConditionals() {
             return conditionals;
         }
 
@@ -226,19 +226,19 @@ class BeanWithCollectionOfBeanTypeTest {
             this.conditionals = conditionals;
         }
 
-        Optional<Boolean> getItalic() {
+        public Optional<Boolean> getItalic() {
             return italic;
         }
 
-        void setItalic(Optional<Boolean> italic) {
+        public void setItalic(Optional<Boolean> italic) {
             this.italic = italic;
         }
 
-        Optional<Boolean> getBold() {
+        public Optional<Boolean> getBold() {
             return bold;
         }
 
-        void setBold(Optional<Boolean> bold) {
+        public void setBold(Optional<Boolean> bold) {
             this.bold = bold;
         }
     }

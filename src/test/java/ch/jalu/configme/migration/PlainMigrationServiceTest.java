@@ -23,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 /**
  * Test for {@link PlainMigrationService}.
@@ -131,7 +131,7 @@ class PlainMigrationServiceTest {
 
         // then
         assertThat(result, equalTo(true)); // still true because value is present at path
-        verifyZeroInteractions(configurationData);
+        verifyNoInteractions(configurationData);
     }
 
     @Test
@@ -147,7 +147,7 @@ class PlainMigrationServiceTest {
 
         // then
         assertThat(result, equalTo(false));
-        verifyZeroInteractions(configurationData);
+        verifyNoInteractions(configurationData);
     }
 
     private PropertyReader createReaderSpy(String file) {
