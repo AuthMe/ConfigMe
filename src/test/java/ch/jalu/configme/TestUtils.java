@@ -2,6 +2,7 @@ package ch.jalu.configme;
 
 import ch.jalu.configme.configurationdata.PropertyValue;
 import org.hamcrest.Matcher;
+import org.junit.jupiter.api.function.Executable;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +26,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Utilities for testing.
@@ -128,53 +129,29 @@ public final class TestUtils {
     // -------------
 
     /**
-     * Verifies that the provided runnable throws an exception of the given type.
+     * Verifies that the provided executable throws an exception of the given type.
      *
-     * @param runnable the runnable to check
+     * @param executable the executable to check
      * @param exceptionType the expected type of the exception
      */
-    public static void verifyException(Runnable runnable, Class<? extends Exception> exceptionType) {
-        verifyException(runnable, exceptionType, "");
+    public static void verifyException(Executable executable, Class<? extends Exception> exceptionType) {
+        verifyException(executable, exceptionType, "");
     }
 
     /**
-     * Verifies that the provided runnable throws an exception of the given type whose message contains
+     * Verifies that the provided executable throws an exception of the given type whose message contains
      * the provided message excerpt.
      *
-     * @param runnable the runnable to check
+     * @param executable the executable to check
      * @param exceptionType the expected type of the exception
      * @param messageExcerpt the text the exception message should contain
      */
-    public static void verifyException(Runnable runnable, Class<? extends Exception> exceptionType,
+    public static void verifyException(Executable executable, Class<? extends Exception> exceptionType,
                                        String messageExcerpt) {
-        Exception e = catchExceptionOrFail(exceptionType, runnable);
+        Exception e = assertThrows(exceptionType, executable);
         if (!messageExcerpt.isEmpty()) {
             assertThat(e.getMessage(), containsString(messageExcerpt));
         }
-    }
-
-    /**
-     * Runs the given runnable and expects an exception of the given class to be thrown, returning it from the method.
-     * This method throws an assertion error if an exception of another type or no exception is thrown.
-     *
-     * @param exceptionClass the exception type expected to be thrown from the runnable
-     * @param runnable the runnable to run
-     * @param <X> the exception type
-     * @return the caught exception
-     */
-    public static <X extends Exception> X catchExceptionOrFail(Class<X> exceptionClass, Runnable runnable) {
-        try {
-            runnable.run();
-            fail("Expected exception of type '" + exceptionClass.getSimpleName() + "' to be thrown");
-        } catch (Exception e) {
-            if (exceptionClass.isInstance(e)) {
-                return (X) e;
-            }
-            e.printStackTrace();
-            fail("Got exception of type '" + e.getClass().getSimpleName()
-                + "' but wanted '" + exceptionClass.getSimpleName() + "'");
-        }
-        throw new IllegalStateException("should never happen"); // fail() throws an exception
     }
 
     // -------------

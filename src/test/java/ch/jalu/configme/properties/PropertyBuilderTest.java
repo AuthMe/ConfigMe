@@ -9,13 +9,13 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 
-import static ch.jalu.configme.TestUtils.catchExceptionOrFail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for {@link PropertyBuilder}.
@@ -52,7 +52,7 @@ class PropertyBuilderTest {
     @Test
     void shouldThrowForMissingPathInCommonPropertyBuilder() {
         // given / when
-        NullPointerException e = catchExceptionOrFail(NullPointerException.class,
+        NullPointerException e = assertThrows(NullPointerException.class,
             () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
                 .defaultValue("Hello")
                 .build());
@@ -64,7 +64,7 @@ class PropertyBuilderTest {
     @Test
     void shouldThrowForMissingDefaultValueInCommonPropertyBuilder() {
         // given / when
-        NullPointerException e = catchExceptionOrFail(NullPointerException.class,
+        NullPointerException e = assertThrows(NullPointerException.class,
             () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
                 .path("a.path")
                 .createFunction((path, val, type) -> new StringProperty(path, val))
@@ -77,7 +77,7 @@ class PropertyBuilderTest {
     @Test
     void shouldThrowForMissingPropertyTypeInCommonPropertyBuilder() {
         // given / when
-        NullPointerException e = catchExceptionOrFail(NullPointerException.class,
+        NullPointerException e = assertThrows(NullPointerException.class,
             () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(null)
                 .path("random.path")
                 .defaultValue("Hello")
@@ -118,7 +118,7 @@ class PropertyBuilderTest {
     @Test
     void shouldThrowForMissingPathInMapBuilder() {
         // given / when
-        NullPointerException e = catchExceptionOrFail(NullPointerException.class,
+        NullPointerException e = assertThrows(NullPointerException.class,
             () -> new PropertyBuilder.MapPropertyBuilder<>(PrimitivePropertyType.DOUBLE).build());
 
         // then
@@ -170,7 +170,7 @@ class PropertyBuilderTest {
     @Test
     void shouldThrowForMissingDefaultValue() {
         // given / when / then
-        catchExceptionOrFail(NullPointerException.class,
+        assertThrows(NullPointerException.class,
             () -> new PropertyBuilder.ListPropertyBuilder<>(PrimitivePropertyType.DOUBLE)
                 .path("defined.path")
                 .build());
