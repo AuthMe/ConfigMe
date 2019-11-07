@@ -3,16 +3,16 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.samples.TestEnum;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
 import static ch.jalu.configme.TestUtils.isErrorValueOf;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static java.util.Optional.of;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -28,7 +28,7 @@ public class OptionalPropertyTest {
 
     private PropertyReader reader;
 
-    @Before
+    @BeforeEach
     public void setUpResource() {
         reader = mock(PropertyReader.class);
         when(reader.getObject("bool.path.test")).thenReturn(true);

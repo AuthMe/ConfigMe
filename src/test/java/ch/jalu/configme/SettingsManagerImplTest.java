@@ -13,15 +13,15 @@ import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
 import ch.jalu.configme.samples.TestConfiguration;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -33,10 +33,10 @@ import static ch.jalu.configme.TestUtils.copyFileFromResources;
 import static ch.jalu.configme.TestUtils.verifyException;
 import static ch.jalu.configme.configurationdata.ConfigurationDataBuilder.createConfiguration;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.verify;
 /**
  * Test for {@link SettingsManagerImpl}.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SettingsManagerImplTest {
 
     private final ConfigurationData configurationData = createConfiguration(Arrays.asList(
@@ -63,17 +63,13 @@ public class SettingsManagerImplTest {
     @Mock
     private MigrationService migrationService;
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-    @Before
-    public void setUpMockRelationships() {
-        given(resource.createReader()).willReturn(reader);
-    }
+    @TempDir
+    public Path temporaryFolder;
 
     @Test
     public void shouldCheckMigrationServiceOnStartup() {
         // given
+        given(resource.createReader()).willReturn(reader);
         given(migrationService.checkAndMigrate(reader, configurationData)).willReturn(false);
 
         // when
@@ -87,6 +83,7 @@ public class SettingsManagerImplTest {
     @Test
     public void shouldSaveAfterPerformingMigrations() {
         // given
+        given(resource.createReader()).willReturn(reader);
         given(migrationService.checkAndMigrate(reader, configurationData)).willReturn(true);
 
         // when
@@ -100,6 +97,7 @@ public class SettingsManagerImplTest {
     @Test
     public void shouldGetProperty() {
         // given
+        given(resource.createReader()).willReturn(reader);
         SettingsManager manager = createManager();
         Property<String> property = typedMock();
         String propValue = "Hello world";
@@ -116,6 +114,7 @@ public class SettingsManagerImplTest {
     @Test
     public void shouldSetProperty() {
         // given
+        given(resource.createReader()).willReturn(reader);
         SettingsManager manager = createManager();
         Property<String> property = typedMock();
         String value = "Hello there";
@@ -150,6 +149,7 @@ public class SettingsManagerImplTest {
     @Test
     public void shouldHandleNullMigrationService() {
         // given
+        given(resource.createReader()).willReturn(reader);
         List<Property<?>> properties = configurationData.getProperties();
         ConfigurationData configurationData = createConfiguration(properties);
 
@@ -223,6 +223,7 @@ public class SettingsManagerImplTest {
     @Test
     public void shouldThrowExceptionForInvalidValue() {
         // given
+        given(resource.createReader()).willReturn(reader);
         Property<String> property = typedMock();
         String value = "test";
         given(property.isValidValue(value)).willReturn(false);

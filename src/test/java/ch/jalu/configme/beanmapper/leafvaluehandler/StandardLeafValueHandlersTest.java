@@ -3,7 +3,7 @@ package ch.jalu.configme.beanmapper.leafvaluehandler;
 import ch.jalu.configme.beanmapper.command.CommandConfig;
 import ch.jalu.configme.samples.TestEnum;
 import ch.jalu.configme.utils.TypeInformation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -14,11 +14,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static ch.jalu.configme.TestUtils.transform;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link StandardLeafValueHandlers}.

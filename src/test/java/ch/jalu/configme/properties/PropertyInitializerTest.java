@@ -4,7 +4,7 @@ import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
 import ch.jalu.configme.properties.inlinearray.StandardInlineArrayConverters;
 import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.samples.TestEnum;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static ch.jalu.configme.properties.PropertyInitializer.arrayProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.inlineArrayProperty;
@@ -19,8 +19,8 @@ import static ch.jalu.configme.properties.PropertyInitializer.optionalEnumProper
 import static ch.jalu.configme.properties.PropertyInitializer.optionalIntegerProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalStringProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.typeBasedProperty;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link PropertyInitializer}.

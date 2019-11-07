@@ -3,17 +3,17 @@ package ch.jalu.configme.resource;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.configme.resource.rootcommentsamples.GroupPropertyHolder;
 import ch.jalu.configme.resource.rootcommentsamples.TestConfig;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
+import static ch.jalu.configme.TestUtils.createTemporaryFile;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertThat;
 
 /**
  * Tests that comments on the root path are included into the YAML export.
@@ -22,20 +22,20 @@ import static org.junit.Assert.assertThat;
  */
 public class YamlFileResourceTopCommentTest {
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
-    private File file;
+    private Path file;
 
-    @Before
-    public void initEmptyFile() throws IOException {
-        file = temporaryFolder.newFile();
+    @BeforeEach
+    public void initEmptyFile() {
+        file = createTemporaryFile(temporaryFolder);
     }
 
     @Test
     public void shouldIncludeCommentFromAnnotation() throws IOException {
         // given
-        PropertyResource resource = new YamlFileResource(file);
+        PropertyResource resource = new YamlFileResource(file.toFile());
 
         // when
         SettingsManagerBuilder.withResource(resource)
@@ -44,7 +44,7 @@ public class YamlFileResourceTopCommentTest {
             .create();
 
         // then
-        assertThat(Files.readAllLines(file.toPath()), contains(
+        assertThat(Files.readAllLines(file), contains(
             "# Group configuration number",
             "worlds: ",
             "- world",
@@ -55,7 +55,7 @@ public class YamlFileResourceTopCommentTest {
     @Test
     public void shouldIncludeRootCommentFromSectionCommentsMethod() throws IOException {
         // given
-        PropertyResource resource = new YamlFileResource(file);
+        PropertyResource resource = new YamlFileResource(file.toFile());
 
         // when
         SettingsManagerBuilder.withResource(resource)
@@ -64,7 +64,7 @@ public class YamlFileResourceTopCommentTest {
             .create();
 
         // then
-        assertThat(Files.readAllLines(file.toPath()), contains(
+        assertThat(Files.readAllLines(file), contains(
             "# Root comment",
             "# 'some' Section",
             "# Explanation for 'some'",

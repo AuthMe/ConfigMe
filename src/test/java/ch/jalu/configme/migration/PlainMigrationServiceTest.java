@@ -7,20 +7,20 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.YamlFileReader;
 import ch.jalu.configme.samples.TestConfiguration;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import static ch.jalu.configme.configurationdata.ConfigurationDataBuilder.createConfiguration;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 /**
  * Test for {@link PlainMigrationService}.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PlainMigrationServiceTest {
 
     private static final String COMPLETE_CONFIG = "/config-sample.yml";
@@ -39,10 +39,10 @@ public class PlainMigrationServiceTest {
     @Spy
     private PlainMigrationService service;
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
-    @Before
+    @BeforeEach
     public void setUpConfigurationData() {
         configurationData = createConfiguration(TestConfiguration.class);
     }

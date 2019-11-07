@@ -2,10 +2,10 @@ package ch.jalu.configme;
 
 import ch.jalu.configme.configurationdata.PropertyValue;
 import org.hamcrest.Matcher;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Utilities for testing.
@@ -66,20 +66,29 @@ public final class TestUtils {
     }
 
     /**
-     * Copies the resources file at the given path to a new file in the provided {@link TemporaryFolder} instance.
+     * Copies the resources file at the given path to a new file in the given temporary folder.
      *
      * @param path the path in the JAR's resources to copy from
      * @param temporaryFolder the temporary folder to copy into
      * @return the created copy
      */
-    public static File copyFileFromResources(String path, TemporaryFolder temporaryFolder) {
+    public static File copyFileFromResources(String path, Path temporaryFolder) {
         try {
             Path source = getJarPath(path);
-            File destination = temporaryFolder.newFile();
-            Files.copy(source, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            return destination;
+            Path destination = Paths.get(temporaryFolder.toString(), source.getFileName().toString());
+            Files.createFile(destination);
+            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+            return destination.toFile();
         } catch (IOException e) {
             throw new IllegalStateException("Could not copy test file", e);
+        }
+    }
+
+    public static Path createTemporaryFile(Path folder) {
+        try {
+            return Files.createTempFile(folder, "configme", "test");
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to create temporary file in " + folder, e);
         }
     }
 

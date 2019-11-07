@@ -5,22 +5,24 @@ import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.TestConfiguration;
 import ch.jalu.configme.samples.TestEnum;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static ch.jalu.configme.TestUtils.createTemporaryFile;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static ch.jalu.configme.TestUtils.verifyException;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -31,7 +33,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link YamlFileReader}.
@@ -41,13 +42,13 @@ public class YamlFileReaderTest {
     private static final String COMPLETE_FILE = "/config-sample.yml";
     private static final String INCOMPLETE_FILE = "/config-incomplete-sample.yml";
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @Test
     public void shouldThrowForAbsentYamlMap() throws IOException {
         // given
-        File file = temporaryFolder.newFile();
+        File file = new File(temporaryFolder.toFile(), "temp-file");
         Files.write(file.toPath(), "123".getBytes());
 
         // when / then
@@ -56,10 +57,9 @@ public class YamlFileReaderTest {
     }
 
     @Test
-    public void shouldWrapIOException() throws IOException {
+    public void shouldWrapIOException() {
         // given
-        File folder = temporaryFolder.newFolder();
-        File file = new File(folder, "test");
+        File file = new File(temporaryFolder.toFile(), "test");
 
         // when / then
         verifyException(() -> new YamlFileReader(file),
@@ -168,25 +168,26 @@ public class YamlFileReaderTest {
     public void shouldWrapYamlException() throws IOException {
         // given
         String invalidYaml = "test:\n   'broken quote";
-        File file = temporaryFolder.newFile();
-        Files.write(file.toPath(), invalidYaml.getBytes());
+        Path file = createTemporaryFile(temporaryFolder);
+        Files.write(file, invalidYaml.getBytes());
 
         // when / then
-        verifyException(() -> new YamlFileReader(file),
+        verifyException(() -> new YamlFileReader(file.toFile()),
             ConfigMeException.class, "YAML error while trying to load file");
     }
 
     @Test
-    public void shouldHandleEmptyFile() throws IOException {
+    public void shouldHandleEmptyFile() {
         // given
-        File file = temporaryFolder.newFile();
-        YamlFileReader reader = new YamlFileReader(file);
+        Path file = createTemporaryFile(temporaryFolder);
+        File pathAsFile = file.toFile();
+        YamlFileReader reader = new YamlFileReader(pathAsFile);
 
         // when
         File result = reader.getFile();
 
         // then
-        assertThat(result, sameInstance(file));
+        assertThat(result, sameInstance(pathAsFile));
         assertThat(reader.getRoot(), anEmptyMap());
     }
 

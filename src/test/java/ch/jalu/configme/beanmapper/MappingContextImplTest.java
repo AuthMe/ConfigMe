@@ -1,13 +1,13 @@
 package ch.jalu.configme.beanmapper;
 
 import ch.jalu.configme.utils.TypeInformation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link MappingContextImpl}.

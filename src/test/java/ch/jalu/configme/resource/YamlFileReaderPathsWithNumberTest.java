@@ -4,15 +4,15 @@ import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.TestEnum;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Tests that paths which have a number in them can be read properly.
@@ -21,8 +21,8 @@ import static org.junit.Assert.assertThat;
  */
 public class YamlFileReaderPathsWithNumberTest {
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @Test
     public void shouldReadPropertiesFromFile() {

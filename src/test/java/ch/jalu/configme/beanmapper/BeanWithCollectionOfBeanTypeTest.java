@@ -7,13 +7,13 @@ import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.properties.Property;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.CombinableMatcher;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newBeanProperty;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for bean types which have a property which is a collection of another bean type.
@@ -38,8 +38,8 @@ public class BeanWithCollectionOfBeanTypeTest {
 
     private static final String NESTED_CHAT_COMPONENT_YML = "/beanmapper/nested_chat_component.yml";
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @Test
     public void shouldLoadValue() {

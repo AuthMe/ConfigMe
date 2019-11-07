@@ -1,8 +1,7 @@
 package ch.jalu.configme.properties.inlinearray;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -10,25 +9,18 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyArray;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link StandardInlineArrayConverters}.
  */
-@RunWith(Parameterized.class)
 public class StandardInlineArrayConvertersTest {
 
-    @Parameterized.Parameter(value = 0)
-    public String name;
-    @Parameterized.Parameter(value = 1)
-    public InlineArrayConverter converter;
-    @Parameterized.Parameter(value = 2)
-    public TestData testData;
-
-    @Test
-    public void shouldConvertValueFromString() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("data")
+    public void shouldConvertValueFromString(String name, InlineArrayConverter converter, TestData testData) {
         // given
         String input = testData.inputValue;
 
@@ -39,8 +31,9 @@ public class StandardInlineArrayConvertersTest {
         assertThat(result, equalTo(testData.expectedValue));
     }
 
-    @Test
-    public void shouldExportValue() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("data")
+    public void shouldExportValue(String name, InlineArrayConverter converter, TestData testData) {
         // given
         Object[] values = testData.expectedValue;
 
@@ -51,8 +44,9 @@ public class StandardInlineArrayConvertersTest {
         assertThat(result, equalTo(testData.expectedExport));
     }
 
-    @Test
-    public void shouldNotThrowErrorForInvalidValues() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("data")
+    public void shouldNotThrowErrorForInvalidValues(String name, InlineArrayConverter converter, TestData testData) {
         // given
         String input = testData.inputWithErrors;
 
@@ -63,8 +57,9 @@ public class StandardInlineArrayConvertersTest {
         assertThat(result, equalTo(testData.expectedValueWithErrors));
     }
 
-    @Test
-    public void shouldConvertFromEmptyString() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("data")
+    public void shouldConvertFromEmptyString(String name, InlineArrayConverter converter, TestData testData) {
         // given / when
         Object[] result = converter.fromString("");
 
@@ -76,8 +71,9 @@ public class StandardInlineArrayConvertersTest {
         }
     }
 
-    @Test
-    public void shouldExportEmptyArray() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("data")
+    public void shouldExportEmptyArray(String name, InlineArrayConverter converter, TestData testData) {
         // given
         Object[] input = converter == StandardInlineArrayConverters.STRING ? new String[0] : new Object[0];
 
@@ -88,8 +84,7 @@ public class StandardInlineArrayConvertersTest {
         assertThat(result, equalTo(""));
     }
 
-    @Parameterized.Parameters(name = "{0}")
-    public static List<Object[]> collectStandardInlineConverters() throws IllegalAccessException {
+    public static List<Object[]> data() throws IllegalAccessException {
         List<Object[]> converters = new ArrayList<>();
         for (Field field : StandardInlineArrayConverters.class.getDeclaredFields()) {
             if (Modifier.isPublic(field.getModifiers()) && Modifier.isStatic(field.getModifiers())) {

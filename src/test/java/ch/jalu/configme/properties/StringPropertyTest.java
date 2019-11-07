@@ -1,11 +1,11 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.resource.PropertyReader;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -17,7 +17,7 @@ public class StringPropertyTest {
 
     private static PropertyReader reader;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
         when(reader.getObject("str.path.test")).thenReturn("Test value");

@@ -2,12 +2,13 @@ package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for {@link BeanPropertyDescriptionImpl}.
@@ -32,24 +33,26 @@ public class BeanPropertyDescriptionImplTest {
         assertThat(-120, equalTo(result2));
     }
 
-    @Test(expected = ConfigMeMapperException.class)
+    @Test
     public void shouldHandlePropertySetError() {
         // given
         BeanPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
         SampleBean bean = new ThrowingBean();
 
-        // when
-        sizeProperty.setValue(bean, -120);
+        // when / then
+        assertThrows(ConfigMeMapperException.class,
+            () -> sizeProperty.setValue(bean, -120));
     }
 
-    @Test(expected = ConfigMeMapperException.class)
+    @Test
     public void shouldHandlePropertyGetError() {
         // given
         BeanPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
         SampleBean bean = new ThrowingBean();
 
-        // when
-        sizeProperty.getValue(bean);
+        // when / then
+        assertThrows(ConfigMeMapperException.class,
+            () -> sizeProperty.getValue(bean));
     }
 
     @Test

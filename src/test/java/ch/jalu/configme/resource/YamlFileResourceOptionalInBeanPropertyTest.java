@@ -10,19 +10,19 @@ import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommandConf
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.properties.BeanProperty;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Optional;
 
 import static ch.jalu.configme.TestUtils.copyFileFromResources;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 /**
  * Tests that bean properties with {@code Optional} fields can be exported properly.
@@ -34,8 +34,8 @@ public class YamlFileResourceOptionalInBeanPropertyTest {
     private static BeanProperty<ComplexCommandConfig> commandConfigProperty = new BeanProperty<>(
         ComplexCommandConfig.class, "commandconfig", new ComplexCommandConfig());
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @Test
     public void shouldSaveOptionalFieldsProperly() {

@@ -10,14 +10,14 @@ import ch.jalu.configme.properties.OptionalProperty;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.TestConfiguration;
 import ch.jalu.configme.samples.TestEnum;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,14 +32,14 @@ import static ch.jalu.configme.configurationdata.ConfigurationDataBuilder.create
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -51,8 +51,8 @@ public class YamlFileResourceTest {
     private static final String INCOMPLETE_FILE = "/config-incomplete-sample.yml";
     private static final String DIFFICULT_FILE = "/config-difficult-values.yml";
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @Test
     public void shouldWriteMissingProperties() {
@@ -134,12 +134,13 @@ public class YamlFileResourceTest {
     @Test
     public void shouldReloadValues() throws IOException {
         // given
-        File file = temporaryFolder.newFile();
-        YamlFileResource resource = new YamlFileResource(file);
+        Path file = temporaryFolder.resolve("file");
+        Files.createFile(file);
+        YamlFileResource resource = new YamlFileResource(file.toFile());
 
         // when
         PropertyReader readerBeforeCopy = resource.createReader();
-        Files.copy(getJarPath(COMPLETE_FILE), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(getJarPath(COMPLETE_FILE), file, StandardCopyOption.REPLACE_EXISTING);
         PropertyReader readerAfterCopy = resource.createReader();
 
         // then
@@ -158,7 +159,8 @@ public class YamlFileResourceTest {
         file.delete();
         // Hacky: the only way we can easily provoke an IOException is by deleting the file and creating a folder
         // with the same name...
-        temporaryFolder.newFolder(file.getName());
+        Path childFolder = temporaryFolder.resolve(file.getName());
+        Files.createDirectory(childFolder);
 
         // when / then
         try {

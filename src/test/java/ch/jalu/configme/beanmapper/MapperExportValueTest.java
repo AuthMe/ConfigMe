@@ -4,7 +4,7 @@ import ch.jalu.configme.beanmapper.command.Command;
 import ch.jalu.configme.beanmapper.command.CommandConfig;
 import ch.jalu.configme.beanmapper.command.ExecutionDetails;
 import ch.jalu.configme.beanmapper.command.Executor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,11 +15,11 @@ import java.util.Map;
 
 import static ch.jalu.configme.beanmapper.command.Executor.CONSOLE;
 import static ch.jalu.configme.beanmapper.command.Executor.USER;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link MapperImpl}, specifically for {@link MapperImpl#toExportValue}.

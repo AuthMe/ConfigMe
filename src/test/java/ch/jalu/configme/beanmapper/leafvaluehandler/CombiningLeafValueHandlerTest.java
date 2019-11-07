@@ -1,12 +1,12 @@
 package ch.jalu.configme.beanmapper.leafvaluehandler;
 
 import ch.jalu.configme.utils.TypeInformation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link CombiningLeafValueHandler}. See also {@link StandardLeafValueHandlersTest}.

@@ -2,7 +2,7 @@ package ch.jalu.configme.configurationdata;
 
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -11,9 +11,9 @@ import java.util.Map;
 
 import static ch.jalu.configme.TestUtils.transform;
 import static ch.jalu.configme.TestUtils.verifyException;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

@@ -5,18 +5,18 @@ import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.properties.Property;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
+import static ch.jalu.configme.TestUtils.createTemporaryFile;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertThat;
 
 /**
  * Tests the integration of comments and configurable new lines
@@ -24,14 +24,14 @@ import static org.junit.Assert.assertThat;
  */
 public class YamlFileResourceNewLineTest {
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @Test
     public void shouldExportWithRootAndFirstComment() throws IOException {
         // given
-        File file = temporaryFolder.newFile();
-        YamlFileResource resource = new YamlFileResource(file, optionsWithLinesFunction());
+        Path file = createTemporaryFile(temporaryFolder);
+        YamlFileResource resource = new YamlFileResource(file.toFile(), optionsWithLinesFunction());
         ConfigurationData configurationData = configurationDataWithComments(true, true);
         configurationData.initializeValues(resource.createReader());
 
@@ -39,7 +39,7 @@ public class YamlFileResourceNewLineTest {
         resource.exportProperties(configurationData);
 
         // then
-        assertThat(Files.readAllLines(file.toPath()), contains(
+        assertThat(Files.readAllLines(file), contains(
             "# Root comment",
             "# First comm",
             "# First comm 2",
@@ -54,8 +54,8 @@ public class YamlFileResourceNewLineTest {
     @Test
     public void shouldExportWithoutRootAndWithFirstComment() throws IOException {
         // given
-        File file = temporaryFolder.newFile();
-        YamlFileResource resource = new YamlFileResource(file, optionsWithLinesFunction());
+        Path file = createTemporaryFile(temporaryFolder);
+        YamlFileResource resource = new YamlFileResource(file.toFile(), optionsWithLinesFunction());
         ConfigurationData configurationData = configurationDataWithComments(false, true);
         configurationData.initializeValues(resource.createReader());
 
@@ -63,7 +63,7 @@ public class YamlFileResourceNewLineTest {
         resource.exportProperties(configurationData);
 
         // then
-        assertThat(Files.readAllLines(file.toPath()), contains(
+        assertThat(Files.readAllLines(file), contains(
             "# First comm",
             "# First comm 2",
             "first: 1",
@@ -77,8 +77,8 @@ public class YamlFileResourceNewLineTest {
     @Test
     public void shouldExportWithRootAndWithoutFirstComment() throws IOException {
         // given
-        File file = temporaryFolder.newFile();
-        YamlFileResource resource = new YamlFileResource(file, optionsWithLinesFunction());
+        Path file = createTemporaryFile(temporaryFolder);
+        YamlFileResource resource = new YamlFileResource(file.toFile(), optionsWithLinesFunction());
         ConfigurationData configurationData = configurationDataWithComments(true, false);
         configurationData.initializeValues(resource.createReader());
 
@@ -86,7 +86,7 @@ public class YamlFileResourceNewLineTest {
         resource.exportProperties(configurationData);
 
         // then
-        assertThat(Files.readAllLines(file.toPath()), contains(
+        assertThat(Files.readAllLines(file), contains(
             "# Root comment",
             "first: 1",
             "",
@@ -99,8 +99,8 @@ public class YamlFileResourceNewLineTest {
     @Test
     public void shouldExportWithoutRootAndFirstComment() throws IOException {
         // given
-        File file = temporaryFolder.newFile();
-        YamlFileResource resource = new YamlFileResource(file, optionsWithLinesFunction());
+        Path file = createTemporaryFile(temporaryFolder);
+        YamlFileResource resource = new YamlFileResource(file.toFile(), optionsWithLinesFunction());
         ConfigurationData configurationData = configurationDataWithComments(false, false);
         configurationData.initializeValues(resource.createReader());
 
@@ -108,7 +108,7 @@ public class YamlFileResourceNewLineTest {
         resource.exportProperties(configurationData);
 
         // then
-        assertThat(Files.readAllLines(file.toPath()), contains(
+        assertThat(Files.readAllLines(file), contains(
             "first: 1",
             "",
             "second:",
@@ -120,11 +120,11 @@ public class YamlFileResourceNewLineTest {
     @Test
     public void shouldExportWithRootCommentAndNewLineEverywhere() throws IOException {
         // given
-        File file = temporaryFolder.newFile();
+        Path file = createTemporaryFile(temporaryFolder);
         YamlFileResourceOptions options = YamlFileResourceOptions.builder()
             .numberOfLinesBeforeFunction(e -> !e.isFirstElement() && e.isFirstOfGroup() ? 1 : 0)
             .build();
-        YamlFileResource resource = new YamlFileResource(file, options);
+        YamlFileResource resource = new YamlFileResource(file.toFile(), options);
         ConfigurationData configurationData = configurationDataWithComments(true, false);
         configurationData.initializeValues(resource.createReader());
 
@@ -132,7 +132,7 @@ public class YamlFileResourceNewLineTest {
         resource.exportProperties(configurationData);
 
         // then
-        assertThat(Files.readAllLines(file.toPath()), contains(
+        assertThat(Files.readAllLines(file), contains(
             "# Root comment",
             "first: 1",
             "",

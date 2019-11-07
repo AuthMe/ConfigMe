@@ -1,26 +1,29 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.resource.PropertyReader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for the {@link BaseProperty} abstract type.
  */
 public class BasePropertyTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldRejectNullValue() {
-        // given / when
-        new PropertyTestImpl("my.path", null);
+        // given / when / then
+        assertThrows(NullPointerException.class,
+            () -> new PropertyTestImpl("my.path", null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldRejectNullPath() {
-        // given / when
-        new PropertyTestImpl(null, (byte) 123);
+        // given / when / then
+        assertThrows(NullPointerException.class,
+            () -> new PropertyTestImpl(null, (byte) 123));
     }
 
     @Test

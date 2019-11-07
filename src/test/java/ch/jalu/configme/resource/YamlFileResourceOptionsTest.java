@@ -1,15 +1,15 @@
 package ch.jalu.configme.resource;
 
 import ch.jalu.configme.resource.PropertyPathTraverser.PathElement;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.function.ToIntFunction;
 
 import static java.util.Collections.emptyList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link YamlFileResourceOptions}.

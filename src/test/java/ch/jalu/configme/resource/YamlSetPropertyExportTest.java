@@ -6,14 +6,14 @@ import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.properties.BaseProperty;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.TestEnum;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -22,8 +22,8 @@ import java.util.Set;
 
 import static ch.jalu.configme.TestUtils.transform;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertThat;
 
 /**
  * Tests that {@link YamlFileResource} exports Sets in a nice way (cf. issue #27).
@@ -32,12 +32,12 @@ public class YamlSetPropertyExportTest {
 
     private static final String SAMPLE_FILE = "/empty_file.yml";
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private File configFile;
 
-    @Before
+    @BeforeEach
     public void copyConfigFile() {
         configFile = TestUtils.copyFileFromResources(SAMPLE_FILE, temporaryFolder);
     }

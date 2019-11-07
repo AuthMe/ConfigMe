@@ -2,34 +2,26 @@ package ch.jalu.configme.properties.type;
 
 import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.properties.types.PropertyType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link PrimitivePropertyType}.
  */
-@RunWith(Parameterized.class)
 public class PrimitivePropertyTypeTest {
 
-    @Parameterized.Parameter(value = 0)
-    public String name;
-    @Parameterized.Parameter(value = 1)
-    public PropertyType propertyType;
-    @Parameterized.Parameter(value = 2)
-    public TestData testData;
-
-    @Test
-    public void shouldConvertValue1() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("data")
+    public void shouldConvertValue1(String name, PropertyType propertyType, TestData testData) {
         // given
         Object object = testData.object1;
 
@@ -40,8 +32,9 @@ public class PrimitivePropertyTypeTest {
         assertThat(result, equalTo(testData.expected1));
     }
 
-    @Test
-    public void shouldConvertValue2() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("data")
+    public void shouldConvertValue2(String name, PropertyType propertyType, TestData testData) {
         // given
         Object object = testData.object2;
 
@@ -52,8 +45,9 @@ public class PrimitivePropertyTypeTest {
         assertThat(result, equalTo(testData.expected2));
     }
 
-    @Test
-    public void shouldReturnNullForInvalidValue() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("data")
+    public void shouldReturnNullForInvalidValue(String name, PropertyType propertyType, TestData testData) {
         // given
         Object object = testData.invalid;
 
@@ -64,8 +58,9 @@ public class PrimitivePropertyTypeTest {
         assertThat(result, nullValue());
     }
 
-    @Test
-    public void shouldHandleNull() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("data")
+    public void shouldHandleNull(String name, PropertyType propertyType, TestData testData) {
         // given / when
         Object result = propertyType.convert(null);
 
@@ -73,8 +68,7 @@ public class PrimitivePropertyTypeTest {
         assertThat(result, nullValue());
     }
 
-    @Parameterized.Parameters(name = "{0}")
-    public static List<Object[]> collectStandardInlineConverters() throws IllegalAccessException {
+    public static List<Object[]> data() throws IllegalAccessException {
         List<Object[]> converters = new ArrayList<>();
         for (Field field : PrimitivePropertyType.class.getDeclaredFields()) {
             if (Modifier.isPublic(field.getModifiers()) && Modifier.isStatic(field.getModifiers())) {

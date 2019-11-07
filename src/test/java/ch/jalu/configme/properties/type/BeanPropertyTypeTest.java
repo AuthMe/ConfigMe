@@ -7,16 +7,16 @@ import ch.jalu.configme.demo.beans.CoordinateSystem;
 import ch.jalu.configme.demo.beans.Location;
 import ch.jalu.configme.properties.types.BeanPropertyType;
 import ch.jalu.configme.utils.TypeInformation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 

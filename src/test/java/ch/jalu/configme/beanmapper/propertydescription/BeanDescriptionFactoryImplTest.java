@@ -8,7 +8,7 @@ import ch.jalu.configme.samples.beanannotations.BeanWithNameClash;
 import ch.jalu.configme.samples.inheritance.Child;
 import ch.jalu.configme.samples.inheritance.Middle;
 import ch.jalu.configme.utils.TypeInformation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.beans.Transient;
 import java.util.ArrayList;
@@ -18,12 +18,12 @@ import java.util.UUID;
 
 import static ch.jalu.configme.TestUtils.transform;
 import static ch.jalu.configme.TestUtils.verifyException;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link BeanDescriptionFactoryImpl}.

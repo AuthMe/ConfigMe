@@ -1,9 +1,9 @@
 package ch.jalu.configme.beanmapper;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link DefaultMapper}.

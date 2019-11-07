@@ -2,12 +2,12 @@ package ch.jalu.configme.configurationdata;
 
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.StringProperty;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static ch.jalu.configme.TestUtils.isErrorValueOf;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link PropertyValue}.

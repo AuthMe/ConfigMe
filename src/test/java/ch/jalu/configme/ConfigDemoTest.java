@@ -1,12 +1,12 @@
 package ch.jalu.configme;
 
 import ch.jalu.configme.demo.WelcomeWriter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link WelcomeWriter}.

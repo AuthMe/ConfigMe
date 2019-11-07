@@ -7,21 +7,20 @@ import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
 import ch.jalu.configme.samples.TestConfiguration;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.Path;
 
 import static ch.jalu.configme.TestUtils.copyFileFromResources;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -32,8 +31,8 @@ import static org.mockito.Mockito.verify;
  */
 public class SettingsManagerBuilderTest {
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @Test
     public void shouldCreateSettingsManager() {
@@ -59,10 +58,9 @@ public class SettingsManagerBuilderTest {
     }
 
     @Test
-    public void shouldCreateSettingsManagerWithYamlFileAndDefaultMigrationService() throws IOException {
+    public void shouldCreateSettingsManagerWithYamlFileAndDefaultMigrationService() {
         // given
-        File folder = temporaryFolder.newFolder();
-        File configFile = new File(folder, "config.yml");
+        File configFile = new File(temporaryFolder.toFile(), "config.yml");
         ConfigurationData configurationData = mock(ConfigurationData.class);
 
         // when

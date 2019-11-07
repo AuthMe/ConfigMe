@@ -1,13 +1,13 @@
 package ch.jalu.configme.properties.type;
 
 import ch.jalu.configme.properties.types.EnumPropertyType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test for {@link EnumPropertyType}.
