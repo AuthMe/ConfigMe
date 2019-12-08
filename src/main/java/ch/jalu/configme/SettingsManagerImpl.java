@@ -48,9 +48,9 @@ public class SettingsManagerImpl implements SettingsManager {
     /**
      * Gets the given property from the configuration.
      *
-     * @param property The property to retrieve
-     * @param <T> The property's type
-     * @return The property's value
+     * @param property the property to retrieve
+     * @param <T> the property's type
+     * @return the property's value
      */
     @Override
     public <T> T getProperty(Property<T> property) {
@@ -60,9 +60,9 @@ public class SettingsManagerImpl implements SettingsManager {
     /**
      * Sets a new value for the given property.
      *
-     * @param property The property to modify
-     * @param value The new value to assign to the property
-     * @param <T> The property's type
+     * @param property the property to modify
+     * @param value the new value to assign to the property
+     * @param <T> the property's type
      */
     @Override
     public <T> void setProperty(Property<T> property, T value) {

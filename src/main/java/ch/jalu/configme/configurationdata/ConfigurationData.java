@@ -3,7 +3,6 @@ package ch.jalu.configme.configurationdata;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -54,14 +53,14 @@ public interface ConfigurationData {
     void initializeValues(PropertyReader propertyReader);
 
     /**
-     * Returns the value associated with the given property. Only to be used with properties
-     * contained in {@link #getProperties()}.
+     * Returns the value associated with the given property. Only to be used with properties contained in
+     * {@link #getProperties()}. By default, never returns null (since base properties always resolve to a non-null
+     * value) and throws an exception if the property is unknown.
      *
      * @param property the property to look up
      * @param <T> property type
      * @return value associated with the property, or null if not present
      */
-    @Nullable
     <T> T getValue(Property<T> property);
 
     /**
