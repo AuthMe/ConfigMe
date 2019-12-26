@@ -78,7 +78,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.0</version>
+                        <version>3.2.1</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -211,13 +211,13 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
-            <version>5.4.2</version>
+            <version>5.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
-            <version>5.4.2</version>
+            <version>5.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -229,7 +229,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
-            <version>3.1.0</version>
+            <version>3.2.4</version>
             <exclusions>
                 <exclusion>
                     <artifactId>hamcrest-core</artifactId>
@@ -240,7 +240,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>2.23.0</version>
+            <version>3.2.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
