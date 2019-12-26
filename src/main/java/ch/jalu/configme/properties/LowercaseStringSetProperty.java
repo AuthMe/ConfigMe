@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
 
 import javax.annotation.Nullable;
@@ -39,7 +40,7 @@ public class LowercaseStringSetProperty extends BaseProperty<Set<String>> {
     }
 
     @Override
-    protected Set<String> getFromReader(PropertyReader reader) {
+    protected Set<String> getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
         List<?> listFromReader = reader.getList(getPath());
         if (listFromReader != null) {
             Set<String> result = new LinkedHashSet<>(listFromReader.size());

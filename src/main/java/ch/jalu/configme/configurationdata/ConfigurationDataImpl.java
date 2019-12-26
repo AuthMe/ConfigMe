@@ -3,6 +3,7 @@ package ch.jalu.configme.configurationdata;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 
 import java.util.Collections;

@@ -42,4 +42,13 @@ public interface MappingContext {
      */
     String createDescription();
 
+    /**
+     * Registers an error during the mapping process, which delegates to the supplied
+     * {@link ch.jalu.configme.properties.convertresult.ConvertErrorRecorder ConvertErrorRecorder},
+     * associated to the property this conversion is being performed for.
+     *
+     * @param reason the error reason (ignored by the default context implementation)
+     */
+    void registerError(String reason);
+
 }

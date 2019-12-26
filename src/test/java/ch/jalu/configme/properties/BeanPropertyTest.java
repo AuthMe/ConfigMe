@@ -9,6 +9,7 @@ import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
@@ -27,9 +28,10 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 /**
  * Test for {@link BeanProperty} and its integration with {@link YamlFileResource}.
@@ -53,7 +55,10 @@ class BeanPropertyTest {
         resource.exportProperties(configurationData);
 
         // then
-        CommandConfig config = property.getFromReader(resource.createReader());
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        CommandConfig config = property.getFromReader(resource.createReader(), errorRecorder);
+        assertThat(errorRecorder.isFullyValid(), equalTo(true));
+
         assertThat(config.getCommands().keySet(), contains("save", "refresh", "open"));
         Command refreshCommand = config.getCommands().get("refresh");
         assertThat(refreshCommand.getExecution().getPrivileges(), contains("page.view", "action.refresh"));
@@ -79,7 +84,10 @@ class BeanPropertyTest {
         resource.exportProperties(configurationData);
 
         // then
-        CommandConfig config = property.getFromReader(resource.createReader());
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        CommandConfig config = property.getFromReader(resource.createReader(), errorRecorder);
+        assertThat(errorRecorder.isFullyValid(), equalTo(true));
+
         assertThat(config.getCommands().keySet(), contains("save"));
         Command saveCommand = config.getCommands().get("save");
         assertThat(saveCommand.getExecution().getPrivileges(), contains("action.open", "action.save"));
@@ -97,14 +105,14 @@ class BeanPropertyTest {
         Object value = new Object();
         given(reader.getObject(path)).willReturn(value);
         WorldGroupConfig groupConfig = new WorldGroupConfig();
-        given(mapper.convertToBean(value, new TypeInformation(WorldGroupConfig.class))).willReturn(groupConfig);
+        given(mapper.convertToBean(eq(value), eq(new TypeInformation(WorldGroupConfig.class)), any(ConvertErrorRecorder.class)))
+            .willReturn(groupConfig);
 
         // when
         WorldGroupConfig result = property.determineValue(reader).getValue();
 
         // then
         assertThat(result, equalTo(groupConfig));
-        verify(mapper).convertToBean(value, new TypeInformation(WorldGroupConfig.class));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 
@@ -15,9 +16,9 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
     /**
      * Constructor.
      *
-     * @param path         the path of the property
+     * @param path the path of the property
      * @param defaultValue the default value of the property
-     * @param type         the property type
+     * @param type the property type
      */
     public MapProperty(String path, Map<String, V> defaultValue, PropertyType<V> type) {
         super(path, defaultValue);
@@ -27,12 +28,9 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
 
     @Nullable
     @Override
-    @SuppressWarnings("unchecked")
-    protected Map<String, V> getFromReader(PropertyReader reader) {
-        // Get a raw map from reader
-        Object rawObject = reader.getObject(this.getPath());
+    protected Map<String, V> getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+        Object rawObject = reader.getObject(getPath());
 
-        // If object is null (it checking instanceof) and object is not a map, then return null
         if (!(rawObject instanceof Map<?, ?>)) {
             return null;
         }
@@ -42,7 +40,7 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
 
         for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
             String path = entry.getKey().toString();
-            V value = this.type.convert(entry.getValue());
+            V value = type.convert(entry.getValue(), errorRecorder);
 
             if (value != null) {
                 map.put(path, value);
@@ -58,7 +56,7 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
         Map<String, Object> exportMap = new HashMap<>();
 
         for (Map.Entry<String, V> entry : value.entrySet()) {
-            exportMap.put(entry.getKey(), this.type.toExportValue(entry.getValue()));
+            exportMap.put(entry.getKey(), type.toExportValue(entry.getValue()));
         }
 
         return exportMap;

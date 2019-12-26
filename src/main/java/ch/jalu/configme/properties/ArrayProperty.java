@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 
@@ -15,9 +16,9 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
     /**
      * Constructor.
      *
-     * @param path         the path of the property
+     * @param path the path of the property
      * @param defaultValue the default value of the property
-     * @param type         the property type
+     * @param type the property type
      * @param arrayProducer array constructor (desired array size as argument)
      */
     public ArrayProperty(String path, T[] defaultValue, PropertyType<T> type, IntFunction<T[]> arrayProducer) {
@@ -29,12 +30,12 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
     }
 
     @Override
-    protected T[] getFromReader(PropertyReader reader) {
+    protected T[] getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
         Object object = reader.getObject(this.getPath());
         if (object instanceof Collection<?>) {
             Collection<?> collection = (Collection<?>) object;
             return collection.stream()
-                .map(type::convert)
+                .map(elem -> type.convert(elem, errorRecorder))
                 .filter(Objects::nonNull)
                 .toArray(arrayProducer);
         }

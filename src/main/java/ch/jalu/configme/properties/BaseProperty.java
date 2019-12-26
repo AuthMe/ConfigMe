@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.configurationdata.PropertyValue;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 
 import javax.annotation.Nullable;
@@ -44,8 +45,12 @@ public abstract class BaseProperty<T> implements Property<T> {
 
     @Override
     public PropertyValue<T> determineValue(PropertyReader reader) {
-        T value = getFromReader(reader);
-        return PropertyValue.defaultIfInvalid(value, this);
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        T value = getFromReader(reader, errorRecorder);
+        if (isValidValue(value)) {
+            return new PropertyValue<>(value, errorRecorder.isFullyValid());
+        }
+        return PropertyValue.withValueRequiringRewrite(getDefaultValue());
     }
 
     @Override
@@ -58,10 +63,11 @@ public abstract class BaseProperty<T> implements Property<T> {
      * available in the reader or if it cannot be used to construct a value for this property.
      *
      * @param reader the reader to read from
+     * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return value based on the reader, or null if not applicable
      */
     @Nullable
-    protected abstract T getFromReader(PropertyReader reader);
+    protected abstract T getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder);
 
     @Override
     public String toString() {

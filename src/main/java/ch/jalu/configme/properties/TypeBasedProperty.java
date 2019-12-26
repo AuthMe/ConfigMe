@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 
@@ -18,9 +19,9 @@ public class TypeBasedProperty<T> extends BaseProperty<T> {
     /**
      * Constructor.
      *
-     * @param path         the path of the property
+     * @param path the path of the property
      * @param defaultValue the default value of the property
-     * @param type         the property type
+     * @param type the property type
      */
     public TypeBasedProperty(String path, T defaultValue, PropertyType<T> type) {
         super(path, defaultValue);
@@ -30,8 +31,8 @@ public class TypeBasedProperty<T> extends BaseProperty<T> {
 
     @Nullable
     @Override
-    protected T getFromReader(PropertyReader reader) {
-        return type.convert(reader.getObject(getPath()));
+    protected T getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+        return type.convert(reader.getObject(getPath()), errorRecorder);
     }
 
     @Nullable

@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 
@@ -22,8 +23,8 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
     /**
      * Constructor.
      *
-     * @param path         the path of the property
-     * @param type         the property type
+     * @param path the path of the property
+     * @param type the property type
      * @param defaultValue the entries in the list of the default value
      */
     @SafeVarargs
@@ -34,8 +35,8 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
     /**
      * Constructor.
      *
-     * @param path         the path of the property
-     * @param type         the property type
+     * @param path the path of the property
+     * @param type the property type
      * @param defaultValue the default value of the property
      */
     public ListProperty(String path, PropertyType<T> type, List<T> defaultValue) {
@@ -46,12 +47,12 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
 
     @Nullable
     @Override
-    protected List<T> getFromReader(PropertyReader reader) {
+    protected List<T> getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
         List<?> list = reader.getList(getPath());
 
         if (list != null) {
             return Collections.unmodifiableList(list.stream()
-                .map(type::convert)
+                .map(elem -> type.convert(elem, errorRecorder))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
         }

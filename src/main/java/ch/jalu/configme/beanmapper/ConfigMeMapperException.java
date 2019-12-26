@@ -19,16 +19,6 @@ public class ConfigMeMapperException extends ConfigMeException {
     }
 
     /**
-     * Creates an exception which incorporates the mapping context's description into the provided message.
-     *
-     * @param mappingContext the mapping context with which the message should be extended
-     * @param message basic message to extend
-     */
-    public ConfigMeMapperException(MappingContext mappingContext, String message) {
-        super(message + ", for mapping of: [" + mappingContext.createDescription() + "]");
-    }
-
-    /**
      * Constructor.
      *
      * @param message the exception message
@@ -36,5 +26,30 @@ public class ConfigMeMapperException extends ConfigMeException {
      */
     public ConfigMeMapperException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param mappingContext the mapping context with which the message should be extended
+     * @param message basic message to extend
+     */
+    public ConfigMeMapperException(MappingContext mappingContext, String message) {
+        super(constructMessage(mappingContext, message));
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param mappingContext the mapping context with which the message should be extended
+     * @param message basic message to extend
+     * @param cause the cause
+     */
+    public ConfigMeMapperException(MappingContext mappingContext, String message, Throwable cause) {
+        super(constructMessage(mappingContext, message), cause);
+    }
+
+    private static String constructMessage(MappingContext mappingContext, String message) {
+        return message + ", for mapping of: [" + mappingContext.createDescription() + "]";
     }
 }
