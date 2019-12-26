@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +47,7 @@ class BasePropertyTest {
         }
 
         @Override
-        protected Byte getFromReader(PropertyReader reader) {
+        protected Byte getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
             Integer value = reader.getInt(getPath());
             return value != null && value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE
                 ? value.byteValue()

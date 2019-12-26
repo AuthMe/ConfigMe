@@ -1,8 +1,8 @@
 package ch.jalu.configme.migration;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
-import ch.jalu.configme.configurationdata.PropertyValue;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 
 /**

@@ -1,5 +1,7 @@
 package ch.jalu.configme.properties.types;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+
 import javax.annotation.Nullable;
 
 /**
@@ -15,10 +17,11 @@ public interface PropertyType<T> {
      * Returns null otherwise.
      *
      * @param object the object to convert
+     * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return the converted value, or null
      */
     @Nullable
-    T convert(@Nullable Object object);
+    T convert(@Nullable Object object, ConvertErrorRecorder errorRecorder);
 
     /**
      * Converts the given value to its export value. (Converts in the opposite way of {@link #convert}.)

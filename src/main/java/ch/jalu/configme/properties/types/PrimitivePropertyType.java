@@ -1,5 +1,7 @@
 package ch.jalu.configme.properties.types;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+
 import java.util.function.Function;
 
 /**
@@ -54,7 +56,7 @@ public class PrimitivePropertyType<T> implements PropertyType<T> {
     }
 
     @Override
-    public T convert(Object object) {
+    public T convert(Object object, ConvertErrorRecorder errorRecorder) {
         return convertFunction.apply(object);
     }
 

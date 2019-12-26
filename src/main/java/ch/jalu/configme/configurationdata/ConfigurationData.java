@@ -1,6 +1,7 @@
 package ch.jalu.configme.configurationdata;
 
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 
 import java.util.List;
@@ -76,7 +77,8 @@ public interface ConfigurationData {
     /**
      * Returns if the last call of {@link #initializeValues} had fully valid values in the resource
      * for all known properties. If false, at least one property was either not present in the resource, or the data
-     * under its path was not fully acceptable for the property type.
+     * under its path was not fully acceptable for the property type. Returns false if the properties have not yet
+     * been loaded.
      *
      * @return true if all properties are represented in a fully valid way in the resource, false otherwise
      * @see PropertyValue#isValidInResource()

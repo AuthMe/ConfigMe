@@ -1,4 +1,4 @@
-package ch.jalu.configme.configurationdata;
+package ch.jalu.configme.properties.convertresult;
 
 import ch.jalu.configme.properties.Property;
 
@@ -25,7 +25,7 @@ public class PropertyValue<T> {
      * @param value the value associated with the property
      * @param isValidInResource true if the value in the resource was fully valid
      */
-    protected PropertyValue(T value, boolean isValidInResource) {
+    public PropertyValue(T value, boolean isValidInResource) {
         this.value = value;
         this.isValidInResource = isValidInResource;
     }
@@ -50,21 +50,6 @@ public class PropertyValue<T> {
      */
     public static <T> PropertyValue<T> withValueRequiringRewrite(T value) {
         return new PropertyValue<>(value, false);
-    }
-
-    /**
-     * Creates a new instance with the given value if the provided property declares it as valid, otherwise uses the
-     * property's default value, setting the valid flag to false.
-     *
-     * @param value the value to check and potentially use
-     * @param property the property to check the value with and whose default value should be used as fallback
-     * @param <T> the property type
-     * @return instance with the appropriate value and validity flag
-     */
-    public static <T> PropertyValue<T> defaultIfInvalid(T value, Property<T> property) {
-        return property.isValidValue(value)
-            ? withValidValue(value)
-            : withValueRequiringRewrite(property.getDefaultValue());
     }
 
     /**

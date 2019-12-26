@@ -18,6 +18,7 @@ import ch.jalu.configme.beanmapper.worldgroup.GameMode;
 import ch.jalu.configme.beanmapper.worldgroup.Group;
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
 import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.YamlFileReader;
 import ch.jalu.configme.samples.TestEnum;
@@ -48,7 +49,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -61,11 +62,14 @@ class MapperImplTest {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds.yml");
         MapperImpl mapperImpl = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        WorldGroupConfig result = mapperImpl.convertToBean(reader.getObject(""), WorldGroupConfig.class);
+        WorldGroupConfig result =
+            mapperImpl.convertToBean(reader.getObject(""), WorldGroupConfig.class, errorRecorder);
 
         // then
+        assertThat(errorRecorder.isFullyValid(), equalTo(true));
         assertThat(result, not(nullValue()));
         assertThat(result.getGroups().keySet(), contains("default", "creative"));
         Group survival = result.getGroups().get("default");
@@ -81,11 +85,15 @@ class MapperImplTest {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
         MapperImpl mapperImpl = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        CommandConfig config = mapperImpl.convertToBean(reader.getObject("commandconfig"), CommandConfig.class);
+        CommandConfig config =
+            mapperImpl.convertToBean(reader.getObject("commandconfig"), CommandConfig.class, errorRecorder);
 
         // then
+        assertThat(errorRecorder.isFullyValid(), equalTo(false));
+
         assertThat(config.getDuration(), equalTo(13));
         assertThat(config.getCommands().keySet(), contains("save", "refresh", "open"));
 
@@ -113,26 +121,31 @@ class MapperImplTest {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds_invalid.yml");
         MapperImpl mapperImpl = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        WorldGroupConfig config = mapperImpl.convertToBean(reader.getObject(""), WorldGroupConfig.class);
+        WorldGroupConfig config = mapperImpl.convertToBean(
+            reader.getObject(""), WorldGroupConfig.class, errorRecorder);
 
         // then
+        assertThat(errorRecorder.isFullyValid(), equalTo(true)); // todo #19: Should be false
         assertThat(config, not(nullValue()));
         assertThat(config.getGroups().keySet(), contains("creative"));
     }
-
 
     @Test
     void shouldHandleInvalidErrors() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid.yml");
         MapperImpl mapper = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        CommandConfig config = mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class);
+        CommandConfig config = mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class, errorRecorder);
 
         // then
+        assertThat(errorRecorder.isFullyValid(), equalTo(false));
+
         assertThat(config, not(nullValue()));
         assertThat(config.getCommands().keySet(), contains("refresh", "open", "cancel"));
         Command cancelCommand = config.getCommands().get("cancel");
@@ -144,9 +157,10 @@ class MapperImplTest {
     void shouldReturnNullForUnavailableSection() {
         // given
         MapperImpl mapper = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        CommandConfig result = mapper.convertToBean(null, CommandConfig.class);
+        CommandConfig result = mapper.convertToBean(null, CommandConfig.class, errorRecorder);
 
         // then
         assertThat(result, nullValue());
@@ -160,7 +174,7 @@ class MapperImplTest {
 
         // when / then
         verifyException(
-            () -> mapper.convertToBean(reader.getObject(""), MapWithNonStringKeys.class),
+            () -> mapper.convertToBean(reader.getObject(""), MapWithNonStringKeys.class, new ConvertErrorRecorder()),
             ConfigMeMapperException.class,
             "The key type of maps may only be of String type");
     }
@@ -173,7 +187,7 @@ class MapperImplTest {
 
         // when / then
         verifyException(
-            () -> mapper.convertToBean(reader.getObject(""), UnsupportedCollection.class),
+            () -> mapper.convertToBean(reader.getObject(""), UnsupportedCollection.class, new ConvertErrorRecorder()),
             ConfigMeMapperException.class,
             "Unsupported collection type");
     }
@@ -186,7 +200,7 @@ class MapperImplTest {
 
         // when / then
         verifyException(
-            () -> mapper.convertToBean(reader.getObject(""), UntypedCollection.class),
+            () -> mapper.convertToBean(reader.getObject(""), UntypedCollection.class, new ConvertErrorRecorder()),
             ConfigMeMapperException.class,
             "The generic type 0 is not well defined, for mapping of: [Path: 'collection', type: 'interface java.util.List']");
     }
@@ -199,7 +213,7 @@ class MapperImplTest {
 
         // when / then
         verifyException(
-            () -> mapper.convertToBean(reader.getObject(""), UntypedMap.class),
+            () -> mapper.convertToBean(reader.getObject(""), UntypedMap.class, new ConvertErrorRecorder()),
             ConfigMeMapperException.class,
             "The generic type 1 is not well defined, for mapping of: [Path: 'map', type: 'java.util.Map<java.lang.String, ?>']");
     }
@@ -212,7 +226,7 @@ class MapperImplTest {
 
         // when / then
         verifyException(
-            () -> mapper.convertToBean(reader.getObject(""), GenericCollection.class),
+            () -> mapper.convertToBean(reader.getObject(""), GenericCollection.class, new ConvertErrorRecorder()),
             ConfigMeMapperException.class,
             "The generic type 0 is not well defined, for mapping of: [Path: 'collection', type: 'java.util.List<? extends java.lang.String>']");
     }
@@ -221,29 +235,30 @@ class MapperImplTest {
     void shouldThrowForUnsupportedMapType() {
         // given
         MapperImpl mapper = new MapperImpl();
-        TypeInformation invalidMapType = new TypeInformation(new HashMap() {}.getClass());
+        Class<?> type = new HashMap() { }.getClass();
+        MappingContext context = createContextWithType(type);
 
         // when / then
         verifyException(
-            () -> mapper.createMapMatchingType(invalidMapType),
+            () -> mapper.createMapMatchingType(context),
             ConfigMeMapperException.class,
-            "Unsupported map type '" + invalidMapType.getType() + "'");
+            "Unsupported map type '" + type + "', for mapping of: [" + context.createDescription() + "]");
     }
 
     @Test
     void shouldCreateCorrectMapType() {
         // given
         MapperImpl mapper = new MapperImpl();
-        TypeInformation interfaceType = new TypeInformation(Map.class);
-        TypeInformation hashType = new TypeInformation(HashMap.class);
-        TypeInformation navigableType = new TypeInformation(NavigableMap.class);
-        TypeInformation treeType = new TypeInformation(TreeMap.class);
+        MappingContext interfaceCtx = createContextWithType(Map.class);
+        MappingContext hashCtx = createContextWithType(HashMap.class);
+        MappingContext navigableCtx = createContextWithType(NavigableMap.class);
+        MappingContext treeCtx = createContextWithType(TreeMap.class);
 
         // when / then
-        assertThat(mapper.createMapMatchingType(interfaceType), instanceOf(LinkedHashMap.class));
-        assertThat(mapper.createMapMatchingType(hashType), instanceOf(LinkedHashMap.class));
-        assertThat(mapper.createMapMatchingType(navigableType), instanceOf(TreeMap.class));
-        assertThat(mapper.createMapMatchingType(treeType), instanceOf(TreeMap.class));
+        assertThat(mapper.createMapMatchingType(interfaceCtx), instanceOf(LinkedHashMap.class));
+        assertThat(mapper.createMapMatchingType(hashCtx), instanceOf(LinkedHashMap.class));
+        assertThat(mapper.createMapMatchingType(navigableCtx), instanceOf(TreeMap.class));
+        assertThat(mapper.createMapMatchingType(treeCtx), instanceOf(TreeMap.class));
     }
 
     @Test
@@ -251,9 +266,10 @@ class MapperImplTest {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid_2.yml");
         MapperImpl mapper = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        CommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class);
+        CommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class, errorRecorder);
 
         // then
         assertThat(result, nullValue());
@@ -264,9 +280,10 @@ class MapperImplTest {
         // given
         PropertyReader reader = createReaderFromFile("/empty_file.yml");
         MapperImpl mapper = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        CommandConfig result = mapper.convertToBean(reader.getObject("commands"), CommandConfig.class);
+        CommandConfig result = mapper.convertToBean(reader.getObject("commands"), CommandConfig.class, errorRecorder);
 
         // then
         assertThat(result, nullValue());
@@ -277,11 +294,14 @@ class MapperImplTest {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
         MapperImpl mapper = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        ComplexCommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), ComplexCommandConfig.class);
+        ComplexCommandConfig result =
+            mapper.convertToBean(reader.getObject("commandconfig"), ComplexCommandConfig.class, errorRecorder);
 
         // then
+        assertThat(errorRecorder.isFullyValid(), equalTo(false)); // e.g. save.arguments are missing
         assertThat(result, not(nullValue()));
         assertThat(result.getCommands().keySet(), contains("save", "refresh", "open"));
         assertAllOptionalFieldsEmpty(result.getCommands().get("save"));
@@ -294,11 +314,15 @@ class MapperImplTest {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/optionalproperties/complex-commands.yml");
         MapperImpl mapper = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        ComplexCommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), ComplexCommandConfig.class);
+        ComplexCommandConfig result = mapper.convertToBean(
+            reader.getObject("commandconfig"), ComplexCommandConfig.class, errorRecorder);
 
         // then
+        assertThat(errorRecorder.isFullyValid(), equalTo(false));
+
         assertThat(result, not(nullValue()));
         assertThat(result.getCommands().keySet(), contains("greet", "block_invalid", "log_admin", "launch"));
 
@@ -331,11 +355,14 @@ class MapperImplTest {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
         MapperImpl mapper = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        ComplexOptionalTypeConfig result = mapper.convertToBean(reader.getObject(""), ComplexOptionalTypeConfig.class);
+        ComplexOptionalTypeConfig result =
+            mapper.convertToBean(reader.getObject(""), ComplexOptionalTypeConfig.class, errorRecorder);
 
         // then
+        assertThat(errorRecorder.isFullyValid(), equalTo(true));
         assertThat(result, not(nullValue()));
         assertThat(result.getCommandconfig().isPresent(), equalTo(true));
         assertThat(result.getCommandconfig().get().keySet(), containsInAnyOrder("duration", "commands"));
@@ -346,11 +373,14 @@ class MapperImplTest {
         // given
         PropertyReader reader = createReaderFromFile("/empty_file.yml");
         MapperImpl mapper = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        ComplexOptionalTypeConfig result = mapper.convertToBean(reader.getObject(""), ComplexOptionalTypeConfig.class);
+        ComplexOptionalTypeConfig result =
+            mapper.convertToBean(reader.getObject(""), ComplexOptionalTypeConfig.class, errorRecorder);
 
         // then
+        assertThat(errorRecorder.isFullyValid(), equalTo(true));
         assertThat(result, not(nullValue()));
         assertThat(result.getCommandconfig(), equalTo(Optional.empty()));
     }
@@ -361,7 +391,7 @@ class MapperImplTest {
         MapperImpl mapper = new MapperImpl();
 
         // when
-        Object command = mapper.createBeanMatchingType(new TypeInformation(Command.class));
+        Object command = mapper.createBeanMatchingType(createContextWithType(Command.class));
 
         // then
         assertThat(command, instanceOf(Command.class));
@@ -373,15 +403,12 @@ class MapperImplTest {
         MapperImpl mapper = new MapperImpl();
 
         // when
-        try {
-            mapper.createBeanMatchingType(new TypeInformation(Iterable.class));
+        ConfigMeException e = assertThrows(ConfigMeException.class,
+            () -> mapper.createBeanMatchingType(createContextWithType(Iterable.class)));
 
-            // then
-            fail("Expected exception to be thrown");
-        } catch (ConfigMeException e) {
-            assertThat(e.getMessage(), containsString("It is required to have a default constructor"));
-            assertThat(e.getCause(), instanceOf(NoSuchMethodException.class));
-        }
+        // then
+        assertThat(e.getMessage(), containsString("It is required to have a default constructor"));
+        assertThat(e.getCause(), instanceOf(NoSuchMethodException.class));
     }
 
     @Test
@@ -416,6 +443,12 @@ class MapperImplTest {
 
     private static PropertyReader createReaderFromFile(String file) {
         return new YamlFileReader(getJarFile(file));
+    }
+
+    private static MappingContext createContextWithType(Class<?> clazz) {
+        TypeInformation type = new TypeInformation(clazz);
+        MappingContextImpl root = MappingContextImpl.createRoot(type, new ConvertErrorRecorder());
+        return root.createChild("path.in.test", type);
     }
 
     private static Matcher<Command> hasExecution(Executor executor, boolean optional, Double importance) {

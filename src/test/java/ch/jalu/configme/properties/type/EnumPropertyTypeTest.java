@@ -20,7 +20,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert("unknown");
+        TimeUnit result = propertyType.convert("unknown", null);
 
         // then
         assertThat(result, nullValue());
@@ -32,7 +32,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert(new Object());
+        TimeUnit result = propertyType.convert(new Object(), null);
 
         // then
         assertThat(result, nullValue());
@@ -44,7 +44,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert(null);
+        TimeUnit result = propertyType.convert(null, null);
 
         // then
         assertThat(result, nullValue());
@@ -56,7 +56,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert(TimeUnit.SECONDS);
+        TimeUnit result = propertyType.convert(TimeUnit.SECONDS, null);
 
         // then
         assertThat(result, equalTo(TimeUnit.SECONDS));
@@ -68,7 +68,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert("SECONDS");
+        TimeUnit result = propertyType.convert("SECONDS", null);
 
         // then
         assertThat(result, equalTo(TimeUnit.SECONDS));

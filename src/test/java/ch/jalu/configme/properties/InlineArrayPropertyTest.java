@@ -26,7 +26,7 @@ class InlineArrayPropertyTest {
         given(reader.getString("inline_value")).willReturn("hello\nkek");
 
         // when
-        String[] result = property.getFromReader(reader);
+        String[] result = property.getFromReader(reader, null);
 
         // then
         assertThat(result, equalTo(new String[] {"hello", "kek"}));

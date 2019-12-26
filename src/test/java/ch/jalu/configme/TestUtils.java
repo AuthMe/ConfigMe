@@ -1,6 +1,6 @@
 package ch.jalu.configme;
 
-import ch.jalu.configme.configurationdata.PropertyValue;
+import ch.jalu.configme.properties.convertresult.PropertyValue;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.function.Executable;
 

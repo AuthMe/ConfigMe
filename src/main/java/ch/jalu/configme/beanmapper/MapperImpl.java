@@ -5,6 +5,7 @@ import ch.jalu.configme.beanmapper.leafvaluehandler.StandardLeafValueHandlers;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.utils.TypeInformation;
 
 import javax.annotation.Nullable;
@@ -75,8 +76,8 @@ public class MapperImpl implements Mapper {
         return leafValueHandler;
     }
 
-    protected MappingContext createRootMappingContext(TypeInformation beanType) {
-        return MappingContextImpl.createRoot(beanType);
+    protected MappingContext createRootMappingContext(TypeInformation beanType, ConvertErrorRecorder errorRecorder) {
+        return MappingContextImpl.createRoot(beanType, errorRecorder);
     }
 
 
@@ -151,12 +152,12 @@ public class MapperImpl implements Mapper {
 
     @Nullable
     @Override
-    public Object convertToBean(Object value, TypeInformation beanType) {
+    public Object convertToBean(Object value, TypeInformation beanType, ConvertErrorRecorder errorRecorder) {
         if (value == null) {
             return null;
         }
 
-        return convertValueForType(createRootMappingContext(beanType), value);
+        return convertValueForType(createRootMappingContext(beanType, errorRecorder), value);
     }
 
     /**
@@ -222,7 +223,7 @@ public class MapperImpl implements Mapper {
     protected Collection createCollection(MappingContext context, Object value) {
         if (value instanceof Iterable<?>) {
             TypeInformation entryType = context.getGenericTypeInfoOrFail(0);
-            Collection result = createCollectionMatchingType(context.getTypeInformation());
+            Collection result = createCollectionMatchingType(context);
 
             int index = 0;
             for (Object entry : (Iterable) value) {
@@ -236,17 +237,17 @@ public class MapperImpl implements Mapper {
     /**
      * Creates a Collection of a type which can be assigned to the provided type.
      *
-     * @param typeInformation the required collection type
+     * @param mappingContext the current mapping context with a collection type
      * @return Collection of matching type
      */
-    protected Collection createCollectionMatchingType(TypeInformation typeInformation) {
-        Class<?> collectionType = typeInformation.getSafeToWriteClass();
+    protected Collection createCollectionMatchingType(MappingContext mappingContext) {
+        Class<?> collectionType = mappingContext.getTypeInformation().getSafeToWriteClass();
         if (collectionType.isAssignableFrom(ArrayList.class)) {
             return new ArrayList();
         } else if (collectionType.isAssignableFrom(LinkedHashSet.class)) {
             return new LinkedHashSet();
         } else {
-            throw new ConfigMeMapperException("Unsupported collection type '" + collectionType + "'");
+            throw new ConfigMeMapperException(mappingContext, "Unsupported collection type '" + collectionType + "'");
         }
     }
 
@@ -268,7 +269,7 @@ public class MapperImpl implements Mapper {
             TypeInformation mapValueType = context.getGenericTypeInfoOrFail(1);
 
             Map<String, ?> entries = (Map<String, ?>) value;
-            Map result = createMapMatchingType(context.getTypeInformation());
+            Map result = createMapMatchingType(context);
             for (Map.Entry<String, ?> entry : entries.entrySet()) {
                 Object mappedValue = convertValueForType(
                     context.createChild("[k=" + entry.getKey() + "]", mapValueType), entry.getValue());
@@ -284,17 +285,17 @@ public class MapperImpl implements Mapper {
     /**
      * Creates a Map of a type which can be assigned to the provided type.
      *
-     * @param typeInformation the required map type
+     * @param mappingContext the current mapping context with a map type
      * @return Map of matching type
      */
-    protected Map createMapMatchingType(TypeInformation typeInformation) {
-        Class<?> mapType = typeInformation.getSafeToWriteClass();
+    protected Map createMapMatchingType(MappingContext mappingContext) {
+        Class<?> mapType = mappingContext.getTypeInformation().getSafeToWriteClass();
         if (mapType.isAssignableFrom(LinkedHashMap.class)) {
             return new LinkedHashMap();
         } else if (mapType.isAssignableFrom(TreeMap.class)) {
             return new TreeMap();
         } else {
-            throw new ConfigMeMapperException("Unsupported map type '" + mapType + "'");
+            throw new ConfigMeMapperException(mappingContext, "Unsupported map type '" + mapType + "'");
         }
     }
 
@@ -330,15 +331,18 @@ public class MapperImpl implements Mapper {
         }
 
         Map<?, ?> entries = (Map<?, ?>) value;
-        Object bean = createBeanMatchingType(context.getTypeInformation());
+        Object bean = createBeanMatchingType(context);
         for (BeanPropertyDescription property : properties) {
             Object result = convertValueForType(
                 context.createChild(property.getName(), property.getTypeInformation()),
                 entries.get(property.getName()));
-            if (result != null) {
+            if (result == null) {
+                if (property.getValue(bean) == null) {
+                    return null; // We do not support beans with a null value
+                }
+                context.registerError("No value found, fallback to field default value");
+            } else {
                 property.setValue(bean, result);
-            } else if (property.getValue(bean) == null) {
-                return null;
             }
         }
         return bean;
@@ -347,17 +351,17 @@ public class MapperImpl implements Mapper {
     /**
      * Creates an object matching the given type information.
      *
-     * @param typeInformation the required type
+     * @param mappingContext current mapping context
      * @return new instance of the given type
      */
-    protected Object createBeanMatchingType(TypeInformation typeInformation) {
+    protected Object createBeanMatchingType(MappingContext mappingContext) {
         // clazz is never null given the only path that leads to this method already performs that check
-        final Class<?> clazz = typeInformation.getSafeToWriteClass();
+        final Class<?> clazz = mappingContext.getTypeInformation().getSafeToWriteClass();
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
-            throw new ConfigMeMapperException("Could not create object of type '" + clazz.getName()
-                + "'. It is required to have a default constructor.", e);
+            throw new ConfigMeMapperException(mappingContext, "Could not create object of type '"
+                + clazz.getName() + "'. It is required to have a default constructor", e);
         }
     }
 }

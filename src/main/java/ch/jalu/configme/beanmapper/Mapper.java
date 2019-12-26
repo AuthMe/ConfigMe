@@ -1,5 +1,6 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.utils.TypeInformation;
 
 import javax.annotation.Nullable;
@@ -17,24 +18,26 @@ public interface Mapper {
      *
      * @param value the value to convert (typically a Map)
      * @param typeInformation the required type
+     * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return object of the given type, or null if not possible
      */
     @Nullable
-    Object convertToBean(@Nullable Object value, TypeInformation typeInformation);
+    Object convertToBean(@Nullable Object value, TypeInformation typeInformation, ConvertErrorRecorder errorRecorder);
 
     /**
      * Converts the given value to an object of the given class, if possible. Returns null otherwise.
-     * This is a convenience method as typed alternative to {@link #convertToBean(Object, TypeInformation)}.
+     * This is a convenience method as typed alternative to
+     * {@link #convertToBean(Object, TypeInformation, ConvertErrorRecorder)}.
      *
      * @param value the value to convert (typically a Map)
      * @param clazz the required class
+     * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @param <T> the class type
      * @return object of the given type, or null if not possible
      */
-    @Nullable
     @SuppressWarnings("unchecked")
-    default <T> T convertToBean(@Nullable Object value, Class<T> clazz) {
-        return (T) convertToBean(value, new TypeInformation(clazz));
+    default <T> T convertToBean(@Nullable Object value, Class<T> clazz, ConvertErrorRecorder errorRecorder) {
+        return (T) convertToBean(value, new TypeInformation(clazz), errorRecorder);
     }
 
     /**

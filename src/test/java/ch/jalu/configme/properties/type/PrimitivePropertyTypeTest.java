@@ -26,7 +26,7 @@ class PrimitivePropertyTypeTest {
         Object object = testData.object1;
 
         // when
-        Object result = propertyType.convert(object);
+        Object result = propertyType.convert(object, null);
 
         // then
         assertThat(result, equalTo(testData.expected1));
@@ -39,7 +39,7 @@ class PrimitivePropertyTypeTest {
         Object object = testData.object2;
 
         // when
-        Object result = propertyType.convert(object);
+        Object result = propertyType.convert(object, null);
 
         // then
         assertThat(result, equalTo(testData.expected2));
@@ -52,7 +52,7 @@ class PrimitivePropertyTypeTest {
         Object object = testData.invalid;
 
         // when
-        Object result = propertyType.convert(object);
+        Object result = propertyType.convert(object, null);
 
         // then
         assertThat(result, nullValue());
@@ -62,7 +62,7 @@ class PrimitivePropertyTypeTest {
     @MethodSource("data")
     void shouldHandleNull(String name, PropertyType propertyType, TestData testData) {
         // given / when
-        Object result = propertyType.convert(null);
+        Object result = propertyType.convert(null, null);
 
         // then
         assertThat(result, nullValue());

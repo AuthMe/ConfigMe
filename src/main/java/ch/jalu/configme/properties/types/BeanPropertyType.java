@@ -2,6 +2,7 @@ package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.beanmapper.DefaultMapper;
 import ch.jalu.configme.beanmapper.Mapper;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.utils.TypeInformation;
 
 public class BeanPropertyType<B> implements PropertyType<B> {
@@ -24,8 +25,8 @@ public class BeanPropertyType<B> implements PropertyType<B> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public B convert(Object object) {
-        return (B) mapper.convertToBean(object, beanType);
+    public B convert(Object object, ConvertErrorRecorder errorRecorder) {
+        return (B) mapper.convertToBean(object, beanType, errorRecorder);
     }
 
     @Override
