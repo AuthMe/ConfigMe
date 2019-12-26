@@ -127,7 +127,7 @@ class MapperImplTest {
             reader.getObject(""), WorldGroupConfig.class, errorRecorder);
 
         // then
-        assertThat(errorRecorder.isFullyValid(), equalTo(true)); // todo #19: Should be false
+        assertThat(errorRecorder.isFullyValid(), equalTo(false));
         assertThat(config, not(nullValue()));
         assertThat(config.getGroups().keySet(), contains("creative"));
     }

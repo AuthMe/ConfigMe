@@ -1,5 +1,6 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.utils.TypeInformation;
 import org.junit.jupiter.api.Test;
 
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Test for {@link MappingContextImpl}.
@@ -41,5 +44,19 @@ class MappingContextImplTest {
 
         // then
         assertThat(description, equalTo("Path: 'oh.em.gee', type: '" + ArrayList.class + "'"));
+    }
+
+    @Test
+    void shouldForwardErrorToErrorRecorder() {
+        // given
+        ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
+        MappingContext root = MappingContextImpl.createRoot(new TypeInformation(String.class), errorRecorder);
+        MappingContext context = root.createChild("bar", new TypeInformation(Double.class));
+
+        // when
+        context.registerError("Not a valid value");
+
+        // then
+        verify(errorRecorder).setHasError("At path 'bar': Not a valid value");
     }
 }

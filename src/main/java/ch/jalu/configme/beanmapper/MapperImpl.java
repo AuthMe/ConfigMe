@@ -220,6 +220,7 @@ public class MapperImpl implements Mapper {
      * @return Collection property from the value, or null if not applicable
      */
     @Nullable
+    @SuppressWarnings("unchecked")
     protected Collection createCollection(MappingContext context, Object value) {
         if (value instanceof Iterable<?>) {
             TypeInformation entryType = context.getGenericTypeInfoOrFail(0);
@@ -228,7 +229,9 @@ public class MapperImpl implements Mapper {
             int index = 0;
             for (Object entry : (Iterable) value) {
                 Object convertedEntry = convertValueForType(context.createChild("[" + index + "]", entryType), entry);
-                if (convertedEntry != null) {
+                if (convertedEntry == null) {
+                    context.registerError("Cannot convert value at index " + index);
+                } else {
                     result.add(convertedEntry);
                 }
             }
@@ -264,6 +267,7 @@ public class MapperImpl implements Mapper {
      * @return Map property, or null if not applicable
      */
     @Nullable
+    @SuppressWarnings("unchecked")
     protected Map createMap(MappingContext context, Object value) {
         if (value instanceof Map<?, ?>) {
             if (context.getGenericTypeInfoOrFail(0).getSafeToWriteClass() != String.class) {
@@ -276,7 +280,9 @@ public class MapperImpl implements Mapper {
             for (Map.Entry<String, ?> entry : entries.entrySet()) {
                 Object mappedValue = convertValueForType(
                     context.createChild("[k=" + entry.getKey() + "]", mapValueType), entry.getValue());
-                if (mappedValue != null) {
+                if (mappedValue == null) {
+                    context.registerError("Cannot map value for key " + entry.getKey());
+                } else {
                     result.put(entry.getKey(), mappedValue);
                 }
             }

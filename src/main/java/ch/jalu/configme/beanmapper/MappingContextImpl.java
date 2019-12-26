@@ -49,7 +49,7 @@ public class MappingContextImpl implements MappingContext {
 
     @Override
     public void registerError(String reason) {
-        errorRecorder.setHasError(reason);
+        errorRecorder.setHasError("At path '" + path + "': " + reason);
     }
 
     @Override
