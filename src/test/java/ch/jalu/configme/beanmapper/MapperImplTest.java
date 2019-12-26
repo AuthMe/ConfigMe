@@ -44,7 +44,6 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -150,7 +149,7 @@ class MapperImplTest {
         assertThat(config.getCommands().keySet(), contains("refresh", "open", "cancel"));
         Command cancelCommand = config.getCommands().get("cancel");
         assertThat(cancelCommand.getArguments(), empty());
-        assertThat(cancelCommand.getExecution().getPrivileges(), hasSize(4));
+        assertThat(cancelCommand.getExecution().getPrivileges(), contains("action.cancel", "true", "1.23"));
     }
 
     @Test

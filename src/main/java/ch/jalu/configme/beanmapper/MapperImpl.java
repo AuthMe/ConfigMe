@@ -227,7 +227,10 @@ public class MapperImpl implements Mapper {
 
             int index = 0;
             for (Object entry : (Iterable) value) {
-                result.add(convertValueForType(context.createChild("[" + index + "]", entryType), entry));
+                Object convertedEntry = convertValueForType(context.createChild("[" + index + "]", entryType), entry);
+                if (convertedEntry != null) {
+                    result.add(convertedEntry);
+                }
             }
             return result;
         }
