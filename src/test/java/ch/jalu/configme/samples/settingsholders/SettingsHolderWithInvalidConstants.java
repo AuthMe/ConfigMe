@@ -23,6 +23,10 @@ public class SettingsHolderWithInvalidConstants implements SettingsHolder {
     private SettingsHolderWithInvalidConstants() {
     }
 
+    // used for test ensuring classes only have a sole no-args private constructor
+    private SettingsHolderWithInvalidConstants(boolean other) {
+    }
+
     public static class Child extends SettingsHolderWithInvalidConstants {
 
         private final Property<String> strProp = null;

@@ -6,6 +6,7 @@ import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.properties.Property;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -30,11 +31,11 @@ public class SettingsHolderClassValidator {
      * Runs all validations of this class with the given settings holder classes.
      * More details at {@link #validate(Iterable)}.
      *
-     * @param settingsHolderClasses settings holder classes that make up the configuration data of the project
+     * @param settingHolders settings holder classes that make up the configuration data of the project
      */
     @SafeVarargs
-    public final void validate(Class<? extends SettingsHolder>... settingsHolderClasses) {
-        validate(Arrays.asList(settingsHolderClasses));
+    public final void validate(Class<? extends SettingsHolder>... settingHolders) {
+        validate(Arrays.asList(settingHolders));
     }
 
     /**
@@ -42,14 +43,16 @@ public class SettingsHolderClassValidator {
      * are not needed from a technical point of view and may be undesired in your project. They can all be
      * run individually and can be customized (method parameters, or overridable methods).
      *
-     * @param settingsHolderClasses settings holder classes that make up the configuration data of the project
+     * @param settingHolders settings holder classes that make up the configuration data of the project
      */
-    public void validate(Iterable<Class<? extends SettingsHolder>> settingsHolderClasses) {
+    public void validate(Iterable<Class<? extends SettingsHolder>> settingHolders) {
+        validateAllPropertiesAreConstants(settingHolders);
+        validateSettingsHolderClassesFinal(settingHolders);
+        validateClassesHaveHiddenNoArgConstructor(settingHolders);
+
         // Note: creating the ConfigurationData with the default builder validates that
         // no properties have overlapping paths
-        ConfigurationData configurationData = createConfigurationData(settingsHolderClasses);
-
-        validateAllPropertiesAreConstants(settingsHolderClasses);
+        ConfigurationData configurationData = createConfigurationData(settingHolders);
         validateHasCommentOnEveryProperty(configurationData, null);
         validateCommentLengthsAreWithinBounds(configurationData, null, 90);
         validateHasAllEnumEntriesInComment(configurationData, null);
@@ -61,12 +64,12 @@ public class SettingsHolderClassValidator {
     /**
      * Throws an exception if any Property field of the given classes is not public, static, or final.
      *
-     * @param settingsHolderClasses the classes to check
+     * @param settingHolders the classes to check
      */
-    public void validateAllPropertiesAreConstants(Iterable<Class<? extends SettingsHolder>> settingsHolderClasses) {
+    public void validateAllPropertiesAreConstants(Iterable<Class<? extends SettingsHolder>> settingHolders) {
         List<String> invalidFields = new ArrayList<>();
 
-        for (Class<? extends SettingsHolder> clazz : settingsHolderClasses) {
+        for (Class<? extends SettingsHolder> clazz : settingHolders) {
             List<String> invalidFieldsForClazz = getAllFields(clazz)
                 .filter(field -> Property.class.isAssignableFrom(field.getType()))
                 .filter(field -> !isValidConstantField(field))
@@ -78,6 +81,47 @@ public class SettingsHolderClassValidator {
         if (!invalidFields.isEmpty()) {
             throw new IllegalStateException("The following fields were found not to be public static final:\n- "
                 + String.join("\n- ", invalidFields));
+        }
+    }
+
+    /**
+     * Throws an exception if any of the provided settings holder classes is not final.
+     *
+     * @param settingHolders the classes to check
+     */
+    public void validateSettingsHolderClassesFinal(Iterable<Class<? extends SettingsHolder>> settingHolders) {
+        List<String> invalidClasses = new ArrayList<>();
+
+        for (Class<? extends SettingsHolder> clazz : settingHolders) {
+            if (!Modifier.isFinal(clazz.getModifiers())) {
+                invalidClasses.add(clazz.getCanonicalName());
+            }
+        }
+
+        if (!invalidClasses.isEmpty()) {
+            throw new IllegalStateException("The following classes are not final:\n- "
+                + String.join("\n- ", invalidClasses));
+        }
+    }
+
+    /**
+     * Throws an exception if any of the provided setting holder classes does not have a single private
+     * no-args constructor.
+     *
+     * @param settingHolders the classes to check
+     */
+    public void validateClassesHaveHiddenNoArgConstructor(Iterable<Class<? extends SettingsHolder>> settingHolders) {
+        List<String> invalidClasses = new ArrayList<>();
+
+        for (Class<? extends SettingsHolder> clazz : settingHolders) {
+            if (!hasValidConstructorSetup(clazz)) {
+                invalidClasses.add(clazz.getCanonicalName());
+            }
+        }
+
+        if (!invalidClasses.isEmpty()) {
+            throw new IllegalStateException("The following classes do not have a single no-args private constructor:"
+                + "\n- " + String.join("\n- ", invalidClasses));
         }
     }
 
@@ -230,6 +274,13 @@ public class SettingsHolderClassValidator {
         return Arrays.stream(enumClass.getEnumConstants())
             .map(Enum::name)
             .collect(Collectors.toList());
+    }
+
+    protected boolean hasValidConstructorSetup(Class<? extends SettingsHolder> clazz) {
+        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+        return constructors.length == 1
+            && constructors[0].getParameterCount() == 0
+            && Modifier.isPrivate(constructors[0].getModifiers());
     }
 
     /**

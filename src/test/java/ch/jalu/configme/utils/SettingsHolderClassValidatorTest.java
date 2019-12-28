@@ -46,6 +46,8 @@ class SettingsHolderClassValidatorTest {
         // then - no exception
         Matcher<Iterable<Class<? extends SettingsHolder>>> matcher = (Matcher) contains(FullyValidSettingsHolder1.class, FullyValidSettingsHolder2.class);
         verify(validatorSpy).validateAllPropertiesAreConstants(argThat(matcher));
+        verify(validatorSpy).validateSettingsHolderClassesFinal(argThat(matcher));
+        verify(validatorSpy).validateClassesHaveHiddenNoArgConstructor(argThat(matcher));
         verify(validatorSpy).validateHasCommentOnEveryProperty(any(ConfigurationData.class), isNull());
         verify(validatorSpy).validateCommentLengthsAreWithinBounds(any(ConfigurationData.class), isNull(), eq(90));
         verify(validatorSpy).validateHasAllEnumEntriesInComment(any(ConfigurationData.class), isNull());
@@ -164,5 +166,37 @@ class SettingsHolderClassValidatorTest {
             + "\n- For Property 'sample.gameMode': missing CREATIVE, SURVIVAL"));
         assertThat(e2.getMessage(), equalTo("The following enum properties do not list all enum values:"
             + "\n- For Property 'sample.gameMode': missing CREATIVE, SURVIVAL"));
+    }
+
+    @Test
+    void shouldThrowForNonFinalClasses() {
+        // given
+        List<Class<? extends SettingsHolder>> classes = Arrays.asList(
+            SettingsHolderWithEnumPropertyComments.class, FullyValidSettingsHolder1.class, SettingsHolderWithInvalidConstants.class);
+
+        // when
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+            () -> validator.validateSettingsHolderClassesFinal(classes));
+
+        // then
+        assertThat(e.getMessage(), equalTo("The following classes are not final:"
+            + "\n- ch.jalu.configme.samples.settingsholders.SettingsHolderWithEnumPropertyComments"
+            + "\n- ch.jalu.configme.samples.settingsholders.SettingsHolderWithInvalidConstants"));
+    }
+
+    @Test
+    void shouldThrowForClassWithoutPrivateConstructor() {
+        // given
+        List<Class<? extends SettingsHolder>> classes = Arrays.asList(
+            SettingsHolderWithEnumPropertyComments.class, FullyValidSettingsHolder1.class, SettingsHolderWithInvalidConstants.class);
+
+        // when
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+            () -> validator.validateClassesHaveHiddenNoArgConstructor(classes));
+
+        // then
+        assertThat(e.getMessage(), equalTo("The following classes do not have a single no-args private constructor:"
+            + "\n- ch.jalu.configme.samples.settingsholders.SettingsHolderWithEnumPropertyComments"
+            + "\n- ch.jalu.configme.samples.settingsholders.SettingsHolderWithInvalidConstants"));
     }
 }
