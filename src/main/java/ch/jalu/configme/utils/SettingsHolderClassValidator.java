@@ -21,7 +21,10 @@ import java.util.stream.Stream;
  * Validates various characteristics of the property implementations of SettingsHolder classes for consistency.
  * Finds potential technical or quality issues with a project's property declarations. This class is intended to
  * be used in a unit test.
- * This class' methods can be overridden for custom behavior.
+ * <p>
+ * This class' methods can be overridden for custom behavior. Depending on your needs, you can call the main
+ * {@code validate} method and override single validation methods you want to customize or disable, or call the
+ * individual validation methods separately.
  */
 public class SettingsHolderClassValidator {
 
@@ -267,7 +270,7 @@ public class SettingsHolderClassValidator {
             // If an enum entry implements methods, it is an anonymous class -> we're interested in the enclosing class
             defaultValueType = defaultValueType.getEnclosingClass();
         }
-        return defaultValueType.isEnum() ? (Class) defaultValueType : null;
+        return defaultValueType.isEnum() ? (Class<? extends Enum<?>>) defaultValueType : null;
     }
 
     protected List<String> gatherExpectedEnumNames(Class<? extends Enum<?>> enumClass) {
