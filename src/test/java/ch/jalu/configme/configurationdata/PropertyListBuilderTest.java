@@ -2,9 +2,9 @@ package ch.jalu.configme.configurationdata;
 
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.properties.StringProperty;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +14,6 @@ import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link PropertyListBuilder}.
@@ -78,12 +76,12 @@ class PropertyListBuilderTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void shouldThrowForUnknownInternalEntry() throws ReflectiveOperationException {
+    void shouldThrowForUnknownInternalEntry() {
         // given
         PropertyListBuilder properties = new PropertyListBuilder();
         properties.add(createPropertyWithPath("test.name"));
 
-        Map<String, Object> internalMap = getInternalMap(properties);
+        Map<String, Object> internalMap = properties.getRootEntries();
         // Put an unknown object in test.version
         ((Map<String, Object>) internalMap.get("test")).put("version", new Object());
 
@@ -93,15 +91,6 @@ class PropertyListBuilderTest {
     }
 
     private static Property<?> createPropertyWithPath(String path) {
-        Property<?> property = mock(Property.class);
-        when(property.getPath()).thenReturn(path);
-        return property;
-    }
-
-    private static Map<String, Object> getInternalMap(PropertyListBuilder properties)
-                                                      throws ReflectiveOperationException {
-        Field field = PropertyListBuilder.class.getDeclaredField("rootEntries");
-        field.setAccessible(true);
-        return (Map<String, Object>) field.get(properties);
+        return new StringProperty(path, "");
     }
 }
