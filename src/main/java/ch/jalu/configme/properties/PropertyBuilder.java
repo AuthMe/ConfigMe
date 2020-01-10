@@ -5,9 +5,12 @@ import ch.jalu.configme.properties.types.PropertyType;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 
 /**
  * Builder for complex types of properties.
@@ -188,6 +191,29 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
         @Override
         public Property<List<T>> build() {
             return new ListProperty<>(getPath(), getType(), getDefaultValue());
+        }
+    }
+
+    /**
+     * Builder for {@link SetProperty}.
+     *
+     * @param <T> the type of the elements in the set
+     */
+    public static class SetPropertyBuilder<T> extends PropertyBuilder<T, Set<T>, SetPropertyBuilder<T>> {
+
+        public SetPropertyBuilder(PropertyType<T> type) {
+            super(type);
+        }
+
+        public SetPropertyBuilder<T> defaultValue(T... defaultValue) {
+            Set<T> defaultSet = Arrays.stream(defaultValue)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+            return super.defaultValue(defaultSet);
+        }
+
+        @Override
+        public Property<Set<T>> build() {
+            return new SetProperty<>(getPath(), getType(), getDefaultValue());
         }
     }
 

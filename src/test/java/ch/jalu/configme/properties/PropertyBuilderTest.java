@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anEmptyMap;
@@ -165,6 +166,20 @@ class PropertyBuilderTest {
         assertThat(property, instanceOf(ListProperty.class));
         assertThat(property.getPath(), equalTo("enum.path"));
         assertThat(property.getDefaultValue(), contains(TestEnum.FOURTH, TestEnum.SECOND));
+    }
+
+    @Test
+    void shouldCreateSetProperty() {
+        // given / when
+        Property<Set<Integer>> property = new PropertyBuilder.SetPropertyBuilder<>(PrimitivePropertyType.INTEGER)
+            .path("path.to.set")
+            .defaultValue(1, 4, 2, 5)
+            .build();
+
+        // then
+        assertThat(property, instanceOf(SetProperty.class));
+        assertThat(property.getPath(), equalTo("path.to.set"));
+        assertThat(property.getDefaultValue(), contains(1, 4, 2, 5));
     }
 
     @Test

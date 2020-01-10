@@ -126,6 +126,10 @@ public class PropertyInitializer {
         return new PropertyBuilder.ListPropertyBuilder<>(type);
     }
 
+    public static <T> PropertyBuilder.SetPropertyBuilder<T> setProperty(PropertyType<T> type) {
+        return new PropertyBuilder.SetPropertyBuilder<>(type);
+    }
+
     public static <T> PropertyBuilder.MapPropertyBuilder<T> mapProperty(PropertyType<T> type) {
         return new PropertyBuilder.MapPropertyBuilder<>(type);
     }
