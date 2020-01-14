@@ -13,6 +13,11 @@ import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+/**
+ * Set property of configurable type. The sets are immutable and preserve the order.
+ *
+ * @param <T> the set type
+ */
 public class SetProperty<T> extends BaseProperty<Set<T>> {
 
     private final PropertyType<T> type;
