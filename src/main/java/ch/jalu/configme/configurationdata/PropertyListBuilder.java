@@ -56,6 +56,10 @@ public class PropertyListBuilder {
         return result;
     }
 
+    protected final Map<String, Object> getRootEntries() {
+        return rootEntries;
+    }
+
     private static Map<String, Object> getChildMap(Map<String, Object> parent, String path) {
         Object o = parent.get(path);
         if (o instanceof Map<?, ?>) {

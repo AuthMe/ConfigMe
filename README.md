@@ -18,10 +18,10 @@ A simple configuration management library with out of the box YAML support.
   in classes which implement the `SettingsHolder` interface.
 - Configurations are read from a `PropertyResource` (e.g. the provided `YamlFileResource`), which abstracts reading
   and writing.
-- The _property resource_ may be checked for completeness with the `MigrationService`, which allows you also to move
-  renamed properties or to remove obsolete ones.
-- The `SettingsManager` unifies the members above. On creation, it provokes a check by the migration service and
-  allows the user to get property values from.
+- The _property resource_ may be checked for completeness with the `MigrationService`, which allows you also to rename
+  properties or to remove obsolete ones.
+- The `SettingsManager` unifies the members above. On creation, it calls the migration service and allows you to get
+  and change property values.
 
 ### Integration
 Start using ConfigMe by adding this to your pom.xml:
@@ -52,7 +52,7 @@ public class TitleConfig implements SettingsHolder {
 
     public static final Property<Integer> TITLE_SIZE =
         newProperty("title.size", 10);
-    
+
     private TitleConfig() {
         // prevent instantiation
     }
@@ -63,28 +63,23 @@ public class TitleConfig implements SettingsHolder {
 ```java
 public class WelcomeWriter {
     public String generateWelcomeMessage() {
-        SettingsManager settings = initSettings();
-      
+        SettingsManager settings = SettingsManagerBuilder
+            .withYamlFile("config.yml")
+            .configurationData(TitleConfig.class)
+            .useDefaultMigrationService()
+            .create();
+
         // Get properties from the settings manager
-        return "<font size=\"" 
+        return "<font size=\""
             + settings.getProperty(TitleConfig.TITLE_SIZE) + "\">"
             + settings.getProperty(TitleConfig.TITLE_TEXT) + "</font>";
     }
-  
-    private SettingsManager initSettings() {
-        // Create property resource
-        PropertyResource resource = new YamlFileResource("config.yml");
-
-        // Create migration service
-        MigrationService migrationService = new PlainMigrationService();
-
-        // Create settings manager
-        return new SettingsManager(resource, migrationService, TitleConfig.class);
-    }
 }
 ```
-:pencil: See a full working example based on this 
+:pencil: Read the full documentation in the [ConfigMe Wiki](https://github.com/AuthMe/ConfigMe/wiki).
+
+:pencil: See a full working example based on this
 [here](https://github.com/AuthMe/ConfigMe/tree/master/src/test/java/ch/jalu/configme/demo).
 
-:pencil: See how to use custom classes as property types in the 
+:pencil: See how to use custom classes as property types in the
 [bean properties demo](https://github.com/AuthMe/ConfigMe/tree/master/src/test/java/ch/jalu/configme/demo/beans).

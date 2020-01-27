@@ -18,6 +18,7 @@ import static ch.jalu.configme.properties.PropertyInitializer.optionalBooleanPro
 import static ch.jalu.configme.properties.PropertyInitializer.optionalEnumProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalIntegerProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalStringProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.setProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.typeBasedProperty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
@@ -48,6 +49,7 @@ class PropertyInitializerTest {
     void shouldInstantiateBuilders() {
         assertThat(typeBasedProperty(PrimitivePropertyType.STRING), instanceOf(PropertyBuilder.TypeBasedPropertyBuilder.class));
         assertThat(listProperty(PrimitivePropertyType.INTEGER), instanceOf(PropertyBuilder.ListPropertyBuilder.class));
+        assertThat(setProperty(PrimitivePropertyType.FLOAT), instanceOf(PropertyBuilder.SetPropertyBuilder.class));
         assertThat(mapProperty(PrimitivePropertyType.DOUBLE), instanceOf(PropertyBuilder.MapPropertyBuilder.class));
         assertThat(arrayProperty(PrimitivePropertyType.BOOLEAN, Boolean[]::new), instanceOf(PropertyBuilder.ArrayPropertyBuilder.class));
         assertThat(inlineArrayProperty(StandardInlineArrayConverters.FLOAT), instanceOf(PropertyBuilder.InlineArrayPropertyBuilder.class));
