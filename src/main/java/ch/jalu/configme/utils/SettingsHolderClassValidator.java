@@ -3,7 +3,10 @@ package ch.jalu.configme.utils;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
+import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.resource.PropertyReader;
+import ch.jalu.configme.resource.PropertyResource;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
@@ -28,7 +31,7 @@ import java.util.stream.Stream;
  */
 public class SettingsHolderClassValidator {
 
-    // ---- All validations with default parameters
+    // ---- Main validation methods (with default settings)
 
     /**
      * Runs all validations of this class with the given settings holder classes.
@@ -44,7 +47,8 @@ public class SettingsHolderClassValidator {
     /**
      * Runs all validations of this class with the given settings holder classes. Some of the validations
      * are not needed from a technical point of view and may be undesired in your project. They can all be
-     * run individually and can be customized (method parameters, or overridable methods).
+     * run individually and can be customized by supplying different method parameters or by overriding methods
+     * in this class.
      *
      * @param settingHolders settings holder classes that make up the configuration data of the project
      */
@@ -59,6 +63,30 @@ public class SettingsHolderClassValidator {
         validateHasCommentOnEveryProperty(configurationData, null);
         validateCommentLengthsAreWithinBounds(configurationData, null, 90);
         validateHasAllEnumEntriesInComment(configurationData, null);
+    }
+
+    /**
+     * Validates that the migration service does not declare that a migration is required for the given
+     * configuration data, which gets saved to the provided resource beforehand. This is intended to
+     * validate that the default values of a configuration do not trigger a migration service:
+     * <ul>
+     *   <li>the configuration data should only have default values</li>
+     *   <li>the resource should only be for this method and thus use a temporary file</li>
+     * </ul>
+     *
+     * @param configurationData the configuration data (with default values, i.e. as created from the properties)
+     * @param resource property resource to save to and read from (temporary medium for testing)
+     * @param migrationService the migration service to check
+     */
+    public void validateConfigurationDataValidForMigrationService(ConfigurationData configurationData,
+                                                                  PropertyResource resource,
+                                                                  MigrationService migrationService) {
+        resource.exportProperties(configurationData);
+
+        PropertyReader reader = resource.createReader();
+        if (migrationService.checkAndMigrate(reader, configurationData) == MigrationService.MIGRATION_REQUIRED) {
+            throw new IllegalStateException("Migration service unexpectedly returned that a migration is required");
+        }
     }
 
 

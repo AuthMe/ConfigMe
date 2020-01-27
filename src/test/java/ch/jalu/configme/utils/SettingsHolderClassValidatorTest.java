@@ -3,7 +3,10 @@ package ch.jalu.configme.utils;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
+import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.resource.PropertyReader;
+import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.samples.settingsholders.FullyValidSettingsHolder1;
 import ch.jalu.configme.samples.settingsholders.FullyValidSettingsHolder2;
 import ch.jalu.configme.samples.settingsholders.MissingCommentsHolder;
@@ -25,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
@@ -198,5 +203,41 @@ class SettingsHolderClassValidatorTest {
         assertThat(e.getMessage(), equalTo("The following classes do not have a single no-args private constructor:"
             + "\n- ch.jalu.configme.samples.settingsholders.SettingsHolderWithEnumPropertyComments"
             + "\n- ch.jalu.configme.samples.settingsholders.SettingsHolderWithInvalidConstants"));
+    }
+
+    @Test
+    void shouldThrowForMigrationServiceRequiringMigration() {
+        // given
+        MigrationService migrationService = mock(MigrationService.class);
+        ConfigurationData configurationData = mock(ConfigurationData.class);
+        PropertyResource resource = mock(PropertyResource.class);
+        PropertyReader reader = mock(PropertyReader.class);
+        given(resource.createReader()).willReturn(reader);
+        given(migrationService.checkAndMigrate(reader, configurationData)).willReturn(true);
+
+        // when
+        IllegalStateException e = assertThrows(IllegalStateException.class,
+            () -> validator.validateConfigurationDataValidForMigrationService(configurationData, resource, migrationService));
+
+        // then
+        assertThat(e.getMessage(), equalTo("Migration service unexpectedly returned that a migration is required"));
+        verify(resource).exportProperties(configurationData);
+    }
+
+    @Test
+    void shouldPassValidationForMigrationServiceNotRequiringMigration() {
+        // given
+        MigrationService migrationService = mock(MigrationService.class);
+        ConfigurationData configurationData = mock(ConfigurationData.class);
+        PropertyResource resource = mock(PropertyResource.class);
+        PropertyReader reader = mock(PropertyReader.class);
+        given(resource.createReader()).willReturn(reader);
+        given(migrationService.checkAndMigrate(reader, configurationData)).willReturn(false);
+
+        // when
+        validator.validateConfigurationDataValidForMigrationService(configurationData, resource, migrationService);
+
+        // then - no exception
+        verify(resource).exportProperties(configurationData);
     }
 }
