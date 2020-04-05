@@ -4,7 +4,6 @@ import ch.jalu.configme.properties.convertresult.PropertyValue;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.function.Executable;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
@@ -37,32 +36,21 @@ public final class TestUtils {
     }
 
     // -------------
-    // JAR resources
+    // File helpers
     // -------------
-
-    /**
-     * Returns a {@link File} to a file in the JAR's resources (main or test).
-     *
-     * @param path The absolute path to the file
-     * @return The project file
-     */
-    public static File getJarFile(String path) {
-        URI uri = getUriOrThrow(path);
-        return new File(uri.getPath());
-    }
 
     /**
      * Returns a {@link Path} to a file in the JAR's resources (main or test).
      *
-     * @param path The absolute path to the file
-     * @return The Path object to the file
+     * @param path the absolute path to the file
+     * @return the Path object to the file
      */
     public static Path getJarPath(String path) {
-        String sqlFilePath = getUriOrThrow(path).getPath();
+        String filePath = getUriOrThrow(path).getPath();
         // Windows preprends the path with a '/' or '\', which Paths cannot handle
         String appropriatePath = System.getProperty("os.name").contains("indow")
-            ? sqlFilePath.substring(1)
-            : sqlFilePath;
+            ? filePath.substring(1)
+            : filePath;
         return Paths.get(appropriatePath);
     }
 
@@ -73,13 +61,13 @@ public final class TestUtils {
      * @param temporaryFolder the temporary folder to copy into
      * @return the created copy
      */
-    public static File copyFileFromResources(String path, Path temporaryFolder) {
+    public static Path copyFileFromResources(String path, Path temporaryFolder) {
         try {
             Path source = getJarPath(path);
-            Path destination = Paths.get(temporaryFolder.toString(), source.getFileName().toString());
+            Path destination = temporaryFolder.resolve(source.getFileName());
             Files.createFile(destination);
             Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
-            return destination.toFile();
+            return destination;
         } catch (IOException e) {
             throw new IllegalStateException("Could not copy test file", e);
         }

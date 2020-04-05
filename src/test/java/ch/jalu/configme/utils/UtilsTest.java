@@ -3,17 +3,24 @@ package ch.jalu.configme.utils;
 import ch.jalu.configme.exception.ConfigMeException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.spi.FileSystemProvider;
 
 import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link Utils}.
@@ -21,21 +28,33 @@ import static org.mockito.Mockito.doThrow;
 class UtilsTest {
 
     @TempDir
-    public File temporaryFolder;
+    public Path temporaryFolder;
 
     @Test
     void shouldCreateFile() {
         // given
-        File file = new File(temporaryFolder, "hello.txt");
-        File otherFile = new File(temporaryFolder, "big/path/in/middle/toFile.png");
+        Path file = temporaryFolder.resolve("hello.txt");
+        Path otherFile = temporaryFolder.resolve("big/path/in/middle/toFile.png");
 
         // when
         Utils.createFileIfNotExists(file);
         Utils.createFileIfNotExists(otherFile);
 
         // then
+        assertThat(Files.exists(file), equalTo(true));
+        assertThat(Files.exists(otherFile), equalTo(true));
+    }
+
+    @Test
+    void shouldCreateFileLegacy() {
+        // given
+        File file = new File(temporaryFolder.toFile(), "inter/mediate/parents/test.yml");
+
+        // when
+        Utils.createFileIfNotExists(file);
+
+        // then
         assertThat(file.exists(), equalTo(true));
-        assertThat(otherFile.exists(), equalTo(true));
     }
 
     @Test
@@ -50,43 +69,34 @@ class UtilsTest {
     @Test
     void shouldThrowIfDirsCannotBeCreated() {
         // given
-        File parent = new File(temporaryFolder, "parent");
-        File parentSpy = Mockito.spy(parent);
-        File fileSpy = Mockito.spy(new File(parent, "file.txt"));
-        given(fileSpy.getParentFile()).willReturn(parentSpy);
-        doReturn(false).when(parentSpy).mkdirs();
+        Path parent = temporaryFolder.resolve("foo");
+        Path file = temporaryFolder.resolve("foo/foo.txt");
+        Utils.createFileIfNotExists(parent);
 
         // when / then
         verifyException(
-            () -> Utils.createFileIfNotExists(fileSpy),
+            () -> Utils.createFileIfNotExists(file),
             ConfigMeException.class,
             "Failed to create parent folder");
     }
 
     @Test
-    void shouldThrowIfFileCannotBeCreated() throws IOException {
+    void shouldIfFileCannotBeCreated() throws IOException {
         // given
-        File parent = new File(temporaryFolder, "parent");
-        File fileSpy = Mockito.spy(new File(parent, "file.txt"));
-        doReturn(false).when(fileSpy).createNewFile();
+        FileSystemProvider provider = mock(FileSystemProvider.class);
+        FileSystem fileSystem = mock(FileSystem.class);
+        given(fileSystem.provider()).willReturn(provider);
+        Path child = mock(Path.class);
+        given(child.getFileSystem()).willReturn(fileSystem);
+        doThrow(NoSuchFileException.class).when(provider).checkAccess(child); // for Files#exists
+        doThrow(new IOException("File creation not supported")).when(provider).newByteChannel(eq(child), anySet(), any());
+
+        Path parent = temporaryFolder.resolve("parent");
+        given(child.getParent()).willReturn(parent);
 
         // when / then
         verifyException(
-            () -> Utils.createFileIfNotExists(fileSpy),
-            ConfigMeException.class,
-            "Could not create file");
-    }
-
-    @Test
-    void shouldWrapException() throws IOException {
-        // given
-        File parent = new File(temporaryFolder, "parent");
-        File fileSpy = Mockito.spy(new File(parent, "file.txt"));
-        doThrow(IOException.class).when(fileSpy).createNewFile();
-
-        // when / then
-        verifyException(
-            () -> Utils.createFileIfNotExists(fileSpy),
+            () -> Utils.createFileIfNotExists(child),
             ConfigMeException.class,
             "Failed to create file");
     }

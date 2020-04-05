@@ -11,6 +11,7 @@ import ch.jalu.configme.utils.Utils;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 
 /**
@@ -32,20 +33,30 @@ public final class SettingsManagerBuilder {
      * @param file the yaml file to use
      * @return settings manager builder
      */
-    public static SettingsManagerBuilder withYamlFile(File file) {
+    public static SettingsManagerBuilder withYamlFile(Path file) {
         return withYamlFile(file, YamlFileResourceOptions.builder().build());
+    }
+
+    /**
+     * Creates a builder, using the given YAML file to use as property resource.
+     *
+     * @param file the yaml file to use
+     * @return settings manager builder
+     */
+    public static SettingsManagerBuilder withYamlFile(File file) {
+        return withYamlFile(file.toPath(), YamlFileResourceOptions.builder().build());
     }
 
     /**
      * Creates a builder, using the given YAML file to use as property resource with the given options.
      *
-     * @param file the yaml file to use
+     * @param path the yaml file to use
      * @param resourceOptions the resource options
      * @return settings manager builder
      */
-    public static SettingsManagerBuilder withYamlFile(File file, YamlFileResourceOptions resourceOptions) {
-        Utils.createFileIfNotExists(file);
-        return new SettingsManagerBuilder(new YamlFileResource(file, resourceOptions));
+    public static SettingsManagerBuilder withYamlFile(Path path, YamlFileResourceOptions resourceOptions) {
+        Utils.createFileIfNotExists(path);
+        return new SettingsManagerBuilder(new YamlFileResource(path, resourceOptions));
     }
 
     /**

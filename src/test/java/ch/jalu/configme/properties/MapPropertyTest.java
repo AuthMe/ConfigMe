@@ -13,7 +13,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
@@ -81,7 +80,7 @@ class MapPropertyTest {
     void shouldRetainOrderAsInFile() {
         // given
         MapProperty<Integer> property = new MapProperty<>("", Collections.emptyMap(), new AlwaysFourPropertyType());
-        File file = TestUtils.copyFileFromResources("/config-sample.yml", temporaryFolder);
+        Path file = TestUtils.copyFileFromResources("/config-sample.yml", temporaryFolder);
         YamlFileResource resource = new YamlFileResource(file);
 
         // when

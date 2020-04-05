@@ -3,7 +3,9 @@ package ch.jalu.configme;
 import ch.jalu.configme.demo.beans.BeanPropertiesDemo;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -14,7 +16,7 @@ import static org.hamcrest.Matchers.equalTo;
 class BeanDemoTest {
 
     @Test
-    void shouldOutputExpectedText() {
+    void shouldOutputExpectedText() throws IOException {
         // given
         BeanPropertiesDemo beanDemo = new BeanPropertiesDemo();
 
@@ -23,9 +25,9 @@ class BeanDemoTest {
             shouldOutputExpectedText(beanDemo);
         } finally {
             // Cleanup - delete the temporary file
-            File file = beanDemo.getConfigFile();
+            Path file = beanDemo.getConfigFile();
             if (file != null) {
-                file.delete();
+                Files.delete(file);
             }
         }
     }

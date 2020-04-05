@@ -6,11 +6,13 @@ import org.yaml.snakeyaml.error.YAMLException;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,23 +25,40 @@ import java.util.stream.Collectors;
  */
 public class YamlFileReader implements PropertyReader {
 
-    private final File file;
+    private final Path path;
     private final Charset charset;
     private final Map<String, Object> root;
 
     /**
      * Constructor.
      *
-     * @param file the file to load
+     * @param path the file to load
      */
-    public YamlFileReader(File file) {
-        this(file, StandardCharsets.UTF_8);
+    public YamlFileReader(Path path) {
+        this(path, StandardCharsets.UTF_8);
     }
 
-    public YamlFileReader(File file, Charset charset) {
-        this.file = file;
+    /**
+     * Constructor.
+     *
+     * @param path the file to load
+     * @param charset the charset to read the data as
+     */
+    public YamlFileReader(Path path, Charset charset) {
+        this.path = path;
         this.charset = charset;
         this.root = loadFile();
+    }
+
+    /**
+     * Constructor (legacy). Prefer the constructors taking {@link Path}.
+     *
+     * @param file the file to load
+     * @deprecated scheduled for removal in favor of Path
+     */
+    @Deprecated
+    public YamlFileReader(File file) {
+        this(file.toPath(), StandardCharsets.UTF_8);
     }
 
     @Override
@@ -136,8 +155,7 @@ public class YamlFileReader implements PropertyReader {
     }
 
     private static boolean isLeafValue(Object o) {
-        boolean isNonEmptyMap = o instanceof Map && !((Map) o).isEmpty();
-        return !isNonEmptyMap;
+        return !(o instanceof Map) || ((Map) o).isEmpty();
     }
 
     /**
@@ -146,15 +164,16 @@ public class YamlFileReader implements PropertyReader {
      * @return map with the values from the file
      */
     protected Map<String, Object> loadFile() {
-        try (FileInputStream fis = new FileInputStream(file);
-             InputStreamReader isr = new InputStreamReader(fis, charset)) {
-            return normalizeMap((Map<Object, Object>) new Yaml().load(isr));
+        try (InputStream is = Files.newInputStream(path);
+             InputStreamReader isr = new InputStreamReader(is, charset)) {
+            Map<Object, Object> rootMap = new Yaml().load(isr);
+            return normalizeMap(rootMap);
         } catch (IOException e) {
-            throw new ConfigMeException("Could not read file '" + file + "'", e);
+            throw new ConfigMeException("Could not read file '" + path + "'", e);
         } catch (ClassCastException e) {
-            throw new ConfigMeException("Top-level is not a map in '" + file + "'", e);
+            throw new ConfigMeException("Top-level is not a map in '" + path + "'", e);
         } catch (YAMLException e) {
-            throw new ConfigMeException("YAML error while trying to load file '" + file + "'", e);
+            throw new ConfigMeException("YAML error while trying to load file '" + path + "'", e);
         }
     }
 
@@ -168,8 +187,14 @@ public class YamlFileReader implements PropertyReader {
         return new MapNormalizer().normalizeMap(map);
     }
 
+    // Scheduled for removal in favor of #getPath
+    @Deprecated
     protected final File getFile() {
-        return file;
+        return path.toFile();
+    }
+
+    protected final Path getPath() {
+        return path;
     }
 
     protected final Map<String, Object> getRoot() {

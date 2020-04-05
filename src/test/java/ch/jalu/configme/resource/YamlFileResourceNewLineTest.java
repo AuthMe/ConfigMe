@@ -31,7 +31,7 @@ class YamlFileResourceNewLineTest {
     void shouldExportWithRootAndFirstComment() throws IOException {
         // given
         Path file = createTemporaryFile(temporaryFolder);
-        YamlFileResource resource = new YamlFileResource(file.toFile(), optionsWithLinesFunction());
+        YamlFileResource resource = new YamlFileResource(file, optionsWithLinesFunction());
         ConfigurationData configurationData = configurationDataWithComments(true, true);
         configurationData.initializeValues(resource.createReader());
 
@@ -55,7 +55,7 @@ class YamlFileResourceNewLineTest {
     void shouldExportWithoutRootAndWithFirstComment() throws IOException {
         // given
         Path file = createTemporaryFile(temporaryFolder);
-        YamlFileResource resource = new YamlFileResource(file.toFile(), optionsWithLinesFunction());
+        YamlFileResource resource = new YamlFileResource(file, optionsWithLinesFunction());
         ConfigurationData configurationData = configurationDataWithComments(false, true);
         configurationData.initializeValues(resource.createReader());
 
@@ -78,7 +78,7 @@ class YamlFileResourceNewLineTest {
     void shouldExportWithRootAndWithoutFirstComment() throws IOException {
         // given
         Path file = createTemporaryFile(temporaryFolder);
-        YamlFileResource resource = new YamlFileResource(file.toFile(), optionsWithLinesFunction());
+        YamlFileResource resource = new YamlFileResource(file, optionsWithLinesFunction());
         ConfigurationData configurationData = configurationDataWithComments(true, false);
         configurationData.initializeValues(resource.createReader());
 
@@ -100,7 +100,7 @@ class YamlFileResourceNewLineTest {
     void shouldExportWithoutRootAndFirstComment() throws IOException {
         // given
         Path file = createTemporaryFile(temporaryFolder);
-        YamlFileResource resource = new YamlFileResource(file.toFile(), optionsWithLinesFunction());
+        YamlFileResource resource = new YamlFileResource(file, optionsWithLinesFunction());
         ConfigurationData configurationData = configurationDataWithComments(false, false);
         configurationData.initializeValues(resource.createReader());
 
@@ -124,7 +124,7 @@ class YamlFileResourceNewLineTest {
         YamlFileResourceOptions options = YamlFileResourceOptions.builder()
             .numberOfLinesBeforeFunction(e -> !e.isFirstElement() && e.isFirstOfGroup() ? 1 : 0)
             .build();
-        YamlFileResource resource = new YamlFileResource(file.toFile(), options);
+        YamlFileResource resource = new YamlFileResource(file, options);
         ConfigurationData configurationData = configurationDataWithComments(true, false);
         configurationData.initializeValues(resource.createReader());
 

@@ -14,7 +14,6 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Optional;
@@ -41,7 +40,7 @@ class YamlFileResourceOptionalInBeanPropertyTest {
     @Test
     void shouldSaveOptionalFieldsProperly() {
         // given
-        File file = copyFileFromResources("/beanmapper/optionalproperties/complex-commands.yml", temporaryFolder);
+        Path file = copyFileFromResources("/beanmapper/optionalproperties/complex-commands.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(file);
         PropertyReader reader = resource.createReader();
         Mapper mapper = new MapperImpl();

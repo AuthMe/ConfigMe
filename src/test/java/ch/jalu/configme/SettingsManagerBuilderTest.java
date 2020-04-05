@@ -10,7 +10,8 @@ import ch.jalu.configme.samples.TestConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static ch.jalu.configme.TestUtils.copyFileFromResources;
@@ -60,7 +61,7 @@ class SettingsManagerBuilderTest {
     @Test
     void shouldCreateSettingsManagerWithYamlFileAndDefaultMigrationService() {
         // given
-        File configFile = new File(temporaryFolder.toFile(), "config.yml");
+        Path configFile = temporaryFolder.resolve("config.yml");
         ConfigurationData configurationData = mock(ConfigurationData.class);
 
         // when
@@ -70,7 +71,7 @@ class SettingsManagerBuilderTest {
             .create();
 
         // then
-        assertThat(configFile.exists(), equalTo(true));
+        assertThat(Files.exists(configFile), equalTo(true));
         assertThat(settingsManager.getPropertyResource(), instanceOf(YamlFileResource.class));
         assertThat(settingsManager.getConfigurationData(), equalTo(configurationData));
         assertThat(settingsManager.getMigrationService().getClass(), equalTo(PlainMigrationService.class));
@@ -99,10 +100,10 @@ class SettingsManagerBuilderTest {
      * but also checks the writing and everything.
      */
     @Test
-    void shouldCreateManagerWithYamlShorthandAndMigrateConfigFile() {
+    void shouldCreateManagerWithYamlShorthandAndMigrateConfigFile() throws IOException {
         // given
-        File file = copyFileFromResources("/config-incomplete-sample.yml", temporaryFolder);
-        long fileLength = file.length();
+        Path file = copyFileFromResources("/config-incomplete-sample.yml", temporaryFolder);
+        long initialFileSize = Files.size(file);
 
         // when
         SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
@@ -112,7 +113,7 @@ class SettingsManagerBuilderTest {
 
         // then
         // check that file was written to (migration services notices incomplete file)
-        assertThat(file.length(), greaterThan(fileLength));
+        assertThat(Files.size(file), greaterThan(initialFileSize));
 
         PropertyReader reader = manager.getPropertyResource().createReader();
         // Value which already existed in file

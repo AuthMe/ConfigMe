@@ -17,7 +17,6 @@ import ch.jalu.configme.utils.TypeInformation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -46,7 +45,7 @@ class BeanPropertyTest {
         // given
         BeanProperty<CommandConfig> property =
             new BeanProperty<>(CommandConfig.class, "commandconfig", new CommandConfig());
-        File configFile = copyFileFromResources("/beanmapper/commands.yml", temporaryFolder);
+        Path configFile = copyFileFromResources("/beanmapper/commands.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(configFile);
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(singletonList(property));
         configurationData.initializeValues(resource.createReader());
@@ -75,7 +74,7 @@ class BeanPropertyTest {
         // given
         BeanProperty<CommandConfig> property =
             new BeanProperty<>(CommandConfig.class, "", new CommandConfig());
-        File configFile = copyFileFromResources("/beanmapper/commands_root_path.yml", temporaryFolder);
+        Path configFile = copyFileFromResources("/beanmapper/commands_root_path.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(configFile);
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(singletonList(property));
         configurationData.initializeValues(resource.createReader());

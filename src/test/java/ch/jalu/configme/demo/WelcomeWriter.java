@@ -4,9 +4,9 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.configme.TestUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -15,7 +15,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  */
 public class WelcomeWriter {
 
-    private File configFile;
+    private Path configFile;
 
     public static void main(String... args) {
         System.out.println("Generating HTML as per the config.yml file");
@@ -46,7 +46,7 @@ public class WelcomeWriter {
     /**
      * @return the temporary config file
      */
-    public File getConfigFile() {
+    public Path getConfigFile() {
         return configFile;
     }
 
@@ -67,10 +67,10 @@ public class WelcomeWriter {
      * @param path the path to copy
      * @return the copied file
      */
-    private static File copyFileFromJar(String path) {
+    private static Path copyFileFromJar(String path) {
         try {
-            File file = File.createTempFile("configme-", "-democonfig.yml");
-            Files.copy(TestUtils.class.getResourceAsStream(path), file.toPath(), REPLACE_EXISTING);
+            Path file = Files.createTempFile("configme-", "-democonfig.yml");
+            Files.copy(TestUtils.class.getResourceAsStream(path), file, REPLACE_EXISTING);
             return file;
         } catch (IOException e) {
             throw new IllegalStateException(e);

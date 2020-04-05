@@ -19,7 +19,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
@@ -179,7 +178,7 @@ class SettingsManagerImplTest {
     void shouldProperlySaveBeanPropertyValueSetAfterwards() {
         // given
         BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>(WorldGroupConfig.class, "groups", new WorldGroupConfig());
-        File file = copyFileFromResources("/beanmapper/worlds.yml", temporaryFolder);
+        Path file = copyFileFromResources("/beanmapper/worlds.yml", temporaryFolder);
         ConfigurationData configurationData = createConfiguration(Collections.singletonList(worldGroups));
         SettingsManager manager = new SettingsManagerImpl(
             new YamlFileResource(file), configurationData, null);
@@ -200,7 +199,7 @@ class SettingsManagerImplTest {
     @Test
     void shouldSetOptionalPropertyCorrectly() {
         // given
-        File file = copyFileFromResources("/config-sample.yml", temporaryFolder);
+        Path file = copyFileFromResources("/config-sample.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(file);
         SettingsManager settingsManager =
             new SettingsManagerImpl(resource, createConfiguration(TestConfiguration.class), null);

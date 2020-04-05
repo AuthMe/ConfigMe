@@ -4,9 +4,9 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.configme.TestUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -16,7 +16,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  */
 public class BeanPropertiesDemo {
 
-    private File configFile;
+    private Path configFile;
 
     public BeanPropertiesDemo() {
         configFile = copyFileFromJar("/demo/bean_demo_config.yml");
@@ -50,7 +50,7 @@ public class BeanPropertiesDemo {
     /**
      * @return the config file
      */
-    public File getConfigFile() {
+    public Path getConfigFile() {
         return configFile;
     }
 
@@ -60,11 +60,11 @@ public class BeanPropertiesDemo {
      * @param path the path to copy
      * @return the copied file
      */
-    private static File copyFileFromJar(String path) {
+    private static Path copyFileFromJar(String path) {
         try {
-            File file = File.createTempFile("configme-", "-beandemoconfig.yml");
-            Files.copy(TestUtils.class.getResourceAsStream(path), file.toPath(), REPLACE_EXISTING);
-            return file;
+            Path tempFile = Files.createTempFile("configme-", "-beandemoconfig.yml");
+            Files.copy(TestUtils.class.getResourceAsStream(path), tempFile, REPLACE_EXISTING);
+            return tempFile;
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }

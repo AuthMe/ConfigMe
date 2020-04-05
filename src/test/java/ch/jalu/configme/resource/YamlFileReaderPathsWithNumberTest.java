@@ -7,7 +7,6 @@ import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.nio.file.Path;
 
 import static ch.jalu.configme.TestUtils.isValidValueOf;
@@ -27,7 +26,7 @@ class YamlFileReaderPathsWithNumberTest {
     @Test
     void shouldReadPropertiesFromFile() {
         // given
-        File file = TestUtils.copyFileFromResources("/configurationfiles/config-with-number-paths.yml", temporaryFolder);
+        Path file = TestUtils.copyFileFromResources("/configurationfiles/config-with-number-paths.yml", temporaryFolder);
         YamlFileResource yamlFileResource = new YamlFileResource(file);
         PropertyReader reader = yamlFileResource.createReader();
 

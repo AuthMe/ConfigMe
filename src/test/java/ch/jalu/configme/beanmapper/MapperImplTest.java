@@ -36,7 +36,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import static ch.jalu.configme.TestUtils.getJarFile;
+import static ch.jalu.configme.TestUtils.getJarPath;
 import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -441,7 +441,7 @@ class MapperImplTest {
     }
 
     private static PropertyReader createReaderFromFile(String file) {
-        return new YamlFileReader(getJarFile(file));
+        return new YamlFileReader(getJarPath(file));
     }
 
     private static MappingContext createContextWithType(Class<?> clazz) {

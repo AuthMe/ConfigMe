@@ -10,7 +10,6 @@ import org.hamcrest.core.CombinableMatcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,7 +43,7 @@ class BeanWithCollectionOfBeanTypeTest {
     @Test
     void shouldLoadValue() {
         // given
-        File file = TestUtils.copyFileFromResources(NESTED_CHAT_COMPONENT_YML, temporaryFolder);
+        Path file = TestUtils.copyFileFromResources(NESTED_CHAT_COMPONENT_YML, temporaryFolder);
         SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file)
             .configurationData(PropertyHolder.class).create();
 
@@ -63,7 +62,7 @@ class BeanWithCollectionOfBeanTypeTest {
     @Test
     void shouldSerializeProperly() throws IOException {
         // given
-        File file = TestUtils.copyFileFromResources(NESTED_CHAT_COMPONENT_YML, temporaryFolder);
+        Path file = TestUtils.copyFileFromResources(NESTED_CHAT_COMPONENT_YML, temporaryFolder);
         SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file)
             .configurationData(PropertyHolder.class).create();
 
@@ -71,7 +70,7 @@ class BeanWithCollectionOfBeanTypeTest {
         settingsManager.save();
 
         // then
-        List<String> lines = Files.readAllLines(file.toPath());
+        List<String> lines = Files.readAllLines(file);
         assertThat(lines, contains(
             "message-key:",
             "    color: blue",
@@ -89,7 +88,7 @@ class BeanWithCollectionOfBeanTypeTest {
     @Test
     void shouldSerializeComplexObject() throws IOException {
         // given
-        File file = TestUtils.copyFileFromResources(NESTED_CHAT_COMPONENT_YML, temporaryFolder);
+        Path file = TestUtils.copyFileFromResources(NESTED_CHAT_COMPONENT_YML, temporaryFolder);
         SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file)
             .configurationData(PropertyHolder.class).create();
         settingsManager.setProperty(PropertyHolder.TEST, createComplexComponent());
@@ -98,7 +97,7 @@ class BeanWithCollectionOfBeanTypeTest {
         settingsManager.save();
 
         // then
-        List<String> lines = Files.readAllLines(file.toPath());
+        List<String> lines = Files.readAllLines(file);
         List<String> expectedLines = Files.readAllLines(TestUtils.getJarPath("/beanmapper/nested_chat_component_complex_expected.yml"));
         assertThat(lines, equalTo(expectedLines));
 

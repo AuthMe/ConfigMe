@@ -40,6 +40,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -57,7 +58,7 @@ class YamlFileResourceTest {
     @Test
     void shouldWriteMissingProperties() {
         // given
-        File file = copyFileFromResources(INCOMPLETE_FILE);
+        Path file = copyFileFromResources(INCOMPLETE_FILE);
         YamlFileResource resource = new YamlFileResource(file);
         ConfigurationData configurationData = createConfiguration(TestConfiguration.class);
         configurationData.initializeValues(resource.createReader());
@@ -93,7 +94,7 @@ class YamlFileResourceTest {
     @Test
     void shouldProperlyExportAnyValues() {
         // given
-        File file = copyFileFromResources(DIFFICULT_FILE);
+        Path file = copyFileFromResources(DIFFICULT_FILE);
         YamlFileResource resource = new YamlFileResource(file);
 
         // Properties
@@ -152,14 +153,14 @@ class YamlFileResourceTest {
     @Test
     void shouldWrapIoExceptionInConfigMeException() throws IOException {
         // given
-        File file = copyFileFromResources(INCOMPLETE_FILE);
+        Path file = copyFileFromResources(INCOMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         ConfigurationData configurationData = createConfiguration(TestConfiguration.class);
         configurationData.initializeValues(resource.createReader());
-        file.delete();
+        Files.delete(file);
         // Hacky: the only way we can easily provoke an IOException is by deleting the file and creating a folder
         // with the same name...
-        Path childFolder = temporaryFolder.resolve(file.getName());
+        Path childFolder = temporaryFolder.resolve(file.getFileName().toString());
         Files.createDirectory(childFolder);
 
         // when / then
@@ -174,7 +175,7 @@ class YamlFileResourceTest {
     @Test
     void shouldExportConfigurationWithExpectedComments() throws IOException {
         // given
-        File file = copyFileFromResources(COMPLETE_FILE);
+        Path file = copyFileFromResources(COMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         ConfigurationData configurationData = createConfiguration(TestConfiguration.class);
         configurationData.initializeValues(resource.createReader());
@@ -185,7 +186,7 @@ class YamlFileResourceTest {
         // then
         // The IDE likes manipulating the whitespace in the expected file. As long as it's handled outside of an IDE
         // this test should be fine.
-        assertThat(Files.readAllLines(file.toPath()),
+        assertThat(Files.readAllLines(file),
             equalTo(Files.readAllLines(getJarPath("/config-export-expected.yml"))));
     }
 
@@ -195,7 +196,7 @@ class YamlFileResourceTest {
         ConfigurationData configurationData = createConfiguration(asList(
             new OptionalProperty<>(TestConfiguration.DURATION_IN_SECONDS),
             new OptionalProperty<>(TestConfiguration.RATIO_ORDER)));
-        File file = copyFileFromResources(INCOMPLETE_FILE);
+        Path file = copyFileFromResources(INCOMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         configurationData.initializeValues(resource.createReader());
 
@@ -203,7 +204,7 @@ class YamlFileResourceTest {
         resource.exportProperties(configurationData);
 
         // then
-        List<String> exportedLines = Files.readAllLines(file.toPath());
+        List<String> exportedLines = Files.readAllLines(file);
         assertThat(exportedLines, contains(
             "test:",
             "    duration: 22"
@@ -216,7 +217,7 @@ class YamlFileResourceTest {
         ConfigurationData configurationData = createConfiguration(asList(
             new OptionalProperty<>(TestConfiguration.DURATION_IN_SECONDS),
             new OptionalProperty<>(TestConfiguration.RATIO_ORDER)));
-        File file = copyFileFromResources(COMPLETE_FILE);
+        Path file = copyFileFromResources(COMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         configurationData.initializeValues(resource.createReader());
 
@@ -224,7 +225,7 @@ class YamlFileResourceTest {
         resource.exportProperties(configurationData);
 
         // then
-        List<String> exportedLines = Files.readAllLines(file.toPath());
+        List<String> exportedLines = Files.readAllLines(file);
         assertThat(exportedLines, contains(
             "test:",
             "    duration: 22",
@@ -241,7 +242,7 @@ class YamlFileResourceTest {
         config.setDuration(3);
         config.setCommands(Collections.emptyMap());
 
-        File file = copyFileFromResources("/beanmapper/commands.yml");
+        Path file = copyFileFromResources("/beanmapper/commands.yml");
         YamlFileResource resource = new YamlFileResource(file);
 
         Property<CommandConfig> commandConfigProperty =
@@ -253,7 +254,7 @@ class YamlFileResourceTest {
         resource.exportProperties(configurationData);
 
         // then
-        List<String> exportedLines = Files.readAllLines(file.toPath());
+        List<String> exportedLines = Files.readAllLines(file);
         assertThat(exportedLines, contains(
             "config:",
             "    commands: {}",
@@ -264,7 +265,7 @@ class YamlFileResourceTest {
     @Test
     void shouldExportWithUtf8() throws IOException {
         // given
-        File file = copyFileFromResources("/charsets/utf8_sample.yml");
+        Path file = copyFileFromResources("/charsets/utf8_sample.yml");
         YamlFileResource resource = new YamlFileResource(file);
 
         Property<String> firstProp = newProperty("first", "");
@@ -278,7 +279,7 @@ class YamlFileResourceTest {
         resource.exportProperties(configurationData);
 
         // then
-        List<String> exportedLines = Files.readAllLines(file.toPath());
+        List<String> exportedLines = Files.readAllLines(file);
         assertThat(exportedLines, contains(
             "first: Санкт-Петербург",
             "second: თბილისი",
@@ -289,7 +290,7 @@ class YamlFileResourceTest {
     @Test
     void shouldExportWithIso88591() throws IOException {
         // given
-        File file = copyFileFromResources("/charsets/iso-8859-1_sample.yml");
+        Path file = copyFileFromResources("/charsets/iso-8859-1_sample.yml");
 
         YamlFileResourceOptions options = YamlFileResourceOptions.builder()
             .charset(StandardCharsets.ISO_8859_1)
@@ -306,7 +307,7 @@ class YamlFileResourceTest {
         resource.exportProperties(configurationData);
 
         // then
-        List<String> exportedLines = Files.readAllLines(file.toPath(), StandardCharsets.ISO_8859_1);
+        List<String> exportedLines = Files.readAllLines(file, StandardCharsets.ISO_8859_1);
         assertThat(exportedLines, contains(
             "elem:",
             "    first: test Ã ö û þ",
@@ -317,23 +318,27 @@ class YamlFileResourceTest {
     @Test
     void shouldReturnFieldsOfResource() {
         // given
-        File file = mock(File.class);
+        Path configFile = mock(Path.class);
+        File givenFile = mock(File.class);
+        given(configFile.toFile()).willReturn(givenFile);
         YamlFileResourceOptions options = mock(YamlFileResourceOptions.class);
-        YamlFileResource resource = new YamlFileResource(file, options);
+        YamlFileResource resource = new YamlFileResource(configFile, options);
 
         // when
+        Path returnedPath = resource.getPath();
         File returnedFile = resource.getFile();
         YamlFileResourceOptions returnedOptions = resource.getOptions();
 
         // then
-        assertThat(returnedFile, sameInstance(file));
+        assertThat(returnedPath, sameInstance(configFile));
+        assertThat(returnedFile, sameInstance(givenFile));
         assertThat(returnedOptions, sameInstance(options));
     }
 
     @Test
     void shouldExportWithCustomIndentationSize() throws IOException {
         // given
-        File file = copyFileFromResources("/config-sample.yml");
+        Path file = copyFileFromResources("/config-sample.yml");
 
         YamlFileResourceOptions options = YamlFileResourceOptions.builder()
             .indentationSize(2)
@@ -347,7 +352,7 @@ class YamlFileResourceTest {
         resource.exportProperties(configurationData);
 
         // then
-        List<String> exportedLines = Files.readAllLines(file.toPath(), StandardCharsets.ISO_8859_1);
+        List<String> exportedLines = Files.readAllLines(file, StandardCharsets.ISO_8859_1);
         assertThat(exportedLines, contains(
             "# Test section",
             "test:",
@@ -397,7 +402,7 @@ class YamlFileResourceTest {
         ));
     }
 
-    private File copyFileFromResources(String path) {
+    private Path copyFileFromResources(String path) {
         return TestUtils.copyFileFromResources(path, temporaryFolder);
     }
 }

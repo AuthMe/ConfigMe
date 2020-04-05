@@ -48,8 +48,8 @@ class YamlFileReaderTest {
     @Test
     void shouldThrowForAbsentYamlMap() throws IOException {
         // given
-        File file = new File(temporaryFolder.toFile(), "temp-file");
-        Files.write(file.toPath(), "123".getBytes());
+        Path file = temporaryFolder.resolve("temp-file");
+        Files.write(file, "123".getBytes());
 
         // when / then
         verifyException(() -> new YamlFileReader(file),
@@ -59,7 +59,7 @@ class YamlFileReaderTest {
     @Test
     void shouldWrapIOException() {
         // given
-        File file = new File(temporaryFolder.toFile(), "test");
+        Path file = temporaryFolder.resolve("test");
 
         // when / then
         verifyException(() -> new YamlFileReader(file),
@@ -69,7 +69,7 @@ class YamlFileReaderTest {
     @Test
     void shouldReadAllProperties() {
         // given
-        File config = copyFileFromResources(COMPLETE_FILE);
+        Path config = copyFileFromResources(COMPLETE_FILE);
 
         // when
         PropertyReader reader = new YamlFileReader(config);
@@ -97,7 +97,7 @@ class YamlFileReaderTest {
     @Test
     void shouldRetrieveTypedValues() {
         // given
-        File file = copyFileFromResources(COMPLETE_FILE);
+        Path file = copyFileFromResources(COMPLETE_FILE);
         PropertyReader reader = new YamlFileReader(file);
 
         // when / then
@@ -110,7 +110,7 @@ class YamlFileReaderTest {
     @Test
     void shouldReadValuesAndHandleAbsentOnes() {
         // given
-        File file = copyFileFromResources(INCOMPLETE_FILE);
+        Path file = copyFileFromResources(INCOMPLETE_FILE);
 
         // when
         PropertyReader reader = new YamlFileReader(file);
@@ -125,7 +125,7 @@ class YamlFileReaderTest {
     @Test
     void shouldReturnIfReaderContainsValue() {
         // given
-        File file = copyFileFromResources(INCOMPLETE_FILE);
+        Path file = copyFileFromResources(INCOMPLETE_FILE);
         PropertyReader reader = new YamlFileReader(file);
 
         // when
@@ -141,7 +141,7 @@ class YamlFileReaderTest {
     @SuppressWarnings("unchecked")
     void shouldReturnRootForEmptyString() {
         // given
-        File file = copyFileFromResources(COMPLETE_FILE);
+        Path file = copyFileFromResources(COMPLETE_FILE);
         PropertyReader reader = new YamlFileReader(file);
 
         // when
@@ -155,7 +155,7 @@ class YamlFileReaderTest {
     @Test
     void shouldReturnNullForUnknownPath() {
         // given
-        File file = copyFileFromResources(COMPLETE_FILE);
+        Path file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
 
         // when / then
@@ -179,22 +179,23 @@ class YamlFileReaderTest {
     @Test
     void shouldHandleEmptyFile() {
         // given
-        Path file = createTemporaryFile(temporaryFolder);
-        File pathAsFile = file.toFile();
-        YamlFileReader reader = new YamlFileReader(pathAsFile);
+        Path configFile = createTemporaryFile(temporaryFolder);
+        YamlFileReader reader = new YamlFileReader(configFile);
 
         // when
-        File result = reader.getFile();
+        Path result = reader.getPath();
+        File resultFile = reader.getFile();
 
         // then
-        assertThat(result, sameInstance(pathAsFile));
+        assertThat(result, sameInstance(configFile));
+        assertThat(resultFile, equalTo(configFile.toFile()));
         assertThat(reader.getRoot(), anEmptyMap());
     }
 
     @Test
     void shouldReadWithUtf8() {
         // given
-        File file = copyFileFromResources("/charsets/utf8_sample.yml");
+        Path file = copyFileFromResources("/charsets/utf8_sample.yml");
         YamlFileReader reader = new YamlFileReader(file);
 
         // when / then
@@ -206,7 +207,7 @@ class YamlFileReaderTest {
     @Test
     void shouldReadWithCustomCharset() {
         // given
-        File file = copyFileFromResources("/charsets/iso-8859-1_sample.yml");
+        Path file = copyFileFromResources("/charsets/iso-8859-1_sample.yml");
         YamlFileReader reader = new YamlFileReader(file, StandardCharsets.ISO_8859_1);
 
         // when / then
@@ -217,7 +218,7 @@ class YamlFileReaderTest {
     @Test
     void shouldReturnKeysOfFile() {
         // given
-        File file = copyFileFromResources(COMPLETE_FILE);
+        Path file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
 
         // when
@@ -235,7 +236,7 @@ class YamlFileReaderTest {
     @Test
     void shouldReturnLeafNodeKeysInFile() {
         // given
-        File file = copyFileFromResources(COMPLETE_FILE);
+        Path file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
 
         // when
@@ -253,7 +254,7 @@ class YamlFileReaderTest {
     @Test
     void shouldTreatEmptyMapsAsLeafNodes() {
         // given
-        File file = copyFileFromResources("/beanmapper/nested_chat_component_complex_expected.yml");
+        Path file = copyFileFromResources("/beanmapper/nested_chat_component_complex_expected.yml");
         YamlFileReader reader = new YamlFileReader(file);
 
         // when
@@ -275,7 +276,7 @@ class YamlFileReaderTest {
     @Test
     void shouldReturnChildrenPathsOfGivenPath() {
         // given
-        File file = copyFileFromResources(COMPLETE_FILE);
+        Path file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
 
         // when
@@ -288,7 +289,7 @@ class YamlFileReaderTest {
     @Test
     void shouldReturnChildrenPathsOfRoot() {
         // given
-        File file = copyFileFromResources(COMPLETE_FILE);
+        Path file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
 
         // when
@@ -301,7 +302,7 @@ class YamlFileReaderTest {
     @Test
     void shouldReturnEmptySetForNonExistentOrLeafValue() {
         // given
-        File file = copyFileFromResources(COMPLETE_FILE);
+        Path file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
 
         // when
@@ -313,7 +314,7 @@ class YamlFileReaderTest {
         assertThat(leafChildren, empty());
     }
 
-    private File copyFileFromResources(String path) {
+    private Path copyFileFromResources(String path) {
         return TestUtils.copyFileFromResources(path, temporaryFolder);
     }
 }

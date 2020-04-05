@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +35,7 @@ class YamlSetPropertyExportTest {
     @TempDir
     public Path temporaryFolder;
 
-    private File configFile;
+    private Path configFile;
 
     @BeforeEach
     void copyConfigFile() {
@@ -58,7 +57,7 @@ class YamlSetPropertyExportTest {
         assertThat(setProperty.determineValue(resource.createReader()).getValue(),
             contains(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD));
 
-        assertThat(Files.readAllLines(configFile.toPath()), contains(
+        assertThat(Files.readAllLines(configFile), contains(
             "sample:",
             "    ratio:",
             "        fields: ",

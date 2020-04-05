@@ -22,7 +22,7 @@ public class BeanExtensionTest {
     public void shouldLoadFileAndConvertSingleValuesToCollection() {
         // given
         SettingsManager settingsManager = SettingsManagerBuilder
-            .withYamlFile(TestUtils.getJarFile(CONFIG_FILE))
+            .withYamlFile(TestUtils.getJarPath(CONFIG_FILE))
             .configurationData(BeanExtensionSettingsHolder.class)
             .create();
 

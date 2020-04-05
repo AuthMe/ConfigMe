@@ -3,7 +3,9 @@ package ch.jalu.configme;
 import ch.jalu.configme.demo.WelcomeWriter;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -14,7 +16,7 @@ import static org.hamcrest.Matchers.equalTo;
 class ConfigDemoTest {
 
     @Test
-    void shouldGenerateExpectedHtml() {
+    void shouldGenerateExpectedHtml() throws IOException {
         // given
         WelcomeWriter writer = new WelcomeWriter();
 
@@ -23,9 +25,9 @@ class ConfigDemoTest {
             shouldGenerateExpectedHtml(writer);
         } finally {
             // Cleanup - delete the temporary file
-            File file = writer.getConfigFile();
+            Path file = writer.getConfigFile();
             if (file != null) {
-                file.delete();
+                Files.delete(file);
             }
         }
     }

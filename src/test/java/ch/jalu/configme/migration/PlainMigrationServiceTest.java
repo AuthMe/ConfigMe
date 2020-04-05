@@ -15,7 +15,6 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
 import java.nio.file.Path;
 
 import static ch.jalu.configme.configurationdata.ConfigurationDataBuilder.createConfiguration;
@@ -152,7 +151,7 @@ class PlainMigrationServiceTest {
 
     private PropertyReader createReaderSpy(String file) {
         // It's a little difficult to set up mock behavior for all cases, so use a YML file from test/resources
-        File copy = TestUtils.copyFileFromResources(file, temporaryFolder);
+        Path copy = TestUtils.copyFileFromResources(file, temporaryFolder);
         return Mockito.spy(new YamlFileReader(copy));
     }
 

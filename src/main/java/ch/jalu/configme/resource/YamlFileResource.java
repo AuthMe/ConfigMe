@@ -9,10 +9,12 @@ import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,30 +23,41 @@ import java.util.Map;
 
 public class YamlFileResource implements PropertyResource {
 
-    private final File file;
+    private final Path path;
     private final YamlFileResourceOptions options;
     private final String indentationSpace;
     private Yaml yamlObject;
 
-    public YamlFileResource(File file) {
-        this(file, YamlFileResourceOptions.builder().build());
+    public YamlFileResource(Path path) {
+        this(path, YamlFileResourceOptions.builder().build());
     }
 
-    public YamlFileResource(File file, YamlFileResourceOptions options) {
-        this.file = file;
+    public YamlFileResource(Path path, YamlFileResourceOptions options) {
+        this.path = path;
         this.options = options;
         this.indentationSpace = String.join("", Collections.nCopies(options.getIndentationSize(), " "));
     }
 
+    /**
+     * Constructor (legacy). Prefer {@link #YamlFileResource(Path)}.
+     *
+     * @param file the file
+     * @deprecated scheduled for removal
+     */
+    @Deprecated
+    public YamlFileResource(File file) {
+        this(file.toPath());
+    }
+
     @Override
     public PropertyReader createReader() {
-        return new YamlFileReader(file, options.getCharset());
+        return new YamlFileReader(path, options.getCharset());
     }
 
     @Override
     public void exportProperties(ConfigurationData configurationData) {
-        try (FileOutputStream fos = new FileOutputStream(file);
-             OutputStreamWriter writer = new OutputStreamWriter(fos, options.getCharset())) {
+        try (OutputStream os = Files.newOutputStream(path);
+             OutputStreamWriter writer = new OutputStreamWriter(os, options.getCharset())) {
             PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
             for (Property<?> property : configurationData.getProperties()) {
                 final Object exportValue = getExportValue(property, configurationData);
@@ -53,14 +66,20 @@ public class YamlFileResource implements PropertyResource {
             writer.append("\n");
             writer.flush();
         } catch (IOException e) {
-            throw new ConfigMeException("Could not save config to '" + file.getPath() + "'", e);
+            throw new ConfigMeException("Could not save config to '" + path + "'", e);
         } finally {
             onWriteComplete();
         }
     }
 
+    protected final Path getPath() {
+        return path;
+    }
+
+    // Scheduled for removal in favor of #getPath
+    @Deprecated
     protected final File getFile() {
-        return file;
+        return path.toFile();
     }
 
     /**
