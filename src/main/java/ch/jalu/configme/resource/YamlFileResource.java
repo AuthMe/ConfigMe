@@ -15,12 +15,13 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class YamlFileResource implements PropertyResource {
 
-    private static final String INDENTATION = "    ";
+    private final String indentationSpace;
 
     private final File file;
     private final YamlFileResourceOptions options;
@@ -33,6 +34,8 @@ public class YamlFileResource implements PropertyResource {
     public YamlFileResource(File file, YamlFileResourceOptions options) {
         this.file = file;
         this.options = options;
+
+        indentationSpace = String.join("", Collections.nCopies(options.getIndentationSize(), " "));
     }
 
     @Override
@@ -65,10 +68,10 @@ public class YamlFileResource implements PropertyResource {
     /**
      * Exports the given value at the provided path.
      *
-     * @param writer the file writer to write with
+     * @param writer        the file writer to write with
      * @param pathTraverser the path traverser (e.g. keeps track of which path elements are new)
-     * @param path the path to export at
-     * @param value the value to export
+     * @param path          the path to export at
+     * @param value         the value to export
      * @throws IOException .
      */
     protected void exportValue(Writer writer, PropertyPathTraverser pathTraverser,
@@ -77,7 +80,7 @@ public class YamlFileResource implements PropertyResource {
             return;
         }
 
-        if (value instanceof Map<?, ?> && !((Map) value).isEmpty()) {
+        if (value instanceof Map<?, ?> && !((Map<?, ?>) value).isEmpty()) {
             final String pathPrefix = path.isEmpty() ? "" : path + ".";
 
             for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
@@ -90,20 +93,20 @@ public class YamlFileResource implements PropertyResource {
                 writeIndentingBetweenLines(writer, pathElement);
                 writeComments(writer, pathElement.getIndentationLevel(), pathElement);
                 writer.append(getNewLineCheckingFileLength(pathElement))
-                    .append(indent(pathElement.getIndentationLevel()))
-                    .append(pathElement.getName())
-                    .append(":");
+                      .append(indent(pathElement.getIndentationLevel()))
+                      .append(pathElement.getName())
+                      .append(":");
             }
 
             writer.append(" ")
-                .append(toYamlIndented(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
+                  .append(toYamlIndented(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
         }
     }
 
     /**
      * Writes the given comment lines as YAML comments at the given indentation level.
      *
-     * @param writer the writer to write with
+     * @param writer      the writer to write with
      * @param indentation the level at which the comment lines should be indented
      * @param pathElement the path element for which the comments are being generated
      * @throws IOException .
@@ -116,9 +119,12 @@ public class YamlFileResource implements PropertyResource {
         String lineStart = pathElement.isFirstElement() ? "" : "\n";
         String commentStart = indent(indentation) + "# ";
         for (String comment : pathElement.getComments()) {
-            writer.append(lineStart)
-                .append(commentStart)
-                .append(comment);
+            writer.append(lineStart);
+
+            if (!comment.equals("\n")) writer.append(commentStart);
+            else comment = "";
+
+            writer.append(comment);
             lineStart = "\n";
         }
     }
@@ -138,7 +144,7 @@ public class YamlFileResource implements PropertyResource {
      * should be applied to all lines except for the first one (such that this method's return value can simply
      * be appended to a properly indented property prefix like {@code name:}).
      *
-     * @param value the value to convert to YAML
+     * @param value  the value to convert to YAML
      * @param indent level of indentation to use
      * @return the value as YAML at the given indentation level
      */
@@ -179,7 +185,7 @@ public class YamlFileResource implements PropertyResource {
     protected String indent(int level) {
         String result = "";
         for (int i = 0; i < level; i++) {
-            result += INDENTATION;
+            result += indentationSpace;
         }
         return result;
     }
@@ -220,7 +226,7 @@ public class YamlFileResource implements PropertyResource {
 
     private static List<?> collectionToList(Collection<?> collection) {
         return collection instanceof List<?>
-            ? (List<?>) collection
-            : new ArrayList<>(collection);
+               ? (List<?>) collection
+               : new ArrayList<>(collection);
     }
 }
