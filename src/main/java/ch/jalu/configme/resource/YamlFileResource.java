@@ -183,11 +183,11 @@ public class YamlFileResource implements PropertyResource {
      * @return whitespace to prepend to a line for proper indentation
      */
     protected String indent(int level) {
-        String result = "";
+        final StringBuilder result = new StringBuilder();
         for (int i = 0; i < level; i++) {
-            result += indentationSpace;
+            result.append(indentationSpace);
         }
-        return result;
+        return result.toString();
     }
 
     /**
