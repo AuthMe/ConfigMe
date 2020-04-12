@@ -15,12 +15,13 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class YamlFileResource implements PropertyResource {
 
-    private static final String INDENTATION = "    ";
+    private final String indentationSpace;
 
     private final File file;
     private final YamlFileResourceOptions options;
@@ -33,6 +34,8 @@ public class YamlFileResource implements PropertyResource {
     public YamlFileResource(File file, YamlFileResourceOptions options) {
         this.file = file;
         this.options = options;
+
+        indentationSpace = String.join("", Collections.nCopies(options.getIndentationSize(), " "));
     }
 
     @Override
@@ -77,7 +80,7 @@ public class YamlFileResource implements PropertyResource {
             return;
         }
 
-        if (value instanceof Map<?, ?> && !((Map) value).isEmpty()) {
+        if (value instanceof Map<?, ?> && !((Map<?, ?>) value).isEmpty()) {
             final String pathPrefix = path.isEmpty() ? "" : path + ".";
 
             for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
@@ -90,13 +93,13 @@ public class YamlFileResource implements PropertyResource {
                 writeIndentingBetweenLines(writer, pathElement);
                 writeComments(writer, pathElement.getIndentationLevel(), pathElement);
                 writer.append(getNewLineCheckingFileLength(pathElement))
-                    .append(indent(pathElement.getIndentationLevel()))
-                    .append(pathElement.getName())
-                    .append(":");
+                      .append(indent(pathElement.getIndentationLevel()))
+                      .append(pathElement.getName())
+                      .append(":");
             }
 
             writer.append(" ")
-                .append(toYamlIndented(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
+                  .append(toYamlIndented(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
         }
     }
 
@@ -116,9 +119,12 @@ public class YamlFileResource implements PropertyResource {
         String lineStart = pathElement.isFirstElement() ? "" : "\n";
         String commentStart = indent(indentation) + "# ";
         for (String comment : pathElement.getComments()) {
-            writer.append(lineStart)
-                .append(commentStart)
-                .append(comment);
+            writer.append(lineStart);
+
+            if (!comment.equals("\n")) writer.append(commentStart);
+            else comment = "";
+
+            writer.append(comment);
             lineStart = "\n";
         }
     }
@@ -177,11 +183,11 @@ public class YamlFileResource implements PropertyResource {
      * @return whitespace to prepend to a line for proper indentation
      */
     protected String indent(int level) {
-        String result = "";
+        final StringBuilder result = new StringBuilder();
         for (int i = 0; i < level; i++) {
-            result += INDENTATION;
+            result.append(indentationSpace);
         }
-        return result;
+        return result.toString();
     }
 
     /**
@@ -220,7 +226,7 @@ public class YamlFileResource implements PropertyResource {
 
     private static List<?> collectionToList(Collection<?> collection) {
         return collection instanceof List<?>
-            ? (List<?>) collection
-            : new ArrayList<>(collection);
+               ? (List<?>) collection
+               : new ArrayList<>(collection);
     }
 }

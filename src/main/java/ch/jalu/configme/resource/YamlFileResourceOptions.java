@@ -11,6 +11,7 @@ public class YamlFileResourceOptions {
 
     private final Charset charset;
     private final ToIntFunction<PathElement> numberOfLinesBeforeFunction;
+    private final int indentationSize;
 
     /**
      * Constructor. Use {@link #builder()} to instantiate option objects.
@@ -19,9 +20,11 @@ public class YamlFileResourceOptions {
      * @param numberOfLinesBeforeFunction function defining how many lines before a path element should be in the export
      */
     protected YamlFileResourceOptions(@Nullable Charset charset,
-                                      @Nullable ToIntFunction<PathElement> numberOfLinesBeforeFunction) {
+                                      @Nullable ToIntFunction<PathElement> numberOfLinesBeforeFunction,
+                                      int indentationSize) {
         this.charset = charset == null ? StandardCharsets.UTF_8 : charset;
         this.numberOfLinesBeforeFunction = numberOfLinesBeforeFunction;
+        this.indentationSize = indentationSize;
     }
 
     public static Builder builder() {
@@ -36,6 +39,10 @@ public class YamlFileResourceOptions {
         return numberOfLinesBeforeFunction == null ? 0 : numberOfLinesBeforeFunction.applyAsInt(pathElement);
     }
 
+    public int getIndentationSize() {
+        return indentationSize;
+    }
+
     @Nullable
     protected final ToIntFunction<PathElement> getIndentFunction() {
         return numberOfLinesBeforeFunction;
@@ -44,6 +51,7 @@ public class YamlFileResourceOptions {
     public static class Builder {
         private Charset charset;
         private ToIntFunction<PathElement> numberOfLinesBeforeFunction;
+        private int indentationSize = 4;
 
         public Builder charset(Charset charset) {
             this.charset = charset;
@@ -55,8 +63,13 @@ public class YamlFileResourceOptions {
             return this;
         }
 
+        public Builder indentationSize(final int indentationSize) {
+            this.indentationSize = indentationSize;
+            return this;
+        }
+
         public YamlFileResourceOptions build() {
-            return new YamlFileResourceOptions(charset, numberOfLinesBeforeFunction);
+            return new YamlFileResourceOptions(charset, numberOfLinesBeforeFunction, indentationSize);
         }
     }
 }
