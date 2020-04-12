@@ -68,10 +68,10 @@ public class YamlFileResource implements PropertyResource {
     /**
      * Exports the given value at the provided path.
      *
-     * @param writer        the file writer to write with
+     * @param writer the file writer to write with
      * @param pathTraverser the path traverser (e.g. keeps track of which path elements are new)
-     * @param path          the path to export at
-     * @param value         the value to export
+     * @param path the path to export at
+     * @param value the value to export
      * @throws IOException .
      */
     protected void exportValue(Writer writer, PropertyPathTraverser pathTraverser,
@@ -106,7 +106,7 @@ public class YamlFileResource implements PropertyResource {
     /**
      * Writes the given comment lines as YAML comments at the given indentation level.
      *
-     * @param writer      the writer to write with
+     * @param writer the writer to write with
      * @param indentation the level at which the comment lines should be indented
      * @param pathElement the path element for which the comments are being generated
      * @throws IOException .
@@ -144,7 +144,7 @@ public class YamlFileResource implements PropertyResource {
      * should be applied to all lines except for the first one (such that this method's return value can simply
      * be appended to a properly indented property prefix like {@code name:}).
      *
-     * @param value  the value to convert to YAML
+     * @param value the value to convert to YAML
      * @param indent level of indentation to use
      * @return the value as YAML at the given indentation level
      */

@@ -11,12 +11,12 @@ public class YamlFileResourceOptions {
 
     private final Charset charset;
     private final ToIntFunction<PathElement> numberOfLinesBeforeFunction;
-    private int indentationSize;
+    private final int indentationSize;
 
     /**
      * Constructor. Use {@link #builder()} to instantiate option objects.
      *
-     * @param charset                     the charset
+     * @param charset the charset
      * @param numberOfLinesBeforeFunction function defining how many lines before a path element should be in the export
      */
     protected YamlFileResourceOptions(@Nullable Charset charset,
@@ -63,7 +63,7 @@ public class YamlFileResourceOptions {
             return this;
         }
 
-        public Builder setIndentationSize(final int indentationSize) {
+        public Builder indentationSize(final int indentationSize) {
             this.indentationSize = indentationSize;
             return this;
         }
