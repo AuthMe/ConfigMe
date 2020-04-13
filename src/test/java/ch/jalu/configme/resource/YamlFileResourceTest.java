@@ -330,6 +330,71 @@ class YamlFileResourceTest {
         assertThat(returnedOptions, sameInstance(options));
     }
 
+    @Test
+    void shouldExportWithCustomIndentationSize() throws IOException {
+        // given
+        File file = copyFileFromResources("/config-sample.yml");
+
+        YamlFileResourceOptions options = YamlFileResourceOptions.builder()
+            .indentationSize(2)
+            .build();
+        YamlFileResource resource = new YamlFileResource(file, options);
+
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestConfiguration.class);
+        configurationData.initializeValues(resource.createReader());
+
+        // when
+        resource.exportProperties(configurationData);
+
+        // then
+        List<String> exportedLines = Files.readAllLines(file.toPath(), StandardCharsets.ISO_8859_1);
+        assertThat(exportedLines, contains(
+            "# Test section",
+            "test:",
+            "  # Duration in seconds",
+            "  duration: 22",
+            "  # The system name",
+            "  systemName: Custom sys name",
+            "# Sample section",
+            "sample:",
+            "  ratio:",
+            "    order: FIRST",
+            "    fields: ",
+            "    - Australia",
+            "    - Burundi",
+            "    - Colombia",
+            "# The version number",
+            "# This is just a random number",
+            "version: 2492",
+            "features:",
+            "  # Plain boring features",
+            "  boring:",
+            "    # Skip boring features?",
+            "    skip: false",
+            "    # Add some boring colors here (gray, beige, ...)",
+            "    colors: ",
+            "    - beige",
+            "    - gray",
+            "    dustLevel: 2.4",
+            "  # Cool features",
+            "  # Contains cool settings",
+            "  cool:",
+            "    # Enable cool features?",
+            "    enabled: true",
+            "    # List of cool options to use",
+            "    options: ",
+            "    - Dinosaurs",
+            "    - Explosions",
+            "    - Big trucks",
+            "security:",
+            "  # Forbidden names",
+            "  forbiddenNames: ",
+            "  - admin",
+            "  - staff",
+            "  - moderator"
+        ));
+    }
+
     private File copyFileFromResources(String path) {
         return TestUtils.copyFileFromResources(path, temporaryFolder);
     }

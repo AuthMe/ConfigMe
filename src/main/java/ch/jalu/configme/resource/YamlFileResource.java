@@ -21,10 +21,9 @@ import java.util.Map;
 
 public class YamlFileResource implements PropertyResource {
 
-    private final String indentationSpace;
-
     private final File file;
     private final YamlFileResourceOptions options;
+    private final String indentationSpace;
     private Yaml yamlObject;
 
     public YamlFileResource(File file) {
@@ -34,8 +33,7 @@ public class YamlFileResource implements PropertyResource {
     public YamlFileResource(File file, YamlFileResourceOptions options) {
         this.file = file;
         this.options = options;
-
-        indentationSpace = String.join("", Collections.nCopies(options.getIndentationSize(), " "));
+        this.indentationSpace = String.join("", Collections.nCopies(options.getIndentationSize(), " "));
     }
 
     @Override

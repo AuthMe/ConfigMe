@@ -18,6 +18,7 @@ public class YamlFileResourceOptions {
      *
      * @param charset the charset
      * @param numberOfLinesBeforeFunction function defining how many lines before a path element should be in the export
+     * @param indentationSize number of spaces to use for each level of indentation
      */
     protected YamlFileResourceOptions(@Nullable Charset charset,
                                       @Nullable ToIntFunction<PathElement> numberOfLinesBeforeFunction,
