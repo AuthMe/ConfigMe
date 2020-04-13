@@ -118,12 +118,12 @@ public class YamlFileResource implements PropertyResource {
         String commentStart = indent(indentation) + "# ";
         for (String comment : pathElement.getComments()) {
             writer.append(lineStart);
-
-            if (!comment.equals("\n")) writer.append(commentStart);
-            else comment = "";
-
-            writer.append(comment);
             lineStart = "\n";
+
+            if (!"\n".equals(comment)) {
+                writer.append(commentStart)
+                      .append(comment);
+            }
         }
     }
 

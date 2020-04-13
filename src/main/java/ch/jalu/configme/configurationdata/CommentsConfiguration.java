@@ -33,6 +33,7 @@ public class CommentsConfiguration {
 
     /**
      * Sets the given lines for the provided path, overriding any previously existing comments for the path.
+     * An entry that is a sole new-line (i.e. "\n") will result in an empty line without any comment marker.
      *
      * @param path the path to register the comment lines for
      * @param commentLines the comment lines to set for the path

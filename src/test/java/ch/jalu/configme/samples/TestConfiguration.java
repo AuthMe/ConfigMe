@@ -71,7 +71,7 @@ public final class TestConfiguration implements SettingsHolder {
     @Override
     public void registerComments(CommentsConfiguration conf) {
         conf.setComment("sample", "Sample section");
-        conf.setComment("features.cool", "Cool features", "Contains cool settings");
+        conf.setComment("features.cool", "\n", "Cool features", "\n", "Contains cool settings");
         conf.setComment("features.boring", "Plain boring features");
         conf.setComment("test", "Test section");
     }

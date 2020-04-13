@@ -13,6 +13,9 @@ import java.lang.annotation.Target;
 public @interface Comment {
 
     /**
+     * Defines the comment to associate with a property field. You can define an empty line with no comment marker
+     * ('#' in YAML) by adding a line that is just "\n", e.g. {@code @Comment("Title", "\n", "Lorem ipsum")}.
+     *
      * @return the comment to associate with the property
      */
     String[] value();
