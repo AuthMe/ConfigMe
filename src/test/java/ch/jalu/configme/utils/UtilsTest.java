@@ -81,7 +81,7 @@ class UtilsTest {
     }
 
     @Test
-    void shouldIfFileCannotBeCreated() throws IOException {
+    void shouldThrowIfFileCannotBeCreated() throws IOException {
         // given
         FileSystemProvider provider = mock(FileSystemProvider.class);
         FileSystem fileSystem = mock(FileSystem.class);

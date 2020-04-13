@@ -47,7 +47,7 @@ public final class TestUtils {
      */
     public static Path getJarPath(String path) {
         String filePath = getUriOrThrow(path).getPath();
-        // Windows preprends the path with a '/' or '\', which Paths cannot handle
+        // Windows prepends the path with a '/' or '\', which Paths cannot handle
         String appropriatePath = System.getProperty("os.name").contains("indow")
             ? filePath.substring(1)
             : filePath;

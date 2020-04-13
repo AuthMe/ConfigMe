@@ -6,11 +6,15 @@ import ch.jalu.configme.migration.PlainMigrationService;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
+import ch.jalu.configme.resource.YamlFileResourceOptions;
 import ch.jalu.configme.samples.TestConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -120,5 +124,36 @@ class SettingsManagerBuilderTest {
         assertThat(TestConfiguration.DURATION_IN_SECONDS.determineValue(reader).getValue(), equalTo(22));
         // Value which has newly been written to -> check with Property#determineValue to make sure it was saved in the config file
         assertThat(TestConfiguration.RATIO_ORDER.determineValue(reader), isValidValueOf(TestConfiguration.RATIO_ORDER.getDefaultValue()));
+    }
+
+    @Test
+    void shouldCreateSettingsManagerFromFileObject() throws URISyntaxException {
+        // given
+        URL fileUrl = getClass().getClassLoader().getResource("config-sample.yml");
+        File file = new File(fileUrl.toURI());
+
+        // when
+        SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file)
+            .configurationData(TestConfiguration.class)
+            .create();
+
+        // then
+        assertThat(settingsManager.getProperty(TestConfiguration.SYSTEM_NAME), equalTo("Custom sys name"));
+    }
+
+    @Test
+    void shouldCreateSettingsManagerFromFileObject2() throws URISyntaxException {
+        // given
+        URL fileUrl = getClass().getClassLoader().getResource("config-sample.yml");
+        File file = new File(fileUrl.toURI());
+        YamlFileResourceOptions options = YamlFileResourceOptions.builder().build();
+
+        // when
+        SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(file, options)
+            .configurationData(TestConfiguration.class)
+            .create();
+
+        // then
+        assertThat(settingsManager.getProperty(TestConfiguration.SYSTEM_NAME), equalTo("Custom sys name"));
     }
 }
