@@ -90,7 +90,7 @@ public class YamlFileResource implements PropertyResource {
             for (PathElement pathElement : pathElements) {
                 writeIndentingBetweenLines(writer, pathElement);
                 writeComments(writer, pathElement.getIndentationLevel(), pathElement);
-                writer.append(getNewLineCheckingFileLength(pathElement))
+                writer.append(getNewLineIfNotFirstElement(pathElement))
                       .append(indent(pathElement.getIndentationLevel()))
                       .append(pathElement.getName())
                       .append(":");
@@ -128,12 +128,13 @@ public class YamlFileResource implements PropertyResource {
     }
 
     private void writeIndentingBetweenLines(Writer writer, PathElement pathElement) throws IOException {
-        for (int i = 0; i < options.getNumberOfEmptyLinesBefore(pathElement); ++i) {
+        int numberOfEmptyLines = options.getNumberOfEmptyLinesBefore(pathElement);
+        for (int i = 0; i < numberOfEmptyLines; ++i) {
             writer.append("\n");
         }
     }
 
-    private String getNewLineCheckingFileLength(PathElement pathElement) {
+    private String getNewLineIfNotFirstElement(PathElement pathElement) {
         return pathElement.isFirstElement() && pathElement.getComments().isEmpty() ? "" : "\n";
     }
 
