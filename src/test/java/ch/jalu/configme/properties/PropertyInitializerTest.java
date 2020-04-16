@@ -6,6 +6,8 @@ import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static ch.jalu.configme.properties.PropertyInitializer.arrayProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.inlineArrayProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.listProperty;
@@ -36,7 +38,9 @@ class PropertyInitializerTest {
         assertThat(newProperty("my.path", "default"), instanceOf(StringProperty.class));
         assertThat(newProperty(TestEnum.class, "my.path", TestEnum.FIRST), instanceOf(EnumProperty.class));
         assertThat(newListProperty("path", "default", "entries"), instanceOf(StringListProperty.class));
+        assertThat(newListProperty("path", Arrays.asList("a1", "a2", "a3")), instanceOf(StringListProperty.class));
         assertThat(newLowercaseStringSetProperty("path", "a", "b", "c"), instanceOf(LowercaseStringSetProperty.class));
+        assertThat(newLowercaseStringSetProperty("path", Arrays.asList("5", "7")), instanceOf(LowercaseStringSetProperty.class));
         assertThat(newBeanProperty(WorldGroupConfig.class, "worlds", new WorldGroupConfig()), instanceOf(BeanProperty.class));
 
         assertThat(optionalBooleanProperty("path"), instanceOf(OptionalProperty.class));

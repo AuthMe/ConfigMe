@@ -3,6 +3,7 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.properties.inlinearray.InlineArrayConverter;
 import ch.jalu.configme.properties.types.PropertyType;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -92,6 +93,18 @@ public class PropertyInitializer {
     }
 
     /**
+     * Creates a new String list property.
+     *
+     * @param path the property's path
+     * @param defaultValues the default value of the property
+     * @return the created list property
+     */
+    public static Property<List<String>> newListProperty(String path, List<String> defaultValues) {
+        // does not have the same name as not to clash with #newProperty(String, String)
+        return new StringListProperty(path, defaultValues);
+    }
+
+    /**
      * Creates a new String set property where all values are lowercase.
      *
      * @param path the property's path
@@ -99,6 +112,17 @@ public class PropertyInitializer {
      * @return the created set property
      */
     public static Property<Set<String>> newLowercaseStringSetProperty(String path, String... defaultValues) {
+        return new LowercaseStringSetProperty(path, defaultValues);
+    }
+
+    /**
+     * Creates a new String set property where all values are lowercase.
+     *
+     * @param path the property's path
+     * @param defaultValues the default value of the property
+     * @return the created set property
+     */
+    public static Property<Set<String>> newLowercaseStringSetProperty(String path, Collection<String> defaultValues) {
         return new LowercaseStringSetProperty(path, defaultValues);
     }
 
