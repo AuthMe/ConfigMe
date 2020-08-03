@@ -111,7 +111,7 @@ public class YamlFileResource implements PropertyResource {
                 writeComments(writer, pathElement.getIndentationLevel(), pathElement);
                 writer.append(getNewLineIfNotFirstElement(pathElement))
                       .append(indent(pathElement.getIndentationLevel()))
-                      .append(pathElement.getName())
+                      .append(escapePathElementIfNeeded(pathElement.getName()))
                       .append(":");
             }
 
@@ -206,6 +206,10 @@ public class YamlFileResource implements PropertyResource {
             result.append(indentationSpace);
         }
         return result.toString();
+    }
+
+    protected String escapePathElementIfNeeded(String path) {
+        return getYamlObject().dump(path).trim();
     }
 
     /**
