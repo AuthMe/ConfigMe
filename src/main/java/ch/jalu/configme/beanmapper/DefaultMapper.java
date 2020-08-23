@@ -3,7 +3,7 @@ package ch.jalu.configme.beanmapper;
 /**
  * Provides the {@link Mapper} instance which is used by default.
  */
-public final class DefaultMapper extends MapperImpl {
+public final class DefaultMapper extends JavaMapperImpl {
 
     private static DefaultMapper instance;
 

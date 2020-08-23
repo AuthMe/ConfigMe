@@ -2,7 +2,7 @@ package ch.jalu.configme.resource;
 
 
 import ch.jalu.configme.beanmapper.Mapper;
-import ch.jalu.configme.beanmapper.MapperImpl;
+import ch.jalu.configme.beanmapper.JavaMapperImpl;
 import ch.jalu.configme.beanmapper.command.ExecutionDetails;
 import ch.jalu.configme.beanmapper.command.Executor;
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommand;
@@ -43,7 +43,7 @@ class YamlFileResourceOptionalInBeanPropertyTest {
         Path file = copyFileFromResources("/beanmapper/optionalproperties/complex-commands.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(file);
         PropertyReader reader = resource.createReader();
-        Mapper mapper = new MapperImpl();
+        Mapper mapper = new JavaMapperImpl();
         ComplexCommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), ComplexCommandConfig.class, new ConvertErrorRecorder());
         result.getCommands().put("shutdown", createShutdownCommand());
         ConfigurationData configurationData = createConfigurationData();

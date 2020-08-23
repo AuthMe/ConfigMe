@@ -7,6 +7,7 @@ import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImp
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
- * Implementation of {@link Mapper}.
+ * Base implementation of {@link Mapper}.
  * <p>
  * Maps a section of a property resource to the provided JavaBean class. The mapping is based on the bean's properties,
  * whose names must correspond with the names in the property resource. For example, if a JavaBean class has a property
@@ -47,7 +48,7 @@ import java.util.stream.Collectors;
  * to it on initialization, the default value remains and the mapping process continues. A JavaBean field whose value is
  * {@code null} signifies a failure and stops the mapping process immediately.
  */
-public class MapperImpl implements Mapper {
+public abstract class BaseMapperImpl implements Mapper {
 
     /** Marker object to signal that null is meant to be used as value. */
     public static final Object RETURN_NULL = new Object();
@@ -56,14 +57,14 @@ public class MapperImpl implements Mapper {
     // Fields and general configurable methods
     // ---------
 
-    private final BeanDescriptionFactory beanDescriptionFactory;
-    private final LeafValueHandler leafValueHandler;
+    protected final BeanDescriptionFactory beanDescriptionFactory;
+    protected final LeafValueHandler leafValueHandler;
 
-    public MapperImpl() {
+    public BaseMapperImpl() {
         this(new BeanDescriptionFactoryImpl(), StandardLeafValueHandlers.getDefaultLeafValueHandler());
     }
 
-    public MapperImpl(BeanDescriptionFactory beanDescriptionFactory, LeafValueHandler leafValueHandler) {
+    public BaseMapperImpl(BeanDescriptionFactory beanDescriptionFactory, LeafValueHandler leafValueHandler) {
         this.beanDescriptionFactory = beanDescriptionFactory;
         this.leafValueHandler = leafValueHandler;
     }
@@ -318,6 +319,7 @@ public class MapperImpl implements Mapper {
 
     // -- Bean
 
+
     /**
      * Converts the provided value to the requested JavaBeans class if possible.
      *
@@ -326,51 +328,5 @@ public class MapperImpl implements Mapper {
      * @return the converted value, or null if not possible
      */
     @Nullable
-    protected Object createBean(MappingContext context, Object value) {
-        // Ensure that the value is a map so we can map it to a bean
-        if (!(value instanceof Map<?, ?>)) {
-            return null;
-        }
-
-        Collection<BeanPropertyDescription> properties = beanDescriptionFactory.getAllProperties(
-            context.getTypeInformation().getSafeToWriteClass());
-        // Check that we have properties (or else we don't have a bean)
-        if (properties.isEmpty()) {
-            return null;
-        }
-
-        Map<?, ?> entries = (Map<?, ?>) value;
-        Object bean = createBeanMatchingType(context);
-        for (BeanPropertyDescription property : properties) {
-            Object result = convertValueForType(
-                context.createChild(property.getName(), property.getTypeInformation()),
-                entries.get(property.getName()));
-            if (result == null) {
-                if (property.getValue(bean) == null) {
-                    return null; // We do not support beans with a null value
-                }
-                context.registerError("No value found, fallback to field default value");
-            } else {
-                property.setValue(bean, result);
-            }
-        }
-        return bean;
-    }
-
-    /**
-     * Creates an object matching the given type information.
-     *
-     * @param mappingContext current mapping context
-     * @return new instance of the given type
-     */
-    protected Object createBeanMatchingType(MappingContext mappingContext) {
-        // clazz is never null given the only path that leads to this method already performs that check
-        final Class<?> clazz = mappingContext.getTypeInformation().getSafeToWriteClass();
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new ConfigMeMapperException(mappingContext, "Could not create object of type '"
-                + clazz.getName() + "'. It is required to have a default constructor", e);
-        }
-    }
+    protected abstract Object createBean(@NotNull MappingContext context, Object value);
 }

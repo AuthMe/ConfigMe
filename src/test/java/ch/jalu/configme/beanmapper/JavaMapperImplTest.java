@@ -52,15 +52,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 /**
- * Test for {@link MapperImpl}.
+ * Test for {@link JavaMapperImpl}.
  */
-class MapperImplTest {
+class JavaMapperImplTest {
 
     @Test
     void shouldCreateWorldGroups() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds.yml");
-        MapperImpl mapperImpl = new MapperImpl();
+        JavaMapperImpl mapperImpl = new JavaMapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -83,7 +83,7 @@ class MapperImplTest {
     void shouldCreateCommands() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
-        MapperImpl mapperImpl = new MapperImpl();
+        JavaMapperImpl mapperImpl = new JavaMapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -119,7 +119,7 @@ class MapperImplTest {
     void shouldSkipInvalidEntry() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds_invalid.yml");
-        MapperImpl mapperImpl = new MapperImpl();
+        JavaMapperImpl mapperImpl = new JavaMapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -136,7 +136,7 @@ class MapperImplTest {
     void shouldHandleInvalidErrors() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid.yml");
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -155,7 +155,7 @@ class MapperImplTest {
     @Test
     void shouldReturnNullForUnavailableSection() {
         // given
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -169,7 +169,7 @@ class MapperImplTest {
     void shouldThrowForMapWithNonStringKeyType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/mapconfig.yml");
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
 
         // when / then
         verifyException(
@@ -182,7 +182,7 @@ class MapperImplTest {
     void shouldThrowForUnsupportedCollectionType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
 
         // when / then
         verifyException(
@@ -195,7 +195,7 @@ class MapperImplTest {
     void shouldThrowForUntypedCollection() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
 
         // when / then
         verifyException(
@@ -208,7 +208,7 @@ class MapperImplTest {
     void shouldThrowForUntypedMap() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/mapconfig.yml");
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
 
         // when / then
         verifyException(
@@ -221,7 +221,7 @@ class MapperImplTest {
     void shouldThrowForCollectionWithGenerics() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
 
         // when / then
         verifyException(
@@ -233,7 +233,7 @@ class MapperImplTest {
     @Test
     void shouldThrowForUnsupportedMapType() {
         // given
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
         Class<?> type = new HashMap() { }.getClass();
         MappingContext context = createContextWithType(type);
 
@@ -247,7 +247,7 @@ class MapperImplTest {
     @Test
     void shouldCreateCorrectMapType() {
         // given
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
         MappingContext interfaceCtx = createContextWithType(Map.class);
         MappingContext hashCtx = createContextWithType(HashMap.class);
         MappingContext navigableCtx = createContextWithType(NavigableMap.class);
@@ -264,7 +264,7 @@ class MapperImplTest {
     void shouldReturnNullForUnmappableMandatoryField() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid_2.yml");
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -278,7 +278,7 @@ class MapperImplTest {
     void shouldReturnNullForMissingSection() {
         // given
         PropertyReader reader = createReaderFromFile("/empty_file.yml");
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -292,7 +292,7 @@ class MapperImplTest {
     void shouldHandleEmptyOptionalFields() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -312,7 +312,7 @@ class MapperImplTest {
     void shouldLoadConfigWithOptionalProperties() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/optionalproperties/complex-commands.yml");
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -353,7 +353,7 @@ class MapperImplTest {
     void shouldHandleComplexOptionalType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -371,7 +371,7 @@ class MapperImplTest {
     void shouldReturnEmptyOptionalForEmptyFile() {
         // given
         PropertyReader reader = createReaderFromFile("/empty_file.yml");
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -387,7 +387,7 @@ class MapperImplTest {
     @Test
     void shouldInvokeDefaultConstructor() {
         // given
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
 
         // when
         Object command = mapper.createBeanMatchingType(createContextWithType(Command.class));
@@ -399,7 +399,7 @@ class MapperImplTest {
     @Test
     void shouldForwardException() {
         // given
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
 
         // when
         ConfigMeException e = assertThrows(ConfigMeException.class,
@@ -415,7 +415,7 @@ class MapperImplTest {
         // given
         BeanDescriptionFactory descriptionFactory = mock(BeanDescriptionFactory.class);
         LeafValueHandler leafValueHandler = mock(LeafValueHandler.class);
-        MapperImpl mapper = new MapperImpl(descriptionFactory, leafValueHandler);
+        JavaMapperImpl mapper = new JavaMapperImpl(descriptionFactory, leafValueHandler);
 
         // when
         BeanDescriptionFactory returnedDescriptionFactory = mapper.getBeanDescriptionFactory();

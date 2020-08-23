@@ -1,6 +1,6 @@
 package ch.jalu.configme.beanmapper.migratingbeanmapper;
 
-import ch.jalu.configme.beanmapper.MapperImpl;
+import ch.jalu.configme.beanmapper.JavaMapperImpl;
 import ch.jalu.configme.beanmapper.MappingContext;
 
 import java.util.Collection;
@@ -11,7 +11,7 @@ import java.util.Collections;
  * a single value to a collection. This mapper wraps a single value into a collection whenever a
  * collection should be constructed. Example for issue #117.
  */
-public class SingleValueToCollectionMapper extends MapperImpl {
+public class SingleValueToCollectionMapper extends JavaMapperImpl {
 
     @Override
     protected Collection<?> createCollection(MappingContext context, Object value) {

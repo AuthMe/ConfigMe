@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 
 /**
- * Test for {@link MapperImpl}, specifically for {@link MapperImpl#toExportValue}.
+ * Test for {@link JavaMapperImpl}, specifically for {@link JavaMapperImpl#toExportValue}.
  */
 class MapperExportValueTest {
 
@@ -42,7 +42,7 @@ class MapperExportValueTest {
         config.getCommands().put("kick", kickCommand);
         config.getCommands().put("msg", msgCommand);
         config.getCommands().put("vanish", vanishCommand);
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
 
         // when
         Object exportValue = mapper.toExportValue(config);
@@ -67,7 +67,7 @@ class MapperExportValueTest {
         CommandConfig config = new CommandConfig();
         config.setCommands(new HashMap<>());
         config.setDuration(14);
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
 
         // when
         Object exportValue = mapper.toExportValue(config);
@@ -88,7 +88,7 @@ class MapperExportValueTest {
         command.setCommand("ping");
         command.setArguments(Arrays.asList("test", "toast", "taste"));
         command.setExecution(null);
-        MapperImpl mapper = new MapperImpl();
+        JavaMapperImpl mapper = new JavaMapperImpl();
 
         // when
         Object exportValue = mapper.toExportValue(command);
