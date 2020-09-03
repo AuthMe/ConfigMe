@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for the {@link BaseProperty} abstract type.
@@ -40,6 +42,23 @@ class BasePropertyTest {
         assertThat(toString, equalTo("Property '" + path + "'"));
     }
 
+    @Test
+    void shouldCheckIfIsValidInResource() {
+        // given
+        PropertyReader reader = mock(PropertyReader.class);
+        given(reader.getInt("path.1")).willReturn(120);
+        given(reader.getInt("path.2")).willReturn(9999999);
+        Property<Byte> property1 = new PropertyTestImpl("path.1", (byte) -89);
+        Property<Byte> property2 = new PropertyTestImpl("path.2", (byte) -89);
+
+        // when
+        boolean isValid1 = property1.isValidInResource(reader);
+        boolean isValid2 = property2.isValidInResource(reader);
+
+        // then
+        assertThat(isValid1, equalTo(true));
+        assertThat(isValid2, equalTo(false));
+    }
 
     private static final class PropertyTestImpl extends BaseProperty<Byte> {
         PropertyTestImpl(String path, Byte defaultValue) {

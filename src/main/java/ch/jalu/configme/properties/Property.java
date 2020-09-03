@@ -34,6 +34,19 @@ public interface Property<T> {
     PropertyValue<T> determineValue(PropertyReader propertyReader);
 
     /**
+     * Convenience method to check whether the property is present in the given reader and a valid representation
+     * of the property type.
+     * Prefer {@link #determineValue(PropertyReader)} if you need the value afterwards to avoid performing the same
+     * operation twice.
+     *
+     * @param propertyReader the reader to check the value in
+     * @return true if a value is available for the property and it is valid, false otherwise
+     */
+    default boolean isValidInResource(PropertyReader propertyReader) {
+        return determineValue(propertyReader).isValidInResource();
+    }
+
+    /**
      * Returns the default value of this property.
      *
      * @return the default value
