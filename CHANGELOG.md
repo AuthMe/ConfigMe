@@ -1,6 +1,17 @@
 # ConfigMe Changelog
 
 ## ConfigMe 1.x
+#### 1.2.0 (2020-09-04)
+- Better ability to trigger a resave for partially valid values ([#19](https://github.com/AuthMe/ConfigMe/issues/19))
+  - See [comment about breaking changes](https://github.com/AuthMe/ConfigMe/issues/19#issuecomment-569066960)
+- Indentation size and number of empty lines are now configurable in YamlFileResourceOptions ([#127](https://github.com/AuthMe/ConfigMe/issues/127))
+- Introduce SetProperty to create properties of a Set type ([#111](https://github.com/AuthMe/ConfigMe/issues/111))
+- New method `getChildKeys` on PropertyReader to get direct children ([#73](https://github.com/AuthMe/ConfigMe/issues/73))
+- Create SettingsHolderClassValidator with utilities to check proper setup of ConfigMe (for unit tests) ([#5](https://github.com/AuthMe/ConfigMe/issues/5))
+- Various bug fixes and improvements. Extensive documentation is now also available on the [ConfigMe wiki](https://github.com/AuthMe/ConfigMe/wiki)
+
+:blue_book: [All changes in 1.2.0](https://github.com/AuthMe/ConfigMe/milestone/9?closed=1)
+
 #### 1.1.0 (2019-02-27)
 - New property structure allowing to easily define maps and lists, see PropertyInitializer
 - Support paths written together (e.g. "path.foo") in YML files
