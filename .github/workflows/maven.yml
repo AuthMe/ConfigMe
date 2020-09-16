@@ -1,0 +1,20 @@
+# Secondary build that builds the project with JDK 11. Note that the target in the pom.xml is still Java 8.
+# The Travis CI build is still configured with Java 8 and acts as "primary" build.
+
+name: JDK 11 build
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Build with Maven
+        run: mvn -B --file pom.xml package
