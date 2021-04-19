@@ -46,18 +46,6 @@ class UtilsTest {
     }
 
     @Test
-    void shouldCreateFileLegacy() {
-        // given
-        File file = new File(temporaryFolder.toFile(), "inter/mediate/parents/test.yml");
-
-        // when
-        Utils.createFileIfNotExists(file);
-
-        // then
-        assertThat(file.exists(), equalTo(true));
-    }
-
-    @Test
     void shouldThrowForFolderAsFile() {
         // given / when / then
         verifyException(

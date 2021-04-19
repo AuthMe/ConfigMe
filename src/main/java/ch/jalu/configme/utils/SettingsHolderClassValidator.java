@@ -68,7 +68,7 @@ public class SettingsHolderClassValidator {
     /**
      * Validates that the migration service does not declare that a migration is required for the given
      * configuration data, which gets saved to the provided resource beforehand. This is intended to
-     * validate that the default values of a configuration do not trigger a migration service:
+     * validate that the default values of a configuration do not trigger a migration:
      * <ul>
      *   <li>the configuration data should only have default values</li>
      *   <li>the resource should only be for this method and thus use a temporary file</li>
