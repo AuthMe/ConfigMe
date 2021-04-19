@@ -1,10 +1,14 @@
 package ch.jalu.configme.beanmapper.leafvaluehandler;
 
+import ch.jalu.configme.samples.TestEnum;
 import ch.jalu.configme.utils.TypeInformation;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +23,8 @@ import static org.hamcrest.Matchers.nullValue;
  */
 class NumberLeafValueHandlerTest {
 
+    private final NumberLeafValueHandler numberHandler = new NumberLeafValueHandler();
+
     @ParameterizedTest(name = "{0}")
     @MethodSource("getNumberTypeArguments")
     void shouldMapToNumbers(Class<?> referenceType, Class<?> primitiveType,
@@ -28,16 +34,42 @@ class NumberLeafValueHandlerTest {
         Object input2 = Collections.emptyMap();
         Object input3 = null;
         Object input4 = -5.9;
-        LeafValueHandler transformer = new NumberLeafValueHandler();
 
         // when / then
         Stream.of(referenceType, primitiveType).forEach(clz -> {
             TypeInformation type = new TypeInformation(clz);
-            assertThat(transformer.convert(type, input1), equalTo(expectedResultForInput1));
-            assertThat(transformer.convert(type, input2), nullValue());
-            assertThat(transformer.convert(type, input3), nullValue());
-            assertThat(transformer.convert(type, input4), equalTo(expectedResultForInput4));
+            assertThat(numberHandler.convert(type, input1), equalTo(expectedResultForInput1));
+            assertThat(numberHandler.convert(type, input2), nullValue());
+            assertThat(numberHandler.convert(type, input3), nullValue());
+            assertThat(numberHandler.convert(type, input4), equalTo(expectedResultForInput4));
         });
+    }
+
+    @Test
+    void shouldNotConvertUnsupportedTypes() {
+        // given / when / then
+        assertThat(numberHandler.convert(new TypeInformation(String.class), "45"), nullValue());
+        assertThat(numberHandler.convert(new TypeInformation(BigDecimal.class), 34), nullValue());
+        assertThat(numberHandler.convert(new TypeInformation(BigInteger.class), "87654"), nullValue());
+        assertThat(numberHandler.convert(new TypeInformation(TestEnum.class), "THIRD"), nullValue());
+        assertThat(numberHandler.convert(new TypeInformation(Boolean.class), null), nullValue());
+    }
+
+    @Test
+    void shouldExportNumbers() {
+        // given / when / then
+        Stream.of(3, 4000000L, -5.5, 77.304f, (short) 14, (byte) -81).forEach(value -> {
+            assertThat(numberHandler.toExportValue(value), equalTo(value));
+        });
+    }
+
+    @Test
+    void shouldNotExportOtherValues() {
+        // given / when / then
+        assertThat(numberHandler.toExportValue(null), nullValue());
+        assertThat(numberHandler.toExportValue("test"), nullValue());
+        assertThat(numberHandler.toExportValue(new BigDecimal("3.1414")), nullValue());
+        assertThat(numberHandler.toExportValue('ç'), nullValue());
     }
 
     /**

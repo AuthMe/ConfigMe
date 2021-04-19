@@ -6,6 +6,8 @@ import ch.jalu.configme.utils.TypeInformation;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +26,8 @@ import static org.hamcrest.Matchers.sameInstance;
  */
 class StandardLeafValueHandlersTest {
 
+    private final LeafValueHandler standardLeafValueHandler = StandardLeafValueHandlers.getDefaultLeafValueHandler();
+
     @Test
     void shouldReturnDefaultTransformerAsSingleton() {
         // given
@@ -38,56 +42,55 @@ class StandardLeafValueHandlersTest {
 
     @Test
     void shouldCombineLeafValueHandlers() {
-        // given / when
-        LeafValueHandler defaultValueTransformer = StandardLeafValueHandlers.getDefaultLeafValueHandler();
-
-        // then
+        // given / when / then
         List<Class<?>> transformerTypesUsed = transform(
-            ((CombiningLeafValueHandler) defaultValueTransformer).getHandlers(), Object::getClass);
+            ((CombiningLeafValueHandler) standardLeafValueHandler).getHandlers(), Object::getClass);
         assertThat(transformerTypesUsed, contains(StringLeafValueHandler.class, EnumLeafValueHandler.class,
             BooleanLeafValueHandler.class, NumberLeafValueHandler.class, BigNumberLeafValueHandler.class,
             ObjectLeafValueHandler.class));
     }
 
     @Test
-    void shouldNotMapUnknownValue() {
-        // given
-        LeafValueHandler transformer = StandardLeafValueHandlers.getDefaultLeafValueHandler();
-
-        // when / then
-        assertThat(transformer.convert(of(TestEnum.class), 45), nullValue());
-        assertThat(transformer.convert(of(Map.class), Collections.emptyMap()), nullValue());
-        assertThat(transformer.convert(of(Integer[].class), 3.8), nullValue());
-        assertThat(transformer.convert(of(String.class), Optional.of("3")), nullValue());
+    void shouldMapValues() {
+        // given / when / then
+        assertThat(standardLeafValueHandler.convert(of(TestEnum.class), "FIRST"), equalTo(TestEnum.FIRST));
+        assertThat(standardLeafValueHandler.convert(of(boolean.class), Boolean.TRUE), equalTo(true));
+        assertThat(standardLeafValueHandler.convert(of(long.class), 34), equalTo(34L));
+        assertThat(standardLeafValueHandler.convert(of(String.class), 47.765), equalTo("47.765"));
+        assertThat(standardLeafValueHandler.convert(of(BigInteger.class), "47198"), equalTo(BigInteger.valueOf(47198)));
     }
 
     @Test
-    void shouldExportSimpleValues() {
-        // given
-        LeafValueHandler transformer = StandardLeafValueHandlers.getDefaultLeafValueHandler();
+    void shouldNotMapUnknownValue() {
+        // given / when / then
+        assertThat(standardLeafValueHandler.convert(of(TestEnum.class), 45), nullValue());
+        assertThat(standardLeafValueHandler.convert(of(Map.class), Collections.emptyMap()), nullValue());
+        assertThat(standardLeafValueHandler.convert(of(Integer[].class), 3.8), nullValue());
+        assertThat(standardLeafValueHandler.convert(of(String.class), Optional.of("3")), nullValue());
+    }
 
-        // when / then
-        assertExportValueSameAsInput(transformer, 45);
-        assertExportValueSameAsInput(transformer, Boolean.FALSE);
-        assertExportValueSameAsInput(transformer, -8.45);
-        assertExportValueSameAsInput(transformer, (short) -2);
-        assertExportValueSameAsInput(transformer, "test string");
-        assertThat(transformer.toExportValue(TestEnum.THIRD), equalTo(TestEnum.THIRD.name()));
+    @Test
+    void shouldExportValues() {
+        // given / when / then
+        assertExportValueSameAsInput(standardLeafValueHandler, 45);
+        assertExportValueSameAsInput(standardLeafValueHandler, Boolean.FALSE);
+        assertExportValueSameAsInput(standardLeafValueHandler, -8.45);
+        assertExportValueSameAsInput(standardLeafValueHandler, (short) -2);
+        assertExportValueSameAsInput(standardLeafValueHandler, "test string");
+        assertThat(standardLeafValueHandler.toExportValue(TestEnum.THIRD), equalTo(TestEnum.THIRD.name()));
+        assertThat(standardLeafValueHandler.toExportValue(new BigDecimal("3.14159")), equalTo("3.14159"));
     }
 
     @Test
     void shouldNotExportOtherValues() {
-        // given
-        LeafValueHandler transformer = StandardLeafValueHandlers.getDefaultLeafValueHandler();
-
-        // when / then
-        assertThat(transformer.toExportValue(Optional.of(3253)), nullValue());
-        assertThat(transformer.toExportValue(new CommandConfig()), nullValue());
-        assertThat(transformer.toExportValue(String.class), nullValue());
-        assertThat(transformer.toExportValue(Arrays.asList("", 5)), nullValue());
+        // given / when / then
+        assertThat(standardLeafValueHandler.toExportValue(Optional.of(3253)), nullValue());
+        assertThat(standardLeafValueHandler.toExportValue(new CommandConfig()), nullValue());
+        assertThat(standardLeafValueHandler.toExportValue(String.class), nullValue());
+        assertThat(standardLeafValueHandler.toExportValue(Arrays.asList("", 5)), nullValue());
     }
 
-    private void assertExportValueSameAsInput(LeafValueHandler transformer, Object input) {
+    private static void assertExportValueSameAsInput(LeafValueHandler transformer, Object input) {
         assertThat(transformer.toExportValue(input), sameInstance(input));
     }
 

@@ -14,17 +14,26 @@ import static org.hamcrest.Matchers.nullValue;
  */
 class ObjectLeafValueHandlerTest {
 
+    private ObjectLeafValueHandler objectHandler = new ObjectLeafValueHandler();
+
     @Test
     void shouldMapToObject() {
         // given
         Object input1 = "str";
         Object input2 = Collections.emptyMap();
         Object input3 = null;
-        LeafValueHandler transformer = new ObjectLeafValueHandler();
 
         // when / then
-        assertThat(transformer.convert(new TypeInformation(Object.class), input1), equalTo(input1));
-        assertThat(transformer.convert(new TypeInformation(Object.class), input2), equalTo(input2));
-        assertThat(transformer.convert(new TypeInformation(Object.class), input3), nullValue());
+        assertThat(objectHandler.convert(new TypeInformation(Object.class), input1), equalTo(input1));
+        assertThat(objectHandler.convert(new TypeInformation(Object.class), input2), equalTo(input2));
+        assertThat(objectHandler.convert(new TypeInformation(Object.class), input3), nullValue());
+    }
+
+    @Test
+    void shouldNotExport() {
+        // given / when / then
+        assertThat(objectHandler.toExportValue(new Object()), nullValue());
+        assertThat(objectHandler.toExportValue("abc"), nullValue());
+        assertThat(objectHandler.toExportValue(null), nullValue());
     }
 }

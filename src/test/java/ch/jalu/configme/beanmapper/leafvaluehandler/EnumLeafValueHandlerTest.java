@@ -13,6 +13,8 @@ import static org.hamcrest.Matchers.nullValue;
  */
 class EnumLeafValueHandlerTest {
 
+    private final EnumLeafValueHandler enumHandler = new EnumLeafValueHandler();
+
     @Test
     void shouldMapToEnum() {
         // given
@@ -20,11 +22,28 @@ class EnumLeafValueHandlerTest {
         String input1 = TestEnum.SECOND.name();
         String input2 = TestEnum.SECOND.name() + "bogus";
         String input3 = null;
-        LeafValueHandler transformer = new EnumLeafValueHandler();
 
         // when / then
-        assertThat(transformer.convert(testEnumType, input1), equalTo(TestEnum.SECOND));
-        assertThat(transformer.convert(testEnumType, input2), nullValue());
-        assertThat(transformer.convert(testEnumType, input3), nullValue());
+        assertThat(enumHandler.convert(testEnumType, input1), equalTo(TestEnum.SECOND));
+        assertThat(enumHandler.convert(testEnumType, input2), nullValue());
+        assertThat(enumHandler.convert(testEnumType, input3), nullValue());
+    }
+
+    @Test
+    void shouldNotConvertToUnsupportedTypes() {
+        // given / when / then
+        assertThat(enumHandler.convert(new TypeInformation(String.class), "THIRD"), nullValue());
+        assertThat(enumHandler.convert(new TypeInformation(Integer.class), null), nullValue());
+        assertThat(enumHandler.convert(new TypeInformation(Double.class), true), nullValue());
+        assertThat(enumHandler.convert(new TypeInformation(TestEnum[].class), "false"), nullValue());
+    }
+
+    @Test
+    void shouldExportEnumValue() {
+        // given / when / then
+        assertThat(enumHandler.toExportValue(TestEnum.THIRD), equalTo("THIRD"));
+        assertThat(enumHandler.toExportValue(null), nullValue());
+        assertThat(enumHandler.toExportValue("bogus"), nullValue());
+        assertThat(enumHandler.toExportValue(27.5), nullValue());
     }
 }
