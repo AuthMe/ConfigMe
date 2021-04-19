@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.IntFunction;
+import java.util.regex.Pattern;
 
 /**
  * Convenience class for instantiating {@link Property} objects. You can use
@@ -78,6 +79,28 @@ public class PropertyInitializer {
      */
     public static <E extends Enum<E>> Property<E> newProperty(Class<E> clazz, String path, E defaultValue) {
         return new EnumProperty<>(clazz, path, defaultValue);
+    }
+
+    /**
+     * Creates a new regex pattern property.
+     *
+     * @param path the property's path
+     * @param defaultRegexValue the default pattern of the property
+     * @return the created regex property
+     */
+    public static RegexProperty newRegexProperty(String path, String defaultRegexValue) {
+        return new RegexProperty(path, defaultRegexValue);
+    }
+
+    /**
+     * Creates a new regex pattern property.
+     *
+     * @param path the property's path
+     * @param defaultRegexValue the default pattern of the property
+     * @return the created regex property
+     */
+    public static RegexProperty newRegexProperty(String path, Pattern defaultRegexValue) {
+        return new RegexProperty(path, defaultRegexValue);
     }
 
     /**
