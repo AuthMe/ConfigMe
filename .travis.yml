@@ -1,8 +1,0 @@
-sudo: false
-
-language: java
-dist: trusty
-jdk: oraclejdk8
-
-script: mvn clean verify jacoco:report coveralls:report -B -U
-
