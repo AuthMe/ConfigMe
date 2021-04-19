@@ -44,6 +44,20 @@ public class YamlFileResourceOptions {
         return indentationSize;
     }
 
+    /**
+     * @return the indentation to use for one level
+     */
+    public String getIndentation() {
+        if (indentationSize == 4) {
+            return "    ";
+        }
+        StringBuilder sb = new StringBuilder(indentationSize);
+        for (int i = 0; i < indentationSize; ++i) {
+            sb.append(" ");
+        }
+        return sb.toString();
+    }
+
     @Nullable
     protected final ToIntFunction<PathElement> getIndentFunction() {
         return numberOfLinesBeforeFunction;
