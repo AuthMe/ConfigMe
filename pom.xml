@@ -28,8 +28,8 @@
         <connection>scm:git:https://github.com/AuthMe/ConfigMe.git</connection>
         <developerConnection>scm:git:git@github.com:AuthMe/ConfigMe.git</developerConnection>
         <url>https://github.com/AuthMe/ConfigMe/issues</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <issueManagement>
         <system>GitHub</system>
@@ -167,7 +167,7 @@
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>4.3.0</version>
                 <configuration>
-                    <!-- Provided by Travis CI -->
+                    <!-- Provided by Github action -->
                     <repoToken>${env.coveralls_repo_token}</repoToken>
                     <failOnServiceError>false</failOnServiceError>
                 </configuration>
