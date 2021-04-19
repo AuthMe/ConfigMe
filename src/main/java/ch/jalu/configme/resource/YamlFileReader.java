@@ -27,6 +27,7 @@ public class YamlFileReader implements PropertyReader {
 
     private final Path path;
     private final Charset charset;
+    @Nullable
     private final Map<String, Object> root;
 
     /**
@@ -116,6 +117,9 @@ public class YamlFileReader implements PropertyReader {
 
     @Override
     public Set<String> getKeys(boolean onlyLeafNodes) {
+        if (root == null) {
+            return Collections.emptySet();
+        }
         Set<String> allKeys = new LinkedHashSet<>();
         collectKeysIntoSet("", root, allKeys, onlyLeafNodes);
         return allKeys;
@@ -183,6 +187,7 @@ public class YamlFileReader implements PropertyReader {
      * @param map the map to normalize
      * @return the normalized map (or same map if no changes are needed)
      */
+    @Nullable
     protected Map<String, Object> normalizeMap(@Nullable Map<Object, Object> map) {
         return new MapNormalizer().normalizeMap(map);
     }
@@ -197,6 +202,12 @@ public class YamlFileReader implements PropertyReader {
         return path;
     }
 
+    /**
+     * @return the root value; may be null if the file was empty
+     * @deprecated use {@code getObject("")} instead
+     */
+    @Nullable
+    @Deprecated
     protected final Map<String, Object> getRoot() {
         return root;
     }

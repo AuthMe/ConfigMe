@@ -23,7 +23,6 @@ import static ch.jalu.configme.TestUtils.createTemporaryFile;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
@@ -189,7 +188,9 @@ class YamlFileReaderTest {
         // then
         assertThat(result, sameInstance(configFile));
         assertThat(resultFile, equalTo(configFile.toFile()));
-        assertThat(reader.getRoot(), anEmptyMap());
+        assertThat(reader.getRoot(), nullValue());
+        assertThat(reader.getKeys(true), empty());
+        assertThat(reader.getChildKeys(""), empty());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.beanmapper.command.Command;
 import ch.jalu.configme.beanmapper.command.CommandConfig;
 import ch.jalu.configme.beanmapper.command.ExecutionDetails;
@@ -27,7 +28,11 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -45,7 +50,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -69,7 +74,7 @@ class MapperImplTest {
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
-        assertThat(result, not(nullValue()));
+        assertThat(result, notNullValue());
         assertThat(result.getGroups().keySet(), contains("default", "creative"));
         Group survival = result.getGroups().get("default");
         assertThat(survival.getWorlds(), contains("world", "world_nether", "world_the_end"));
@@ -128,7 +133,7 @@ class MapperImplTest {
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(false));
-        assertThat(config, not(nullValue()));
+        assertThat(config, notNullValue());
         assertThat(config.getGroups().keySet(), contains("creative"));
     }
 
@@ -145,7 +150,7 @@ class MapperImplTest {
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(false));
 
-        assertThat(config, not(nullValue()));
+        assertThat(config, notNullValue());
         assertThat(config.getCommands().keySet(), contains("refresh", "open", "cancel"));
         Command cancelCommand = config.getCommands().get("cancel");
         assertThat(cancelCommand.getArguments(), empty());
@@ -301,7 +306,7 @@ class MapperImplTest {
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(false)); // e.g. save.arguments are missing
-        assertThat(result, not(nullValue()));
+        assertThat(result, notNullValue());
         assertThat(result.getCommands().keySet(), contains("save", "refresh", "open"));
         assertAllOptionalFieldsEmpty(result.getCommands().get("save"));
         assertAllOptionalFieldsEmpty(result.getCommands().get("refresh"));
@@ -322,7 +327,7 @@ class MapperImplTest {
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(false));
 
-        assertThat(result, not(nullValue()));
+        assertThat(result, notNullValue());
         assertThat(result.getCommands().keySet(), contains("greet", "block_invalid", "log_admin", "launch"));
 
         ComplexCommand greet = result.getCommands().get("greet");
@@ -362,7 +367,7 @@ class MapperImplTest {
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
-        assertThat(result, not(nullValue()));
+        assertThat(result, notNullValue());
         assertThat(result.getCommandconfig().isPresent(), equalTo(true));
         assertThat(result.getCommandconfig().get().keySet(), containsInAnyOrder("duration", "commands"));
     }
@@ -380,7 +385,25 @@ class MapperImplTest {
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
-        assertThat(result, not(nullValue()));
+        assertThat(result, nullValue());
+    }
+
+    @Test
+    void shouldReturnEmptyOptionalForFileWithEmptyMap(@TempDir Path tempDir) throws IOException {
+        // given
+        Path tempFile = TestUtils.createTemporaryFile(tempDir);
+        Files.write(tempFile, "{}".getBytes());
+        PropertyReader reader = new YamlFileReader(tempFile);
+        MapperImpl mapper = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+
+        // when
+        ComplexOptionalTypeConfig result =
+            mapper.convertToBean(reader.getObject(""), ComplexOptionalTypeConfig.class, errorRecorder);
+
+        // then
+        assertThat(errorRecorder.isFullyValid(), equalTo(true));
+        assertThat(result, notNullValue());
         assertThat(result.getCommandconfig(), equalTo(Optional.empty()));
     }
 
