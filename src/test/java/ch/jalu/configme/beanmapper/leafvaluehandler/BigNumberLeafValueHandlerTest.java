@@ -3,7 +3,6 @@ package ch.jalu.configme.beanmapper.leafvaluehandler;
 import ch.jalu.configme.samples.TestEnum;
 import ch.jalu.configme.utils.TypeInformation;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.TypeInfo;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -129,7 +128,15 @@ class BigNumberLeafValueHandlerTest {
         assertThat(bigNumberHandler.toExportValue(new BigDecimal("9123456789.43214321")), equalTo("9123456789.43214321"));
         assertThat(bigNumberHandler.toExportValue(new BigDecimal("-9999999999.999999")), equalTo("-9999999999.999999"));
         assertThat(bigNumberHandler.toExportValue(new BigDecimal("-2E3")), equalTo("-2000"));
-        assertThat(bigNumberHandler.toExportValue(new BigDecimal("-2.5E+10")), equalTo("-2.5E+10"));
+        assertThat(bigNumberHandler.toExportValue(new BigDecimal("7.4718329E40")), equalTo("74718329000000000000000000000000000000000"));
+        assertThat(bigNumberHandler.toExportValue(new BigDecimal("-2.5E+221")), equalTo("-2.5E+221"));
+
+        // BigDecimal toString can have odd, unexpected behavior and depends on the way it was created (as seen above).
+        // For completeness, we check a few export outputs from BigDecimals constructed via other methods.
+        assertThat(bigNumberHandler.toExportValue(BigDecimal.valueOf(29384723984.9234)), equalTo("29384723984.9234"));
+        assertThat(bigNumberHandler.toExportValue(BigDecimal.valueOf(8523327856898475L)), equalTo("8523327856898475"));
+        assertThat(bigNumberHandler.toExportValue(BigDecimal.valueOf(-456, -30)), equalTo("-456000000000000000000000000000000"));
+        assertThat(bigNumberHandler.toExportValue(BigDecimal.valueOf(-456, -101)), equalTo("-4.56E+103"));
     }
 
     @Test
@@ -141,7 +148,34 @@ class BigNumberLeafValueHandlerTest {
         assertThat(bigNumberHandler.toExportValue(TestEnum.SECOND), nullValue());
     }
 
+    @Test
+    void shouldNotHandleExtensionsOfBigNumberClasses() {
+        // given
+        BigDecimal bigDecimalExt = new TestBigDecimalDummyExt("1.41421");
+        BigInteger bigIntegerExt = new TestBigIntegerDummyExt("5432");
+
+        // when / then
+        assertThat(bigNumberHandler.toExportValue(bigIntegerExt), nullValue());
+        assertThat(bigNumberHandler.toExportValue(bigDecimalExt), nullValue());
+        assertThat(bigNumberHandler.convert(new TypeInformation(TestBigDecimalDummyExt.class), "2"), nullValue());
+        assertThat(bigNumberHandler.convert(new TypeInformation(TestBigIntegerDummyExt.class), "7"), nullValue());
+    }
+
     private static BigInteger newBigInteger(String value) {
         return new BigDecimal(value).toBigIntegerExact();
+    }
+
+    private static final class TestBigDecimalDummyExt extends BigDecimal {
+
+        public TestBigDecimalDummyExt(String val) {
+            super(val);
+        }
+    }
+
+    private static final class TestBigIntegerDummyExt extends BigInteger {
+
+        public TestBigIntegerDummyExt(String val) {
+            super(val);
+        }
     }
 }

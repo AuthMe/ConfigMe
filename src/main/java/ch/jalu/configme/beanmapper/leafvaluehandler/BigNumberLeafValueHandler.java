@@ -10,8 +10,8 @@ import java.math.BigInteger;
  */
 public class BigNumberLeafValueHandler extends AbstractLeafValueHandler {
 
-    /** Value after which scientific notation (like "1E+30") might be used when exporting BigDecimal values. */
-    private static final BigDecimal BIG_DECIMAL_SCIENTIFIC_THRESHOLD = new BigDecimal("1E10");
+    /** Value after which scientific notation (like "1E+130") might be used when exporting BigDecimal values. */
+    private static final BigDecimal BIG_DECIMAL_SCIENTIFIC_THRESHOLD = new BigDecimal("1E100");
 
     @Override
     protected Object convert(Class<?> clazz, Object value) {
@@ -28,9 +28,10 @@ public class BigNumberLeafValueHandler extends AbstractLeafValueHandler {
 
     @Override
     public Object toExportValue(Object value) {
-        if (value instanceof BigInteger) {
+        final Class<?> valueType = value == null ? null : value.getClass();
+        if (valueType == BigInteger.class) {
             return value.toString();
-        } else if (value instanceof BigDecimal) {
+        } else if (valueType == BigDecimal.class) {
             BigDecimal bigDecimal = (BigDecimal) value;
             return bigDecimal.abs().compareTo(BIG_DECIMAL_SCIENTIFIC_THRESHOLD) >= 0
                 ? bigDecimal.toString()
