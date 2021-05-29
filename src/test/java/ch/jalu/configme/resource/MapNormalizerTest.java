@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
 /**
@@ -22,12 +23,12 @@ class MapNormalizerTest {
     private MapNormalizer mapNormalizer = new MapNormalizer();
 
     @Test
-    void shouldReturnEmptyMapForNull() {
+    void shouldReturnNullForNull() {
         // given / when
         Map<String, Object> result = mapNormalizer.normalizeMap(null);
 
         // then
-        assertThat(result, anEmptyMap());
+        assertThat(result, nullValue());
     }
 
     @Test

@@ -2,7 +2,6 @@ package ch.jalu.configme.utils;
 
 import ch.jalu.configme.exception.ConfigMeException;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,19 +12,6 @@ import java.nio.file.Path;
 public final class Utils {
 
     private Utils() {
-    }
-
-    /**
-     * Attempts to create the given file if it doesn't exist. If creating the file
-     * is unsuccessful, an exception is thrown. Throws an exception if the argument
-     * exists but is not a file.
-     *
-     * @param file the file to create if it doesn't exist
-     * @deprecated to be removed in the next major release in favor of {@link #createFileIfNotExists(Path)}
-     */
-    @Deprecated
-    public static void createFileIfNotExists(File file) {
-        createFileIfNotExists(file.toPath());
     }
 
     /**

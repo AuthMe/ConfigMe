@@ -7,6 +7,7 @@ import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import static ch.jalu.configme.properties.PropertyInitializer.arrayProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.inlineArrayProperty;
@@ -16,6 +17,7 @@ import static ch.jalu.configme.properties.PropertyInitializer.newBeanProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newLowercaseStringSetProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.newRegexProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalBooleanProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalEnumProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalIntegerProperty;
@@ -37,6 +39,8 @@ class PropertyInitializerTest {
         assertThat(newProperty("my.path", -8.4), instanceOf(DoubleProperty.class));
         assertThat(newProperty("my.path", "default"), instanceOf(StringProperty.class));
         assertThat(newProperty(TestEnum.class, "my.path", TestEnum.FIRST), instanceOf(EnumProperty.class));
+        assertThat(newRegexProperty("reg.path", "abc?"), instanceOf(RegexProperty.class));
+        assertThat(newRegexProperty("reg.path", Pattern.compile("w[0-9]*")), instanceOf(RegexProperty.class));
         assertThat(newListProperty("path", "default", "entries"), instanceOf(StringListProperty.class));
         assertThat(newListProperty("path", Arrays.asList("a1", "a2", "a3")), instanceOf(StringListProperty.class));
         assertThat(newLowercaseStringSetProperty("path", "a", "b", "c"), instanceOf(LowercaseStringSetProperty.class));

@@ -1,7 +1,6 @@
 package ch.jalu.configme.resource;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -18,10 +17,11 @@ public class MapNormalizer {
      * @param loadedMap the map to normalize
      * @return new map with sanitized structure (or same if no changes are needed)
      */
+    @Nullable
     @SuppressWarnings("unchecked")
     public Map<String, Object> normalizeMap(@Nullable Map<Object, Object> loadedMap) {
         if (loadedMap == null) {
-            return Collections.emptyMap();
+            return null;
         }
         // Cast to Map<String, Object> if we have an empty optional as the method guarantees to return a new Map
         // if it does not exclusively use String keys

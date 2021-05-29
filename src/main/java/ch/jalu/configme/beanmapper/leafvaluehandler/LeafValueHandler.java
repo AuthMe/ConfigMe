@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
  * Java beans.
  * <p>
  * Default implementation is provided by {@link StandardLeafValueHandlers#getDefaultLeafValueHandler}.
+ * Handlers can be easily combined with {@link CombiningLeafValueHandler}.
  */
 public interface LeafValueHandler {
 

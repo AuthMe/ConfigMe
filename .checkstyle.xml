@@ -92,6 +92,7 @@
             <message key="name.invalidPattern"
                      value="Parameter name ''{0}'' must match pattern ''{1}''."/>
         </module>
+        <module name="ParameterAssignment"/>
         <module name="LocalVariableName">
             <property name="tokens" value="VARIABLE_DEF"/>
             <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
@@ -167,6 +168,7 @@
             <property name="exceptionVariableName" value="ignore|ignored"/>
         </module>
         <module name="EqualsHashCode"/>
+        <module name="StringLiteralEquality"/>
     </module>
     <module name="FileTabCharacter"/>
 </module>

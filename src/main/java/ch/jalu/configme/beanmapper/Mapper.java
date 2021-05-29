@@ -35,6 +35,7 @@ public interface Mapper {
      * @param <T> the class type
      * @return object of the given type, or null if not possible
      */
+    @Nullable
     @SuppressWarnings("unchecked")
     default <T> T convertToBean(@Nullable Object value, Class<T> clazz, ConvertErrorRecorder errorRecorder) {
         return (T) convertToBean(value, new TypeInformation(clazz), errorRecorder);

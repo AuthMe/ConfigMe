@@ -17,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,7 @@ public class YamlFileResource implements PropertyResource {
     public YamlFileResource(Path path, YamlFileResourceOptions options) {
         this.path = path;
         this.options = options;
-        this.indentationSpace = String.join("", Collections.nCopies(options.getIndentationSize(), " "));
+        this.indentationSpace = options.getIndentation();
     }
 
     /**
@@ -201,8 +200,18 @@ public class YamlFileResource implements PropertyResource {
      * @return whitespace to prepend to a line for proper indentation
      */
     protected String indent(int level) {
-        final StringBuilder result = new StringBuilder();
-        for (int i = 0; i < level; i++) {
+        switch (level) {
+            case 0: return "";
+            case 1: return indentationSpace;
+            case 2: return indentationSpace + indentationSpace;
+            case 3: return indentationSpace + indentationSpace + indentationSpace;
+            case 4: return indentationSpace + indentationSpace + indentationSpace + indentationSpace;
+            case 5: return indentationSpace + indentationSpace + indentationSpace + indentationSpace + indentationSpace;
+            default: // proceed
+        }
+
+        final StringBuilder result = new StringBuilder(level * indentationSpace.length());
+        for (int i = 0; i < level; ++i) {
             result.append(indentationSpace);
         }
         return result.toString();
