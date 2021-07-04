@@ -98,24 +98,30 @@ public class YamlFileResource implements PropertyResource {
 
         if (value instanceof Map<?, ?> && !((Map<?, ?>) value).isEmpty()) {
             final String pathPrefix = path.isEmpty() ? "" : path + ".";
+            final Map<String, ?> mapValue = (Map<String, ?>) value;
 
-            for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
+            for (Map.Entry<String, ?> entry : mapValue.entrySet()) {
                 exportValue(writer, pathTraverser, pathPrefix + entry.getKey(), entry.getValue());
             }
         } else {
             List<PathElement> pathElements = pathTraverser.getPathElements(path);
+            final boolean isRootProperty = pathElements.size() == 1 && "".equals(pathElements.get(0).getName());
 
             for (PathElement pathElement : pathElements) {
                 writeIndentingBetweenLines(writer, pathElement);
                 writeComments(writer, pathElement.getIndentationLevel(), pathElement);
-                writer.append(getNewLineIfNotFirstElement(pathElement))
-                      .append(indent(pathElement.getIndentationLevel()))
-                      .append(escapePathElementIfNeeded(pathElement.getName()))
-                      .append(":");
+                writer.append(getNewLineIfNotFirstElement(pathElement));
+                if (!isRootProperty) {
+                      writer.append(indent(pathElement.getIndentationLevel()))
+                            .append(escapePathElementIfNeeded(pathElement.getName()))
+                            .append(":");
+                }
+            }
+            if (!isRootProperty) {
+                writer.append(" ");
             }
 
-            writer.append(" ")
-                  .append(toYamlIndented(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
+            writer.append(toYamlIndented(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
         }
     }
 
@@ -257,7 +263,7 @@ public class YamlFileResource implements PropertyResource {
 
     private static List<?> collectionToList(Collection<?> collection) {
         return collection instanceof List<?>
-               ? (List<?>) collection
-               : new ArrayList<>(collection);
+            ? (List<?>) collection
+            : new ArrayList<>(collection);
     }
 }
