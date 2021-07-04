@@ -128,6 +128,28 @@ public class PropertyInitializer {
     }
 
     /**
+     * Creates a new String set property.
+     *
+     * @param path the property's path
+     * @param defaultValues the items in the default set
+     * @return the created set property
+     */
+    public static Property<Set<String>> newStringSetProperty(String path, String... defaultValues) {
+        return new StringSetProperty(path, defaultValues);
+    }
+
+    /**
+     * Creates a new String set property.
+     *
+     * @param path the property's path
+     * @param defaultValues the default value of the property
+     * @return the created set property
+     */
+    public static Property<Set<String>> newStringSetProperty(String path, Set<String> defaultValues) {
+        return new StringSetProperty(path, defaultValues);
+    }
+
+    /**
      * Creates a new String set property where all values are lowercase.
      *
      * @param path the property's path

@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 /**
  * Property whose value is a String set all in lowercase. The sets are immutable.
  */
-public class LowercaseStringSetProperty extends BaseProperty<Set<String>> {
+public class LowercaseStringSetProperty extends StringSetProperty {
 
     /**
      * Constructor.
