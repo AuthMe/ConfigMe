@@ -11,6 +11,21 @@ import java.util.Optional;
  */
 public class MapNormalizer {
 
+    private final boolean splitDotPaths;
+
+    /**
+     * Constructor.
+     *
+     * @param splitDotPaths whether compound keys (keys with ".") should be split
+     */
+    public MapNormalizer(boolean splitDotPaths) {
+        this.splitDotPaths = splitDotPaths;
+    }
+
+    protected final boolean splitDotPaths() {
+        return splitDotPaths;
+    }
+
     /**
      * Normalizes the raw map read from a property resource for further use in a property reader.
      *
@@ -62,7 +77,10 @@ public class MapNormalizer {
     }
 
     protected boolean isKeyInvalid(Object key) {
-        return !(key instanceof String) || ((String) key).contains(".");
+        if (key instanceof String) {
+            return splitDotPaths && ((String) key).contains(".");
+        }
+        return true;
     }
 
     /**
@@ -74,7 +92,7 @@ public class MapNormalizer {
      * @param value the value to store
      */
     protected void addValueIntoMap(Map<String, Object> map, String path, Object value) {
-        int dotPosition = path.indexOf(".");
+        int dotPosition = splitDotPaths ? path.indexOf(".") : -1;
         if (dotPosition > -1) {
             String pathElement = path.substring(0, dotPosition);
             Map<String, Object> mapAtPath = getOrInsertMap(map, pathElement);

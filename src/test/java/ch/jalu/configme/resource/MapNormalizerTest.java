@@ -20,11 +20,12 @@ import static org.hamcrest.Matchers.sameInstance;
  */
 class MapNormalizerTest {
 
-    private MapNormalizer mapNormalizer = new MapNormalizer();
-
     @Test
     void shouldReturnNullForNull() {
-        // given / when
+        // given
+        MapNormalizer mapNormalizer = new MapNormalizer(true);
+
+        // when
         Map<String, Object> result = mapNormalizer.normalizeMap(null);
 
         // then
@@ -34,6 +35,7 @@ class MapNormalizerTest {
     @Test
     void shouldHandleEmptyMap() {
         // given
+        MapNormalizer mapNormalizer = new MapNormalizer(true);
         Map<Object, Object> map = new HashMap<>();
 
         // when
@@ -47,6 +49,7 @@ class MapNormalizerTest {
     @Test
     void shouldKeepNormalizedMap() {
         // given
+        MapNormalizer mapNormalizer = new MapNormalizer(true);
         Map<Object, Object> map1 = new HashMap<>();
         Map<Object, Object> map2 = new HashMap<>();
         Map<Object, Object> map3 = new HashMap<>();
@@ -73,6 +76,7 @@ class MapNormalizerTest {
     @Test
     void shouldExpandPathsWithPeriod() {
         // given
+        MapNormalizer mapNormalizer = new MapNormalizer(true);
         Map<Object, Object> fruits = new LinkedHashMap<>();
         fruits.put("orange", "oranges");
         fruits.put("apple", "apples");
@@ -100,6 +104,7 @@ class MapNormalizerTest {
     @Test
     void shouldConvertKeysToStrings() {
         // given
+        MapNormalizer mapNormalizer = new MapNormalizer(true);
         Map<Object, Object> map = new LinkedHashMap<>();
         map.put("test", "test");
         map.put("other", "other");
@@ -125,6 +130,7 @@ class MapNormalizerTest {
     @Test
     void shouldOverrideEntriesOnClash() {
         // given
+        MapNormalizer mapNormalizer = new MapNormalizer(true);
         Map<Object, Object> map = new LinkedHashMap<>();
         map.put("test", "a test");
         map.put("test.one", 1);
@@ -142,5 +148,28 @@ class MapNormalizerTest {
         assertThat(result.get("test"), instanceOf(Map.class));
         assertThat(((Map<String, Object>) result.get("test")).keySet(), contains("one", "two"));
         assertThat(result.get("other"), equalTo(0));
+    }
+
+    @Test
+    void shouldNotSplitDotsIfSoConfigured() {
+        // given
+        MapNormalizer mapNormalizer = new MapNormalizer(false);
+        Map<Object, Object> nestedMap = new LinkedHashMap<>();
+        nestedMap.put("entry.foo", "bar");
+        nestedMap.put("other.entry", false);
+
+        Map<Object, Object> map = new LinkedHashMap<>();
+        map.put("ch.jalu.sub", nestedMap);
+        map.put("ch.jalu.sup", 1);
+        map.put("ch.jalu.third", 2);
+        map.put(true, 3);
+
+        // when
+        Map<String, Object> result = mapNormalizer.normalizeMap(map);
+
+        // then
+        assertThat(result.keySet(), contains("ch.jalu.sub", "ch.jalu.sup", "ch.jalu.third", "true"));
+        Map<String, Object> subMap = (Map) result.get("ch.jalu.sub");
+        assertThat(subMap.keySet(), contains("entry.foo", "other.entry"));
     }
 }
