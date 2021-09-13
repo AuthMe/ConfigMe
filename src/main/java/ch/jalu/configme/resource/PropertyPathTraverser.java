@@ -4,7 +4,6 @@ import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.utils.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

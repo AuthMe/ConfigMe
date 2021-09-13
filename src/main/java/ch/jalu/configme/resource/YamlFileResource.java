@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static ch.jalu.configme.utils.CollectionUtils.getRange;
-
 public class YamlFileResource implements PropertyResource {
 
     private final Path path;
