@@ -17,6 +17,7 @@ public @interface Comment {
      * ('#' in YAML) by adding a line that is just "\n", e.g. {@code @Comment("Title", "\n", "Lorem ipsum")}.
      *
      * @return the comment to associate with the property
+     * test
      */
     String[] value();
 
