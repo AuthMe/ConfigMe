@@ -31,7 +31,7 @@ jobs:
           echo "::set-output name=pr_number::$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")"
       - name: Coveralls Maven plugin
         env:
-          CI_NAME: Github
+          CI_NAME: github
           CI_BUILD_NUMBER: ${{ github.run_id }}
           CI_BUILD_URL: https://github.com/${{ github.repository }}/commit/${{ github.event.after }}/checks
           CI_BRANCH: ${{ steps.refs.outputs.branch_name }}
@@ -39,4 +39,4 @@ jobs:
         run: |
           mvn coveralls:report \
           --no-transfer-progress \
-          -D repoToken=${{ secrets.COVERALLS_TOKEN }}
+          -DrepoToken=${{ secrets.COVERALLS_TOKEN }} -DpullRequest=${{ github.event.number }}
