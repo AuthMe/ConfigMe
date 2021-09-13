@@ -8,7 +8,6 @@ import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.properties.types.EnumPropertyType;
 import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.samples.TestEnum;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -69,7 +68,6 @@ class YamlFileResourceNoSplitPathsTest {
     }
 
     @Test
-    @Disabled
     void shouldExportMapWithDotsWithoutSplittingPaths() throws IOException {
         // given
         Path file = TestUtils.createTemporaryFile(tempFolder);
@@ -97,11 +95,11 @@ class YamlFileResourceNoSplitPathsTest {
         // then
         assertThat(Files.readAllLines(file), contains(
             "sections:",
-            "    org.example.one: 'FOURTH'",
-            "    org.example.second.a: 'FIRST'",
-            "    org.example.second.b: 'SECOND'",
-            "    org.example.third: 'THIRD'",
-            "    abc: 'FOURTH'"
+            "    org.example.one: FOURTH",
+            "    org.example.second.a: FIRST",
+            "    org.example.second.b: SECOND",
+            "    org.example.third: THIRD",
+            "    abc: FOURTH"
         ));
     }
 }
