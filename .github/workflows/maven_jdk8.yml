@@ -35,7 +35,7 @@ jobs:
           CI_BUILD_NUMBER: ${{ github.run_id }}
           CI_BUILD_URL: https://github.com/${{ github.repository }}/commit/${{ github.event.after }}/checks
           CI_BRANCH: ${{ steps.refs.outputs.branch_name }}
-          CI_PULL_REQUEST: ${{ steps.refs.outputs.pr_number }}
+          CI_PULL_REQUEST: ${{ github.event.number }}
         run: |
           mvn coveralls:report -e \
           --no-transfer-progress \
