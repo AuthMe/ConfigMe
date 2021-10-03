@@ -134,7 +134,7 @@ public class PropertyInitializer {
      * @param defaultValues the items in the default set
      * @return the created set property
      */
-    public static Property<Set<String>> newStringSetProperty(String path, String... defaultValues) {
+    public static Property<Set<String>> newSetProperty(String path, String... defaultValues) {
         return new StringSetProperty(path, defaultValues);
     }
 
@@ -145,7 +145,7 @@ public class PropertyInitializer {
      * @param defaultValues the default value of the property
      * @return the created set property
      */
-    public static Property<Set<String>> newStringSetProperty(String path, Set<String> defaultValues) {
+    public static Property<Set<String>> newSetProperty(String path, Set<String> defaultValues) {
         return new StringSetProperty(path, defaultValues);
     }
 

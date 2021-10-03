@@ -9,10 +9,22 @@ import java.util.Set;
  */
 public class StringSetProperty extends SetProperty<String> {
 
+    /**
+     * Constructor.
+     *
+     * @param path the path of the property
+     * @param defaultValue the values that make up the entries of the default set
+     */
     public StringSetProperty(String path, String... defaultValue) {
         super(path, PrimitivePropertyType.STRING, defaultValue);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param path the path of the property
+     * @param defaultValue the values that make up the entries of the default set
+     */
     public StringSetProperty(String path, Set<String> defaultValue) {
         super(path, PrimitivePropertyType.STRING, defaultValue);
     }
