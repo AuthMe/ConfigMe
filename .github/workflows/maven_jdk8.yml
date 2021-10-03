@@ -22,21 +22,17 @@ jobs:
         run: mvn -B --file pom.xml package jacoco:report
 
       # Set environment variables for Coveralls. Copied from https://github.com/trautonen/coveralls-maven-plugin/issues/136
-      - name: Set branch name and PR number
-        id: refs
-        env:
-          BRANCH_NAME_OR_REF: ${{ github.head_ref || github.ref }}
+      - name: "Report: Coverage via coveralls.io"
+        # Coveralls only works on master, so disable this step if we're elsewhere
+        if: github.ref == 'refs/heads/master'
         run: |
-          echo "::set-output name=branch_name::${BRANCH_NAME_OR_REF#refs/heads/}"
-          echo "::set-output name=pr_number::$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")"
-      - name: Coveralls Maven plugin
+          export CI_BRANCH=${BRANCH_NAME_OR_REF#refs/heads/}
+          export CI_PULL_REQUEST=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          mvn coveralls:report -e --no-transfer-progress -DrepoToken=${{ secrets.COVERALLS_TOKEN }}
         env:
-          CI_NAME: Github
+          CI_NAME: github
+          BRANCH_NAME_OR_REF: ${{ github.head_ref || github.ref }}
           CI_BUILD_NUMBER: ${{ github.run_id }}
           CI_BUILD_URL: https://github.com/${{ github.repository }}/commit/${{ github.event.after }}/checks
-          CI_BRANCH: ${{ steps.refs.outputs.branch_name }}
-          CI_PULL_REQUEST: ${{ steps.refs.outputs.pr_number }}
-        run: |
-          mvn coveralls:report \
-          --no-transfer-progress \
-          -D repoToken=${{ secrets.COVERALLS_TOKEN }}
+          COVERALLS_SECRET: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
