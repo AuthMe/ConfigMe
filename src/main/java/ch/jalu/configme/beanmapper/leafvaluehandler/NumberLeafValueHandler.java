@@ -17,7 +17,7 @@ public class NumberLeafValueHandler extends AbstractLeafValueHandler {
         createMapOfTypeToTransformFunction();
 
     @Override
-    public @Nullable Object convert(Class<?> clazz, Object value) {
+    public @Nullable Object convert(@Nullable Class<?> clazz, @Nullable Object value) {
         if (value instanceof Number) {
             Function<Number, Number> numberFunction = NUMBER_CLASSES_TO_CONVERSION.get(clazz);
             return numberFunction == null ? null : numberFunction.apply((Number) value);
@@ -26,7 +26,7 @@ public class NumberLeafValueHandler extends AbstractLeafValueHandler {
     }
 
     @Override
-    public Object toExportValue(@Nullable Object value) {
+    public @Nullable Object toExportValue(@Nullable Object value) {
         Class<?> clazz = value == null ? null : value.getClass();
         if (NUMBER_CLASSES_TO_CONVERSION.containsKey(clazz)) {
             return value;

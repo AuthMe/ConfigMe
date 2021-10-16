@@ -2,6 +2,7 @@ package ch.jalu.configme.beanmapper.leafvaluehandler;
 
 import ch.jalu.configme.utils.TypeInformation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,7 +23,7 @@ public class CombiningLeafValueHandler implements LeafValueHandler {
      *
      * @param handlers the handlers to delegate each call to (in the given order)
      */
-    public CombiningLeafValueHandler(LeafValueHandler... handlers) {
+    public CombiningLeafValueHandler(@NotNull LeafValueHandler... handlers) {
         this(Arrays.asList(handlers));
     }
 
@@ -36,12 +37,12 @@ public class CombiningLeafValueHandler implements LeafValueHandler {
     }
 
     @Override
-    public Object convert(TypeInformation typeInformation, Object value) {
+    public @Nullable Object convert(@NotNull TypeInformation typeInformation, @Nullable Object value) {
         return getFirstNonNull(t -> t.convert(typeInformation, value));
     }
 
     @Override
-    public Object toExportValue(Object value) {
+    public @Nullable Object toExportValue(@Nullable Object value) {
         return getFirstNonNull(t -> t.toExportValue(value));
     }
 
@@ -49,7 +50,7 @@ public class CombiningLeafValueHandler implements LeafValueHandler {
         return handlers;
     }
 
-    private Object getFirstNonNull(Function<LeafValueHandler, Object> callback) {
+    private @Nullable Object getFirstNonNull(@NotNull Function<LeafValueHandler, Object> callback) {
         return handlers.stream()
             .map(callback)
             .filter(Objects::nonNull)

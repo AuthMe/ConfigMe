@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 public class ObjectLeafValueHandler extends AbstractLeafValueHandler {
 
     @Override
-    public @Nullable Object convert(Class<?> clazz, Object value) {
+    public @Nullable Object convert(@Nullable Class<?> clazz, @Nullable Object value) {
         if (clazz == Object.class) {
             return value;
         }
@@ -14,7 +14,7 @@ public class ObjectLeafValueHandler extends AbstractLeafValueHandler {
     }
 
     @Override
-    public Object toExportValue(Object value) {
+    public @Nullable Object toExportValue(@Nullable Object value) {
         return null;
     }
 }

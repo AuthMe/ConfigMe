@@ -11,10 +11,10 @@ import org.jetbrains.annotations.Nullable;
 public abstract class AbstractLeafValueHandler implements LeafValueHandler {
 
     @Override
-    public Object convert(@NotNull TypeInformation typeInformation, Object value) {
+    public @Nullable Object convert(@NotNull TypeInformation typeInformation, @Nullable Object value) {
         return convert(typeInformation.getSafeToWriteClass(), value);
     }
 
-    protected abstract @Nullable Object convert(Class<?> clazz, Object value);
+    protected abstract @Nullable Object convert(@Nullable Class<?> clazz, @Nullable Object value);
 
 }

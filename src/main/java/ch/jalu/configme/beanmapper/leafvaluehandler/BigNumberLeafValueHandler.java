@@ -16,7 +16,7 @@ public class BigNumberLeafValueHandler extends AbstractLeafValueHandler {
     private static final BigDecimal BIG_DECIMAL_SCIENTIFIC_THRESHOLD = new BigDecimal("1E100");
 
     @Override
-    protected @Nullable Object convert(@NotNull Class<?> clazz, Object value) {
+    protected @Nullable Object convert(@Nullable Class<?> clazz, @Nullable Object value) {
         if (clazz != BigInteger.class && clazz != BigDecimal.class) {
             return null;
         }
@@ -29,7 +29,7 @@ public class BigNumberLeafValueHandler extends AbstractLeafValueHandler {
     }
 
     @Override
-    public Object toExportValue(@Nullable Object value) {
+    public @Nullable Object toExportValue(@Nullable Object value) {
         final Class<?> valueType = value == null ? null : value.getClass();
         if (valueType == BigInteger.class) {
             return value.toString();
@@ -49,8 +49,7 @@ public class BigNumberLeafValueHandler extends AbstractLeafValueHandler {
      * @param value the value to convert
      * @return BigInteger or BigDecimal as defined by the target class, or null if no conversion was possible
      */
-    @Nullable
-    protected Object fromString(Class<?> targetClass, @NotNull String value) {
+    protected @Nullable Object fromString(@NotNull Class<?> targetClass, @NotNull String value) {
         try {
             return targetClass == BigInteger.class
                 ? new BigInteger(value)
@@ -67,7 +66,7 @@ public class BigNumberLeafValueHandler extends AbstractLeafValueHandler {
      * @param value the value to convert
      * @return BigInteger or BigDecimal as defined by the target class
      */
-    protected Object fromNumber(@NotNull Class<?> targetClass, Number value) {
+    protected @NotNull Object fromNumber(@NotNull Class<?> targetClass, @NotNull Number value) {
         if (targetClass.isInstance(value)) {
             return value;
         }

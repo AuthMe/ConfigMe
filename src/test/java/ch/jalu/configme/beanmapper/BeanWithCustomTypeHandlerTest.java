@@ -94,7 +94,7 @@ class BeanWithCustomTypeHandlerTest {
     public static final class CustomIntegerLeafValueHandler extends AbstractLeafValueHandler {
 
         @Override
-        protected Object convert(Class<?> clazz, Object value) {
+        protected @Nullable Object convert(@Nullable Class<?> clazz, @Nullable Object value) {
             if (clazz == CustomInteger.class && value instanceof Number) {
                 return new CustomInteger(((Number) value).intValue(), false);
             }
