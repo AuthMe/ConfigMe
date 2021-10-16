@@ -1,8 +1,8 @@
 package ch.jalu.configme.beanmapper.leafvaluehandler;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -16,7 +16,7 @@ public class BigNumberLeafValueHandler extends AbstractLeafValueHandler {
     private static final BigDecimal BIG_DECIMAL_SCIENTIFIC_THRESHOLD = new BigDecimal("1E100");
 
     @Override
-    protected @org.jetbrains.annotations.Nullable Object convert(@NotNull Class<?> clazz, Object value) {
+    protected @Nullable Object convert(@NotNull Class<?> clazz, Object value) {
         if (clazz != BigInteger.class && clazz != BigDecimal.class) {
             return null;
         }
@@ -29,7 +29,7 @@ public class BigNumberLeafValueHandler extends AbstractLeafValueHandler {
     }
 
     @Override
-    public Object toExportValue(@org.jetbrains.annotations.Nullable Object value) {
+    public Object toExportValue(@Nullable Object value) {
         final Class<?> valueType = value == null ? null : value.getClass();
         if (valueType == BigInteger.class) {
             return value.toString();

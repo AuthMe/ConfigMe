@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -168,7 +168,7 @@ public class YamlFileReader implements PropertyReader {
      *
      * @return map with the values from the file
      */
-    protected @org.jetbrains.annotations.Nullable Map<String, Object> loadFile() {
+    protected @Nullable Map<String, Object> loadFile() {
         try (InputStream is = Files.newInputStream(path);
              InputStreamReader isr = new InputStreamReader(is, charset)) {
             Map<Object, Object> rootMap = new Yaml().load(isr);

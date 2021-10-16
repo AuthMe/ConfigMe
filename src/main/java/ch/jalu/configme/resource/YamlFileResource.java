@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,7 +26,7 @@ public class YamlFileResource implements PropertyResource {
     private final Path path;
     private final @NotNull YamlFileResourceOptions options;
     private final String indentationSpace;
-    private @org.jetbrains.annotations.Nullable Yaml yamlObject;
+    private @Nullable Yaml yamlObject;
 
     public YamlFileResource(Path path) {
         this(path, YamlFileResourceOptions.builder().build());
@@ -92,7 +92,7 @@ public class YamlFileResource implements PropertyResource {
      * @throws IOException .
      */
     protected void exportValue(@NotNull Writer writer, @NotNull PropertyPathTraverser pathTraverser,
-                               @NotNull String path, @org.jetbrains.annotations.Nullable Object value) throws IOException {
+                               @NotNull String path, @Nullable Object value) throws IOException {
         if (value == null) {
             return;
         }
@@ -240,7 +240,7 @@ public class YamlFileResource implements PropertyResource {
      *
      * @return the YAML instance to use
      */
-    protected @org.jetbrains.annotations.Nullable Yaml getYamlObject() {
+    protected @Nullable Yaml getYamlObject() {
         if (yamlObject == null) {
             yamlObject = createNewYaml();
         }
@@ -258,7 +258,7 @@ public class YamlFileResource implements PropertyResource {
         return options;
     }
 
-    private <T> @org.jetbrains.annotations.Nullable Object getExportValue(@NotNull Property<T> property, @NotNull ConfigurationData configurationData) {
+    private <T> @Nullable Object getExportValue(@NotNull Property<T> property, @NotNull ConfigurationData configurationData) {
         return property.toExportValue(configurationData.getValue(property));
     }
 

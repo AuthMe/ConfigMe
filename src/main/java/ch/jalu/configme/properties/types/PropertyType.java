@@ -2,7 +2,7 @@ package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Property type: provides methods for converting between property resource and a defined type
@@ -20,9 +20,7 @@ public interface PropertyType<T> {
      * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return the converted value, or null
      */
-    @Nullable
-    @org.jetbrains.annotations.Nullable
-    T convert(@Nullable Object object, ConvertErrorRecorder errorRecorder);
+    @Nullable T convert(@Nullable Object object, ConvertErrorRecorder errorRecorder);
 
     /**
      * Converts the given value to its export value. (Converts in the opposite way of {@link #convert}.)

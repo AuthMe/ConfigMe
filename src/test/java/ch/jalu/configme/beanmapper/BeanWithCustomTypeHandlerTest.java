@@ -13,7 +13,7 @@ import ch.jalu.configme.properties.Property;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -101,9 +101,8 @@ class BeanWithCustomTypeHandlerTest {
             return null;
         }
 
-        @Nullable
         @Override
-        public Object toExportValue(@Nullable Object value) {
+        public @Nullable Object toExportValue(@Nullable Object value) {
             if (value instanceof CustomInteger) {
                 return ((CustomInteger) value).value;
             }

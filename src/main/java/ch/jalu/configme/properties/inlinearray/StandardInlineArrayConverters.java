@@ -2,7 +2,7 @@ package ch.jalu.configme.properties.inlinearray;
 
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.StringJoiner;

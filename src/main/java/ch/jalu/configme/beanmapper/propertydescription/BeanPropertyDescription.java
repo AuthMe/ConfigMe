@@ -2,7 +2,7 @@ package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.utils.TypeInformation;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a property within a bean class, as used in {@link ch.jalu.configme.beanmapper.MapperImpl}.
@@ -37,7 +37,5 @@ public interface BeanPropertyDescription {
      * @param bean the bean to read the property from
      * @return the value of the property (can be null)
      */
-    @Nullable
-    @org.jetbrains.annotations.Nullable
-    Object getValue(Object bean);
+    @Nullable Object getValue(Object bean);
 }

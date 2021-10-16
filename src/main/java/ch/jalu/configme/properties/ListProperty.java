@@ -5,7 +5,7 @@ import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +61,7 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
     }
 
     @Override
-    public @org.jetbrains.annotations.Nullable Object toExportValue(@NotNull List<T> value) {
+    public @Nullable Object toExportValue(@NotNull List<T> value) {
         return value.stream()
             .map(type::toExportValue)
             .collect(Collectors.toList());

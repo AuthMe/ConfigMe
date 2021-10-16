@@ -3,7 +3,7 @@ package ch.jalu.configme.resource;
 import ch.jalu.configme.resource.PropertyPathTraverser.PathElement;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.function.ToIntFunction;
@@ -11,7 +11,7 @@ import java.util.function.ToIntFunction;
 public class YamlFileResourceOptions {
 
     private final @NotNull Charset charset;
-    private final @org.jetbrains.annotations.Nullable ToIntFunction<PathElement> numberOfLinesBeforeFunction;
+    private final @Nullable ToIntFunction<PathElement> numberOfLinesBeforeFunction;
     private final int indentationSize;
 
     /**

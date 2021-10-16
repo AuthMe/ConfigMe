@@ -5,7 +5,7 @@ import ch.jalu.configme.beanmapper.ExportName;
 import ch.jalu.configme.utils.TypeInformation;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;

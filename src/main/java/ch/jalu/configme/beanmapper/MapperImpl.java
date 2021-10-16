@@ -9,7 +9,7 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.utils.TypeInformation;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -87,7 +87,7 @@ public class MapperImpl implements Mapper {
     // ---------
 
     @Override
-    public Object toExportValue(@org.jetbrains.annotations.Nullable Object value) {
+    public Object toExportValue(@Nullable Object value) {
         // Step 1: attempt simple value transformation
         Object simpleValue = leafValueHandler.toExportValue(value);
         if (simpleValue != null || value == null) {
@@ -143,7 +143,7 @@ public class MapperImpl implements Mapper {
         return null;
     }
 
-    protected static @org.jetbrains.annotations.Nullable Object unwrapReturnNull(Object o) {
+    protected static @Nullable Object unwrapReturnNull(Object o) {
         return o == RETURN_NULL ? null : o;
     }
 
@@ -153,7 +153,7 @@ public class MapperImpl implements Mapper {
 
     @Nullable
     @Override
-    public Object convertToBean(@org.jetbrains.annotations.Nullable Object value, TypeInformation beanType, ConvertErrorRecorder errorRecorder) {
+    public Object convertToBean(@Nullable Object value, TypeInformation beanType, ConvertErrorRecorder errorRecorder) {
         if (value == null) {
             return null;
         }
@@ -220,9 +220,8 @@ public class MapperImpl implements Mapper {
      * @param value the value to map from
      * @return Collection property from the value, or null if not applicable
      */
-    @Nullable
     @SuppressWarnings("unchecked")
-    protected @org.jetbrains.annotations.Nullable Collection createCollection(@NotNull MappingContext context, Object value) {
+    protected @Nullable Collection createCollection(@NotNull MappingContext context, Object value) {
         if (value instanceof Iterable<?>) {
             TypeInformation entryType = context.getGenericTypeInfoOrFail(0);
             Collection result = createCollectionMatchingType(context);

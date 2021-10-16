@@ -4,7 +4,7 @@ import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.utils.TypeInformation;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

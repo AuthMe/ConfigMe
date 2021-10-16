@@ -1,6 +1,6 @@
 package ch.jalu.configme.resource;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
@@ -41,9 +41,7 @@ public interface PropertyReader {
      * @param path the path to retrieve the value for
      * @return the value, or null if there is none
      */
-    @Nullable
-    @org.jetbrains.annotations.Nullable
-    Object getObject(String path);
+    @Nullable Object getObject(String path);
 
     /**
      * Returns the value of the given path as a String if available.
@@ -51,9 +49,7 @@ public interface PropertyReader {
      * @param path the path to retrieve a String for
      * @return the value as a String, or null if not applicable or unavailable
      */
-    @Nullable
-    @org.jetbrains.annotations.Nullable
-    String getString(String path);
+    @Nullable String getString(String path);
 
     /**
      * Returns the value of the given path as an integer if available.
@@ -61,9 +57,7 @@ public interface PropertyReader {
      * @param path the path to retrieve an integer for
      * @return the value as integer, or null if not applicable or unavailable
      */
-    @Nullable
-    @org.jetbrains.annotations.Nullable
-    Integer getInt(String path);
+    @Nullable Integer getInt(String path);
 
     /**
      * Returns the value of the given path as a double if available.
@@ -71,9 +65,7 @@ public interface PropertyReader {
      * @param path the path to retrieve a double for
      * @return the value as a double, or null if not applicable or unavailable
      */
-    @Nullable
-    @org.jetbrains.annotations.Nullable
-    Double getDouble(String path);
+    @Nullable Double getDouble(String path);
 
     /**
      * Returns the value of the given path as a boolean if available.
@@ -81,9 +73,7 @@ public interface PropertyReader {
      * @param path the path to retrieve a boolean for
      * @return the value as a boolean, or null if not applicable or unavailable
      */
-    @Nullable
-    @org.jetbrains.annotations.Nullable
-    Boolean getBoolean(String path);
+    @Nullable Boolean getBoolean(String path);
 
     /**
      * Returns the value of the given path as a list if available.
@@ -91,8 +81,6 @@ public interface PropertyReader {
      * @param path the path to retrieve a list for
      * @return the value as a list, or null if not applicable or unavailable
      */
-    @Nullable
-    @org.jetbrains.annotations.Nullable
-    List<?> getList(String path);
+    @Nullable List<?> getList(String path);
 
 }

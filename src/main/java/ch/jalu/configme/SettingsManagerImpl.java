@@ -6,7 +6,7 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Default implementation of {@link SettingsManager}. Use the {@link SettingsManagerBuilder} to create instances.
@@ -28,7 +28,7 @@ public class SettingsManagerImpl implements SettingsManager {
 
     private final ConfigurationData configurationData;
     private final PropertyResource resource;
-    private final @org.jetbrains.annotations.Nullable MigrationService migrationService;
+    private final @Nullable MigrationService migrationService;
 
     /**
      * Constructor. Use {@link SettingsManagerBuilder} to create instances.

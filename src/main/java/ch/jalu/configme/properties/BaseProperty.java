@@ -5,7 +5,7 @@ import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**
@@ -55,7 +55,7 @@ public abstract class BaseProperty<T> implements Property<T> {
     }
 
     @Override
-    public boolean isValidValue(@org.jetbrains.annotations.Nullable T value) {
+    public boolean isValidValue(@Nullable T value) {
         return value != null;
     }
 
@@ -67,8 +67,7 @@ public abstract class BaseProperty<T> implements Property<T> {
      * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return value based on the reader, or null if not applicable
      */
-    @Nullable
-    protected abstract @org.jetbrains.annotations.Nullable T getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder);
+    protected abstract @Nullable T getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder);
 
     @Override
     public @NotNull String toString() {

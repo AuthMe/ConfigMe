@@ -10,7 +10,7 @@ import ch.jalu.configme.resource.YamlFileResourceOptions;
 import ch.jalu.configme.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -22,7 +22,7 @@ public final class SettingsManagerBuilder {
 
     private final PropertyResource resource;
     private ConfigurationData configurationData;
-    private @org.jetbrains.annotations.Nullable MigrationService migrationService;
+    private @Nullable MigrationService migrationService;
 
     private SettingsManagerBuilder(PropertyResource resource) {
         this.resource = resource;
@@ -132,7 +132,7 @@ public final class SettingsManagerBuilder {
      *
      * @return the settings manager
      */
-    public @org.jetbrains.annotations.Nullable SettingsManager create() {
+    public @Nullable SettingsManager create() {
         Objects.requireNonNull(resource, "resource");
         Objects.requireNonNull(configurationData, "configurationData");
         return new SettingsManagerImpl(resource, configurationData, migrationService);
