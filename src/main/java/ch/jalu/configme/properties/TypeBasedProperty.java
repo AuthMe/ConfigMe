@@ -3,6 +3,7 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -31,7 +32,7 @@ public class TypeBasedProperty<T> extends BaseProperty<T> {
 
     @Nullable
     @Override
-    protected T getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+    protected T getFromReader(@NotNull PropertyReader reader, ConvertErrorRecorder errorRecorder) {
         return type.convert(reader.getObject(getPath()), errorRecorder);
     }
 

@@ -26,6 +26,7 @@ public interface LeafValueHandler {
      * @return value of the given type, or null if not applicable
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     Object convert(TypeInformation typeInformation, @Nullable Object value);
 
     /**
@@ -40,6 +41,7 @@ public interface LeafValueHandler {
      * @return value to use in the export, or null if not applicable
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     Object toExportValue(@Nullable Object value);
 
 }

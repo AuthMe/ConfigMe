@@ -1,6 +1,7 @@
 package ch.jalu.configme.resource;
 
 import ch.jalu.configme.resource.PropertyPathTraverser.PathElement;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.nio.charset.Charset;
@@ -9,8 +10,8 @@ import java.util.function.ToIntFunction;
 
 public class YamlFileResourceOptions {
 
-    private final Charset charset;
-    private final ToIntFunction<PathElement> numberOfLinesBeforeFunction;
+    private final @NotNull Charset charset;
+    private final @org.jetbrains.annotations.Nullable ToIntFunction<PathElement> numberOfLinesBeforeFunction;
     private final int indentationSize;
 
     /**
@@ -28,11 +29,11 @@ public class YamlFileResourceOptions {
         this.indentationSize = indentationSize;
     }
 
-    public static Builder builder() {
+    public static @NotNull Builder builder() {
         return new Builder();
     }
 
-    public Charset getCharset() {
+    public @NotNull Charset getCharset() {
         return charset;
     }
 
@@ -47,7 +48,7 @@ public class YamlFileResourceOptions {
     /**
      * @return the indentation to use for one level
      */
-    public String getIndentation() {
+    public @NotNull String getIndentation() {
         if (indentationSize == 4) {
             return "    ";
         }
@@ -68,22 +69,22 @@ public class YamlFileResourceOptions {
         private ToIntFunction<PathElement> numberOfLinesBeforeFunction;
         private int indentationSize = 4;
 
-        public Builder charset(Charset charset) {
+        public @NotNull Builder charset(Charset charset) {
             this.charset = charset;
             return this;
         }
 
-        public Builder numberOfLinesBeforeFunction(ToIntFunction<PathElement> numberOfLinesBeforeFunction) {
+        public @NotNull Builder numberOfLinesBeforeFunction(ToIntFunction<PathElement> numberOfLinesBeforeFunction) {
             this.numberOfLinesBeforeFunction = numberOfLinesBeforeFunction;
             return this;
         }
 
-        public Builder indentationSize(final int indentationSize) {
+        public @NotNull Builder indentationSize(final int indentationSize) {
             this.indentationSize = indentationSize;
             return this;
         }
 
-        public YamlFileResourceOptions build() {
+        public @NotNull YamlFileResourceOptions build() {
             return new YamlFileResourceOptions(charset, numberOfLinesBeforeFunction, indentationSize);
         }
     }

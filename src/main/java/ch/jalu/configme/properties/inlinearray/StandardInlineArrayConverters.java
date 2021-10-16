@@ -1,5 +1,7 @@
 package ch.jalu.configme.properties.inlinearray;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
@@ -69,7 +71,7 @@ public class StandardInlineArrayConverters<T> implements InlineArrayConverter<T>
     }
 
     @Override
-    public T[] fromString(String input) {
+    public T @NotNull [] fromString(@NotNull String input) {
         String[] inputArray = input.split(Pattern.quote(separator));
 
         return Arrays.stream(inputArray)
@@ -79,7 +81,7 @@ public class StandardInlineArrayConverters<T> implements InlineArrayConverter<T>
     }
 
     @Override
-    public String toExportValue(T[] value) {
+    public String toExportValue(T @NotNull [] value) {
         String delimiter = useTrimAndSpaces ? separator + " " : separator;
         StringJoiner joiner = new StringJoiner(delimiter);
         for (T entry : value) {
@@ -95,7 +97,7 @@ public class StandardInlineArrayConverters<T> implements InlineArrayConverter<T>
      * @return converted value, or null if not possible
      */
     @Nullable
-    protected T convert(String input) {
+    protected T convert(@NotNull String input) {
         try {
             String argument = useTrimAndSpaces ? input.trim() : input;
             return convertFunction.apply(argument);

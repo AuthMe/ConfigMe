@@ -4,6 +4,8 @@ import ch.jalu.configme.beanmapper.DefaultMapper;
 import ch.jalu.configme.beanmapper.Mapper;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BeanPropertyType<B> implements PropertyType<B> {
 
@@ -15,11 +17,11 @@ public class BeanPropertyType<B> implements PropertyType<B> {
         this.mapper = mapper;
     }
 
-    public static <B> BeanPropertyType<B> of(Class<B> type, Mapper mapper) {
+    public static <B> @NotNull BeanPropertyType<B> of(Class<B> type, Mapper mapper) {
         return new BeanPropertyType<>(new TypeInformation(type), mapper);
     }
 
-    public static <B> BeanPropertyType<B> of(Class<B> type) {
+    public static <B> @NotNull BeanPropertyType<B> of(Class<B> type) {
         return of(type, DefaultMapper.getInstance());
     }
 
@@ -30,7 +32,7 @@ public class BeanPropertyType<B> implements PropertyType<B> {
     }
 
     @Override
-    public Object toExportValue(B value) {
+    public @Nullable Object toExportValue(B value) {
         return mapper.toExportValue(value);
     }
 }

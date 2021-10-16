@@ -38,5 +38,6 @@ public interface BeanPropertyDescription {
      * @return the value of the property (can be null)
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     Object getValue(Object bean);
 }

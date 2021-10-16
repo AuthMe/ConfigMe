@@ -1,6 +1,7 @@
 package ch.jalu.configme.resource;
 
 import ch.jalu.configme.exception.ConfigMeException;
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
@@ -58,12 +59,12 @@ public class YamlFileReader implements PropertyReader {
      * @deprecated scheduled for removal in favor of Path
      */
     @Deprecated
-    public YamlFileReader(File file) {
+    public YamlFileReader(@NotNull File file) {
         this(file.toPath(), StandardCharsets.UTF_8);
     }
 
     @Override
-    public Object getObject(String path) {
+    public Object getObject(@NotNull String path) {
         if (path.isEmpty()) {
             return root;
         }
@@ -80,12 +81,12 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    public String getString(String path) {
+    public String getString(@NotNull String path) {
         return getTypedObject(path, String.class);
     }
 
     @Override
-    public Integer getInt(String path) {
+    public Integer getInt(@NotNull String path) {
         Number n = getTypedObject(path, Number.class);
         return (n == null)
             ? null
@@ -93,7 +94,7 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    public Double getDouble(String path) {
+    public Double getDouble(@NotNull String path) {
         Number n = getTypedObject(path, Number.class);
         return (n == null)
             ? null
@@ -101,22 +102,22 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    public Boolean getBoolean(String path) {
+    public Boolean getBoolean(@NotNull String path) {
         return getTypedObject(path, Boolean.class);
     }
 
     @Override
-    public List<?> getList(String path) {
+    public List<?> getList(@NotNull String path) {
         return getTypedObject(path, List.class);
     }
 
     @Override
-    public boolean contains(String path) {
+    public boolean contains(@NotNull String path) {
         return getObject(path) != null;
     }
 
     @Override
-    public Set<String> getKeys(boolean onlyLeafNodes) {
+    public @NotNull Set<String> getKeys(boolean onlyLeafNodes) {
         if (root == null) {
             return Collections.emptySet();
         }
@@ -126,7 +127,7 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    public Set<String> getChildKeys(String path) {
+    public Set<String> getChildKeys(@NotNull String path) {
         Object object = getObject(path);
         if (object instanceof Map) {
             String pathPrefix = path.isEmpty() ? "" : path + ".";
@@ -145,7 +146,7 @@ public class YamlFileReader implements PropertyReader {
      * @param result set to save keys to
      * @param onlyLeafNodes whether only leaf nodes should be added to the result set
      */
-    private void collectKeysIntoSet(String path, Map<String, Object> map, Set<String> result, boolean onlyLeafNodes) {
+    private void collectKeysIntoSet(@NotNull String path, @NotNull Map<String, Object> map, @NotNull Set<String> result, boolean onlyLeafNodes) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String childPath = path.isEmpty() ? entry.getKey() : path + "." + entry.getKey();
             if (!onlyLeafNodes || isLeafValue(entry.getValue())) {
@@ -167,7 +168,7 @@ public class YamlFileReader implements PropertyReader {
      *
      * @return map with the values from the file
      */
-    protected Map<String, Object> loadFile() {
+    protected @org.jetbrains.annotations.Nullable Map<String, Object> loadFile() {
         try (InputStream is = Files.newInputStream(path);
              InputStreamReader isr = new InputStreamReader(is, charset)) {
             Map<Object, Object> rootMap = new Yaml().load(isr);
@@ -194,7 +195,7 @@ public class YamlFileReader implements PropertyReader {
 
     // Scheduled for removal in favor of #getPath
     @Deprecated
-    protected final File getFile() {
+    protected final @NotNull File getFile() {
         return path.toFile();
     }
 
@@ -222,7 +223,7 @@ public class YamlFileReader implements PropertyReader {
      * @return cast value at the given path, null if not applicable
      */
     @Nullable
-    protected <T> T getTypedObject(String path, Class<T> clazz) {
+    protected <T> T getTypedObject(@NotNull String path, @NotNull Class<T> clazz) {
         Object value = getObject(path);
         if (clazz.isInstance(value)) {
             return clazz.cast(value);

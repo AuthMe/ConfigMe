@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import org.jetbrains.annotations.NotNull;
 
 public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
 
@@ -10,7 +11,7 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
         this.enumType = enumType;
     }
 
-    public static <E extends Enum<E>> EnumPropertyType<E> of(Class<E> type) {
+    public static <E extends Enum<E>> @NotNull EnumPropertyType<E> of(Class<E> type) {
         return new EnumPropertyType<>(type);
     }
 
@@ -37,7 +38,7 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
     }
 
     @Override
-    public Object toExportValue(E value) {
+    public @NotNull Object toExportValue(@NotNull E value) {
         return value.name();
     }
 }

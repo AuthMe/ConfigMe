@@ -28,7 +28,7 @@ public class SettingsManagerImpl implements SettingsManager {
 
     private final ConfigurationData configurationData;
     private final PropertyResource resource;
-    private final MigrationService migrationService;
+    private final @org.jetbrains.annotations.Nullable MigrationService migrationService;
 
     /**
      * Constructor. Use {@link SettingsManagerBuilder} to create instances.

@@ -1,6 +1,7 @@
 package ch.jalu.configme.beanmapper.leafvaluehandler;
 
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,7 +15,7 @@ import java.util.function.Function;
  */
 public class CombiningLeafValueHandler implements LeafValueHandler {
 
-    private final Collection<LeafValueHandler> handlers;
+    private final @NotNull Collection<LeafValueHandler> handlers;
 
     /**
      * Constructor.
@@ -30,7 +31,7 @@ public class CombiningLeafValueHandler implements LeafValueHandler {
      *
      * @param handlers the handlers to delegate each call to (in the iteration order of the collection)
      */
-    public CombiningLeafValueHandler(Collection<LeafValueHandler> handlers) {
+    public CombiningLeafValueHandler(@NotNull Collection<LeafValueHandler> handlers) {
         this.handlers = Collections.unmodifiableCollection(handlers);
     }
 
@@ -44,7 +45,7 @@ public class CombiningLeafValueHandler implements LeafValueHandler {
         return getFirstNonNull(t -> t.toExportValue(value));
     }
 
-    protected final Collection<LeafValueHandler> getHandlers() {
+    protected final @NotNull Collection<LeafValueHandler> getHandlers() {
         return handlers;
     }
 

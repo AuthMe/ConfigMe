@@ -1,10 +1,12 @@
 package ch.jalu.configme.beanmapper.leafvaluehandler;
 
+import org.jetbrains.annotations.Nullable;
+
 /** Boolean leaf value handler. */
 public class BooleanLeafValueHandler extends AbstractLeafValueHandler {
 
     @Override
-    public Object convert(Class<?> clazz, Object value) {
+    public @Nullable Object convert(Class<?> clazz, Object value) {
         if ((clazz == boolean.class || clazz == Boolean.class) && value instanceof Boolean) {
             return value;
         }

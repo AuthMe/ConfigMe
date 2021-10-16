@@ -3,6 +3,7 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -39,7 +40,7 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
      * @param type the property type
      * @param defaultValue the default value of the property
      */
-    public ListProperty(String path, PropertyType<T> type, List<T> defaultValue) {
+    public ListProperty(String path, PropertyType<T> type, @NotNull List<T> defaultValue) {
         super(path, Collections.unmodifiableList(defaultValue));
         Objects.requireNonNull(type, "type");
         this.type = type;
@@ -47,7 +48,7 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
 
     @Nullable
     @Override
-    protected List<T> getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+    protected List<T> getFromReader(@NotNull PropertyReader reader, ConvertErrorRecorder errorRecorder) {
         List<?> list = reader.getList(getPath());
 
         if (list != null) {
@@ -60,7 +61,7 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
     }
 
     @Override
-    public Object toExportValue(List<T> value) {
+    public @org.jetbrains.annotations.Nullable Object toExportValue(@NotNull List<T> value) {
         return value.stream()
             .map(type::toExportValue)
             .collect(Collectors.toList());

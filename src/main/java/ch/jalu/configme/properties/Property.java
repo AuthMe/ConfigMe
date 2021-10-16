@@ -82,6 +82,7 @@ public interface Property<T> {
      * @return value to use for export, null to skip the property
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     Object toExportValue(T value);
 
 }

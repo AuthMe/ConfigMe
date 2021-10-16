@@ -3,6 +3,7 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -44,7 +45,7 @@ public abstract class BaseProperty<T> implements Property<T> {
     }
 
     @Override
-    public PropertyValue<T> determineValue(PropertyReader reader) {
+    public @NotNull PropertyValue<T> determineValue(PropertyReader reader) {
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
         T value = getFromReader(reader, errorRecorder);
         if (isValidValue(value)) {
@@ -54,7 +55,7 @@ public abstract class BaseProperty<T> implements Property<T> {
     }
 
     @Override
-    public boolean isValidValue(T value) {
+    public boolean isValidValue(@org.jetbrains.annotations.Nullable T value) {
         return value != null;
     }
 
@@ -67,10 +68,10 @@ public abstract class BaseProperty<T> implements Property<T> {
      * @return value based on the reader, or null if not applicable
      */
     @Nullable
-    protected abstract T getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder);
+    protected abstract @org.jetbrains.annotations.Nullable T getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder);
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "Property '" + path + "'";
     }
 }

@@ -1,5 +1,7 @@
 package ch.jalu.configme.resource;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -73,7 +75,7 @@ public class MapNormalizer {
      * @param path the path to store the value under
      * @param value the value to store
      */
-    protected void addValueIntoMap(Map<String, Object> map, String path, Object value) {
+    protected void addValueIntoMap(@NotNull Map<String, Object> map, @NotNull String path, Object value) {
         int dotPosition = path.indexOf(".");
         if (dotPosition > -1) {
             String pathElement = path.substring(0, dotPosition);
@@ -98,7 +100,7 @@ public class MapNormalizer {
      * @param path the key with which the value should be looked up from the map
      * @return the nested map, as stored under the path in the given map
      */
-    protected Map<String, Object> getOrInsertMap(Map<String, Object> parentMap, String path) {
+    protected @NotNull Map<String, Object> getOrInsertMap(@NotNull Map<String, Object> parentMap, String path) {
         Object value = parentMap.get(path);
         if (value instanceof Map<?, ?>) {
             return (Map<String, Object>) value;

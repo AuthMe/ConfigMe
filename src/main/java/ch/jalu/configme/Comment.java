@@ -1,5 +1,7 @@
 package ch.jalu.configme;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,6 +20,6 @@ public @interface Comment {
      *
      * @return the comment to associate with the property
      */
-    String[] value();
+    String @NotNull [] value();
 
 }

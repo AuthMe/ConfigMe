@@ -21,6 +21,7 @@ public interface PropertyType<T> {
      * @return the converted value, or null
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     T convert(@Nullable Object object, ConvertErrorRecorder errorRecorder);
 
     /**

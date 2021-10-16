@@ -4,6 +4,7 @@ import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Simple migration service that can be extended.
@@ -11,7 +12,7 @@ import ch.jalu.configme.resource.PropertyReader;
 public class PlainMigrationService implements MigrationService {
 
     @Override
-    public boolean checkAndMigrate(PropertyReader reader, ConfigurationData configurationData) {
+    public boolean checkAndMigrate(PropertyReader reader, @NotNull ConfigurationData configurationData) {
         if (performMigrations(reader, configurationData) == MIGRATION_REQUIRED
             || !configurationData.areAllValuesValidInResource()) {
             return MIGRATION_REQUIRED;
@@ -47,8 +48,8 @@ public class PlainMigrationService implements MigrationService {
      * @param <T> the type of the property
      * @return true if the old path exists in the configuration file, false otherwise
      */
-    protected static <T> boolean moveProperty(Property<T> oldProperty, Property<T> newProperty,
-                                              PropertyReader reader, ConfigurationData configurationData) {
+    protected static <T> boolean moveProperty(@NotNull Property<T> oldProperty, @NotNull Property<T> newProperty,
+                                              @NotNull PropertyReader reader, @NotNull ConfigurationData configurationData) {
         if (reader.contains(oldProperty.getPath())) {
             if (!reader.contains(newProperty.getPath())) {
                 PropertyValue<T> value = oldProperty.determineValue(reader);

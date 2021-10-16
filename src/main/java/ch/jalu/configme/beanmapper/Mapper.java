@@ -22,6 +22,7 @@ public interface Mapper {
      * @return object of the given type, or null if not possible
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     Object convertToBean(@Nullable Object value, TypeInformation typeInformation, ConvertErrorRecorder errorRecorder);
 
     /**
@@ -50,6 +51,7 @@ public interface Mapper {
      * @return export value to use
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     Object toExportValue(@Nullable Object object);
 
 }

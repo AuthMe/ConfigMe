@@ -3,6 +3,7 @@ package ch.jalu.configme.beanmapper.propertydescription;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.beanmapper.ExportName;
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.beans.IntrospectionException;
@@ -70,7 +71,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @return the converted object, or null if the property should be skipped
      */
     @Nullable
-    protected BeanPropertyDescription convert(PropertyDescriptor descriptor) {
+    protected BeanPropertyDescription convert(@NotNull PropertyDescriptor descriptor) {
         if (Boolean.TRUE.equals(descriptor.getValue("transient"))) {
             return null;
         }
@@ -88,7 +89,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param clazz the class to which the properties belong
      * @param properties the properties that will be used on the class
      */
-    protected void validateProperties(Class<?> clazz, Collection<BeanPropertyDescription> properties) {
+    protected void validateProperties(Class<?> clazz, @NotNull Collection<BeanPropertyDescription> properties) {
         Set<String> names = new HashSet<>(properties.size());
         properties.forEach(property -> {
             if (property.getName().isEmpty()) {
@@ -107,7 +108,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param descriptor the descriptor to get the name for
      * @return the property name
      */
-    protected String getPropertyName(PropertyDescriptor descriptor) {
+    protected String getPropertyName(@NotNull PropertyDescriptor descriptor) {
         if (descriptor.getReadMethod().isAnnotationPresent(ExportName.class)) {
             return descriptor.getReadMethod().getAnnotation(ExportName.class).value();
         } else if (descriptor.getWriteMethod().isAnnotationPresent(ExportName.class)) {
@@ -116,7 +117,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
         return descriptor.getName();
     }
 
-    protected TypeInformation createTypeInfo(PropertyDescriptor descriptor) {
+    protected @NotNull TypeInformation createTypeInfo(@NotNull PropertyDescriptor descriptor) {
         return new TypeInformation(descriptor.getWriteMethod().getGenericParameterTypes()[0]);
     }
 
@@ -127,7 +128,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param clazz the class to process
      * @return all writable properties of the bean class
      */
-    protected List<PropertyDescriptor> getWritableProperties(Class<?> clazz) {
+    protected @NotNull List<PropertyDescriptor> getWritableProperties(Class<?> clazz) {
         PropertyDescriptor[] descriptors;
         try {
             descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
@@ -151,7 +152,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param properties the properties to sort
      * @return sorted properties
      */
-    protected List<PropertyDescriptor> sortPropertiesList(Class<?> clazz, List<PropertyDescriptor> properties) {
+    protected @NotNull List<PropertyDescriptor> sortPropertiesList(Class<?> clazz, @NotNull List<PropertyDescriptor> properties) {
         Map<String, Integer> fieldNameByIndex = createFieldNameOrderMap(clazz);
         int maxIndex = fieldNameByIndex.size();
 
@@ -170,7 +171,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param clazz the class to create the field index map for
      * @return map with all field names as keys and its index as value
      */
-    protected Map<String, Integer> createFieldNameOrderMap(Class<?> clazz) {
+    protected @NotNull Map<String, Integer> createFieldNameOrderMap(Class<?> clazz) {
         Map<String, Integer> nameByIndex = new HashMap<>();
         int i = 0;
         for (Class currentClass : collectClassAndAllParents(clazz)) {
@@ -189,7 +190,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param clazz the class whose parents should be collected
      * @return list of all of the class' parents, sorted by highest class in the hierarchy to lowest
      */
-    protected List<Class<?>> collectClassAndAllParents(Class<?> clazz) {
+    protected @NotNull List<Class<?>> collectClassAndAllParents(Class<?> clazz) {
         List<Class<?>> parents = new ArrayList<>();
         Class<?> curClass = clazz;
         while (curClass != null && curClass != Object.class) {

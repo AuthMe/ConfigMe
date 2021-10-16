@@ -1,5 +1,7 @@
 package ch.jalu.configme.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -32,7 +34,7 @@ public class TypeInformation {
      * @param field the field to create a type information for
      * @return type information wrapping the field's type
      */
-    public static TypeInformation fromField(Field field) {
+    public static @NotNull TypeInformation fromField(@NotNull Field field) {
         return new TypeInformation(field.getGenericType());
     }
 
@@ -60,7 +62,7 @@ public class TypeInformation {
      *         (e.g. setting a value to a field or adding to a collection);
      *         null if not applicable
      */
-    public Class<?> getSafeToWriteClass() {
+    public @org.jetbrains.annotations.Nullable Class<?> getSafeToWriteClass() {
         return getSafeToWriteClassInternal(type);
     }
 
@@ -78,7 +80,7 @@ public class TypeInformation {
      *
      * @return the type as Class which is safe for reading (e.g. getting field value or reading from a collection)
      */
-    public Class<?> getSafeToReadClass() {
+    public @NotNull Class<?> getSafeToReadClass() {
         Class<?> safeToReadClass = getSafeToReadClassInternal(type);
         return safeToReadClass == null ? Object.class : safeToReadClass;
     }
@@ -166,7 +168,7 @@ public class TypeInformation {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "TypeInformation[type=" + type + "]";
     }
 

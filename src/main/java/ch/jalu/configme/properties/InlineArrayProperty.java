@@ -3,6 +3,7 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.inlinearray.InlineArrayConverter;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -30,7 +31,7 @@ public class InlineArrayProperty<T> extends BaseProperty<T[]> {
     }
 
     @Override
-    protected T[] getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+    protected T[] getFromReader(@NotNull PropertyReader reader, ConvertErrorRecorder errorRecorder) {
         String value = reader.getString(getPath());
         return value == null ? null : inlineConverter.fromString(value);
     }

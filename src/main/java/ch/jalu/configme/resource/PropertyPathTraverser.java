@@ -2,6 +2,7 @@ package ch.jalu.configme.resource;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.utils.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +20,7 @@ public class PropertyPathTraverser {
 
     private final ConfigurationData configurationData;
     /** Contains all path elements besides the last, e.g. {datasource, mysql} for "datasource.mysql.table". */
-    private List<String> parentPathElements = new ArrayList<>(0);
+    private @NotNull List<String> parentPathElements = new ArrayList<>(0);
     private boolean isFirstProperty = true;
 
     public PropertyPathTraverser(ConfigurationData configurationData) {
@@ -32,7 +33,7 @@ public class PropertyPathTraverser {
      * @param path the property path
      * @return the new path elements
      */
-    public List<PathElement> getPathElements(String path) {
+    public @NotNull List<PathElement> getPathElements(@NotNull String path) {
         List<String> propertyPath = Arrays.asList(path.split("\\."));
         List<String> commonPathParts = CollectionUtils.filterCommonStart(
             parentPathElements, propertyPath.subList(0, propertyPath.size() - 1));
@@ -45,7 +46,7 @@ public class PropertyPathTraverser {
         return convertToPathElements(indentationLevel, prefix, newPathParts);
     }
 
-    private List<PathElement> convertToPathElements(int indentation, String prefix, List<String> elements) {
+    private @NotNull List<PathElement> convertToPathElements(int indentation, String prefix, @NotNull List<String> elements) {
         List<PathElement> pathElements = new ArrayList<>(elements.size());
         for (String element : elements) {
             List<String> comments = isFirstProperty

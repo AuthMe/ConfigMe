@@ -1,6 +1,7 @@
 package ch.jalu.configme.configurationdata;
 
 import ch.jalu.configme.SettingsHolder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,7 +48,7 @@ public class CommentsConfiguration {
      *
      * @return map with all comments
      */
-    public Map<String, List<String>> getAllComments() {
+    public @NotNull Map<String, List<String>> getAllComments() {
         return Collections.unmodifiableMap(comments);
     }
 }

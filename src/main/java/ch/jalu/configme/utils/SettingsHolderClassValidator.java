@@ -7,6 +7,7 @@ import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
@@ -52,7 +53,7 @@ public class SettingsHolderClassValidator {
      *
      * @param settingHolders settings holder classes that make up the configuration data of the project
      */
-    public void validate(Iterable<Class<? extends SettingsHolder>> settingHolders) {
+    public void validate(@NotNull Iterable<Class<? extends SettingsHolder>> settingHolders) {
         validateAllPropertiesAreConstants(settingHolders);
         validateSettingsHolderClassesFinal(settingHolders);
         validateClassesHaveHiddenNoArgConstructor(settingHolders);
@@ -79,8 +80,8 @@ public class SettingsHolderClassValidator {
      * @param migrationService the migration service to check
      */
     public void validateConfigurationDataValidForMigrationService(ConfigurationData configurationData,
-                                                                  PropertyResource resource,
-                                                                  MigrationService migrationService) {
+                                                                  @NotNull PropertyResource resource,
+                                                                  @NotNull MigrationService migrationService) {
         resource.exportProperties(configurationData);
 
         PropertyReader reader = resource.createReader();
@@ -97,7 +98,7 @@ public class SettingsHolderClassValidator {
      *
      * @param settingHolders the classes to check
      */
-    public void validateAllPropertiesAreConstants(Iterable<Class<? extends SettingsHolder>> settingHolders) {
+    public void validateAllPropertiesAreConstants(@NotNull Iterable<Class<? extends SettingsHolder>> settingHolders) {
         List<String> invalidFields = new ArrayList<>();
 
         for (Class<? extends SettingsHolder> clazz : settingHolders) {
@@ -120,7 +121,7 @@ public class SettingsHolderClassValidator {
      *
      * @param settingHolders the classes to check
      */
-    public void validateSettingsHolderClassesFinal(Iterable<Class<? extends SettingsHolder>> settingHolders) {
+    public void validateSettingsHolderClassesFinal(@NotNull Iterable<Class<? extends SettingsHolder>> settingHolders) {
         List<String> invalidClasses = new ArrayList<>();
 
         for (Class<? extends SettingsHolder> clazz : settingHolders) {
@@ -141,7 +142,7 @@ public class SettingsHolderClassValidator {
      *
      * @param settingHolders the classes to check
      */
-    public void validateClassesHaveHiddenNoArgConstructor(Iterable<Class<? extends SettingsHolder>> settingHolders) {
+    public void validateClassesHaveHiddenNoArgConstructor(@NotNull Iterable<Class<? extends SettingsHolder>> settingHolders) {
         List<String> invalidClasses = new ArrayList<>();
 
         for (Class<? extends SettingsHolder> clazz : settingHolders) {
@@ -162,7 +163,7 @@ public class SettingsHolderClassValidator {
      * @param configurationData the configuration data to check
      * @param propertyFilter predicate determining which properties are checked (if null, are properties are checked)
      */
-    public void validateHasCommentOnEveryProperty(ConfigurationData configurationData,
+    public void validateHasCommentOnEveryProperty(@NotNull ConfigurationData configurationData,
                                                   @Nullable Predicate<Property<?>> propertyFilter) {
         Predicate<Property<?>> filter = propertyFilter == null ? (p -> true) : propertyFilter;
         List<String> invalidProperties = new ArrayList<>();
@@ -192,7 +193,7 @@ public class SettingsHolderClassValidator {
      * @param minLength the number of characters each comment line must at least have (null to disable check)
      * @param maxLength the number of characters each comment may not surpass (null to disable check)
      */
-    public void validateCommentLengthsAreWithinBounds(ConfigurationData configurationData,
+    public void validateCommentLengthsAreWithinBounds(@NotNull ConfigurationData configurationData,
                                                       @Nullable Integer minLength, @Nullable Integer maxLength) {
         Predicate<String> hasInvalidLengthPredicate = createValidLengthPredicate(minLength, maxLength).negate();
 
@@ -220,7 +221,7 @@ public class SettingsHolderClassValidator {
      * @param configurationData the configuration data whose properties and comments should be checked
      * @param propertyFilter predicate determining which properties are checked (if null, are properties are checked)
      */
-    public void validateHasAllEnumEntriesInComment(ConfigurationData configurationData,
+    public void validateHasAllEnumEntriesInComment(@NotNull ConfigurationData configurationData,
                                                    @Nullable Predicate<Property<?>> propertyFilter) {
         List<String> commentErrors = new ArrayList<>();
 
@@ -251,7 +252,7 @@ public class SettingsHolderClassValidator {
 
     // ---- Validation helpers
 
-    protected boolean isValidConstantField(Field field) {
+    protected boolean isValidConstantField(@NotNull Field field) {
         int modifiers = field.getModifiers();
         return Modifier.isPublic(modifiers)
             && Modifier.isStatic(modifiers)
@@ -276,7 +277,7 @@ public class SettingsHolderClassValidator {
      * @param maxLength the max length (nullable)
      * @return predicate based on the supplied length parameters
      */
-    protected Predicate<String> createValidLengthPredicate(@Nullable Integer minLength, @Nullable Integer maxLength) {
+    protected @NotNull Predicate<String> createValidLengthPredicate(@Nullable Integer minLength, @Nullable Integer maxLength) {
         if (minLength == null && maxLength == null) {
             throw new IllegalArgumentException("min length or max length must be not null");
         }
@@ -292,7 +293,7 @@ public class SettingsHolderClassValidator {
      */
     @Nullable
     @SuppressWarnings("unchecked")
-    protected Class<? extends Enum<?>> getEnumTypeOfProperty(Property<?> property) {
+    protected Class<? extends Enum<?>> getEnumTypeOfProperty(@NotNull Property<?> property) {
         Class<?> defaultValueType = property.getDefaultValue().getClass();
         if (defaultValueType.isAnonymousClass()) {
             // If an enum entry implements methods, it is an anonymous class -> we're interested in the enclosing class
@@ -301,13 +302,13 @@ public class SettingsHolderClassValidator {
         return defaultValueType.isEnum() ? (Class<? extends Enum<?>>) defaultValueType : null;
     }
 
-    protected List<String> gatherExpectedEnumNames(Class<? extends Enum<?>> enumClass) {
+    protected List<String> gatherExpectedEnumNames(@NotNull Class<? extends Enum<?>> enumClass) {
         return Arrays.stream(enumClass.getEnumConstants())
             .map(Enum::name)
             .collect(Collectors.toList());
     }
 
-    protected boolean hasValidConstructorSetup(Class<? extends SettingsHolder> clazz) {
+    protected boolean hasValidConstructorSetup(@NotNull Class<? extends SettingsHolder> clazz) {
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
         return constructors.length == 1
             && constructors[0].getParameterCount() == 0
@@ -320,7 +321,7 @@ public class SettingsHolderClassValidator {
      * @param clazz the class whose fields should be retrieved
      * @return all fields of the class, including its parents
      */
-    protected Stream<Field> getAllFields(Class<?> clazz) {
+    protected Stream<Field> getAllFields(@NotNull Class<?> clazz) {
         // Shortcut: Class does not inherit from another class, so just go through its fields
         if (Object.class.equals(clazz.getSuperclass())) {
             return Arrays.stream(clazz.getDeclaredFields());

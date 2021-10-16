@@ -2,6 +2,7 @@ package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.inlinearray.InlineArrayConverter;
 import ch.jalu.configme.properties.types.PropertyType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -41,7 +42,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
      * @param path the path
      * @return this builder
      */
-    public B path(String path) {
+    public @NotNull B path(String path) {
         this.path = path;
         return (B) this;
     }
@@ -62,7 +63,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
      *
      * @return the created property
      */
-    public abstract Property<T> build();
+    public abstract @NotNull Property<T> build();
 
     protected final String getPath() {
         return path;
@@ -88,13 +89,13 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
             defaultValue(new LinkedHashMap<>());
         }
 
-        public MapPropertyBuilder<T> defaultEntry(String key, T value) {
+        public @NotNull MapPropertyBuilder<T> defaultEntry(String key, T value) {
             getDefaultValue().put(key, value);
             return this;
         }
 
         @Override
-        public MapProperty<T> build() {
+        public @NotNull MapProperty<T> build() {
             return new MapProperty<>(getPath(), getDefaultValue(), getType());
         }
     }
@@ -112,13 +113,13 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
             super(type);
         }
 
-        public TypeBasedPropertyBuilder<T> createFunction(CreateFunction<T, T> createFunction) {
+        public @NotNull TypeBasedPropertyBuilder<T> createFunction(CreateFunction<T, T> createFunction) {
             this.createFunction = createFunction;
             return this;
         }
 
         @Override
-        public Property<T> build() {
+        public @NotNull Property<T> build() {
             return createFunction.apply(getPath(), getDefaultValue(), getType());
         }
     }
@@ -143,7 +144,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
         }
 
         @Override
-        public Property<T[]> build() {
+        public @NotNull Property<T[]> build() {
             return new ArrayProperty<>(getPath(), getDefaultValue(), getType(), arrayProducer);
         }
     }
@@ -168,7 +169,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
         }
 
         @Override
-        public Property<T[]> build() {
+        public @NotNull Property<T[]> build() {
             return new InlineArrayProperty<>(getPath(), getDefaultValue(), inlineConverter);
         }
     }
@@ -189,7 +190,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
         }
 
         @Override
-        public Property<List<T>> build() {
+        public @NotNull Property<List<T>> build() {
             return new ListProperty<>(getPath(), getType(), getDefaultValue());
         }
     }
@@ -205,14 +206,14 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
             super(type);
         }
 
-        public SetPropertyBuilder<T> defaultValue(T... defaultValue) {
+        public SetPropertyBuilder<T> defaultValue(T @NotNull ... defaultValue) {
             Set<T> defaultSet = Arrays.stream(defaultValue)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
             return super.defaultValue(defaultSet);
         }
 
         @Override
-        public Property<Set<T>> build() {
+        public @NotNull Property<Set<T>> build() {
             return new SetProperty<>(getPath(), getType(), getDefaultValue());
         }
     }
@@ -226,7 +227,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
     @FunctionalInterface
     public interface CreateFunction<K, T> {
 
-        Property<T> apply(String path, T defaultValue, PropertyType<K> type);
+        @NotNull Property<T> apply(String path, T defaultValue, PropertyType<K> type);
 
     }
 

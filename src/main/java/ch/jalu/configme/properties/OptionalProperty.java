@@ -2,6 +2,8 @@ package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -21,7 +23,7 @@ public class OptionalProperty<T> implements Property<Optional<T>> {
         this.defaultValue = Optional.empty();
     }
 
-    public OptionalProperty(Property<T> baseProperty, T defaultValue) {
+    public OptionalProperty(Property<T> baseProperty, @NotNull T defaultValue) {
         this.baseProperty = baseProperty;
         this.defaultValue = Optional.of(defaultValue);
     }
@@ -32,7 +34,7 @@ public class OptionalProperty<T> implements Property<Optional<T>> {
     }
 
     @Override
-    public PropertyValue<Optional<T>> determineValue(PropertyReader reader) {
+    public @NotNull PropertyValue<Optional<T>> determineValue(@NotNull PropertyReader reader) {
         PropertyValue<T> basePropertyValue = baseProperty.determineValue(reader);
         Optional<T> value = basePropertyValue.isValidInResource()
             ? Optional.ofNullable(basePropertyValue.getValue())
@@ -52,7 +54,7 @@ public class OptionalProperty<T> implements Property<Optional<T>> {
     }
 
     @Override
-    public boolean isValidValue(Optional<T> value) {
+    public boolean isValidValue(@Nullable Optional<T> value) {
         if (value == null) {
             return false;
         }
@@ -60,7 +62,7 @@ public class OptionalProperty<T> implements Property<Optional<T>> {
     }
 
     @Override
-    public Object toExportValue(Optional<T> value) {
+    public Object toExportValue(@NotNull Optional<T> value) {
         return value.map(baseProperty::toExportValue).orElse(null);
     }
 }

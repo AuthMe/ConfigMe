@@ -2,6 +2,7 @@ package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
@@ -52,7 +53,7 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
     public Object getValue(Object bean) {
         try {
             return getter.invoke(bean);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (@NotNull IllegalAccessException | InvocationTargetException e) {
             throw new ConfigMeMapperException(
                 "Could not get property '" + name + "' from instance '" + bean + "'", e);
         }
@@ -67,14 +68,14 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
     public void setValue(Object bean, Object value) {
         try {
             setter.invoke(bean, value);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (@NotNull IllegalAccessException | InvocationTargetException e) {
             throw new ConfigMeMapperException(
                 "Could not set property '" + name + "' to value '" + value + "' on instance '" + bean + "'", e);
         }
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "Bean property '" + name + "' with getter '" + getter + "'";
     }
 }

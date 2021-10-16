@@ -1,6 +1,7 @@
 package ch.jalu.configme.beanmapper;
 
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Holds necessary information for a certain value that is being mapped in the bean mapper.
@@ -28,7 +29,7 @@ public interface MappingContext {
      * @param index the index to get generic type info for
      * @return the generic type info (throws exception if absent or not precise enough)
      */
-    default TypeInformation getGenericTypeInfoOrFail(int index) {
+    default @Nullable TypeInformation getGenericTypeInfoOrFail(int index) {
         TypeInformation genericType = getTypeInformation().getGenericType(index);
         if (genericType == null || genericType.getSafeToWriteClass() == null) {
             throw new ConfigMeMapperException(this,

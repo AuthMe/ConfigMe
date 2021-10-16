@@ -42,6 +42,7 @@ public interface PropertyReader {
      * @return the value, or null if there is none
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     Object getObject(String path);
 
     /**
@@ -51,6 +52,7 @@ public interface PropertyReader {
      * @return the value as a String, or null if not applicable or unavailable
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     String getString(String path);
 
     /**
@@ -60,6 +62,7 @@ public interface PropertyReader {
      * @return the value as integer, or null if not applicable or unavailable
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     Integer getInt(String path);
 
     /**
@@ -69,6 +72,7 @@ public interface PropertyReader {
      * @return the value as a double, or null if not applicable or unavailable
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     Double getDouble(String path);
 
     /**
@@ -78,6 +82,7 @@ public interface PropertyReader {
      * @return the value as a boolean, or null if not applicable or unavailable
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     Boolean getBoolean(String path);
 
     /**
@@ -87,6 +92,7 @@ public interface PropertyReader {
      * @return the value as a list, or null if not applicable or unavailable
      */
     @Nullable
+    @org.jetbrains.annotations.Nullable
     List<?> getList(String path);
 
 }

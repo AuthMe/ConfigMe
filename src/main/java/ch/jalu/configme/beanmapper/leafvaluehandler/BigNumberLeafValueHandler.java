@@ -1,5 +1,7 @@
 package ch.jalu.configme.beanmapper.leafvaluehandler;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -14,7 +16,7 @@ public class BigNumberLeafValueHandler extends AbstractLeafValueHandler {
     private static final BigDecimal BIG_DECIMAL_SCIENTIFIC_THRESHOLD = new BigDecimal("1E100");
 
     @Override
-    protected Object convert(Class<?> clazz, Object value) {
+    protected @org.jetbrains.annotations.Nullable Object convert(@NotNull Class<?> clazz, Object value) {
         if (clazz != BigInteger.class && clazz != BigDecimal.class) {
             return null;
         }
@@ -27,7 +29,7 @@ public class BigNumberLeafValueHandler extends AbstractLeafValueHandler {
     }
 
     @Override
-    public Object toExportValue(Object value) {
+    public Object toExportValue(@org.jetbrains.annotations.Nullable Object value) {
         final Class<?> valueType = value == null ? null : value.getClass();
         if (valueType == BigInteger.class) {
             return value.toString();
@@ -48,7 +50,7 @@ public class BigNumberLeafValueHandler extends AbstractLeafValueHandler {
      * @return BigInteger or BigDecimal as defined by the target class, or null if no conversion was possible
      */
     @Nullable
-    protected Object fromString(Class<?> targetClass, String value) {
+    protected Object fromString(Class<?> targetClass, @NotNull String value) {
         try {
             return targetClass == BigInteger.class
                 ? new BigInteger(value)
@@ -65,7 +67,7 @@ public class BigNumberLeafValueHandler extends AbstractLeafValueHandler {
      * @param value the value to convert
      * @return BigInteger or BigDecimal as defined by the target class
      */
-    protected Object fromNumber(Class<?> targetClass, Number value) {
+    protected Object fromNumber(@NotNull Class<?> targetClass, Number value) {
         if (targetClass.isInstance(value)) {
             return value;
         }

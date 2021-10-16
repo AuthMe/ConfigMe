@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties.convertresult;
 
 import ch.jalu.configme.properties.Property;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Return value of {@link Property#determineValue}. Wraps the value to associate with the property, along with a field
@@ -37,7 +38,7 @@ public class PropertyValue<T> {
      * @param <T> the value type
      * @return property value with the given value and the valid flag set to true
      */
-    public static <T> PropertyValue<T> withValidValue(T value) {
+    public static <T> @NotNull PropertyValue<T> withValidValue(T value) {
         return new PropertyValue<>(value, true);
     }
 
@@ -48,7 +49,7 @@ public class PropertyValue<T> {
      * @param <T> the value type
      * @return property value with the given value and the valid flag set to false
      */
-    public static <T> PropertyValue<T> withValueRequiringRewrite(T value) {
+    public static <T> @NotNull PropertyValue<T> withValueRequiringRewrite(T value) {
         return new PropertyValue<>(value, false);
     }
 
@@ -72,7 +73,7 @@ public class PropertyValue<T> {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "PropertyValue[valid=" + isValidInResource + ", value='" + value + "']";
     }
 }

@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -66,7 +67,7 @@ public class PrimitivePropertyType<T> implements PropertyType<T> {
     }
 
     /* Helper to create property types which convert from a Number object. */
-    private static <T> PrimitivePropertyType<T> fromNumber(Function<Number, T> function) {
+    private static <T> @NotNull PrimitivePropertyType<T> fromNumber(@NotNull Function<Number, T> function) {
         return new PrimitivePropertyType<>(object -> object instanceof Number ? function.apply((Number) object) : null);
     }
 }

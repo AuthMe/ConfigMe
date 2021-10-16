@@ -7,6 +7,7 @@ import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImp
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class MapperImpl implements Mapper {
         return leafValueHandler;
     }
 
-    protected MappingContext createRootMappingContext(TypeInformation beanType, ConvertErrorRecorder errorRecorder) {
+    protected @NotNull MappingContext createRootMappingContext(TypeInformation beanType, ConvertErrorRecorder errorRecorder) {
         return MappingContextImpl.createRoot(beanType, errorRecorder);
     }
 
@@ -86,7 +87,7 @@ public class MapperImpl implements Mapper {
     // ---------
 
     @Override
-    public Object toExportValue(Object value) {
+    public Object toExportValue(@org.jetbrains.annotations.Nullable Object value) {
         // Step 1: attempt simple value transformation
         Object simpleValue = leafValueHandler.toExportValue(value);
         if (simpleValue != null || value == null) {
@@ -142,7 +143,7 @@ public class MapperImpl implements Mapper {
         return null;
     }
 
-    protected static Object unwrapReturnNull(Object o) {
+    protected static @org.jetbrains.annotations.Nullable Object unwrapReturnNull(Object o) {
         return o == RETURN_NULL ? null : o;
     }
 
@@ -152,7 +153,7 @@ public class MapperImpl implements Mapper {
 
     @Nullable
     @Override
-    public Object convertToBean(Object value, TypeInformation beanType, ConvertErrorRecorder errorRecorder) {
+    public Object convertToBean(@org.jetbrains.annotations.Nullable Object value, TypeInformation beanType, ConvertErrorRecorder errorRecorder) {
         if (value == null) {
             return null;
         }
@@ -168,7 +169,7 @@ public class MapperImpl implements Mapper {
      * @return object whose type matches the one in the mapping context, or null if not applicable
      */
     @Nullable
-    protected Object convertValueForType(MappingContext context, Object value) {
+    protected Object convertValueForType(@NotNull MappingContext context, Object value) {
         Class<?> rawClass = context.getTypeInformation().getSafeToWriteClass();
         if (rawClass == null) {
             throw new ConfigMeMapperException(context, "Cannot determine required type");
@@ -198,7 +199,7 @@ public class MapperImpl implements Mapper {
      * @return object whose type matches the one in the mapping context, or null if not applicable
      */
     @Nullable
-    protected Object handleSpecialTypes(MappingContext context, Object value) {
+    protected Object handleSpecialTypes(@NotNull MappingContext context, Object value) {
         final Class<?> rawClass = context.getTypeInformation().getSafeToWriteClass();
         if (Collection.class.isAssignableFrom(rawClass)) {
             return createCollection(context, value);
@@ -221,7 +222,7 @@ public class MapperImpl implements Mapper {
      */
     @Nullable
     @SuppressWarnings("unchecked")
-    protected Collection createCollection(MappingContext context, Object value) {
+    protected @org.jetbrains.annotations.Nullable Collection createCollection(@NotNull MappingContext context, Object value) {
         if (value instanceof Iterable<?>) {
             TypeInformation entryType = context.getGenericTypeInfoOrFail(0);
             Collection result = createCollectionMatchingType(context);
@@ -246,7 +247,7 @@ public class MapperImpl implements Mapper {
      * @param mappingContext the current mapping context with a collection type
      * @return Collection of matching type
      */
-    protected Collection createCollectionMatchingType(MappingContext mappingContext) {
+    protected @NotNull Collection createCollectionMatchingType(@NotNull MappingContext mappingContext) {
         Class<?> collectionType = mappingContext.getTypeInformation().getSafeToWriteClass();
         if (collectionType.isAssignableFrom(ArrayList.class)) {
             return new ArrayList();
@@ -268,7 +269,7 @@ public class MapperImpl implements Mapper {
      */
     @Nullable
     @SuppressWarnings("unchecked")
-    protected Map createMap(MappingContext context, Object value) {
+    protected Map createMap(@NotNull MappingContext context, Object value) {
         if (value instanceof Map<?, ?>) {
             if (context.getGenericTypeInfoOrFail(0).getSafeToWriteClass() != String.class) {
                 throw new ConfigMeMapperException(context, "The key type of maps may only be of String type");
@@ -297,7 +298,7 @@ public class MapperImpl implements Mapper {
      * @param mappingContext the current mapping context with a map type
      * @return Map of matching type
      */
-    protected Map createMapMatchingType(MappingContext mappingContext) {
+    protected @NotNull Map createMapMatchingType(@NotNull MappingContext mappingContext) {
         Class<?> mapType = mappingContext.getTypeInformation().getSafeToWriteClass();
         if (mapType.isAssignableFrom(LinkedHashMap.class)) {
             return new LinkedHashMap();
@@ -310,7 +311,7 @@ public class MapperImpl implements Mapper {
 
     // -- Optional
 
-    protected Object createOptional(MappingContext context, Object value) {
+    protected Object createOptional(@NotNull MappingContext context, Object value) {
         MappingContext childContext = context.createChild("[v]", context.getGenericTypeInfoOrFail(0));
         Object result = convertValueForType(childContext, value);
         return Optional.ofNullable(result);
@@ -326,7 +327,7 @@ public class MapperImpl implements Mapper {
      * @return the converted value, or null if not possible
      */
     @Nullable
-    protected Object createBean(MappingContext context, Object value) {
+    protected Object createBean(@NotNull MappingContext context, Object value) {
         // Ensure that the value is a map so we can map it to a bean
         if (!(value instanceof Map<?, ?>)) {
             return null;
@@ -363,7 +364,7 @@ public class MapperImpl implements Mapper {
      * @param mappingContext current mapping context
      * @return new instance of the given type
      */
-    protected Object createBeanMatchingType(MappingContext mappingContext) {
+    protected @NotNull Object createBeanMatchingType(@NotNull MappingContext mappingContext) {
         // clazz is never null given the only path that leads to this method already performs that check
         final Class<?> clazz = mappingContext.getTypeInformation().getSafeToWriteClass();
         try {

@@ -3,6 +3,7 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -30,7 +31,7 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
     }
 
     @Override
-    protected T[] getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+    protected T[] getFromReader(@NotNull PropertyReader reader, ConvertErrorRecorder errorRecorder) {
         Object object = reader.getObject(this.getPath());
         if (object instanceof Collection<?>) {
             Collection<?> collection = (Collection<?>) object;
@@ -43,7 +44,7 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
     }
 
     @Override
-    public Object toExportValue(T[] value) {
+    public Object toExportValue(T @NotNull [] value) {
         Object[] array = new Object[value.length];
 
         for (int i = 0; i < array.length; i++) {

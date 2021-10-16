@@ -2,6 +2,7 @@ package ch.jalu.configme.beanmapper;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Standard implementation of {@link MappingContext}.
@@ -25,12 +26,12 @@ public class MappingContextImpl implements MappingContext {
      * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return root mapping context
      */
-    public static MappingContextImpl createRoot(TypeInformation typeInformation, ConvertErrorRecorder errorRecorder) {
+    public static @NotNull MappingContextImpl createRoot(TypeInformation typeInformation, ConvertErrorRecorder errorRecorder) {
         return new MappingContextImpl("", typeInformation, errorRecorder);
     }
 
     @Override
-    public MappingContext createChild(String subPath, TypeInformation typeInformation) {
+    public @NotNull MappingContext createChild(String subPath, TypeInformation typeInformation) {
         if (path.isEmpty()) {
             return new MappingContextImpl(subPath, typeInformation, errorRecorder);
         }
@@ -43,7 +44,7 @@ public class MappingContextImpl implements MappingContext {
     }
 
     @Override
-    public String createDescription() {
+    public @NotNull String createDescription() {
         return "Path: '" + path + "', type: '" + typeInformation.getType() + "'";
     }
 
@@ -53,7 +54,7 @@ public class MappingContextImpl implements MappingContext {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return getClass().getSimpleName() + "[" + createDescription() + "]";
     }
 }
