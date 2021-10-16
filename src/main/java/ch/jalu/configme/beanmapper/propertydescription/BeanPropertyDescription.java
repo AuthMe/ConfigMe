@@ -2,6 +2,7 @@ package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.utils.TypeInformation;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -15,12 +16,12 @@ public interface BeanPropertyDescription {
     /**
      * @return the name of the property in the configuration file
      */
-    String getName();
+    @NotNull String getName();
 
     /**
      * @return property type
      */
-    TypeInformation getTypeInformation();
+    @NotNull TypeInformation getTypeInformation();
 
     /**
      * Sets the given value on the provided bean for this property. The value should correspond
@@ -29,7 +30,7 @@ public interface BeanPropertyDescription {
      * @param bean the bean to set the property on
      * @param value the value to set
      */
-    void setValue(Object bean, Object value);
+    void setValue(@NotNull Object bean, @NotNull Object value);
 
     /**
      * Returns the value of the property for the given bean.
@@ -37,5 +38,5 @@ public interface BeanPropertyDescription {
      * @param bean the bean to read the property from
      * @return the value of the property (can be null)
      */
-    @Nullable Object getValue(Object bean);
+    @Nullable Object getValue(@NotNull Object bean);
 }
