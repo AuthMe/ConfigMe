@@ -102,7 +102,7 @@ public class MapNormalizer {
             Map<?, ?> mapValue = (Map<?, ?>) value;
             mapValue.forEach((entryKey, entryValue) ->
                 addValueIntoMap(mapAtPath, Objects.toString(entryKey), entryValue));
-        } else { // no dot in path and value is not a map: just insert it
+        } else { // no dot in path that needs to be split, and value is not a map: just insert it
             map.put(path, value);
         }
     }

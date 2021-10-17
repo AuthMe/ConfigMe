@@ -172,4 +172,19 @@ class MapNormalizerTest {
         Map<String, Object> subMap = (Map) result.get("ch.jalu.sub");
         assertThat(subMap.keySet(), contains("entry.foo", "other.entry"));
     }
+
+    @Test
+    void shouldReturnWhetherToSplitDotPaths() {
+        // given
+        MapNormalizer mapNormalizer1 = new MapNormalizer(true);
+        MapNormalizer mapNormalizer2 = new MapNormalizer(false);
+
+        // when
+        boolean result1 = mapNormalizer1.splitDotPaths();
+        boolean result2 = mapNormalizer2.splitDotPaths();
+
+        // then
+        assertThat(result1, equalTo(true));
+        assertThat(result2, equalTo(false));
+    }
 }
