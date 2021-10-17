@@ -1,6 +1,15 @@
 # ConfigMe Changelog
 
 ## ConfigMe 1.x
+#### 1.3.0 (2020-10-17)
+- Introduce option to NOT split paths that contain dots in the YAML file ([#214](https://github.com/AuthMe/ConfigMe/issues/214))
+- Add support for BigInteger and BigDecimal in bean properties ([#182](https://github.com/AuthMe/ConfigMe/issues/182))
+- Support map properties at root path-level properly when they are empty ([#191](https://github.com/AuthMe/ConfigMe/issues/191))
+- Introduce RegexProperty to safely handle configurable regex patterns ([#145](https://github.com/AuthMe/ConfigMe/issues/145))
+- Introduce StringSetProperty class ([#211](https://github.com/AuthMe/ConfigMe/pull/211))
+
+:blue_book: [All changes in 1.3.0](https://github.com/AuthMe/ConfigMe/milestone/11?closed=1)
+
 #### 1.2.0 (2020-09-04)
 - Better ability to trigger a resave for partially valid values ([#19](https://github.com/AuthMe/ConfigMe/issues/19))
   - See [comment about breaking changes](https://github.com/AuthMe/ConfigMe/issues/19#issuecomment-569066960)
