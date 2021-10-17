@@ -61,7 +61,7 @@ public class PropertyListBuilder {
         return rootEntries;
     }
 
-    private static @NotNull Map<String, Object> getChildMap(@NotNull Map<String, Object> parent, String path) {
+    private static @NotNull Map<String, Object> getChildMap(@NotNull Map<String, Object> parent, @NotNull String path) {
         Object o = parent.get(path);
         if (o instanceof Map<?, ?>) {
             return asTypedMap(o);

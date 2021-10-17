@@ -28,7 +28,7 @@ public class CommentsConfiguration {
      *
      * @param comments map to store comments in
      */
-    public CommentsConfiguration(Map<String, List<String>> comments) {
+    public CommentsConfiguration(@NotNull Map<String, List<String>> comments) {
         this.comments = comments;
     }
 
@@ -39,7 +39,7 @@ public class CommentsConfiguration {
      * @param path the path to register the comment lines for
      * @param commentLines the comment lines to set for the path
      */
-    public void setComment(String path, String... commentLines) {
+    public void setComment(@NotNull String path, @NotNull String... commentLines) {
         comments.put(path, Collections.unmodifiableList(Arrays.asList(commentLines)));
     }
 

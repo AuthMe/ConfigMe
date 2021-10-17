@@ -42,7 +42,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
-    public List<String> getCommentsForSection(String path) {
+    public @NotNull List<String> getCommentsForSection(String path) {
         return allComments.getOrDefault(path, Collections.emptyList());
     }
 
@@ -53,7 +53,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> @NotNull T getValue(@NotNull Property<T> property) {
+    public <T> T getValue(@NotNull Property<T> property) {
         Object value = values.get(property.getPath());
         if (value == null) {
             throw new ConfigMeException(format("No value exists for property with path '%s'. This may happen if "
@@ -64,7 +64,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
-    public <T> void setValue(@NotNull Property<T> property, T value) {
+    public <T> void setValue(@NotNull Property<T> property, @NotNull T value) {
         if (property.isValidValue(value)) {
             values.put(property.getPath(), value);
         } else {
@@ -73,7 +73,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
-    public void initializeValues(PropertyReader reader) {
+    public void initializeValues(@NotNull PropertyReader reader) {
         values.clear();
 
         allPropertiesValidInResource = getProperties().stream()
@@ -85,7 +85,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
      * Saves the value for the provided property as determined from the reader and returns whether the
      * property is represented in a fully valid way in the resource.
      */
-    protected <T> boolean setValueForProperty(@NotNull Property<T> property, PropertyReader reader) {
+    protected <T> boolean setValueForProperty(@NotNull Property<T> property, @NotNull PropertyReader reader) {
         PropertyValue<T> propertyValue = property.determineValue(reader);
         setValue(property, propertyValue.getValue());
         return propertyValue.isValidInResource();

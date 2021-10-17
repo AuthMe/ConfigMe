@@ -5,8 +5,8 @@ import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 import org.jetbrains.annotations.NotNull;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -41,7 +41,7 @@ public class ConfigurationDataBuilder {
      * @return collected configuration data
      */
     @SafeVarargs
-    public static @NotNull ConfigurationData createConfiguration(Class<? extends SettingsHolder>... classes) {
+    public static @NotNull ConfigurationData createConfiguration(@NotNull Class<? extends SettingsHolder>... classes) {
         return createConfiguration(Arrays.asList(classes));
     }
 
@@ -96,7 +96,7 @@ public class ConfigurationDataBuilder {
         });
     }
 
-    protected void setCommentForPropertyField(@NotNull Field field, String path) {
+    protected void setCommentForPropertyField(@NotNull Field field, @NotNull String path) {
         Comment commentAnnotation = field.getAnnotation(Comment.class);
         if (commentAnnotation != null) {
             commentsConfiguration.setComment(path, commentAnnotation.value());
@@ -109,8 +109,7 @@ public class ConfigurationDataBuilder {
      * @param field the field's value to return
      * @return the property the field defines, or null if not applicable
      */
-    @Nullable
-    protected Property<?> getPropertyField(@NotNull Field field) {
+    protected @Nullable Property<?> getPropertyField(@NotNull Field field) {
         if (Property.class.isAssignableFrom(field.getType()) && Modifier.isStatic(field.getModifiers())) {
             try {
                 return (Property<?>) field.get(null);
@@ -141,7 +140,7 @@ public class ConfigurationDataBuilder {
             return constructor.newInstance();
         } catch (NoSuchMethodException e) {
             throw new ConfigMeException("Expected no-args constructor to be available for " + clazz, e);
-        } catch (@NotNull IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new ConfigMeException("Could not create instance of " + clazz, e);
         }
     }
@@ -153,7 +152,7 @@ public class ConfigurationDataBuilder {
      * @param clazz the class whose fields should be returned
      * @return stream of all the fields to process
      */
-    protected Stream<Field> findFieldsToProcess(@NotNull Class<?> clazz) {
+    protected @NotNull Stream<Field> findFieldsToProcess(@NotNull Class<?> clazz) {
         // In most cases we expect the class not to have any parent, so we check here and "fast track" this case
         if (Object.class.equals(clazz.getSuperclass())) {
             return Arrays.stream(clazz.getDeclaredFields());

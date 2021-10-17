@@ -3,6 +3,8 @@ package ch.jalu.configme.configurationdata;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +28,7 @@ public interface ConfigurationData {
      *
      * @return list of properties, in order
      */
-    List<Property<?>> getProperties();
+    @NotNull List<Property<?>> getProperties();
 
     /**
      * Returns the comments associated with the given path.
@@ -34,7 +36,7 @@ public interface ConfigurationData {
      * @param path the path for which the comments should be retrieved
      * @return list of comments, never null
      */
-    List<String> getCommentsForSection(String path);
+    @NotNull List<String> getCommentsForSection(String path);
 
     /**
      * Returns all comments registered to this configuration data. Typically for tests and
@@ -43,7 +45,7 @@ public interface ConfigurationData {
      *
      * @return read-only view of all comments
      */
-    Map<String, List<String>> getAllComments();
+    @NotNull Map<String, List<String>> getAllComments();
 
     /**
      * Initializes the values of all {@link #getProperties known properties} based on the provided reader.
@@ -51,7 +53,7 @@ public interface ConfigurationData {
      *
      * @param propertyReader the reader to use to determine the property's values
      */
-    void initializeValues(PropertyReader propertyReader);
+    void initializeValues(@NotNull PropertyReader propertyReader);
 
     /**
      * Returns the value associated with the given property. Only to be used with properties contained in
@@ -62,7 +64,7 @@ public interface ConfigurationData {
      * @param <T> property type
      * @return value associated with the property, or null if not present
      */
-    <T> T getValue(Property<T> property);
+    <T> T getValue(@NotNull Property<T> property);
 
     /**
      * Sets the given value for the given property. May throw an exception
@@ -72,7 +74,7 @@ public interface ConfigurationData {
      * @param value the value to set
      * @param <T> the property type
      */
-    <T> void setValue(Property<T> property, T value);
+    <T> void setValue(@NotNull Property<T> property, @NotNull T value);
 
     /**
      * Returns if the last call of {@link #initializeValues} had fully valid values in the resource
