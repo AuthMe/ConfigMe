@@ -2,7 +2,7 @@ package ch.jalu.configme.beanmapper;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.utils.TypeInformation;
-
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -21,7 +21,7 @@ public interface Mapper {
      * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return object of the given type, or null if not possible
      */
-    @Nullable Object convertToBean(@Nullable Object value, TypeInformation typeInformation, ConvertErrorRecorder errorRecorder);
+    @Nullable Object convertToBean(@Nullable Object value, @NotNull TypeInformation typeInformation, @NotNull ConvertErrorRecorder errorRecorder);
 
     /**
      * Converts the given value to an object of the given class, if possible. Returns null otherwise.
@@ -36,7 +36,7 @@ public interface Mapper {
      */
     @Nullable
     @SuppressWarnings("unchecked")
-    default <T> T convertToBean(@Nullable Object value, Class<T> clazz, ConvertErrorRecorder errorRecorder) {
+    default <T> T convertToBean(@Nullable Object value, @NotNull Class<T> clazz, @NotNull ConvertErrorRecorder errorRecorder) {
         return (T) convertToBean(value, new TypeInformation(clazz), errorRecorder);
     }
 

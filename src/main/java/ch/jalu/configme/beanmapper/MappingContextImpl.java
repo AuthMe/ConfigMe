@@ -13,7 +13,7 @@ public class MappingContextImpl implements MappingContext {
     private final TypeInformation typeInformation;
     private final ConvertErrorRecorder errorRecorder;
 
-    protected MappingContextImpl(String path, TypeInformation typeInformation, ConvertErrorRecorder errorRecorder) {
+    protected MappingContextImpl(@NotNull String path, @NotNull TypeInformation typeInformation, @NotNull ConvertErrorRecorder errorRecorder) {
         this.path = path;
         this.typeInformation = typeInformation;
         this.errorRecorder = errorRecorder;
@@ -26,12 +26,12 @@ public class MappingContextImpl implements MappingContext {
      * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return root mapping context
      */
-    public static @NotNull MappingContextImpl createRoot(TypeInformation typeInformation, ConvertErrorRecorder errorRecorder) {
+    public static @NotNull MappingContextImpl createRoot(@NotNull TypeInformation typeInformation, @NotNull ConvertErrorRecorder errorRecorder) {
         return new MappingContextImpl("", typeInformation, errorRecorder);
     }
 
     @Override
-    public @NotNull MappingContext createChild(String subPath, TypeInformation typeInformation) {
+    public @NotNull MappingContext createChild(@NotNull String subPath, @NotNull TypeInformation typeInformation) {
         if (path.isEmpty()) {
             return new MappingContextImpl(subPath, typeInformation, errorRecorder);
         }
@@ -39,7 +39,7 @@ public class MappingContextImpl implements MappingContext {
     }
 
     @Override
-    public TypeInformation getTypeInformation() {
+    public @NotNull TypeInformation getTypeInformation() {
         return typeInformation;
     }
 
@@ -49,7 +49,7 @@ public class MappingContextImpl implements MappingContext {
     }
 
     @Override
-    public void registerError(String reason) {
+    public void registerError(@NotNull String reason) {
         errorRecorder.setHasError("At path '" + path + "': " + reason);
     }
 

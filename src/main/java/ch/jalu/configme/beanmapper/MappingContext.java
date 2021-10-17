@@ -1,6 +1,7 @@
 package ch.jalu.configme.beanmapper;
 
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -15,12 +16,12 @@ public interface MappingContext {
      * @param typeInformation the required type
      * @return new child context
      */
-    MappingContext createChild(String name, TypeInformation typeInformation);
+    @NotNull MappingContext createChild(@NotNull String name, @NotNull TypeInformation typeInformation);
 
     /**
      * @return the required type the value needs to be mapped to
      */
-    TypeInformation getTypeInformation();
+    @NotNull TypeInformation getTypeInformation();
 
     /**
      * Convenience method: gets the generic type info for the given index and ensures that the generic type information
@@ -41,7 +42,7 @@ public interface MappingContext {
     /**
      * @return textual representation of the info in the context, used in exceptions
      */
-    String createDescription();
+    @NotNull String createDescription();
 
     /**
      * Registers an error during the mapping process, which delegates to the supplied
@@ -50,6 +51,6 @@ public interface MappingContext {
      *
      * @param reason the error reason (ignored by the default context implementation)
      */
-    void registerError(String reason);
+    void registerError(@NotNull String reason);
 
 }
