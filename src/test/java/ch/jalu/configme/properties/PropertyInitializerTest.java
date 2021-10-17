@@ -7,6 +7,7 @@ import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.regex.Pattern;
 
 import static ch.jalu.configme.properties.PropertyInitializer.arrayProperty;
@@ -18,6 +19,7 @@ import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newLowercaseStringSetProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newRegexProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.newSetProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalBooleanProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalEnumProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalIntegerProperty;
@@ -43,6 +45,8 @@ class PropertyInitializerTest {
         assertThat(newRegexProperty("reg.path", Pattern.compile("w[0-9]*")), instanceOf(RegexProperty.class));
         assertThat(newListProperty("path", "default", "entries"), instanceOf(StringListProperty.class));
         assertThat(newListProperty("path", Arrays.asList("a1", "a2", "a3")), instanceOf(StringListProperty.class));
+        assertThat(newSetProperty("path", "some", "values"), instanceOf(StringSetProperty.class));
+        assertThat(newSetProperty("path", newLinkedHashSet("ah", "hmm", "oh")), instanceOf(StringSetProperty.class));
         assertThat(newLowercaseStringSetProperty("path", "a", "b", "c"), instanceOf(LowercaseStringSetProperty.class));
         assertThat(newLowercaseStringSetProperty("path", Arrays.asList("5", "7")), instanceOf(LowercaseStringSetProperty.class));
         assertThat(newBeanProperty(WorldGroupConfig.class, "worlds", new WorldGroupConfig()), instanceOf(BeanProperty.class));
@@ -69,5 +73,10 @@ class PropertyInitializerTest {
         new PropertyInitializer() { };
 
         // then - no exception
+    }
+
+    @SafeVarargs
+    private static <T> LinkedHashSet<T> newLinkedHashSet(T... args) {
+        return new LinkedHashSet<>(Arrays.asList(args));
     }
 }

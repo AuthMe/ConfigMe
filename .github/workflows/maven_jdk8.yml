@@ -23,6 +23,8 @@ jobs:
 
       # Set environment variables for Coveralls. Copied from https://github.com/trautonen/coveralls-maven-plugin/issues/136
       - name: Set branch name and PR number
+        # Coveralls only works on master, so disable this step if we're elsewhere
+        if: github.ref == 'refs/heads/master'
         id: refs
         env:
           BRANCH_NAME_OR_REF: ${{ github.head_ref || github.ref }}

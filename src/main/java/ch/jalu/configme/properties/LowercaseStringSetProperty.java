@@ -1,23 +1,20 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
-import ch.jalu.configme.resource.PropertyReader;
-
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * Property whose value is a String set all in lowercase. The sets are immutable.
  */
-public class LowercaseStringSetProperty extends BaseProperty<Set<String>> {
+public class LowercaseStringSetProperty extends StringSetProperty {
 
     /**
      * Constructor.
@@ -40,31 +37,15 @@ public class LowercaseStringSetProperty extends BaseProperty<Set<String>> {
     }
 
     @Override
-    protected Set<String> getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
-        List<?> listFromReader = reader.getList(getPath());
-        if (listFromReader != null) {
-            Set<String> result = new LinkedHashSet<>(listFromReader.size());
-            for (Object value : listFromReader) {
-                result.add(convertToLowercaseString(value));
-            }
-            return result;
-        }
-        return null;
-    }
-
-    @Override
-    public Object toExportValue(Set<String> value) {
-        return value;
-    }
-
-    protected String convertToLowercaseString(@Nullable Object value) {
-        return Objects.toString(value).toLowerCase();
+    protected Collector<String, ?, Set<String>> setCollector() {
+        Function<String, String> toLowerCaseFn = value -> String.valueOf(value).toLowerCase();
+        return Collectors.mapping(toLowerCaseFn, super.setCollector());
     }
 
     protected static Set<String> toLowercaseLinkedHashSet(Stream<String> valuesStream) {
         Set<String> valuesLowercase = valuesStream
             .map(String::toLowerCase)
             .collect(Collectors.toCollection(LinkedHashSet::new));
-        return Collections.unmodifiableSet(valuesLowercase);
+        return unmodifiableSet(valuesLowercase);
     }
 }

@@ -89,7 +89,7 @@ class LowercaseStringSetPropertyTest {
         PropertyValue<Set<String>> result = property.determineValue(reader);
 
         // then
-        assertThat(result, isValidValueOf(newLinkedHashSet("null", "test")));
+        assertThat(result, isValidValueOf(newLinkedHashSet("test")));
     }
 
     @Test
