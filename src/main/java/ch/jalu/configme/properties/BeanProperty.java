@@ -9,11 +9,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class BeanProperty<T> extends TypeBasedProperty<T> {
 
-    public BeanProperty(Class<T> beanType, String path, T defaultValue) {
+    public BeanProperty(@NotNull Class<T> beanType, @NotNull String path, @NotNull T defaultValue) {
         this(beanType, path, defaultValue, DefaultMapper.getInstance());
     }
 
-    public BeanProperty(Class<T> beanType, String path, T defaultValue, Mapper mapper) {
+    public BeanProperty(@NotNull Class<T> beanType, @NotNull String path, @NotNull T defaultValue, @NotNull Mapper mapper) {
         super(path, defaultValue, BeanPropertyType.of(beanType, mapper));
     }
 
@@ -26,7 +26,7 @@ public class BeanProperty<T> extends TypeBasedProperty<T> {
      * @param defaultValue the default value
      * @param mapper the mapper to map with
      */
-    protected BeanProperty(@NotNull TypeInformation beanType, String path, T defaultValue, Mapper mapper) {
+    protected BeanProperty(@NotNull TypeInformation beanType, @NotNull String path, @NotNull T defaultValue, @NotNull Mapper mapper) {
         super(path, defaultValue, new BeanPropertyType<>(beanType, mapper));
         if (!beanType.getSafeToWriteClass().isInstance(defaultValue)) {
             throw new ConfigMeException(

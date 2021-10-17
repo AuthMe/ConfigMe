@@ -18,18 +18,18 @@ public class OptionalProperty<T> implements Property<Optional<T>> {
     private final Property<T> baseProperty;
     private final Optional<T> defaultValue;
 
-    public OptionalProperty(Property<T> baseProperty) {
+    public OptionalProperty(@NotNull Property<T> baseProperty) {
         this.baseProperty = baseProperty;
         this.defaultValue = Optional.empty();
     }
 
-    public OptionalProperty(Property<T> baseProperty, @NotNull T defaultValue) {
+    public OptionalProperty(@NotNull Property<T> baseProperty, @NotNull T defaultValue) {
         this.baseProperty = baseProperty;
         this.defaultValue = Optional.of(defaultValue);
     }
 
     @Override
-    public String getPath() {
+    public @NotNull String getPath() {
         return baseProperty.getPath();
     }
 
@@ -49,7 +49,7 @@ public class OptionalProperty<T> implements Property<Optional<T>> {
     }
 
     @Override
-    public Optional<T> getDefaultValue() {
+    public @NotNull Optional<T> getDefaultValue() {
         return defaultValue;
     }
 
@@ -62,7 +62,7 @@ public class OptionalProperty<T> implements Property<Optional<T>> {
     }
 
     @Override
-    public Object toExportValue(@NotNull Optional<T> value) {
+    public @Nullable Object toExportValue(@NotNull Optional<T> value) {
         return value.map(baseProperty::toExportValue).orElse(null);
     }
 }

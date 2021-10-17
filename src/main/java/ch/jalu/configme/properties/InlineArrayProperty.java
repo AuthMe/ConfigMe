@@ -4,6 +4,7 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.inlinearray.InlineArrayConverter;
 import ch.jalu.configme.resource.PropertyReader;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -24,14 +25,14 @@ public class InlineArrayProperty<T> extends BaseProperty<T[]> {
      * @param defaultValue the default value of the property
      * @param inlineConverter the inline converter to use
      */
-    public InlineArrayProperty(String path, T[] defaultValue, InlineArrayConverter<T> inlineConverter) {
+    public InlineArrayProperty(@NotNull String path, T @NotNull [] defaultValue, @NotNull InlineArrayConverter<T> inlineConverter) {
         super(path, defaultValue);
         Objects.requireNonNull(inlineConverter, "inlineConverter");
         this.inlineConverter = inlineConverter;
     }
 
     @Override
-    protected T[] getFromReader(@NotNull PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+    protected T @Nullable [] getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
         String value = reader.getString(getPath());
         return value == null ? null : inlineConverter.fromString(value);
     }

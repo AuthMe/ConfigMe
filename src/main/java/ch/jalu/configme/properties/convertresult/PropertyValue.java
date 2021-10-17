@@ -26,7 +26,7 @@ public class PropertyValue<T> {
      * @param value the value associated with the property
      * @param isValidInResource true if the value in the resource was fully valid
      */
-    public PropertyValue(T value, boolean isValidInResource) {
+    public PropertyValue(@NotNull T value, boolean isValidInResource) {
         this.value = value;
         this.isValidInResource = isValidInResource;
     }
@@ -38,7 +38,7 @@ public class PropertyValue<T> {
      * @param <T> the value type
      * @return property value with the given value and the valid flag set to true
      */
-    public static <T> @NotNull PropertyValue<T> withValidValue(T value) {
+    public static <T> @NotNull PropertyValue<T> withValidValue(@NotNull T value) {
         return new PropertyValue<>(value, true);
     }
 
@@ -49,14 +49,14 @@ public class PropertyValue<T> {
      * @param <T> the value type
      * @return property value with the given value and the valid flag set to false
      */
-    public static <T> @NotNull PropertyValue<T> withValueRequiringRewrite(T value) {
+    public static <T> @NotNull PropertyValue<T> withValueRequiringRewrite(@NotNull T value) {
         return new PropertyValue<>(value, false);
     }
 
     /**
      * @return the value to associate with the property
      */
-    public T getValue() {
+    public @NotNull T getValue() {
         return value;
     }
 

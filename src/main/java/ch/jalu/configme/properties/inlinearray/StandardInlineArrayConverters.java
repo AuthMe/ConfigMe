@@ -48,8 +48,8 @@ public class StandardInlineArrayConverters<T> implements InlineArrayConverter<T>
     private final Function<String, T> convertFunction;
     private final boolean useTrimAndSpaces;
 
-    public StandardInlineArrayConverters(String separator, IntFunction<T[]> arrayProducer,
-                                         Function<String, T> convertFunction) {
+    public StandardInlineArrayConverters(@NotNull String separator, @NotNull IntFunction<T[]> arrayProducer,
+                                         @NotNull Function<String, T> convertFunction) {
         this(separator, arrayProducer, convertFunction, true);
     }
 
@@ -62,8 +62,8 @@ public class StandardInlineArrayConverters<T> implements InlineArrayConverter<T>
      * @param useTrimAndSpaces true if a space should be put after the separator in the export and if the split elements
      *                         from the input String should be trimmed before being passed to the convert function
      */
-    public StandardInlineArrayConverters(String separator, IntFunction<T[]> arrayProducer,
-                                         Function<String, T> convertFunction, boolean useTrimAndSpaces) {
+    public StandardInlineArrayConverters(@NotNull String separator, @NotNull IntFunction<T[]> arrayProducer,
+                                         @NotNull Function<String, T> convertFunction, boolean useTrimAndSpaces) {
         this.separator = separator;
         this.arrayProducer = arrayProducer;
         this.convertFunction = convertFunction;
@@ -71,7 +71,7 @@ public class StandardInlineArrayConverters<T> implements InlineArrayConverter<T>
     }
 
     @Override
-    public T @NotNull [] fromString(@NotNull String input) {
+    public @NotNull T @NotNull [] fromString(@NotNull String input) {
         String[] inputArray = input.split(Pattern.quote(separator));
 
         return Arrays.stream(inputArray)
@@ -81,7 +81,7 @@ public class StandardInlineArrayConverters<T> implements InlineArrayConverter<T>
     }
 
     @Override
-    public String toExportValue(T @NotNull [] value) {
+    public @NotNull String toExportValue(@NotNull T @NotNull [] value) {
         String delimiter = useTrimAndSpaces ? separator + " " : separator;
         StringJoiner joiner = new StringJoiner(delimiter);
         for (T entry : value) {
@@ -96,8 +96,7 @@ public class StandardInlineArrayConverters<T> implements InlineArrayConverter<T>
      * @param input String to convert from
      * @return converted value, or null if not possible
      */
-    @Nullable
-    protected T convert(@NotNull String input) {
+    protected @Nullable T convert(@NotNull String input) {
         try {
             String argument = useTrimAndSpaces ? input.trim() : input;
             return convertFunction.apply(argument);

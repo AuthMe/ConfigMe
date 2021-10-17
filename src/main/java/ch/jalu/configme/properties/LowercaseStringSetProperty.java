@@ -24,7 +24,7 @@ public class LowercaseStringSetProperty extends StringSetProperty {
      * @param path property path
      * @param defaultEntries entries in the Set that is the default value
      */
-    public LowercaseStringSetProperty(String path, String @NotNull ... defaultEntries) {
+    public LowercaseStringSetProperty(@NotNull String path, @NotNull String @NotNull ... defaultEntries) {
         super(path, toLowercaseLinkedHashSet(Arrays.stream(defaultEntries)));
     }
 
@@ -34,7 +34,7 @@ public class LowercaseStringSetProperty extends StringSetProperty {
      * @param path property path
      * @param defaultEntries entries in the Set that is the default value
      */
-    public LowercaseStringSetProperty(String path, @NotNull Collection<String> defaultEntries) {
+    public LowercaseStringSetProperty(@NotNull String path, @NotNull Collection<String> defaultEntries) {
         super(path, toLowercaseLinkedHashSet(defaultEntries.stream()));
     }
 

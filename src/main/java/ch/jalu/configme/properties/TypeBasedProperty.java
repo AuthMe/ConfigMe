@@ -24,21 +24,19 @@ public class TypeBasedProperty<T> extends BaseProperty<T> {
      * @param defaultValue the default value of the property
      * @param type the property type
      */
-    public TypeBasedProperty(String path, T defaultValue, PropertyType<T> type) {
+    public TypeBasedProperty(@NotNull String path, @NotNull T defaultValue, @NotNull PropertyType<T> type) {
         super(path, defaultValue);
         Objects.requireNonNull(type, "type");
         this.type = type;
     }
 
-    @Nullable
     @Override
-    protected T getFromReader(@NotNull PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+    protected @Nullable T getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
         return type.convert(reader.getObject(getPath()), errorRecorder);
     }
 
-    @Nullable
     @Override
-    public Object toExportValue(T value) {
+    public @Nullable Object toExportValue(T value) {
         return type.toExportValue(value);
     }
 }

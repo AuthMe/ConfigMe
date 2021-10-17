@@ -27,7 +27,7 @@ public abstract class BaseProperty<T> implements Property<T> {
      * @param path the path of the property
      * @param defaultValue the default value of the property
      */
-    public BaseProperty(String path, T defaultValue) {
+    public BaseProperty(@NotNull String path, @NotNull T defaultValue) {
         Objects.requireNonNull(path, "path");
         Objects.requireNonNull(defaultValue, "defaultValue");
         this.path = path;
@@ -35,17 +35,17 @@ public abstract class BaseProperty<T> implements Property<T> {
     }
 
     @Override
-    public String getPath() {
+    public @NotNull String getPath() {
         return path;
     }
 
     @Override
-    public T getDefaultValue() {
+    public @NotNull T getDefaultValue() {
         return defaultValue;
     }
 
     @Override
-    public @NotNull PropertyValue<T> determineValue(PropertyReader reader) {
+    public @NotNull PropertyValue<T> determineValue(@NotNull PropertyReader reader) {
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
         T value = getFromReader(reader, errorRecorder);
         if (isValidValue(value)) {
@@ -67,7 +67,7 @@ public abstract class BaseProperty<T> implements Property<T> {
      * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return value based on the reader, or null if not applicable
      */
-    protected abstract @Nullable T getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder);
+    protected abstract @Nullable T getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder);
 
     @Override
     public @NotNull String toString() {

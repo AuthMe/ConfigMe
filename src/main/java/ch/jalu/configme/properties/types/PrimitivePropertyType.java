@@ -2,6 +2,7 @@ package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -41,7 +42,7 @@ public class PrimitivePropertyType<T> implements PropertyType<T> {
      *
      * @param convertFunction function to convert to the given type
      */
-    public PrimitivePropertyType(Function<Object, T> convertFunction) {
+    public PrimitivePropertyType(@NotNull Function<Object, T> convertFunction) {
         this(convertFunction, t -> t);
     }
 
@@ -51,18 +52,18 @@ public class PrimitivePropertyType<T> implements PropertyType<T> {
      * @param convertFunction function to convert to the given type
      * @param exportValueFunction function to convert a value to its export value
      */
-    public PrimitivePropertyType(Function<Object, T> convertFunction, Function<T, Object> exportValueFunction) {
+    public PrimitivePropertyType(@NotNull Function<Object, T> convertFunction, @NotNull Function<T, Object> exportValueFunction) {
         this.convertFunction = convertFunction;
         this.exportValueFunction = exportValueFunction;
     }
 
     @Override
-    public T convert(Object object, ConvertErrorRecorder errorRecorder) {
+    public @Nullable T convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
         return convertFunction.apply(object);
     }
 
     @Override
-    public Object toExportValue(T value) {
+    public @Nullable Object toExportValue(@Nullable T value) {
         return exportValueFunction.apply(value);
     }
 

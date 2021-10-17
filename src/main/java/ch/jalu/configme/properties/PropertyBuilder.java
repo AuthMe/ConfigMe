@@ -32,7 +32,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
      *
      * @param type the property type
      */
-    public PropertyBuilder(PropertyType<K> type) {
+    public PropertyBuilder(@NotNull PropertyType<K> type) {
         this.type = type;
     }
 
@@ -42,7 +42,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
      * @param path the path
      * @return this builder
      */
-    public @NotNull B path(String path) {
+    public @NotNull B path(@NotNull String path) {
         this.path = path;
         return (B) this;
     }
@@ -53,7 +53,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
      * @param defaultValue the default value to set
      * @return this builder
      */
-    public B defaultValue(T defaultValue) {
+    public @NotNull B defaultValue(@NotNull T defaultValue) {
         this.defaultValue = defaultValue;
         return (B) this;
     }
@@ -65,15 +65,15 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
      */
     public abstract @NotNull Property<T> build();
 
-    protected final String getPath() {
+    protected final @NotNull String getPath() {
         return path;
     }
 
-    protected final T getDefaultValue() {
+    protected final @NotNull T getDefaultValue() {
         return defaultValue;
     }
 
-    protected final PropertyType<K> getType() {
+    protected final @NotNull PropertyType<K> getType() {
         return type;
     }
 
@@ -84,12 +84,12 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
      */
     public static class MapPropertyBuilder<T> extends PropertyBuilder<T, Map<String, T>, MapPropertyBuilder<T>> {
 
-        public MapPropertyBuilder(PropertyType<T> type) {
+        public MapPropertyBuilder(@NotNull PropertyType<T> type) {
             super(type);
             defaultValue(new LinkedHashMap<>());
         }
 
-        public @NotNull MapPropertyBuilder<T> defaultEntry(String key, T value) {
+        public @NotNull MapPropertyBuilder<T> defaultEntry(@NotNull String key, @NotNull T value) {
             getDefaultValue().put(key, value);
             return this;
         }
@@ -109,11 +109,11 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
 
         private CreateFunction<T, T> createFunction = TypeBasedProperty::new;
 
-        public TypeBasedPropertyBuilder(PropertyType<T> type) {
+        public TypeBasedPropertyBuilder(@NotNull PropertyType<T> type) {
             super(type);
         }
 
-        public @NotNull TypeBasedPropertyBuilder<T> createFunction(CreateFunction<T, T> createFunction) {
+        public @NotNull TypeBasedPropertyBuilder<T> createFunction(@NotNull CreateFunction<T, T> createFunction) {
             this.createFunction = createFunction;
             return this;
         }
@@ -133,13 +133,13 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
 
         private final IntFunction<T[]> arrayProducer;
 
-        public ArrayPropertyBuilder(PropertyType<T> type, IntFunction<T[]> arrayProducer) {
+        public ArrayPropertyBuilder(@NotNull PropertyType<T> type, @NotNull IntFunction<T[]> arrayProducer) {
             super(type);
             this.arrayProducer = arrayProducer;
         }
 
         @Override
-        public ArrayPropertyBuilder<T> defaultValue(T... defaultValue) {
+        public @NotNull ArrayPropertyBuilder<T> defaultValue(@NotNull T @NotNull ... defaultValue) {
             return super.defaultValue(defaultValue);
         }
 
@@ -158,13 +158,13 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
 
         private InlineArrayConverter<T> inlineConverter;
 
-        public InlineArrayPropertyBuilder(InlineArrayConverter<T> inlineConverter) {
+        public InlineArrayPropertyBuilder(@NotNull InlineArrayConverter<T> inlineConverter) {
             super(null);
             this.inlineConverter = inlineConverter;
         }
 
         @Override
-        public InlineArrayPropertyBuilder<T> defaultValue(T... defaultValue) {
+        public @NotNull InlineArrayPropertyBuilder<T> defaultValue(@NotNull T @NotNull ... defaultValue) {
             return super.defaultValue(defaultValue);
         }
 
@@ -181,11 +181,11 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
      */
     public static class ListPropertyBuilder<T> extends PropertyBuilder<T, List<T>, ListPropertyBuilder<T>> {
 
-        public ListPropertyBuilder(PropertyType<T> type) {
+        public ListPropertyBuilder(@NotNull PropertyType<T> type) {
             super(type);
         }
 
-        public ListPropertyBuilder<T> defaultValue(T... defaultValue) {
+        public @NotNull ListPropertyBuilder<T> defaultValue(@NotNull T @NotNull ... defaultValue) {
             return super.defaultValue(Arrays.asList(defaultValue));
         }
 
@@ -202,11 +202,11 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
      */
     public static class SetPropertyBuilder<T> extends PropertyBuilder<T, Set<T>, SetPropertyBuilder<T>> {
 
-        public SetPropertyBuilder(PropertyType<T> type) {
+        public SetPropertyBuilder(@NotNull PropertyType<T> type) {
             super(type);
         }
 
-        public SetPropertyBuilder<T> defaultValue(T @NotNull ... defaultValue) {
+        public @NotNull SetPropertyBuilder<T> defaultValue(@NotNull T @NotNull ... defaultValue) {
             Set<T> defaultSet = Arrays.stream(defaultValue)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
             return super.defaultValue(defaultSet);
@@ -227,7 +227,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
     @FunctionalInterface
     public interface CreateFunction<K, T> {
 
-        @NotNull Property<T> apply(String path, T defaultValue, PropertyType<K> type);
+        @NotNull Property<T> apply(@NotNull String path, @NotNull T defaultValue, @NotNull PropertyType<K> type);
 
     }
 
