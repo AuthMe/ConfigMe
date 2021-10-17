@@ -41,7 +41,7 @@ public class SettingsHolderClassValidator {
      * @param settingHolders settings holder classes that make up the configuration data of the project
      */
     @SafeVarargs
-    public final void validate(Class<? extends SettingsHolder>... settingHolders) {
+    public final void validate(@NotNull Class<? extends SettingsHolder>... settingHolders) {
         validate(Arrays.asList(settingHolders));
     }
 
@@ -79,7 +79,7 @@ public class SettingsHolderClassValidator {
      * @param resource property resource to save to and read from (temporary medium for testing)
      * @param migrationService the migration service to check
      */
-    public void validateConfigurationDataValidForMigrationService(ConfigurationData configurationData,
+    public void validateConfigurationDataValidForMigrationService(@NotNull ConfigurationData configurationData,
                                                                   @NotNull PropertyResource resource,
                                                                   @NotNull MigrationService migrationService) {
         resource.exportProperties(configurationData);
@@ -259,7 +259,7 @@ public class SettingsHolderClassValidator {
             && Modifier.isFinal(modifiers);
     }
 
-    protected ConfigurationData createConfigurationData(Iterable<Class<? extends SettingsHolder>> classes) {
+    protected @NotNull ConfigurationData createConfigurationData(@NotNull Iterable<Class<? extends SettingsHolder>> classes) {
         return ConfigurationDataBuilder.createConfiguration(classes);
     }
 
@@ -291,9 +291,8 @@ public class SettingsHolderClassValidator {
      * @param property the property to process
      * @return the enum type it wraps, or null if not applicable
      */
-    @Nullable
     @SuppressWarnings("unchecked")
-    protected Class<? extends Enum<?>> getEnumTypeOfProperty(@NotNull Property<?> property) {
+    protected @Nullable Class<? extends Enum<?>> getEnumTypeOfProperty(@NotNull Property<?> property) {
         Class<?> defaultValueType = property.getDefaultValue().getClass();
         if (defaultValueType.isAnonymousClass()) {
             // If an enum entry implements methods, it is an anonymous class -> we're interested in the enclosing class
@@ -302,7 +301,7 @@ public class SettingsHolderClassValidator {
         return defaultValueType.isEnum() ? (Class<? extends Enum<?>>) defaultValueType : null;
     }
 
-    protected List<String> gatherExpectedEnumNames(@NotNull Class<? extends Enum<?>> enumClass) {
+    protected @NotNull List<String> gatherExpectedEnumNames(@NotNull Class<? extends Enum<?>> enumClass) {
         return Arrays.stream(enumClass.getEnumConstants())
             .map(Enum::name)
             .collect(Collectors.toList());
@@ -321,7 +320,7 @@ public class SettingsHolderClassValidator {
      * @param clazz the class whose fields should be retrieved
      * @return all fields of the class, including its parents
      */
-    protected Stream<Field> getAllFields(@NotNull Class<?> clazz) {
+    protected @NotNull Stream<Field> getAllFields(@NotNull Class<?> clazz) {
         // Shortcut: Class does not inherit from another class, so just go through its fields
         if (Object.class.equals(clazz.getSuperclass())) {
             return Arrays.stream(clazz.getDeclaredFields());

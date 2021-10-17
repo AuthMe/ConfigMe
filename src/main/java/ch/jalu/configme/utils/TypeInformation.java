@@ -24,7 +24,7 @@ public class TypeInformation {
      *
      * @param type the type the instance should wrap
      */
-    public TypeInformation(Type type) {
+    public TypeInformation(@Nullable Type type) {
         this.type = type;
     }
 
@@ -41,8 +41,7 @@ public class TypeInformation {
     /**
      * @return the type this instance is wrapping
      */
-    @Nullable
-    public Type getType() {
+    public @Nullable Type getType() {
         return type;
     }
 
@@ -99,8 +98,7 @@ public class TypeInformation {
      * @param index the index of the generic type to get (0-based)
      * @return type information representing the generic type info for the given index, null if not applicable
      */
-    @Nullable
-    public TypeInformation getGenericType(int index) {
+    public @Nullable TypeInformation getGenericType(int index) {
         if (type instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) type;
             return pt.getActualTypeArguments().length > index
@@ -125,14 +123,12 @@ public class TypeInformation {
      * @param index the index of the generic type to get (0-based)
      * @return type information representing the generic type info for the given index, null if not applicable
      */
-    @Nullable
-    public Class<?> getGenericTypeAsClass(int index) {
+    public @Nullable Class<?> getGenericTypeAsClass(int index) {
         TypeInformation genericType = getGenericType(index);
         return genericType == null ? null : genericType.getSafeToWriteClass();
     }
 
-    @Nullable
-    private Class<?> getSafeToWriteClassInternal(Type type) {
+    private @Nullable Class<?> getSafeToWriteClassInternal(@Nullable Type type) {
         if (type instanceof Class<?>) {
             return (Class<?>) type;
         } else if (type instanceof ParameterizedType) {
@@ -143,8 +139,7 @@ public class TypeInformation {
         return null;
     }
 
-    @Nullable
-    private Class<?> getSafeToReadClassInternal(Type type) {
+    private @Nullable Class<?> getSafeToReadClassInternal(@Nullable Type type) {
         Class<?> safeToWriteClass = getSafeToWriteClassInternal(type);
         if (safeToWriteClass != null) {
             return safeToWriteClass;
