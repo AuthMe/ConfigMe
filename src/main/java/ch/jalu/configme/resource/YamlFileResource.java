@@ -5,10 +5,10 @@ import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyPathTraverser.PathElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,11 +28,11 @@ public class YamlFileResource implements PropertyResource {
     private final String indentationSpace;
     private @Nullable Yaml yamlObject;
 
-    public YamlFileResource(Path path) {
+    public YamlFileResource(@NotNull Path path) {
         this(path, YamlFileResourceOptions.builder().build());
     }
 
-    public YamlFileResource(Path path, @NotNull YamlFileResourceOptions options) {
+    public YamlFileResource(@NotNull Path path, @NotNull YamlFileResourceOptions options) {
         this.path = path;
         this.options = options;
         this.indentationSpace = options.getIndentation();
@@ -72,7 +72,7 @@ public class YamlFileResource implements PropertyResource {
         }
     }
 
-    protected final Path getPath() {
+    protected final @NotNull Path getPath() {
         return path;
     }
 
@@ -152,7 +152,7 @@ public class YamlFileResource implements PropertyResource {
         }
     }
 
-    private void writeIndentingBetweenLines(@NotNull Writer writer, PathElement pathElement) throws IOException {
+    private void writeIndentingBetweenLines(@NotNull Writer writer, @NotNull PathElement pathElement) throws IOException {
         int numberOfEmptyLines = options.getNumberOfEmptyLinesBefore(pathElement);
         for (int i = 0; i < numberOfEmptyLines; ++i) {
             writer.append("\n");
@@ -224,7 +224,7 @@ public class YamlFileResource implements PropertyResource {
         return result.toString();
     }
 
-    protected @NotNull String escapePathElementIfNeeded(String path) {
+    protected @NotNull String escapePathElementIfNeeded(@NotNull String path) {
         return getYamlObject().dump(path).trim();
     }
 
@@ -240,7 +240,7 @@ public class YamlFileResource implements PropertyResource {
      *
      * @return the YAML instance to use
      */
-    protected @Nullable Yaml getYamlObject() {
+    protected @NotNull Yaml getYamlObject() {
         if (yamlObject == null) {
             yamlObject = createNewYaml();
         }
@@ -262,7 +262,7 @@ public class YamlFileResource implements PropertyResource {
         return property.toExportValue(configurationData.getValue(property));
     }
 
-    private static @NotNull List<?> collectionToList(Collection<?> collection) {
+    private static @NotNull List<?> collectionToList(@NotNull Collection<?> collection) {
         return collection instanceof List<?>
             ? (List<?>) collection
             : new ArrayList<>(collection);

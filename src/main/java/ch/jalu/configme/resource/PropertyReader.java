@@ -1,5 +1,6 @@
 package ch.jalu.configme.resource;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
@@ -15,7 +16,7 @@ public interface PropertyReader {
      * @param path the path to check
      * @return true if there is a value, false otherwise
      */
-    boolean contains(String path);
+    boolean contains(@NotNull String path);
 
     /**
      * Returns the keys available in the file. Depending on the parameter either all keys are returned,
@@ -24,7 +25,7 @@ public interface PropertyReader {
      * @param onlyLeafNodes true if only the paths of leaf nodes should be returned (no intermediate paths)
      * @return set of all existing keys (ordered)
      */
-    Set<String> getKeys(boolean onlyLeafNodes);
+    @NotNull Set<String> getKeys(boolean onlyLeafNodes);
 
     /**
      * Returns the direct children of the given path which are available in the file. Returns an empty set
@@ -33,7 +34,7 @@ public interface PropertyReader {
      * @param path the path whose direct child paths should be looked up
      * @return set of all direct children (ordered, never null)
      */
-    Set<String> getChildKeys(String path);
+    @NotNull Set<String> getChildKeys(@NotNull String path);
 
     /**
      * Returns the object at the given path, or null if absent.
@@ -41,7 +42,7 @@ public interface PropertyReader {
      * @param path the path to retrieve the value for
      * @return the value, or null if there is none
      */
-    @Nullable Object getObject(String path);
+    @Nullable Object getObject(@NotNull String path);
 
     /**
      * Returns the value of the given path as a String if available.
@@ -49,7 +50,7 @@ public interface PropertyReader {
      * @param path the path to retrieve a String for
      * @return the value as a String, or null if not applicable or unavailable
      */
-    @Nullable String getString(String path);
+    @Nullable String getString(@NotNull String path);
 
     /**
      * Returns the value of the given path as an integer if available.
@@ -57,7 +58,7 @@ public interface PropertyReader {
      * @param path the path to retrieve an integer for
      * @return the value as integer, or null if not applicable or unavailable
      */
-    @Nullable Integer getInt(String path);
+    @Nullable Integer getInt(@NotNull String path);
 
     /**
      * Returns the value of the given path as a double if available.
@@ -65,7 +66,7 @@ public interface PropertyReader {
      * @param path the path to retrieve a double for
      * @return the value as a double, or null if not applicable or unavailable
      */
-    @Nullable Double getDouble(String path);
+    @Nullable Double getDouble(@NotNull String path);
 
     /**
      * Returns the value of the given path as a boolean if available.
@@ -73,7 +74,7 @@ public interface PropertyReader {
      * @param path the path to retrieve a boolean for
      * @return the value as a boolean, or null if not applicable or unavailable
      */
-    @Nullable Boolean getBoolean(String path);
+    @Nullable Boolean getBoolean(@NotNull String path);
 
     /**
      * Returns the value of the given path as a list if available.
@@ -81,6 +82,6 @@ public interface PropertyReader {
      * @param path the path to retrieve a list for
      * @return the value as a list, or null if not applicable or unavailable
      */
-    @Nullable List<?> getList(String path);
+    @Nullable List<?> getList(@NotNull String path);
 
 }

@@ -37,7 +37,7 @@ public class YamlFileResourceOptions {
         return charset;
     }
 
-    public int getNumberOfEmptyLinesBefore(PathElement pathElement) {
+    public int getNumberOfEmptyLinesBefore(@NotNull PathElement pathElement) {
         return numberOfLinesBeforeFunction == null ? 0 : numberOfLinesBeforeFunction.applyAsInt(pathElement);
     }
 
@@ -59,8 +59,7 @@ public class YamlFileResourceOptions {
         return sb.toString();
     }
 
-    @Nullable
-    protected final ToIntFunction<PathElement> getIndentFunction() {
+    protected final @Nullable ToIntFunction<PathElement> getIndentFunction() {
         return numberOfLinesBeforeFunction;
     }
 
@@ -74,7 +73,7 @@ public class YamlFileResourceOptions {
             return this;
         }
 
-        public @NotNull Builder numberOfLinesBeforeFunction(ToIntFunction<PathElement> numberOfLinesBeforeFunction) {
+        public @NotNull Builder numberOfLinesBeforeFunction(@NotNull ToIntFunction<PathElement> numberOfLinesBeforeFunction) {
             this.numberOfLinesBeforeFunction = numberOfLinesBeforeFunction;
             return this;
         }

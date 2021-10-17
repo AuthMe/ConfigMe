@@ -20,10 +20,10 @@ public class PropertyPathTraverser {
 
     private final ConfigurationData configurationData;
     /** Contains all path elements besides the last, e.g. {datasource, mysql} for "datasource.mysql.table". */
-    private @NotNull List<String> parentPathElements = new ArrayList<>(0);
+    private List<String> parentPathElements = new ArrayList<>(0);
     private boolean isFirstProperty = true;
 
-    public PropertyPathTraverser(ConfigurationData configurationData) {
+    public PropertyPathTraverser(@NotNull ConfigurationData configurationData) {
         this.configurationData = configurationData;
     }
 
@@ -46,7 +46,7 @@ public class PropertyPathTraverser {
         return convertToPathElements(indentationLevel, prefix, newPathParts);
     }
 
-    private @NotNull List<PathElement> convertToPathElements(int indentation, String prefix, @NotNull List<String> elements) {
+    private @NotNull List<PathElement> convertToPathElements(int indentation, @NotNull String prefix, @NotNull List<String> elements) {
         List<PathElement> pathElements = new ArrayList<>(elements.size());
         for (String element : elements) {
             List<String> comments = isFirstProperty
@@ -61,7 +61,7 @@ public class PropertyPathTraverser {
         return pathElements;
     }
 
-    private List<String> getCommentsIncludingRoot(String path) {
+    private @NotNull List<String> getCommentsIncludingRoot(@NotNull String path) {
         List<String> rootComments = configurationData.getCommentsForSection("");
         if ("".equals(path)) {
             return rootComments;
@@ -88,7 +88,7 @@ public class PropertyPathTraverser {
         private final boolean isFirstElement;
         private boolean isFirstOfGroup;
 
-        public PathElement(int indentationLevel, String name, List<String> comments, boolean isFirstElement) {
+        public PathElement(int indentationLevel, @NotNull String name, @NotNull List<String> comments, boolean isFirstElement) {
             this.indentationLevel = indentationLevel;
             this.name = name;
             this.comments = comments;
@@ -99,11 +99,11 @@ public class PropertyPathTraverser {
             return indentationLevel;
         }
 
-        public String getName() {
+        public @NotNull String getName() {
             return name;
         }
 
-        public List<String> getComments() {
+        public @NotNull List<String> getComments() {
             return comments;
         }
 
