@@ -1,6 +1,7 @@
 package ch.jalu.configme;
 
 import ch.jalu.configme.configurationdata.CommentsConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Marker interface for classes that define Property objects.
@@ -24,7 +25,7 @@ public interface SettingsHolder {
      *
      * @param conf the comments configuration
      */
-    default void registerComments(CommentsConfiguration conf) {
+    default void registerComments(@NotNull CommentsConfiguration conf) {
         // override to register comments for sections
     }
 }

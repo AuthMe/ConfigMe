@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class PlainMigrationService implements MigrationService {
 
     @Override
-    public boolean checkAndMigrate(PropertyReader reader, @NotNull ConfigurationData configurationData) {
+    public boolean checkAndMigrate(@NotNull PropertyReader reader, @NotNull ConfigurationData configurationData) {
         if (performMigrations(reader, configurationData) == MIGRATION_REQUIRED
             || !configurationData.areAllValuesValidInResource()) {
             return MIGRATION_REQUIRED;
@@ -32,7 +32,7 @@ public class PlainMigrationService implements MigrationService {
      * @param configurationData the configuration data
      * @return true if a migration has been performed, false otherwise (see constants on {@link MigrationService})
      */
-    protected boolean performMigrations(PropertyReader reader, ConfigurationData configurationData) {
+    protected boolean performMigrations(@NotNull PropertyReader reader, @NotNull ConfigurationData configurationData) {
         return NO_MIGRATION_NEEDED;
     }
 

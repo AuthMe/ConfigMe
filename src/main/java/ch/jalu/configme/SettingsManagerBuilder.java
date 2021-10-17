@@ -24,7 +24,7 @@ public final class SettingsManagerBuilder {
     private ConfigurationData configurationData;
     private @Nullable MigrationService migrationService;
 
-    private SettingsManagerBuilder(PropertyResource resource) {
+    private SettingsManagerBuilder(@NotNull PropertyResource resource) {
         this.resource = resource;
     }
 
@@ -77,7 +77,7 @@ public final class SettingsManagerBuilder {
      * @param resource the resource to use
      * @return settings manager builder
      */
-    public static @NotNull SettingsManagerBuilder withResource(PropertyResource resource) {
+    public static @NotNull SettingsManagerBuilder withResource(@NotNull PropertyResource resource) {
         return new SettingsManagerBuilder(resource);
     }
 
@@ -88,7 +88,7 @@ public final class SettingsManagerBuilder {
      * @return this builder
      */
     @SafeVarargs
-    public final @NotNull SettingsManagerBuilder configurationData(Class<? extends SettingsHolder>... classes) {
+    public final @NotNull SettingsManagerBuilder configurationData(@NotNull Class<? extends SettingsHolder>... classes) {
         this.configurationData = ConfigurationDataBuilder.createConfiguration(classes);
         return this;
     }
@@ -99,7 +99,7 @@ public final class SettingsManagerBuilder {
      * @param configurationData the configuration data
      * @return this builder
      */
-    public @NotNull SettingsManagerBuilder configurationData(ConfigurationData configurationData) {
+    public @NotNull SettingsManagerBuilder configurationData(@NotNull ConfigurationData configurationData) {
         this.configurationData = configurationData;
         return this;
     }
