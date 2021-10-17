@@ -1,7 +1,7 @@
 # ConfigMe Changelog
 
 ## ConfigMe 1.x
-#### 1.3.0 (2020-10-17)
+#### 1.3.0 (2021-10-17)
 - Introduce option to NOT split paths that contain dots in the YAML file ([#214](https://github.com/AuthMe/ConfigMe/issues/214))
 - Add support for BigInteger and BigDecimal in bean properties ([#182](https://github.com/AuthMe/ConfigMe/issues/182))
 - Support map properties at root path-level properly when they are empty ([#191](https://github.com/AuthMe/ConfigMe/issues/191))
