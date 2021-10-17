@@ -112,7 +112,7 @@ public class MapperImpl implements Mapper {
 
     /**
      * Handles values of types which need special handling (such as Optional). Null means the value is not
-     * a special type and that the export value should be built differently. Use {@link #RETURN_NULL} to $
+     * a special type and that the export value should be built differently. Use {@link #RETURN_NULL} to
      * signal that null should be used as the export value of the provided value.
      *
      * @param value the value to convert
