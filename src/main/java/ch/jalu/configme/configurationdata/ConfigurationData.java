@@ -64,7 +64,7 @@ public interface ConfigurationData {
      * @param <T> property type
      * @return value associated with the property, or null if not present
      */
-    <T> T getValue(@NotNull Property<T> property);
+    <T> @Nullable T getValue(@NotNull Property<T> property);
 
     /**
      * Sets the given value for the given property. May throw an exception

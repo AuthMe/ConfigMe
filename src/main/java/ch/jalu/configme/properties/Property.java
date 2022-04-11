@@ -82,6 +82,6 @@ public interface Property<T> {
      * @param value the value to convert to an export value
      * @return value to use for export, null to skip the property
      */
-    @Nullable Object toExportValue(T value);
+    @Nullable Object toExportValue(@Nullable T value);
 
 }

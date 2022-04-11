@@ -132,7 +132,7 @@ public final class SettingsManagerBuilder {
      *
      * @return the settings manager
      */
-    public @Nullable SettingsManager create() {
+    public @NotNull SettingsManager create() {
         Objects.requireNonNull(resource, "resource");
         Objects.requireNonNull(configurationData, "configurationData");
         return new SettingsManagerImpl(resource, configurationData, migrationService);
