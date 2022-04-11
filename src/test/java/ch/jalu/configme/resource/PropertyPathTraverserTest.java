@@ -31,7 +31,7 @@ class PropertyPathTraverserTest {
         given(configurationData.getCommentsForSection("prop.test")).willReturn(Collections.singletonList("prop.test comment"));
 
         // when
-        List<PropertyPathTraverser.PathElement> result = propertyPathTraverser.getPathElements("prop.test");
+        List<PropertyPathTraverser.PathElement> result = propertyPathTraverser.getPathElements(Arrays.asList("prop", "test"));
 
         // then
         assertThat(result, hasSize(2));
@@ -50,7 +50,7 @@ class PropertyPathTraverserTest {
         given(configurationData.getCommentsForSection("prop")).willReturn(Collections.singletonList("prop 1"));
 
         // when
-        List<PropertyPathTraverser.PathElement> result = propertyPathTraverser.getPathElements("prop.test");
+        List<PropertyPathTraverser.PathElement> result = propertyPathTraverser.getPathElements(Arrays.asList("prop", "test"));
 
         // then
         assertThat(result, hasSize(2));
@@ -68,7 +68,7 @@ class PropertyPathTraverserTest {
         given(configurationData.getCommentsForSection("")).willReturn(Arrays.asList("c1", "d2", "e3"));
 
         // when
-        List<PropertyPathTraverser.PathElement> result = propertyPathTraverser.getPathElements("");
+        List<PropertyPathTraverser.PathElement> result = propertyPathTraverser.getPathElements(Collections.singletonList(""));
 
         // then
         assertThat(result, hasSize(1));
@@ -81,10 +81,10 @@ class PropertyPathTraverserTest {
     void shouldReturnOnlyNewElements() {
         // given
         given(configurationData.getCommentsForSection("some.longer.path")).willReturn(Collections.singletonList("The comment"));
-        propertyPathTraverser.getPathElements("some.longer.test");
+        propertyPathTraverser.getPathElements(Arrays.asList("some", "longer", "test"));
 
         // when
-        List<PropertyPathTraverser.PathElement> result = propertyPathTraverser.getPathElements("some.longer.path.value");
+        List<PropertyPathTraverser.PathElement> result = propertyPathTraverser.getPathElements(Arrays.asList("some", "longer", "path", "value"));
 
         // then
         assertThat(result, hasSize(2));

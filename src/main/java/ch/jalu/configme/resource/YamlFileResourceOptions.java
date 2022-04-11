@@ -13,6 +13,7 @@ public class YamlFileResourceOptions {
     private final @NotNull Charset charset;
     private final @Nullable ToIntFunction<PathElement> numberOfLinesBeforeFunction;
     private final int indentationSize;
+    private final boolean splitDotPaths;
 
     /**
      * Constructor. Use {@link #builder()} to instantiate option objects.
@@ -20,13 +21,16 @@ public class YamlFileResourceOptions {
      * @param charset the charset
      * @param numberOfLinesBeforeFunction function defining how many lines before a path element should be in the export
      * @param indentationSize number of spaces to use for each level of indentation
+     * @param splitDotPaths whether compound keys (keys with ".") should be split into nested paths
      */
     protected YamlFileResourceOptions(@Nullable Charset charset,
                                       @Nullable ToIntFunction<PathElement> numberOfLinesBeforeFunction,
-                                      int indentationSize) {
+                                      int indentationSize,
+                                      boolean splitDotPaths) {
         this.charset = charset == null ? StandardCharsets.UTF_8 : charset;
         this.numberOfLinesBeforeFunction = numberOfLinesBeforeFunction;
         this.indentationSize = indentationSize;
+        this.splitDotPaths = splitDotPaths;
     }
 
     public static @NotNull Builder builder() {
@@ -43,6 +47,10 @@ public class YamlFileResourceOptions {
 
     public int getIndentationSize() {
         return indentationSize;
+    }
+
+    public boolean splitDotPaths() {
+        return splitDotPaths;
     }
 
     /**
@@ -64,9 +72,11 @@ public class YamlFileResourceOptions {
     }
 
     public static class Builder {
+
         private Charset charset;
         private ToIntFunction<PathElement> numberOfLinesBeforeFunction;
         private int indentationSize = 4;
+        private boolean splitDotPaths = true;
 
         public @NotNull Builder charset(Charset charset) {
             this.charset = charset;
@@ -83,8 +93,13 @@ public class YamlFileResourceOptions {
             return this;
         }
 
+        public Builder splitDotPaths(boolean splitDotPaths) {
+            this.splitDotPaths = splitDotPaths;
+            return this;
+        }
+
         public @NotNull YamlFileResourceOptions build() {
-            return new YamlFileResourceOptions(charset, numberOfLinesBeforeFunction, indentationSize);
+            return new YamlFileResourceOptions(charset, numberOfLinesBeforeFunction, indentationSize, splitDotPaths);
         }
     }
 }

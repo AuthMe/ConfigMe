@@ -37,7 +37,7 @@ public class YamlFileReader implements PropertyReader {
      * @param path the file to load
      */
     public YamlFileReader(@NotNull Path path) {
-        this(path, StandardCharsets.UTF_8);
+        this(path, StandardCharsets.UTF_8, true);
     }
 
     /**
@@ -47,9 +47,20 @@ public class YamlFileReader implements PropertyReader {
      * @param charset the charset to read the data as
      */
     public YamlFileReader(@NotNull Path path, @NotNull Charset charset) {
+        this(path, charset, true);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param path the file to load
+     * @param charset the charset to read the data as
+     * @param splitDotPaths whether dots in yaml paths should be split into nested paths
+     */
+    public YamlFileReader(@NotNull Path path, @NotNull Charset charset, boolean splitDotPaths) {
         this.path = path;
         this.charset = charset;
-        this.root = loadFile();
+        this.root = loadFile(splitDotPaths);
     }
 
     /**
@@ -166,13 +177,14 @@ public class YamlFileReader implements PropertyReader {
     /**
      * Loads the values of the file.
      *
+     * @param splitDotPaths whether compound keys (keys with ".") should be split into nested paths
      * @return map with the values from the file
      */
-    protected @Nullable Map<String, Object> loadFile() {
+    protected @Nullable Map<String, Object> loadFile(boolean splitDotPaths) {
         try (InputStream is = Files.newInputStream(path);
              InputStreamReader isr = new InputStreamReader(is, charset)) {
             Map<Object, Object> rootMap = new Yaml().load(isr);
-            return normalizeMap(rootMap);
+            return normalizeMap(rootMap, splitDotPaths);
         } catch (IOException e) {
             throw new ConfigMeException("Could not read file '" + path + "'", e);
         } catch (ClassCastException e) {
@@ -186,10 +198,12 @@ public class YamlFileReader implements PropertyReader {
      * Processes the map as read from SnakeYAML and may return a new, adjusted one.
      *
      * @param map the map to normalize
+     * @param splitDotPaths whether compound keys (keys with ".") should be split into nested paths
      * @return the normalized map (or same map if no changes are needed)
      */
-    protected @Nullable Map<String, Object> normalizeMap(@Nullable Map<Object, Object> map) {
-        return new MapNormalizer().normalizeMap(map);
+    protected @Nullable Map<String, Object> normalizeMap(@Nullable Map<Object, Object> map,
+                                                         boolean splitDotPaths) {
+        return new MapNormalizer(splitDotPaths).normalizeMap(map);
     }
 
     // Scheduled for removal in favor of #getPath

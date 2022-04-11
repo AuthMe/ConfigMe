@@ -5,7 +5,6 @@ import ch.jalu.configme.utils.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,16 +29,15 @@ public class PropertyPathTraverser {
     /**
      * Returns all path elements for the given property that have not been traversed yet.
      *
-     * @param path the property path
+     * @param pathElements all elements that make up the path of the property
      * @return the new path elements
      */
-    public @NotNull List<PathElement> getPathElements(@NotNull String path) {
-        List<String> propertyPath = Arrays.asList(path.split("\\."));
+    public @NotNull List<PathElement> getPathElements(@NotNull List<String> pathElements) {
         List<String> commonPathParts = CollectionUtils.filterCommonStart(
-            parentPathElements, propertyPath.subList(0, propertyPath.size() - 1));
-        List<String> newPathParts = CollectionUtils.getRange(propertyPath, commonPathParts.size());
+            parentPathElements, pathElements.subList(0, pathElements.size() - 1));
+        List<String> newPathParts = CollectionUtils.getRange(pathElements, commonPathParts.size());
 
-        parentPathElements = propertyPath.subList(0, propertyPath.size() - 1);
+        parentPathElements = pathElements.subList(0, pathElements.size() - 1);
 
         int indentationLevel = commonPathParts.size();
         String prefix = commonPathParts.isEmpty() ? "" : String.join(".", commonPathParts) + ".";

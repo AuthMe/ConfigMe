@@ -26,6 +26,7 @@ class YamlFileResourceOptionsTest {
             .numberOfLinesBeforeFunction(lineFunction)
             .charset(StandardCharsets.UTF_16BE)
             .indentationSize(2)
+            .splitDotPaths(false)
             .build();
 
         // then
@@ -35,6 +36,7 @@ class YamlFileResourceOptionsTest {
         assertThat(options.getNumberOfEmptyLinesBefore(pathElement), equalTo(3));
         assertThat(options.getIndentationSize(), equalTo(2));
         assertThat(options.getIndentation(), equalTo("  "));
+        assertThat(options.splitDotPaths(), equalTo(false));
     }
 
     @Test
@@ -49,5 +51,6 @@ class YamlFileResourceOptionsTest {
         assertThat(options.getIndentation(), equalTo("    "));
         PathElement pathElement = new PathElement(3, "test", emptyList(), false);
         assertThat(options.getNumberOfEmptyLinesBefore(pathElement), equalTo(0));
+        assertThat(options.splitDotPaths(), equalTo(true));
     }
 }

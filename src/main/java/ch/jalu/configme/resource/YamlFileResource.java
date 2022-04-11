@@ -17,9 +17,12 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class YamlFileResource implements PropertyResource {
 
@@ -51,7 +54,7 @@ public class YamlFileResource implements PropertyResource {
 
     @Override
     public @NotNull PropertyReader createReader() {
-        return new YamlFileReader(path, options.getCharset());
+        return new YamlFileReader(path, options.getCharset(), options.splitDotPaths());
     }
 
     @Override
@@ -61,7 +64,7 @@ public class YamlFileResource implements PropertyResource {
             PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
             for (Property<?> property : configurationData.getProperties()) {
                 final Object exportValue = getExportValue(property, configurationData);
-                exportValue(writer, pathTraverser, property.getPath(), exportValue);
+                exportValue(writer, pathTraverser, Arrays.asList(property.getPath().split("\\.")), exportValue);
             }
             writer.append("\n");
             writer.flush();
@@ -87,42 +90,42 @@ public class YamlFileResource implements PropertyResource {
      *
      * @param writer the file writer to write with
      * @param pathTraverser the path traverser (e.g. keeps track of which path elements are new)
-     * @param path the path to export at
+     * @param pathElements all elements that make up the path to the value
      * @param value the value to export
      * @throws IOException .
      */
     protected void exportValue(@NotNull Writer writer, @NotNull PropertyPathTraverser pathTraverser,
-                               @NotNull String path, @Nullable Object value) throws IOException {
+                               @NotNull List<String> pathElements, @Nullable Object value) throws IOException {
         if (value == null) {
             return;
         }
 
         if (value instanceof Map<?, ?> && !((Map<?, ?>) value).isEmpty()) {
-            final String pathPrefix = path.isEmpty() ? "" : path + ".";
             final Map<String, ?> mapValue = (Map<String, ?>) value;
 
             for (Map.Entry<String, ?> entry : mapValue.entrySet()) {
-                exportValue(writer, pathTraverser, pathPrefix + entry.getKey(), entry.getValue());
+                List<String> pathElementsForEntry = combinePathElementsAndMapEntryKey(pathElements, entry.getKey());
+                exportValue(writer, pathTraverser, pathElementsForEntry, entry.getValue());
             }
         } else {
-            List<PathElement> pathElements = pathTraverser.getPathElements(path);
-            final boolean isRootProperty = pathElements.size() == 1 && "".equals(pathElements.get(0).getName());
+            List<PathElement> newPathElements = pathTraverser.getPathElements(pathElements);
+            final boolean isRootProperty = newPathElements.size() == 1 && "".equals(newPathElements.get(0).getName());
 
-            for (PathElement pathElement : pathElements) {
+            for (PathElement pathElement : newPathElements) {
                 writeIndentingBetweenLines(writer, pathElement);
                 writeComments(writer, pathElement.getIndentationLevel(), pathElement);
                 writer.append(getNewLineIfNotFirstElement(pathElement));
                 if (!isRootProperty) {
-                      writer.append(indent(pathElement.getIndentationLevel()))
-                            .append(escapePathElementIfNeeded(pathElement.getName()))
-                            .append(":");
+                    writer.append(indent(pathElement.getIndentationLevel()))
+                          .append(escapePathElementIfNeeded(pathElement.getName()))
+                          .append(":");
                 }
             }
             if (!isRootProperty) {
                 writer.append(" ");
             }
 
-            writer.append(toYamlIndented(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
+            writer.append(toYamlIndented(value, newPathElements.get(newPathElements.size() - 1).getIndentationLevel()));
         }
     }
 
@@ -150,6 +153,28 @@ public class YamlFileResource implements PropertyResource {
                       .append(comment);
             }
         }
+    }
+
+    /**
+     * Combines two path element sources to a new list of path elements: the list of path elements that were given
+     * from the parent context and the map entry key from which one or more path elements should be derived.
+     *
+     * @param parentPathElements the path elements that were previously given
+     * @param mapEntryKey the key of a map entry which is added to the path
+     * @return path of the map entry based on previous elements and its key
+     */
+    protected List<String> combinePathElementsAndMapEntryKey(List<String> parentPathElements,
+                                                             String mapEntryKey) {
+        // If we were at the root just before, parent path elements is an empty string, which needs to be skipped
+        Stream<String> parentPathElems = parentPathElements.size() == 1 && "".equals(parentPathElements.get(0))
+            ? Stream.empty()
+            : parentPathElements.stream();
+        // Split map by '.' if so configured, otherwise retain entire key as one additional path element
+        Stream<String> pathElemsFromEntryKey = options.splitDotPaths()
+            ? Arrays.stream(mapEntryKey.split("\\."))
+            : Stream.of(mapEntryKey);
+        return Stream.concat(parentPathElems, pathElemsFromEntryKey)
+            .collect(Collectors.toList());
     }
 
     private void writeIndentingBetweenLines(@NotNull Writer writer, @NotNull PathElement pathElement) throws IOException {
