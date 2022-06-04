@@ -1,5 +1,7 @@
 package ch.jalu.configme.beanmapper.leafvaluehandler;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Provides the leaf value handler which is used by default.
  *
@@ -18,7 +20,7 @@ public final class StandardLeafValueHandlers {
      *
      * @return default leaf value handler
      */
-    public static LeafValueHandler getDefaultLeafValueHandler() {
+    public static @NotNull LeafValueHandler getDefaultLeafValueHandler() {
         if (defaultHandler == null) {
             defaultHandler = new CombiningLeafValueHandler(new StringLeafValueHandler(), new EnumLeafValueHandler(),
                 new BooleanLeafValueHandler(), new NumberLeafValueHandler(), new BigNumberLeafValueHandler(),

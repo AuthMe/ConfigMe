@@ -4,8 +4,9 @@ import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -25,9 +26,9 @@ import java.util.stream.Stream;
 public class ConfigurationDataBuilder {
 
     @SuppressWarnings("checkstyle:VisibilityModifier")
-    protected PropertyListBuilder propertyListBuilder = new PropertyListBuilder();
+    protected @NotNull PropertyListBuilder propertyListBuilder = new PropertyListBuilder();
     @SuppressWarnings("checkstyle:VisibilityModifier")
-    protected CommentsConfiguration commentsConfiguration = new CommentsConfiguration();
+    protected @NotNull CommentsConfiguration commentsConfiguration = new CommentsConfiguration();
 
     protected ConfigurationDataBuilder() {
     }
@@ -40,7 +41,7 @@ public class ConfigurationDataBuilder {
      * @return collected configuration data
      */
     @SafeVarargs
-    public static ConfigurationData createConfiguration(Class<? extends SettingsHolder>... classes) {
+    public static @NotNull ConfigurationData createConfiguration(@NotNull Class<? extends SettingsHolder>... classes) {
         return createConfiguration(Arrays.asList(classes));
     }
 
@@ -51,17 +52,17 @@ public class ConfigurationDataBuilder {
      * @param classes the classes to scan for their property data
      * @return collected configuration data
      */
-    public static ConfigurationData createConfiguration(Iterable<Class<? extends SettingsHolder>> classes) {
+    public static @NotNull ConfigurationData createConfiguration(@NotNull Iterable<Class<? extends SettingsHolder>> classes) {
         ConfigurationDataBuilder builder = new ConfigurationDataBuilder();
         return builder.collectData(classes);
     }
 
-    public static ConfigurationData createConfiguration(List<? extends Property<?>> properties) {
+    public static @NotNull ConfigurationData createConfiguration(@NotNull List<? extends Property<?>> properties) {
         return new ConfigurationDataImpl(properties, Collections.emptyMap());
     }
 
-    public static ConfigurationData createConfiguration(List<? extends Property<?>> properties,
-                                                        CommentsConfiguration commentsConfiguration) {
+    public static @NotNull ConfigurationData createConfiguration(@NotNull List<? extends Property<?>> properties,
+                                                                 @NotNull CommentsConfiguration commentsConfiguration) {
         return new ConfigurationDataImpl(properties, commentsConfiguration.getAllComments());
     }
 
@@ -72,7 +73,7 @@ public class ConfigurationDataBuilder {
      * @param classes the classes to process
      * @return configuration data with the classes' data
      */
-    protected ConfigurationData collectData(Iterable<Class<? extends SettingsHolder>> classes) {
+    protected @NotNull ConfigurationData collectData(@NotNull Iterable<Class<? extends SettingsHolder>> classes) {
         for (Class<? extends SettingsHolder> clazz : classes) {
             collectProperties(clazz);
             collectSectionComments(clazz);
@@ -85,7 +86,7 @@ public class ConfigurationDataBuilder {
      *
      * @param clazz the class to process
      */
-    protected void collectProperties(Class<?> clazz) {
+    protected void collectProperties(@NotNull Class<?> clazz) {
         findFieldsToProcess(clazz).forEach(field -> {
             Property<?> property = getPropertyField(field);
             if (property != null) {
@@ -95,7 +96,7 @@ public class ConfigurationDataBuilder {
         });
     }
 
-    protected void setCommentForPropertyField(Field field, String path) {
+    protected void setCommentForPropertyField(@NotNull Field field, @NotNull String path) {
         Comment commentAnnotation = field.getAnnotation(Comment.class);
         if (commentAnnotation != null) {
             commentsConfiguration.setComment(path, commentAnnotation.value());
@@ -108,8 +109,7 @@ public class ConfigurationDataBuilder {
      * @param field the field's value to return
      * @return the property the field defines, or null if not applicable
      */
-    @Nullable
-    protected Property<?> getPropertyField(Field field) {
+    protected @Nullable Property<?> getPropertyField(@NotNull Field field) {
         if (Property.class.isAssignableFrom(field.getType()) && Modifier.isStatic(field.getModifiers())) {
             try {
                 return (Property<?>) field.get(null);
@@ -121,7 +121,7 @@ public class ConfigurationDataBuilder {
         return null;
     }
 
-    protected void collectSectionComments(Class<? extends SettingsHolder> clazz) {
+    protected void collectSectionComments(@NotNull Class<? extends SettingsHolder> clazz) {
         SettingsHolder settingsHolder = createSettingsHolderInstance(clazz);
         settingsHolder.registerComments(commentsConfiguration);
     }
@@ -133,7 +133,7 @@ public class ConfigurationDataBuilder {
      * @param <T> the class type
      * @return instance of the class
      */
-    protected <T extends SettingsHolder> T createSettingsHolderInstance(Class<T> clazz) {
+    protected <T extends SettingsHolder> @NotNull T createSettingsHolderInstance(@NotNull Class<T> clazz) {
         try {
             Constructor<T> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
@@ -152,7 +152,7 @@ public class ConfigurationDataBuilder {
      * @param clazz the class whose fields should be returned
      * @return stream of all the fields to process
      */
-    protected Stream<Field> findFieldsToProcess(Class<?> clazz) {
+    protected @NotNull Stream<Field> findFieldsToProcess(@NotNull Class<?> clazz) {
         // In most cases we expect the class not to have any parent, so we check here and "fast track" this case
         if (Object.class.equals(clazz.getSuperclass())) {
             return Arrays.stream(clazz.getDeclaredFields());

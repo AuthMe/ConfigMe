@@ -3,6 +3,8 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -26,14 +28,14 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
      * @param defaultValue the default value of the property
      * @param type the property type of the values
      */
-    public MapProperty(String path, Map<String, V> defaultValue, PropertyType<V> type) {
+    public MapProperty(@NotNull String path, @NotNull Map<String, V> defaultValue, @NotNull PropertyType<V> type) {
         super(path, Collections.unmodifiableMap(defaultValue));
         Objects.requireNonNull(type, "type");
         this.type = type;
     }
 
     @Override
-    protected Map<String, V> getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+    protected @Nullable Map<String, V> getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
         Object rawObject = reader.getObject(getPath());
 
         if (!(rawObject instanceof Map<?, ?>)) {
@@ -56,7 +58,7 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
     }
 
     @Override
-    public Object toExportValue(Map<String, V> value) {
+    public @NotNull Object toExportValue(@NotNull Map<String, V> value) {
         Map<String, Object> exportMap = new LinkedHashMap<>();
 
         for (Map.Entry<String, V> entry : value.entrySet()) {
@@ -67,7 +69,7 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
     }
 
     /* Allows to modify the map once its fully built based on the values in the property reader. */
-    protected Map<String, V> postProcessMap(Map<String, V> constructedMap) {
+    protected @NotNull Map<String, V> postProcessMap(@NotNull Map<String, V> constructedMap) {
         return Collections.unmodifiableMap(constructedMap);
     }
 }

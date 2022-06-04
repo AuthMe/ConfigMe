@@ -200,10 +200,10 @@
 
         <!-- FindBugs, has implementation for @Nullable -->
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>23.0.0</version>
             <scope>provided</scope>
-            <version>3.0.2</version>
         </dependency>
 
         <!-- Unit testing -->

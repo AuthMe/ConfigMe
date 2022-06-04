@@ -2,6 +2,7 @@ package ch.jalu.configme.configurationdata;
 
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,14 +24,14 @@ import java.util.Map;
  */
 public class PropertyListBuilder {
 
-    private Map<String, Object> rootEntries = new LinkedHashMap<>();
+    private @NotNull Map<String, Object> rootEntries = new LinkedHashMap<>();
 
     /**
      * Adds the property to the list builder.
      *
      * @param property the property to add
      */
-    public void add(Property<?> property) {
+    public void add(@NotNull Property<?> property) {
         String[] paths = property.getPath().split("\\.");
         Map<String, Object> map = rootEntries;
         for (int i = 0; i < paths.length - 1; ++i) {
@@ -50,17 +51,17 @@ public class PropertyListBuilder {
      *
      * @return ordered list of registered properties
      */
-    public List<Property<?>> create() {
+    public @NotNull List<Property<?>> create() {
         List<Property<?>> result = new ArrayList<>();
         collectEntries(rootEntries, result);
         return result;
     }
 
-    protected final Map<String, Object> getRootEntries() {
+    protected final @NotNull Map<String, Object> getRootEntries() {
         return rootEntries;
     }
 
-    private static Map<String, Object> getChildMap(Map<String, Object> parent, String path) {
+    private static @NotNull Map<String, Object> getChildMap(@NotNull Map<String, Object> parent, @NotNull String path) {
         Object o = parent.get(path);
         if (o instanceof Map<?, ?>) {
             return asTypedMap(o);
@@ -77,7 +78,7 @@ public class PropertyListBuilder {
         }
     }
 
-    private static void collectEntries(Map<String, Object> map, List<Property<?>> results) {
+    private static void collectEntries(@NotNull Map<String, Object> map, @NotNull List<Property<?>> results) {
         for (Object o : map.values()) {
             if (o instanceof Map<?, ?>) {
                 collectEntries(asTypedMap(o), results);
@@ -88,7 +89,7 @@ public class PropertyListBuilder {
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> asTypedMap(Object o) {
+    private static @NotNull Map<String, Object> asTypedMap(@NotNull Object o) {
         return (Map<String, Object>) o;
     }
 }

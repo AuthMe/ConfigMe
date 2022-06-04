@@ -2,6 +2,7 @@ package ch.jalu.configme.resource;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.utils.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ public class PropertyPathTraverser {
     private List<String> parentPathElements = new ArrayList<>(0);
     private boolean isFirstProperty = true;
 
-    public PropertyPathTraverser(ConfigurationData configurationData) {
+    public PropertyPathTraverser(@NotNull ConfigurationData configurationData) {
         this.configurationData = configurationData;
     }
 
@@ -31,7 +32,7 @@ public class PropertyPathTraverser {
      * @param pathElements all elements that make up the path of the property
      * @return the new path elements
      */
-    public List<PathElement> getPathElements(List<String> pathElements) {
+    public @NotNull List<PathElement> getPathElements(@NotNull List<String> pathElements) {
         List<String> commonPathParts = CollectionUtils.filterCommonStart(
             parentPathElements, pathElements.subList(0, pathElements.size() - 1));
         List<String> newPathParts = CollectionUtils.getRange(pathElements, commonPathParts.size());
@@ -43,7 +44,7 @@ public class PropertyPathTraverser {
         return convertToPathElements(indentationLevel, prefix, newPathParts);
     }
 
-    private List<PathElement> convertToPathElements(int indentation, String prefix, List<String> elements) {
+    private @NotNull List<PathElement> convertToPathElements(int indentation, @NotNull String prefix, @NotNull List<String> elements) {
         List<PathElement> pathElements = new ArrayList<>(elements.size());
         for (String element : elements) {
             List<String> comments = isFirstProperty
@@ -58,7 +59,7 @@ public class PropertyPathTraverser {
         return pathElements;
     }
 
-    private List<String> getCommentsIncludingRoot(String path) {
+    private @NotNull List<String> getCommentsIncludingRoot(@NotNull String path) {
         List<String> rootComments = configurationData.getCommentsForSection("");
         if ("".equals(path)) {
             return rootComments;
@@ -85,7 +86,7 @@ public class PropertyPathTraverser {
         private final boolean isFirstElement;
         private boolean isFirstOfGroup;
 
-        public PathElement(int indentationLevel, String name, List<String> comments, boolean isFirstElement) {
+        public PathElement(int indentationLevel, @NotNull String name, @NotNull List<String> comments, boolean isFirstElement) {
             this.indentationLevel = indentationLevel;
             this.name = name;
             this.comments = comments;
@@ -96,11 +97,11 @@ public class PropertyPathTraverser {
             return indentationLevel;
         }
 
-        public String getName() {
+        public @NotNull String getName() {
             return name;
         }
 
-        public List<String> getComments() {
+        public @NotNull List<String> getComments() {
             return comments;
         }
 

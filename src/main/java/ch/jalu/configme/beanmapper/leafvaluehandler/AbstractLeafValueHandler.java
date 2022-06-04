@@ -1,6 +1,8 @@
 package ch.jalu.configme.beanmapper.leafvaluehandler;
 
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Common parent of simple leaf value handlers which only need the required type as {@link Class}
@@ -9,10 +11,10 @@ import ch.jalu.configme.utils.TypeInformation;
 public abstract class AbstractLeafValueHandler implements LeafValueHandler {
 
     @Override
-    public Object convert(TypeInformation typeInformation, Object value) {
+    public @Nullable Object convert(@NotNull TypeInformation typeInformation, @Nullable Object value) {
         return convert(typeInformation.getSafeToWriteClass(), value);
     }
 
-    protected abstract Object convert(Class<?> clazz, Object value);
+    protected abstract @Nullable Object convert(@Nullable Class<?> clazz, @Nullable Object value);
 
 }

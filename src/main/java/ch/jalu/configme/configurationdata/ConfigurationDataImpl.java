@@ -5,6 +5,7 @@ import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,9 +19,9 @@ import static java.lang.String.format;
  */
 public class ConfigurationDataImpl implements ConfigurationData {
 
-    private final List<Property<?>> properties;
-    private final Map<String, List<String>> allComments;
-    private final Map<String, Object> values;
+    private final @NotNull List<Property<?>> properties;
+    private final @NotNull Map<String, List<String>> allComments;
+    private final @NotNull Map<String, Object> values;
     private boolean allPropertiesValidInResource;
 
     /**
@@ -29,30 +30,30 @@ public class ConfigurationDataImpl implements ConfigurationData {
      * @param allProperties all known properties
      * @param allComments map of comments by path
      */
-    protected ConfigurationDataImpl(List<? extends Property<?>> allProperties, Map<String, List<String>> allComments) {
+    protected ConfigurationDataImpl(@NotNull List<? extends Property<?>> allProperties, @NotNull Map<String, List<String>> allComments) {
         this.properties = Collections.unmodifiableList(allProperties);
         this.allComments = Collections.unmodifiableMap(allComments);
         this.values = new HashMap<>();
     }
 
     @Override
-    public List<Property<?>> getProperties() {
+    public @NotNull List<Property<?>> getProperties() {
         return properties;
     }
 
     @Override
-    public List<String> getCommentsForSection(String path) {
+    public @NotNull List<String> getCommentsForSection(String path) {
         return allComments.getOrDefault(path, Collections.emptyList());
     }
 
     @Override
-    public Map<String, List<String>> getAllComments() {
+    public @NotNull Map<String, List<String>> getAllComments() {
         return allComments;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getValue(Property<T> property) {
+    public <T> T getValue(@NotNull Property<T> property) {
         Object value = values.get(property.getPath());
         if (value == null) {
             throw new ConfigMeException(format("No value exists for property with path '%s'. This may happen if "
@@ -63,7 +64,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
-    public <T> void setValue(Property<T> property, T value) {
+    public <T> void setValue(@NotNull Property<T> property, @NotNull T value) {
         if (property.isValidValue(value)) {
             values.put(property.getPath(), value);
         } else {
@@ -72,7 +73,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
-    public void initializeValues(PropertyReader reader) {
+    public void initializeValues(@NotNull PropertyReader reader) {
         values.clear();
 
         allPropertiesValidInResource = getProperties().stream()
@@ -84,7 +85,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
      * Saves the value for the provided property as determined from the reader and returns whether the
      * property is represented in a fully valid way in the resource.
      */
-    protected <T> boolean setValueForProperty(Property<T> property, PropertyReader reader) {
+    protected <T> boolean setValueForProperty(@NotNull Property<T> property, @NotNull PropertyReader reader) {
         PropertyValue<T> propertyValue = property.determineValue(reader);
         setValue(property, propertyValue.getValue());
         return propertyValue.isValidInResource();
@@ -95,7 +96,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
         return allPropertiesValidInResource;
     }
 
-    protected Map<String, Object> getValues() {
+    protected @NotNull Map<String, Object> getValues() {
         return values;
     }
 }

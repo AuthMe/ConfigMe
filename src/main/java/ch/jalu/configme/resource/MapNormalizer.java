@@ -1,6 +1,8 @@
 package ch.jalu.configme.resource;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -32,9 +34,8 @@ public class MapNormalizer {
      * @param loadedMap the map to normalize
      * @return new map with sanitized structure (or same if no changes are needed)
      */
-    @Nullable
     @SuppressWarnings("unchecked")
-    public Map<String, Object> normalizeMap(@Nullable Map<Object, Object> loadedMap) {
+    public @Nullable Map<String, Object> normalizeMap(@Nullable Map<Object, Object> loadedMap) {
         if (loadedMap == null) {
             return null;
         }
@@ -50,7 +51,7 @@ public class MapNormalizer {
      * @param value the value to process
      * @return optional with a new map to replace the given one with, empty optional if not needed or not applicable
      */
-    protected Optional<Map<String, Object>> createNormalizedMapIfNeeded(Object value) {
+    protected @NotNull Optional<Map<String, Object>> createNormalizedMapIfNeeded(@NotNull Object value) {
         if (!(value instanceof Map<?, ?>)) {
             return Optional.empty();
         }
@@ -76,7 +77,7 @@ public class MapNormalizer {
         return Optional.empty();
     }
 
-    protected boolean isKeyInvalid(Object key) {
+    protected boolean isKeyInvalid(@NotNull Object key) {
         if (key instanceof String) {
             return splitDotPaths && ((String) key).contains(".");
         }
@@ -91,7 +92,7 @@ public class MapNormalizer {
      * @param path the path to store the value under
      * @param value the value to store
      */
-    protected void addValueIntoMap(Map<String, Object> map, String path, Object value) {
+    protected void addValueIntoMap(@NotNull Map<String, Object> map, @NotNull String path, @NotNull Object value) {
         int dotPosition = splitDotPaths ? path.indexOf(".") : -1;
         if (dotPosition > -1) {
             String pathElement = path.substring(0, dotPosition);
@@ -116,7 +117,7 @@ public class MapNormalizer {
      * @param path the key with which the value should be looked up from the map
      * @return the nested map, as stored under the path in the given map
      */
-    protected Map<String, Object> getOrInsertMap(Map<String, Object> parentMap, String path) {
+    protected @NotNull Map<String, Object> getOrInsertMap(@NotNull Map<String, Object> parentMap, @NotNull String path) {
         Object value = parentMap.get(path);
         if (value instanceof Map<?, ?>) {
             return (Map<String, Object>) value;

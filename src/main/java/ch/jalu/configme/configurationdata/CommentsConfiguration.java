@@ -1,6 +1,8 @@
 package ch.jalu.configme.configurationdata;
 
 import ch.jalu.configme.SettingsHolder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,7 +15,7 @@ import java.util.Map;
  */
 public class CommentsConfiguration {
 
-    private final Map<String, List<String>> comments;
+    private final @NotNull Map<String, List<String>> comments;
 
     /**
      * Constructor.
@@ -27,7 +29,7 @@ public class CommentsConfiguration {
      *
      * @param comments map to store comments in
      */
-    public CommentsConfiguration(Map<String, List<String>> comments) {
+    public CommentsConfiguration(@NotNull Map<String, List<String>> comments) {
         this.comments = comments;
     }
 
@@ -38,7 +40,7 @@ public class CommentsConfiguration {
      * @param path the path to register the comment lines for
      * @param commentLines the comment lines to set for the path
      */
-    public void setComment(String path, String... commentLines) {
+    public void setComment(@NotNull String path, @NotNull String... commentLines) {
         comments.put(path, Collections.unmodifiableList(Arrays.asList(commentLines)));
     }
 
@@ -47,7 +49,7 @@ public class CommentsConfiguration {
      *
      * @return map with all comments
      */
-    public Map<String, List<String>> getAllComments() {
+    public @NotNull @UnmodifiableView Map<String, @UnmodifiableView List<String>> getAllComments() {
         return Collections.unmodifiableMap(comments);
     }
 }

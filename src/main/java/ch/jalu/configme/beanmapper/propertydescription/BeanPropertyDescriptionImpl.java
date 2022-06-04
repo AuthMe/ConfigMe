@@ -2,8 +2,9 @@ package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -25,7 +26,7 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
      * @param getter getter for the property
      * @param setter setter for the property
      */
-    public BeanPropertyDescriptionImpl(String name, TypeInformation typeInformation, Method getter, Method setter) {
+    public BeanPropertyDescriptionImpl(@NotNull String name, @NotNull TypeInformation typeInformation, @NotNull Method getter, @NotNull Method setter) {
         this.name = name;
         this.typeInformation = typeInformation;
         this.getter = getter;
@@ -33,12 +34,12 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
 
     @Override
-    public TypeInformation getTypeInformation() {
+    public @NotNull TypeInformation getTypeInformation() {
         return typeInformation;
     }
 
@@ -48,11 +49,10 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
      * @param bean the bean to read the property from
      * @return bean value
      */
-    @Nullable
-    public Object getValue(Object bean) {
+    public @Nullable Object getValue(@NotNull Object bean) {
         try {
             return getter.invoke(bean);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (@NotNull IllegalAccessException | InvocationTargetException e) {
             throw new ConfigMeMapperException(
                 "Could not get property '" + name + "' from instance '" + bean + "'", e);
         }
@@ -64,17 +64,17 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
      * @param bean the bean to modify
      * @param value the value to set the property to
      */
-    public void setValue(Object bean, Object value) {
+    public void setValue(@NotNull Object bean, @NotNull Object value) {
         try {
             setter.invoke(bean, value);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (@NotNull IllegalAccessException | InvocationTargetException e) {
             throw new ConfigMeMapperException(
                 "Could not set property '" + name + "' to value '" + value + "' on instance '" + bean + "'", e);
         }
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "Bean property '" + name + "' with getter '" + getter + "'";
     }
 }

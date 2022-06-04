@@ -1,5 +1,7 @@
 package ch.jalu.configme.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,7 +23,7 @@ public final class CollectionUtils {
      * @return the sublist of all elements from index {@code start} and on; empty list
      *         if the start index exceeds the list's size
      */
-    public static <T> List<T> getRange(List<T> list, int start) {
+    public static <T> @NotNull List<T> getRange(@NotNull List<T> list, int start) {
         if (start >= list.size()) {
             return new ArrayList<>();
         }
@@ -36,7 +38,7 @@ public final class CollectionUtils {
      * @param <T> type of the lists
      * @return list of all equal entries at the start of both lists
      */
-    public static <T> List<T> filterCommonStart(List<T> list1, List<T> list2) {
+    public static <T> @NotNull List<T> filterCommonStart(@NotNull List<T> list1, @NotNull List<T> list2) {
         List<T> commonStart = new ArrayList<>();
         int minSize = Math.min(list1.size(), list2.size());
         int i = 0;
