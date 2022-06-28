@@ -37,6 +37,17 @@ public class PropertyInitializer {
     }
 
     /**
+     * Creates a new short property.
+     *
+     * @param path the property's path
+     * @param defaultValue the default value
+     * @return the created property
+     */
+    public static @NotNull Property<Short> newProperty(@NotNull String path, short defaultValue) {
+        return new ShortProperty(path, defaultValue);
+    }
+
+    /**
      * Creates a new integer property.
      *
      * @param path the property's path
@@ -45,6 +56,17 @@ public class PropertyInitializer {
      */
     public static @NotNull Property<Integer> newProperty(@NotNull String path, int defaultValue) {
         return new IntegerProperty(path, defaultValue);
+    }
+
+    /**
+     * Creates a new long property.
+     *
+     * @param path the property's path
+     * @param defaultValue the default value
+     * @return the created property
+     */
+    public static @NotNull Property<Long> newProperty(@NotNull String path, long defaultValue) {
+        return new LongProperty(path, defaultValue);
     }
 
     /**
