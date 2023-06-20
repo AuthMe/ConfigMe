@@ -40,6 +40,7 @@ class PropertyInitializerTest {
         assertThat(newProperty("my.path", (short) 5), instanceOf(ShortProperty.class));
         assertThat(newProperty("my.path", 12), instanceOf(IntegerProperty.class));
         assertThat(newProperty("my.path", 10L), instanceOf(LongProperty.class));
+        assertThat(newProperty("my.path", 3.5f), instanceOf(FloatProperty.class));
         assertThat(newProperty("my.path", -8.4), instanceOf(DoubleProperty.class));
         assertThat(newProperty("my.path", "default"), instanceOf(StringProperty.class));
         assertThat(newProperty(TestEnum.class, "my.path", TestEnum.FIRST), instanceOf(EnumProperty.class));
