@@ -21,8 +21,8 @@ class MappingContextImplTest {
     void shouldCreateProperPath() {
         // given
         TypeInformation typeInformation = new TypeInformation(Integer.class);
-        MappingContext parent1 = MappingContextImpl.createRoot(typeInformation, null);
-        MappingContext parent2 = MappingContextImpl.createRoot(typeInformation, null).createChild("foo", typeInformation);
+        MappingContext parent1 = MappingContextImpl.createRoot(typeInformation, new ConvertErrorRecorder());
+        MappingContext parent2 = MappingContextImpl.createRoot(typeInformation, new ConvertErrorRecorder()).createChild("foo", typeInformation);
 
         // when
         MappingContext child1 = parent1.createChild("bar", typeInformation);
@@ -36,7 +36,7 @@ class MappingContextImplTest {
     @Test
     void shouldCreateDescription() {
         // given
-        MappingContext context = MappingContextImpl.createRoot(new TypeInformation(String.class), null)
+        MappingContext context = MappingContextImpl.createRoot(new TypeInformation(String.class), new ConvertErrorRecorder())
             .createChild("oh.em.gee", new TypeInformation(ArrayList.class));
 
         // when
