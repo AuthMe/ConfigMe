@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static ch.jalu.configme.TestUtils.getExceptionTypeForNullArg;
-import static ch.jalu.configme.TestUtils.getExceptionTypeForNullField;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.arrayContaining;
@@ -55,7 +54,7 @@ class PropertyBuilderTest {
     @Test
     void shouldThrowForMissingPathInCommonPropertyBuilder() {
         // given / when
-        Exception e = assertThrows(getExceptionTypeForNullField(),
+        Exception e = assertThrows(getExceptionTypeForNullArg(),
             () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
                 .defaultValue("Hello")
                 .build());
@@ -69,7 +68,7 @@ class PropertyBuilderTest {
     @Test
     void shouldThrowForMissingDefaultValueInCommonPropertyBuilder() {
         // given / when
-        Exception e = assertThrows(getExceptionTypeForNullField(),
+        Exception e = assertThrows(getExceptionTypeForNullArg(),
             () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
                 .path("a.path")
                 .createFunction((path, val, type) -> new StringProperty(path, val))
@@ -127,7 +126,7 @@ class PropertyBuilderTest {
     @Test
     void shouldThrowForMissingPathInMapBuilder() {
         // given / when
-        Exception e = assertThrows(getExceptionTypeForNullField(),
+        Exception e = assertThrows(getExceptionTypeForNullArg(),
             () -> new PropertyBuilder.MapPropertyBuilder<>(PrimitivePropertyType.DOUBLE).build());
 
         // then
@@ -195,7 +194,7 @@ class PropertyBuilderTest {
     @Test
     void shouldThrowForMissingDefaultValue() {
         // given / when / then
-        assertThrows(getExceptionTypeForNullField(),
+        assertThrows(getExceptionTypeForNullArg(),
             () -> new PropertyBuilder.ListPropertyBuilder<>(PrimitivePropertyType.DOUBLE)
                 .path("defined.path")
                 .build());

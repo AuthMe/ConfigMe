@@ -3,6 +3,7 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.properties.inlinearray.InlineArrayConverter;
 import ch.jalu.configme.properties.types.PropertyType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -25,14 +26,14 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
 
     private String path;
     private T defaultValue;
-    private PropertyType<K> type;
+    private final PropertyType<K> type;
 
     /**
      * Constructor.
      *
      * @param type the property type
      */
-    public PropertyBuilder(@NotNull PropertyType<K> type) {
+    public PropertyBuilder(@Nullable PropertyType<K> type) {
         this.type = type;
     }
 
@@ -65,15 +66,19 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
      */
     public abstract @NotNull Property<T> build();
 
-    protected final @NotNull String getPath() {
+
+    // Note: these getters are @Nullable because they may be null only in some implementations, or because a caller
+    // might have forgotten to set a value (e.g. the path). Some values are never valid as null, but _can_ be null here.
+
+    protected final @Nullable String getPath() {
         return path;
     }
 
-    protected final @NotNull T getDefaultValue() {
+    protected final @Nullable T getDefaultValue() {
         return defaultValue;
     }
 
-    protected final @NotNull PropertyType<K> getType() {
+    protected final @Nullable PropertyType<K> getType() {
         return type;
     }
 
