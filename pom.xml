@@ -164,18 +164,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Coveralls plugin -->
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.3.0</version>
-                <configuration>
-                    <!-- Provided by Github action -->
-                    <repoToken>${env.coveralls_repo_token}</repoToken>
-                    <failOnServiceError>false</failOnServiceError>
-                </configuration>
-            </plugin>
-
             <!-- Coverage report generator -->
             <plugin>
                 <groupId>org.jacoco</groupId>
