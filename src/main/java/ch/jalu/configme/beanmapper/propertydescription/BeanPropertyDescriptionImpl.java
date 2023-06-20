@@ -26,7 +26,8 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
      * @param getter getter for the property
      * @param setter setter for the property
      */
-    public BeanPropertyDescriptionImpl(@NotNull String name, @NotNull TypeInformation typeInformation, @NotNull Method getter, @NotNull Method setter) {
+    public BeanPropertyDescriptionImpl(@NotNull String name, @NotNull TypeInformation typeInformation,
+                                       @NotNull Method getter, @NotNull Method setter) {
         this.name = name;
         this.typeInformation = typeInformation;
         this.getter = getter;

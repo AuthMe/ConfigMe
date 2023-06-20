@@ -35,7 +35,8 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
     }
 
     @Override
-    protected @Nullable Map<String, V> getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
+    protected @Nullable Map<String, V> getFromReader(@NotNull PropertyReader reader,
+                                                     @NotNull ConvertErrorRecorder errorRecorder) {
         Object rawObject = reader.getObject(getPath());
 
         if (!(rawObject instanceof Map<?, ?>)) {

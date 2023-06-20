@@ -44,7 +44,8 @@ public class PropertyPathTraverser {
         return convertToPathElements(indentationLevel, prefix, newPathParts);
     }
 
-    private @NotNull List<PathElement> convertToPathElements(int indentation, @NotNull String prefix, @NotNull List<String> elements) {
+    private @NotNull List<PathElement> convertToPathElements(int indentation, @NotNull String prefix,
+                                                             @NotNull List<String> elements) {
         List<PathElement> pathElements = new ArrayList<>(elements.size());
         for (String element : elements) {
             List<String> comments = isFirstProperty
@@ -86,7 +87,8 @@ public class PropertyPathTraverser {
         private final boolean isFirstElement;
         private boolean isFirstOfGroup;
 
-        public PathElement(int indentationLevel, @NotNull String name, @NotNull List<String> comments, boolean isFirstElement) {
+        public PathElement(int indentationLevel, @NotNull String name, @NotNull List<String> comments,
+                           boolean isFirstElement) {
             this.indentationLevel = indentationLevel;
             this.name = name;
             this.comments = comments;

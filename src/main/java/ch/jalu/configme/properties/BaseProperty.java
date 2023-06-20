@@ -67,7 +67,8 @@ public abstract class BaseProperty<T> implements Property<T> {
      * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return value based on the reader, or null if not applicable
      */
-    protected abstract @Nullable T getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder);
+    protected abstract @Nullable T getFromReader(@NotNull PropertyReader reader,
+                                                 @NotNull ConvertErrorRecorder errorRecorder);
 
     @Override
     public @NotNull String toString() {

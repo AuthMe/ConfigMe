@@ -111,7 +111,8 @@ public class PropertyInitializer {
      * @param <E> the enum type
      * @return the created enum property
      */
-    public static <E extends Enum<E>> @NotNull Property<E> newProperty(@NotNull Class<E> clazz, @NotNull String path, @NotNull E defaultValue) {
+    public static <E extends Enum<E>> @NotNull Property<E> newProperty(@NotNull Class<E> clazz, @NotNull String path,
+                                                                       @NotNull E defaultValue) {
         return new EnumProperty<>(clazz, path, defaultValue);
     }
 
@@ -144,7 +145,8 @@ public class PropertyInitializer {
      * @param defaultValues the items in the default list
      * @return the created list property
      */
-    public static @NotNull Property<List<String>> newListProperty(@NotNull String path, @NotNull String @NotNull ... defaultValues) {
+    public static @NotNull Property<List<String>> newListProperty(@NotNull String path,
+                                                                  @NotNull String @NotNull ... defaultValues) {
         // does not have the same name as not to clash with #newProperty(String, String)
         return new StringListProperty(path, defaultValues);
     }
@@ -156,7 +158,8 @@ public class PropertyInitializer {
      * @param defaultValues the default value of the property
      * @return the created list property
      */
-    public static @NotNull Property<List<String>> newListProperty(@NotNull String path, @NotNull List<String> defaultValues) {
+    public static @NotNull Property<List<String>> newListProperty(@NotNull String path,
+                                                                  @NotNull List<String> defaultValues) {
         // does not have the same name as not to clash with #newProperty(String, String)
         return new StringListProperty(path, defaultValues);
     }
@@ -168,7 +171,8 @@ public class PropertyInitializer {
      * @param defaultValues the items in the default set
      * @return the created set property
      */
-    public static @NotNull Property<Set<String>> newSetProperty(@NotNull String path, @NotNull String @NotNull ... defaultValues) {
+    public static @NotNull Property<Set<String>> newSetProperty(@NotNull String path,
+                                                                @NotNull String @NotNull ... defaultValues) {
         return new StringSetProperty(path, defaultValues);
     }
 
@@ -179,7 +183,8 @@ public class PropertyInitializer {
      * @param defaultValues the default value of the property
      * @return the created set property
      */
-    public static @NotNull Property<Set<String>> newSetProperty(@NotNull String path, @NotNull Set<String> defaultValues) {
+    public static @NotNull Property<Set<String>> newSetProperty(@NotNull String path,
+                                                                @NotNull Set<String> defaultValues) {
         return new StringSetProperty(path, defaultValues);
     }
 
@@ -190,7 +195,8 @@ public class PropertyInitializer {
      * @param defaultValues the items in the default set
      * @return the created set property
      */
-    public static @NotNull Property<Set<String>> newLowercaseStringSetProperty(@NotNull String path, @NotNull String @NotNull ... defaultValues) {
+    public static @NotNull Property<Set<String>> newLowercaseStringSetProperty(@NotNull String path,
+                                                                           @NotNull String @NotNull ... defaultValues) {
         return new LowercaseStringSetProperty(path, defaultValues);
     }
 
@@ -201,7 +207,8 @@ public class PropertyInitializer {
      * @param defaultValues the default value of the property
      * @return the created set property
      */
-    public static @NotNull Property<Set<String>> newLowercaseStringSetProperty(@NotNull String path, @NotNull Collection<String> defaultValues) {
+    public static @NotNull Property<Set<String>> newLowercaseStringSetProperty(@NotNull String path,
+                                                                            @NotNull Collection<String> defaultValues) {
         return new LowercaseStringSetProperty(path, defaultValues);
     }
 
@@ -214,14 +221,16 @@ public class PropertyInitializer {
      * @param <B> the bean type
      * @return the created bean property
      */
-    public static <B> @NotNull Property<B> newBeanProperty(@NotNull Class<B> beanClass, @NotNull String path, @NotNull B defaultValue) {
+    public static <B> @NotNull Property<B> newBeanProperty(@NotNull Class<B> beanClass, @NotNull String path,
+                                                           @NotNull B defaultValue) {
         return new BeanProperty<>(beanClass, path, defaultValue);
     }
 
     // --------------
     // Property builders
     // --------------
-    public static <T> PropertyBuilder.@NotNull TypeBasedPropertyBuilder<T> typeBasedProperty(@NotNull PropertyType<T> type) {
+    public static <T> PropertyBuilder.@NotNull TypeBasedPropertyBuilder<T> typeBasedProperty(
+                                                                                        @NotNull PropertyType<T> type) {
         return new PropertyBuilder.TypeBasedPropertyBuilder<>(type);
     }
 
@@ -238,7 +247,7 @@ public class PropertyInitializer {
     }
 
     public static <T> PropertyBuilder.@NotNull ArrayPropertyBuilder<T> arrayProperty(@NotNull PropertyType<T> type,
-                                                                                     @NotNull IntFunction<T[]> arrayProducer) {
+                                                                              @NotNull IntFunction<T[]> arrayProducer) {
         return new PropertyBuilder.ArrayPropertyBuilder<>(type, arrayProducer);
     }
 
@@ -262,7 +271,8 @@ public class PropertyInitializer {
         return new OptionalProperty<>(new StringProperty(path, ""));
     }
 
-    public static <E extends Enum<E>> @NotNull Property<Optional<E>> optionalEnumProperty(@NotNull Class<E> clazz, @NotNull String path) {
+    public static <E extends Enum<E>> @NotNull Property<Optional<E>> optionalEnumProperty(@NotNull Class<E> clazz,
+                                                                                          @NotNull String path) {
         // default value may never be null, so get the first entry in the enum class
         return new OptionalProperty<>(new EnumProperty<>(clazz, path, clazz.getEnumConstants()[0]));
     }

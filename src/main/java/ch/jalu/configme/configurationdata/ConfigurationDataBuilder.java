@@ -52,7 +52,8 @@ public class ConfigurationDataBuilder {
      * @param classes the classes to scan for their property data
      * @return collected configuration data
      */
-    public static @NotNull ConfigurationData createConfiguration(@NotNull Iterable<Class<? extends SettingsHolder>> classes) {
+    public static @NotNull ConfigurationData createConfiguration(
+                                                           @NotNull Iterable<Class<? extends SettingsHolder>> classes) {
         ConfigurationDataBuilder builder = new ConfigurationDataBuilder();
         return builder.collectData(classes);
     }

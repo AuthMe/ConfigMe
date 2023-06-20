@@ -48,8 +48,10 @@ public class PlainMigrationService implements MigrationService {
      * @param <T> the type of the property
      * @return true if the old path exists in the configuration file, false otherwise
      */
-    protected static <T> boolean moveProperty(@NotNull Property<T> oldProperty, @NotNull Property<T> newProperty,
-                                              @NotNull PropertyReader reader, @NotNull ConfigurationData configurationData) {
+    protected static <T> boolean moveProperty(@NotNull Property<T> oldProperty,
+                                              @NotNull Property<T> newProperty,
+                                              @NotNull PropertyReader reader,
+                                              @NotNull ConfigurationData configurationData) {
         if (reader.contains(oldProperty.getPath())) {
             if (!reader.contains(newProperty.getPath())) {
                 PropertyValue<T> value = oldProperty.determineValue(reader);

@@ -25,14 +25,16 @@ public class InlineArrayProperty<T> extends BaseProperty<T[]> {
      * @param defaultValue the default value of the property
      * @param inlineConverter the inline converter to use
      */
-    public InlineArrayProperty(@NotNull String path, T @NotNull [] defaultValue, @NotNull InlineArrayConverter<T> inlineConverter) {
+    public InlineArrayProperty(@NotNull String path, T @NotNull [] defaultValue,
+                               @NotNull InlineArrayConverter<T> inlineConverter) {
         super(path, defaultValue);
         Objects.requireNonNull(inlineConverter, "inlineConverter");
         this.inlineConverter = inlineConverter;
     }
 
     @Override
-    protected T @Nullable [] getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
+    protected T @Nullable [] getFromReader(@NotNull PropertyReader reader,
+                                           @NotNull ConvertErrorRecorder errorRecorder) {
         String value = reader.getString(getPath());
         return value == null ? null : inlineConverter.fromString(value);
     }

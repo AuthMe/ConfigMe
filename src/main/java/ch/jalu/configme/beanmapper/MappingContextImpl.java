@@ -13,7 +13,8 @@ public class MappingContextImpl implements MappingContext {
     private final TypeInformation typeInformation;
     private final ConvertErrorRecorder errorRecorder;
 
-    protected MappingContextImpl(@NotNull String path, @NotNull TypeInformation typeInformation, @NotNull ConvertErrorRecorder errorRecorder) {
+    protected MappingContextImpl(@NotNull String path, @NotNull TypeInformation typeInformation,
+                                 @NotNull ConvertErrorRecorder errorRecorder) {
         this.path = path;
         this.typeInformation = typeInformation;
         this.errorRecorder = errorRecorder;
@@ -26,7 +27,8 @@ public class MappingContextImpl implements MappingContext {
      * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return root mapping context
      */
-    public static @NotNull MappingContextImpl createRoot(@NotNull TypeInformation typeInformation, @NotNull ConvertErrorRecorder errorRecorder) {
+    public static @NotNull MappingContextImpl createRoot(@NotNull TypeInformation typeInformation,
+                                                         @NotNull ConvertErrorRecorder errorRecorder) {
         return new MappingContextImpl("", typeInformation, errorRecorder);
     }
 

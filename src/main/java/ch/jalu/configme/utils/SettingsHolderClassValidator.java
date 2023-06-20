@@ -142,7 +142,8 @@ public class SettingsHolderClassValidator {
      *
      * @param settingHolders the classes to check
      */
-    public void validateClassesHaveHiddenNoArgConstructor(@NotNull Iterable<Class<? extends SettingsHolder>> settingHolders) {
+    public void validateClassesHaveHiddenNoArgConstructor(
+                                                    @NotNull Iterable<Class<? extends SettingsHolder>> settingHolders) {
         List<String> invalidClasses = new ArrayList<>();
 
         for (Class<? extends SettingsHolder> clazz : settingHolders) {
@@ -259,7 +260,8 @@ public class SettingsHolderClassValidator {
             && Modifier.isFinal(modifiers);
     }
 
-    protected @NotNull ConfigurationData createConfigurationData(@NotNull Iterable<Class<? extends SettingsHolder>> classes) {
+    protected @NotNull ConfigurationData createConfigurationData(
+                                                           @NotNull Iterable<Class<? extends SettingsHolder>> classes) {
         return ConfigurationDataBuilder.createConfiguration(classes);
     }
 
@@ -277,7 +279,8 @@ public class SettingsHolderClassValidator {
      * @param maxLength the max length (nullable)
      * @return predicate based on the supplied length parameters
      */
-    protected @NotNull Predicate<String> createValidLengthPredicate(@Nullable Integer minLength, @Nullable Integer maxLength) {
+    protected @NotNull Predicate<String> createValidLengthPredicate(@Nullable Integer minLength,
+                                                                    @Nullable Integer maxLength) {
         if (minLength == null && maxLength == null) {
             throw new IllegalArgumentException("min length or max length must be not null");
         }
