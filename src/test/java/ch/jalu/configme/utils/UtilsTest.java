@@ -4,12 +4,12 @@ import ch.jalu.configme.exception.ConfigMeException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
 import java.nio.file.spi.FileSystemProvider;
 
 import static ch.jalu.configme.TestUtils.verifyException;
@@ -77,7 +77,7 @@ class UtilsTest {
         Path child = mock(Path.class);
         given(child.getFileSystem()).willReturn(fileSystem);
         doThrow(NoSuchFileException.class).when(provider).checkAccess(child); // for Files#exists
-        doThrow(new IOException("File creation not supported")).when(provider).newByteChannel(eq(child), anySet(), any());
+        given(provider.newByteChannel(eq(child), anySet(), any(FileAttribute[].class))).willThrow(new IOException("File creation not supported"));
 
         Path parent = temporaryFolder.resolve("parent");
         given(child.getParent()).willReturn(parent);
