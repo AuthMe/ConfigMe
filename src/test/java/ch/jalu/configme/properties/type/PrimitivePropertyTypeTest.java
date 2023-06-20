@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties.type;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.properties.types.PropertyType;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,12 +22,12 @@ class PrimitivePropertyTypeTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    void shouldConvertValue1(String name, PropertyType propertyType, TestData testData) {
+    void shouldConvertValue1(String name, PropertyType<?> propertyType, TestData testData) {
         // given
         Object object = testData.object1;
 
         // when
-        Object result = propertyType.convert(object, null);
+        Object result = propertyType.convert(object, new ConvertErrorRecorder());
 
         // then
         assertThat(result, equalTo(testData.expected1));
@@ -34,12 +35,12 @@ class PrimitivePropertyTypeTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    void shouldConvertValue2(String name, PropertyType propertyType, TestData testData) {
+    void shouldConvertValue2(String name, PropertyType<?> propertyType, TestData testData) {
         // given
         Object object = testData.object2;
 
         // when
-        Object result = propertyType.convert(object, null);
+        Object result = propertyType.convert(object, new ConvertErrorRecorder());
 
         // then
         assertThat(result, equalTo(testData.expected2));
@@ -47,12 +48,12 @@ class PrimitivePropertyTypeTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    void shouldReturnNullForInvalidValue(String name, PropertyType propertyType, TestData testData) {
+    void shouldReturnNullForInvalidValue(String name, PropertyType<?> propertyType, TestData testData) {
         // given
         Object object = testData.invalid;
 
         // when
-        Object result = propertyType.convert(object, null);
+        Object result = propertyType.convert(object, new ConvertErrorRecorder());
 
         // then
         assertThat(result, nullValue());
@@ -60,9 +61,9 @@ class PrimitivePropertyTypeTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    void shouldHandleNull(String name, PropertyType propertyType, TestData testData) {
+    void shouldHandleNull(String name, PropertyType<?> propertyType, TestData testData) {
         // given / when
-        Object result = propertyType.convert(null, null);
+        Object result = propertyType.convert(null, new ConvertErrorRecorder());
 
         // then
         assertThat(result, nullValue());
@@ -72,14 +73,14 @@ class PrimitivePropertyTypeTest {
         List<Object[]> converters = new ArrayList<>();
         for (Field field : PrimitivePropertyType.class.getDeclaredFields()) {
             if (Modifier.isPublic(field.getModifiers()) && Modifier.isStatic(field.getModifiers())) {
-                PrimitivePropertyType propertyType = (PrimitivePropertyType) field.get(null);
+                PrimitivePropertyType<?> propertyType = (PrimitivePropertyType<?>) field.get(null);
                 converters.add(new Object[]{field.getName(), propertyType, getTestData(propertyType)});
             }
         }
         return converters;
     }
 
-    private static TestData getTestData(PrimitivePropertyType propertyType) {
+    private static TestData getTestData(PrimitivePropertyType<?> propertyType) {
         if (propertyType == PrimitivePropertyType.BOOLEAN) {
             return new TestData(true, true, false, false, 3);
         } else if (propertyType == PrimitivePropertyType.BYTE) {

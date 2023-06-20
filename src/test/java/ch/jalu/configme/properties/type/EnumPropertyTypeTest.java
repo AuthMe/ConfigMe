@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties.type;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.EnumPropertyType;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +33,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert(new Object(), null);
+        TimeUnit result = propertyType.convert(new Object(), new ConvertErrorRecorder());
 
         // then
         assertThat(result, nullValue());
@@ -44,7 +45,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert(null, null);
+        TimeUnit result = propertyType.convert(null, new ConvertErrorRecorder());
 
         // then
         assertThat(result, nullValue());
@@ -56,7 +57,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert(TimeUnit.SECONDS, null);
+        TimeUnit result = propertyType.convert(TimeUnit.SECONDS, new ConvertErrorRecorder());
 
         // then
         assertThat(result, equalTo(TimeUnit.SECONDS));
@@ -68,7 +69,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert("SECONDS", null);
+        TimeUnit result = propertyType.convert("SECONDS", new ConvertErrorRecorder());
 
         // then
         assertThat(result, equalTo(TimeUnit.SECONDS));

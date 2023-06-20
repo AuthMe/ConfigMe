@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.resource.PropertyReader;
@@ -37,7 +38,7 @@ class ArrayPropertyTest {
         given(reader.getObject("singleton")).willReturn("hello");
 
         // when
-        String[] result = property.getFromReader(reader, null);
+        String[] result = property.getFromReader(reader, new ConvertErrorRecorder());
 
         // then
         assertThat(result, nullValue());
@@ -55,7 +56,7 @@ class ArrayPropertyTest {
         given(reader.getObject("singleton")).willReturn(null);
 
         // when
-        String[] result = property.getFromReader(reader, null);
+        String[] result = property.getFromReader(reader, new ConvertErrorRecorder());
 
         // then
         assertThat(result, nullValue());

@@ -1,6 +1,8 @@
 package ch.jalu.configme.utils;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+
+import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -22,7 +24,7 @@ public class TypeInformation {
      *
      * @param type the type the instance should wrap
      */
-    public TypeInformation(Type type) {
+    public TypeInformation(@Nullable Type type) {
         this.type = type;
     }
 
@@ -32,15 +34,14 @@ public class TypeInformation {
      * @param field the field to create a type information for
      * @return type information wrapping the field's type
      */
-    public static TypeInformation fromField(Field field) {
+    public static @NotNull TypeInformation fromField(@NotNull Field field) {
         return new TypeInformation(field.getGenericType());
     }
 
     /**
      * @return the type this instance is wrapping
      */
-    @Nullable
-    public Type getType() {
+    public @Nullable Type getType() {
         return type;
     }
 
@@ -60,7 +61,7 @@ public class TypeInformation {
      *         (e.g. setting a value to a field or adding to a collection);
      *         null if not applicable
      */
-    public Class<?> getSafeToWriteClass() {
+    public @Nullable Class<?> getSafeToWriteClass() {
         return getSafeToWriteClassInternal(type);
     }
 
@@ -78,7 +79,7 @@ public class TypeInformation {
      *
      * @return the type as Class which is safe for reading (e.g. getting field value or reading from a collection)
      */
-    public Class<?> getSafeToReadClass() {
+    public @NotNull Class<?> getSafeToReadClass() {
         Class<?> safeToReadClass = getSafeToReadClassInternal(type);
         return safeToReadClass == null ? Object.class : safeToReadClass;
     }
@@ -97,8 +98,7 @@ public class TypeInformation {
      * @param index the index of the generic type to get (0-based)
      * @return type information representing the generic type info for the given index, null if not applicable
      */
-    @Nullable
-    public TypeInformation getGenericType(int index) {
+    public @Nullable TypeInformation getGenericType(int index) {
         if (type instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) type;
             return pt.getActualTypeArguments().length > index
@@ -123,14 +123,12 @@ public class TypeInformation {
      * @param index the index of the generic type to get (0-based)
      * @return type information representing the generic type info for the given index, null if not applicable
      */
-    @Nullable
-    public Class<?> getGenericTypeAsClass(int index) {
+    public @Nullable Class<?> getGenericTypeAsClass(int index) {
         TypeInformation genericType = getGenericType(index);
         return genericType == null ? null : genericType.getSafeToWriteClass();
     }
 
-    @Nullable
-    private Class<?> getSafeToWriteClassInternal(Type type) {
+    private @Nullable Class<?> getSafeToWriteClassInternal(@Nullable Type type) {
         if (type instanceof Class<?>) {
             return (Class<?>) type;
         } else if (type instanceof ParameterizedType) {
@@ -141,8 +139,7 @@ public class TypeInformation {
         return null;
     }
 
-    @Nullable
-    private Class<?> getSafeToReadClassInternal(Type type) {
+    private @Nullable Class<?> getSafeToReadClassInternal(@Nullable Type type) {
         Class<?> safeToWriteClass = getSafeToWriteClassInternal(type);
         if (safeToWriteClass != null) {
             return safeToWriteClass;
@@ -166,7 +163,7 @@ public class TypeInformation {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "TypeInformation[type=" + type + "]";
     }
 

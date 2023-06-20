@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties.convertresult;
 
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Records errors during the conversion of a property to its Java value.
@@ -23,7 +24,7 @@ public class ConvertErrorRecorder {
      *
      * @param reason the reason (not used in this implementation but may be extended for debugging)
      */
-    public void setHasError(String reason) {
+    public void setHasError(@NotNull String reason) {
         hasError = true;
     }
 

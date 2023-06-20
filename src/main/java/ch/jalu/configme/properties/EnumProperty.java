@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.types.EnumPropertyType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Enum property.
@@ -9,7 +10,7 @@ import ch.jalu.configme.properties.types.EnumPropertyType;
  */
 public class EnumProperty<E extends Enum<E>> extends TypeBasedProperty<E> {
 
-    public EnumProperty(Class<E> clazz, String path, E defaultValue) {
+    public EnumProperty(@NotNull Class<E> clazz, @NotNull String path, @NotNull E defaultValue) {
         super(path, defaultValue, EnumPropertyType.of(clazz));
     }
 }

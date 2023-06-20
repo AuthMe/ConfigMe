@@ -8,8 +8,9 @@ import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
 import ch.jalu.configme.resource.YamlFileResourceOptions;
 import ch.jalu.configme.utils.Utils;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -21,9 +22,9 @@ public final class SettingsManagerBuilder {
 
     private final PropertyResource resource;
     private ConfigurationData configurationData;
-    private MigrationService migrationService;
+    private @Nullable MigrationService migrationService;
 
-    private SettingsManagerBuilder(PropertyResource resource) {
+    private SettingsManagerBuilder(@NotNull PropertyResource resource) {
         this.resource = resource;
     }
 
@@ -33,7 +34,7 @@ public final class SettingsManagerBuilder {
      * @param file the yaml file to use
      * @return settings manager builder
      */
-    public static SettingsManagerBuilder withYamlFile(Path file) {
+    public static @NotNull SettingsManagerBuilder withYamlFile(@NotNull Path file) {
         return withYamlFile(file, YamlFileResourceOptions.builder().build());
     }
 
@@ -43,7 +44,7 @@ public final class SettingsManagerBuilder {
      * @param file the yaml file to use
      * @return settings manager builder
      */
-    public static SettingsManagerBuilder withYamlFile(File file) {
+    public static @NotNull SettingsManagerBuilder withYamlFile(@NotNull File file) {
         return withYamlFile(file.toPath());
     }
 
@@ -54,7 +55,7 @@ public final class SettingsManagerBuilder {
      * @param resourceOptions the resource options
      * @return settings manager builder
      */
-    public static SettingsManagerBuilder withYamlFile(Path path, YamlFileResourceOptions resourceOptions) {
+    public static @NotNull SettingsManagerBuilder withYamlFile(@NotNull Path path, @NotNull YamlFileResourceOptions resourceOptions) {
         Utils.createFileIfNotExists(path);
         return new SettingsManagerBuilder(new YamlFileResource(path, resourceOptions));
     }
@@ -66,7 +67,7 @@ public final class SettingsManagerBuilder {
      * @param resourceOptions the resource options
      * @return settings manager builder
      */
-    public static SettingsManagerBuilder withYamlFile(File file, YamlFileResourceOptions resourceOptions) {
+    public static @NotNull SettingsManagerBuilder withYamlFile(@NotNull File file, @NotNull YamlFileResourceOptions resourceOptions) {
         return withYamlFile(file.toPath(), resourceOptions);
     }
 
@@ -76,7 +77,7 @@ public final class SettingsManagerBuilder {
      * @param resource the resource to use
      * @return settings manager builder
      */
-    public static SettingsManagerBuilder withResource(PropertyResource resource) {
+    public static @NotNull SettingsManagerBuilder withResource(@NotNull PropertyResource resource) {
         return new SettingsManagerBuilder(resource);
     }
 
@@ -87,7 +88,7 @@ public final class SettingsManagerBuilder {
      * @return this builder
      */
     @SafeVarargs
-    public final SettingsManagerBuilder configurationData(Class<? extends SettingsHolder>... classes) {
+    public final @NotNull SettingsManagerBuilder configurationData(@NotNull Class<? extends SettingsHolder>... classes) {
         this.configurationData = ConfigurationDataBuilder.createConfiguration(classes);
         return this;
     }
@@ -98,7 +99,7 @@ public final class SettingsManagerBuilder {
      * @param configurationData the configuration data
      * @return this builder
      */
-    public SettingsManagerBuilder configurationData(ConfigurationData configurationData) {
+    public @NotNull SettingsManagerBuilder configurationData(@NotNull ConfigurationData configurationData) {
         this.configurationData = configurationData;
         return this;
     }
@@ -109,7 +110,7 @@ public final class SettingsManagerBuilder {
      * @param migrationService the migration service to use (or null)
      * @return this builder
      */
-    public SettingsManagerBuilder migrationService(@Nullable MigrationService migrationService) {
+    public @NotNull SettingsManagerBuilder migrationService(@Nullable MigrationService migrationService) {
         this.migrationService = migrationService;
         return this;
     }
@@ -120,7 +121,7 @@ public final class SettingsManagerBuilder {
      *
      * @return this builder
      */
-    public SettingsManagerBuilder useDefaultMigrationService() {
+    public @NotNull SettingsManagerBuilder useDefaultMigrationService() {
         this.migrationService = new PlainMigrationService();
         return this;
     }
@@ -131,7 +132,7 @@ public final class SettingsManagerBuilder {
      *
      * @return the settings manager
      */
-    public SettingsManager create() {
+    public @NotNull SettingsManager create() {
         Objects.requireNonNull(resource, "resource");
         Objects.requireNonNull(configurationData, "configurationData");
         return new SettingsManagerImpl(resource, configurationData, migrationService);

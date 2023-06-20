@@ -4,6 +4,7 @@ import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.configme.TestUtils;
+import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.MapProperty;
 import ch.jalu.configme.properties.types.BeanPropertyType;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -92,7 +94,52 @@ class BeanMapOnRootLevelTest {
         assertThat(result.get("medium").getLore(), contains("Test", "Toast"));
     }
 
-    public static final class TestSettingsHolder implements SettingsHolder {
+    @Test
+    void shouldExportValuesAsEmptyMap() throws IOException {
+        String yaml = "medium:\n"
+            + "\n    name: \"med\"\n"
+            + "\n    lore:\n"
+            + "\n      - \"Test\""
+            + "\n      - \"Toast\"";
+        Path tempFile = TestUtils.createTemporaryFile(tempDir);
+        Files.write(tempFile, yaml.getBytes());
+
+        SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(tempFile)
+            .configurationData(TestSettingsHolder.class)
+            .create();
+
+        // when
+        settingsManager.setProperty(TestSettingsHolder.INFO, new HashMap<>());
+        settingsManager.save();
+
+        // then
+        assertThat(Files.readAllLines(tempFile), contains("{}"));
+    }
+
+    @Test
+    void shouldExportValuesAsEmptyMapIncludingComments() throws IOException {
+        String yaml = "medium:\n"
+            + "\n    name: \"med\"\n"
+            + "\n    lore:\n"
+            + "\n      - \"Test\""
+            + "\n      - \"Toast\"";
+        Path tempFile = TestUtils.createTemporaryFile(tempDir);
+        Files.write(tempFile, yaml.getBytes());
+
+        SettingsManager settingsManager = SettingsManagerBuilder.withYamlFile(tempFile)
+            .configurationData(TestSettingsHolderWithRootComment.class)
+            .create();
+
+        // when
+        settingsManager.setProperty(TestSettingsHolder.INFO, new HashMap<>());
+        settingsManager.save();
+
+        // then
+        assertThat(Files.readAllLines(tempFile),
+            contains("# Define your info here below", "# You can add as many entries as you want", "{}"));
+    }
+
+    public static class TestSettingsHolder implements SettingsHolder {
 
         public static final MapProperty<Info> INFO = mapProperty(BeanPropertyType.of(Info.class))
             .path("")
@@ -100,6 +147,16 @@ class BeanMapOnRootLevelTest {
             .build();
 
         private TestSettingsHolder() {
+        }
+    }
+
+    public static final class TestSettingsHolderWithRootComment extends TestSettingsHolder {
+
+        @Override
+        public void registerComments(CommentsConfiguration conf) {
+            conf.setComment("",
+                "Define your info here below",
+                "You can add as many entries as you want");
         }
     }
 

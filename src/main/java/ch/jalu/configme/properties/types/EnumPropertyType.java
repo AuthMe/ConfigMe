@@ -1,21 +1,23 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
 
     private Class<E> enumType;
 
-    public EnumPropertyType(Class<E> enumType) {
+    public EnumPropertyType(@NotNull Class<E> enumType) {
         this.enumType = enumType;
     }
 
-    public static <E extends Enum<E>> EnumPropertyType<E> of(Class<E> type) {
+    public static <E extends Enum<E>> @NotNull EnumPropertyType<E> of(@NotNull Class<E> type) {
         return new EnumPropertyType<>(type);
     }
 
     @Override
-    public E convert(Object object, ConvertErrorRecorder errorRecorder) {
+    public @Nullable E convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
         // If object is enum, then return this object, casting to E
         if (enumType.isInstance(object)) {
             return (E) object;
@@ -37,7 +39,7 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
     }
 
     @Override
-    public Object toExportValue(E value) {
+    public @NotNull Object toExportValue(@NotNull E value) {
         return value.name();
     }
 }

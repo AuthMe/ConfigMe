@@ -2,6 +2,7 @@ package ch.jalu.configme.beanmapper;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Standard implementation of {@link MappingContext}.
@@ -12,7 +13,7 @@ public class MappingContextImpl implements MappingContext {
     private final TypeInformation typeInformation;
     private final ConvertErrorRecorder errorRecorder;
 
-    protected MappingContextImpl(String path, TypeInformation typeInformation, ConvertErrorRecorder errorRecorder) {
+    protected MappingContextImpl(@NotNull String path, @NotNull TypeInformation typeInformation, @NotNull ConvertErrorRecorder errorRecorder) {
         this.path = path;
         this.typeInformation = typeInformation;
         this.errorRecorder = errorRecorder;
@@ -25,12 +26,12 @@ public class MappingContextImpl implements MappingContext {
      * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return root mapping context
      */
-    public static MappingContextImpl createRoot(TypeInformation typeInformation, ConvertErrorRecorder errorRecorder) {
+    public static @NotNull MappingContextImpl createRoot(@NotNull TypeInformation typeInformation, @NotNull ConvertErrorRecorder errorRecorder) {
         return new MappingContextImpl("", typeInformation, errorRecorder);
     }
 
     @Override
-    public MappingContext createChild(String subPath, TypeInformation typeInformation) {
+    public @NotNull MappingContext createChild(@NotNull String subPath, @NotNull TypeInformation typeInformation) {
         if (path.isEmpty()) {
             return new MappingContextImpl(subPath, typeInformation, errorRecorder);
         }
@@ -38,22 +39,22 @@ public class MappingContextImpl implements MappingContext {
     }
 
     @Override
-    public TypeInformation getTypeInformation() {
+    public @NotNull TypeInformation getTypeInformation() {
         return typeInformation;
     }
 
     @Override
-    public String createDescription() {
+    public @NotNull String createDescription() {
         return "Path: '" + path + "', type: '" + typeInformation.getType() + "'";
     }
 
     @Override
-    public void registerError(String reason) {
+    public void registerError(@NotNull String reason) {
         errorRecorder.setHasError("At path '" + path + "': " + reason);
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return getClass().getSimpleName() + "[" + createDescription() + "]";
     }
 }

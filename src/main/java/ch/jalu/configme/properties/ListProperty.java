@@ -3,8 +3,9 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +29,7 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
      * @param defaultValue the entries in the list of the default value
      */
     @SafeVarargs
-    public ListProperty(String path, PropertyType<T> type, T... defaultValue) {
+    public ListProperty(@NotNull String path, @NotNull PropertyType<T> type, @NotNull T @NotNull ... defaultValue) {
         this(path, type, Arrays.asList(defaultValue));
     }
 
@@ -39,15 +40,14 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
      * @param type the property type
      * @param defaultValue the default value of the property
      */
-    public ListProperty(String path, PropertyType<T> type, List<T> defaultValue) {
+    public ListProperty(@NotNull String path, @NotNull PropertyType<T> type, @NotNull List<T> defaultValue) {
         super(path, Collections.unmodifiableList(defaultValue));
         Objects.requireNonNull(type, "type");
         this.type = type;
     }
 
-    @Nullable
     @Override
-    protected List<T> getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+    protected @Nullable List<T> getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
         List<?> list = reader.getList(getPath());
 
         if (list != null) {
@@ -60,7 +60,7 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
     }
 
     @Override
-    public Object toExportValue(List<T> value) {
+    public @NotNull Object toExportValue(@NotNull List<T> value) {
         return value.stream()
             .map(type::toExportValue)
             .collect(Collectors.toList());

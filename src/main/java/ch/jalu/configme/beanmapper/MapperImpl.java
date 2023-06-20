@@ -7,8 +7,9 @@ import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImp
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -63,20 +64,20 @@ public class MapperImpl implements Mapper {
         this(new BeanDescriptionFactoryImpl(), StandardLeafValueHandlers.getDefaultLeafValueHandler());
     }
 
-    public MapperImpl(BeanDescriptionFactory beanDescriptionFactory, LeafValueHandler leafValueHandler) {
+    public MapperImpl(@NotNull BeanDescriptionFactory beanDescriptionFactory, @NotNull LeafValueHandler leafValueHandler) {
         this.beanDescriptionFactory = beanDescriptionFactory;
         this.leafValueHandler = leafValueHandler;
     }
 
-    protected final BeanDescriptionFactory getBeanDescriptionFactory() {
+    protected final @NotNull BeanDescriptionFactory getBeanDescriptionFactory() {
         return beanDescriptionFactory;
     }
 
-    protected final LeafValueHandler getLeafValueHandler() {
+    protected final @NotNull LeafValueHandler getLeafValueHandler() {
         return leafValueHandler;
     }
 
-    protected MappingContext createRootMappingContext(TypeInformation beanType, ConvertErrorRecorder errorRecorder) {
+    protected @NotNull MappingContext createRootMappingContext(@NotNull TypeInformation beanType, @NotNull ConvertErrorRecorder errorRecorder) {
         return MappingContextImpl.createRoot(beanType, errorRecorder);
     }
 
@@ -86,7 +87,7 @@ public class MapperImpl implements Mapper {
     // ---------
 
     @Override
-    public Object toExportValue(Object value) {
+    public @Nullable Object toExportValue(@Nullable Object value) {
         // Step 1: attempt simple value transformation
         Object simpleValue = leafValueHandler.toExportValue(value);
         if (simpleValue != null || value == null) {
@@ -112,14 +113,13 @@ public class MapperImpl implements Mapper {
 
     /**
      * Handles values of types which need special handling (such as Optional). Null means the value is not
-     * a special type and that the export value should be built differently. Use {@link #RETURN_NULL} to $
+     * a special type and that the export value should be built differently. Use {@link #RETURN_NULL} to
      * signal that null should be used as the export value of the provided value.
      *
      * @param value the value to convert
      * @return the export value to use or {@link #RETURN_NULL}, or null if not applicable
      */
-    @Nullable
-    protected Object createExportValueForSpecialTypes(Object value) {
+    protected @Nullable Object createExportValueForSpecialTypes(@Nullable Object value) {
         if (value instanceof Collection<?>) {
             return ((Collection<?>) value).stream()
                 .map(this::toExportValue)
@@ -142,7 +142,7 @@ public class MapperImpl implements Mapper {
         return null;
     }
 
-    protected static Object unwrapReturnNull(Object o) {
+    protected static @Nullable Object unwrapReturnNull(@Nullable Object o) {
         return o == RETURN_NULL ? null : o;
     }
 
@@ -150,9 +150,8 @@ public class MapperImpl implements Mapper {
     // Bean mapping
     // ---------
 
-    @Nullable
     @Override
-    public Object convertToBean(Object value, TypeInformation beanType, ConvertErrorRecorder errorRecorder) {
+    public @Nullable Object convertToBean(@Nullable Object value, @NotNull TypeInformation beanType, @NotNull ConvertErrorRecorder errorRecorder) {
         if (value == null) {
             return null;
         }
@@ -167,8 +166,7 @@ public class MapperImpl implements Mapper {
      * @param value the value to convert from
      * @return object whose type matches the one in the mapping context, or null if not applicable
      */
-    @Nullable
-    protected Object convertValueForType(MappingContext context, Object value) {
+    protected @Nullable Object convertValueForType(@NotNull MappingContext context, @Nullable Object value) {
         Class<?> rawClass = context.getTypeInformation().getSafeToWriteClass();
         if (rawClass == null) {
             throw new ConfigMeMapperException(context, "Cannot determine required type");
@@ -197,8 +195,7 @@ public class MapperImpl implements Mapper {
      * @param value the value to convert from
      * @return object whose type matches the one in the mapping context, or null if not applicable
      */
-    @Nullable
-    protected Object handleSpecialTypes(MappingContext context, Object value) {
+    protected @Nullable Object handleSpecialTypes(@NotNull MappingContext context, @Nullable Object value) {
         final Class<?> rawClass = context.getTypeInformation().getSafeToWriteClass();
         if (Collection.class.isAssignableFrom(rawClass)) {
             return createCollection(context, value);
@@ -219,9 +216,8 @@ public class MapperImpl implements Mapper {
      * @param value the value to map from
      * @return Collection property from the value, or null if not applicable
      */
-    @Nullable
     @SuppressWarnings("unchecked")
-    protected Collection createCollection(MappingContext context, Object value) {
+    protected @Nullable Collection createCollection(@NotNull MappingContext context, @Nullable Object value) {
         if (value instanceof Iterable<?>) {
             TypeInformation entryType = context.getGenericTypeInfoOrFail(0);
             Collection result = createCollectionMatchingType(context);
@@ -246,7 +242,7 @@ public class MapperImpl implements Mapper {
      * @param mappingContext the current mapping context with a collection type
      * @return Collection of matching type
      */
-    protected Collection createCollectionMatchingType(MappingContext mappingContext) {
+    protected @NotNull Collection createCollectionMatchingType(@NotNull MappingContext mappingContext) {
         Class<?> collectionType = mappingContext.getTypeInformation().getSafeToWriteClass();
         if (collectionType.isAssignableFrom(ArrayList.class)) {
             return new ArrayList();
@@ -266,9 +262,8 @@ public class MapperImpl implements Mapper {
      * @param value value to map from
      * @return Map property, or null if not applicable
      */
-    @Nullable
     @SuppressWarnings("unchecked")
-    protected Map createMap(MappingContext context, Object value) {
+    protected @Nullable Map createMap(@NotNull MappingContext context, @Nullable Object value) {
         if (value instanceof Map<?, ?>) {
             if (context.getGenericTypeInfoOrFail(0).getSafeToWriteClass() != String.class) {
                 throw new ConfigMeMapperException(context, "The key type of maps may only be of String type");
@@ -297,7 +292,7 @@ public class MapperImpl implements Mapper {
      * @param mappingContext the current mapping context with a map type
      * @return Map of matching type
      */
-    protected Map createMapMatchingType(MappingContext mappingContext) {
+    protected @NotNull Map createMapMatchingType(@NotNull MappingContext mappingContext) {
         Class<?> mapType = mappingContext.getTypeInformation().getSafeToWriteClass();
         if (mapType.isAssignableFrom(LinkedHashMap.class)) {
             return new LinkedHashMap();
@@ -310,7 +305,7 @@ public class MapperImpl implements Mapper {
 
     // -- Optional
 
-    protected Object createOptional(MappingContext context, Object value) {
+    protected @NotNull Object createOptional(@NotNull MappingContext context, @Nullable Object value) {
         MappingContext childContext = context.createChild("[v]", context.getGenericTypeInfoOrFail(0));
         Object result = convertValueForType(childContext, value);
         return Optional.ofNullable(result);
@@ -325,8 +320,7 @@ public class MapperImpl implements Mapper {
      * @param value the value from the property resource
      * @return the converted value, or null if not possible
      */
-    @Nullable
-    protected Object createBean(MappingContext context, Object value) {
+    protected @Nullable Object createBean(@NotNull MappingContext context, @Nullable Object value) {
         // Ensure that the value is a map so we can map it to a bean
         if (!(value instanceof Map<?, ?>)) {
             return null;
@@ -363,7 +357,7 @@ public class MapperImpl implements Mapper {
      * @param mappingContext current mapping context
      * @return new instance of the given type
      */
-    protected Object createBeanMatchingType(MappingContext mappingContext) {
+    protected @NotNull Object createBeanMatchingType(@NotNull MappingContext mappingContext) {
         // clazz is never null given the only path that leads to this method already performs that check
         final Class<?> clazz = mappingContext.getTypeInformation().getSafeToWriteClass();
         try {

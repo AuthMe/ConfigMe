@@ -1,5 +1,7 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 
 /**
@@ -16,6 +18,6 @@ public interface BeanDescriptionFactory {
      * @param clazz the class whose properties should be returned
      * @return the relevant properties on the class
      */
-    Collection<BeanPropertyDescription> getAllProperties(Class<?> clazz);
+    @NotNull Collection<BeanPropertyDescription> getAllProperties(@NotNull Class<?> clazz);
 
 }

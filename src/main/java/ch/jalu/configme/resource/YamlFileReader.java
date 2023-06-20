@@ -1,10 +1,11 @@
 package ch.jalu.configme.resource;
 
 import ch.jalu.configme.exception.ConfigMeException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,8 +36,8 @@ public class YamlFileReader implements PropertyReader {
      *
      * @param path the file to load
      */
-    public YamlFileReader(Path path) {
-        this(path, StandardCharsets.UTF_8);
+    public YamlFileReader(@NotNull Path path) {
+        this(path, StandardCharsets.UTF_8, true);
     }
 
     /**
@@ -45,10 +46,21 @@ public class YamlFileReader implements PropertyReader {
      * @param path the file to load
      * @param charset the charset to read the data as
      */
-    public YamlFileReader(Path path, Charset charset) {
+    public YamlFileReader(@NotNull Path path, @NotNull Charset charset) {
+        this(path, charset, true);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param path the file to load
+     * @param charset the charset to read the data as
+     * @param splitDotPaths whether dots in yaml paths should be split into nested paths
+     */
+    public YamlFileReader(@NotNull Path path, @NotNull Charset charset, boolean splitDotPaths) {
         this.path = path;
         this.charset = charset;
-        this.root = loadFile();
+        this.root = loadFile(splitDotPaths);
     }
 
     /**
@@ -58,12 +70,12 @@ public class YamlFileReader implements PropertyReader {
      * @deprecated scheduled for removal in favor of Path
      */
     @Deprecated
-    public YamlFileReader(File file) {
+    public YamlFileReader(@NotNull File file) {
         this(file.toPath(), StandardCharsets.UTF_8);
     }
 
     @Override
-    public Object getObject(String path) {
+    public @Nullable Object getObject(@NotNull String path) {
         if (path.isEmpty()) {
             return root;
         }
@@ -80,12 +92,12 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    public String getString(String path) {
+    public @Nullable String getString(@NotNull String path) {
         return getTypedObject(path, String.class);
     }
 
     @Override
-    public Integer getInt(String path) {
+    public @Nullable Integer getInt(@NotNull String path) {
         Number n = getTypedObject(path, Number.class);
         return (n == null)
             ? null
@@ -93,7 +105,7 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    public Double getDouble(String path) {
+    public @Nullable Double getDouble(@NotNull String path) {
         Number n = getTypedObject(path, Number.class);
         return (n == null)
             ? null
@@ -101,22 +113,22 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    public Boolean getBoolean(String path) {
+    public @Nullable Boolean getBoolean(@NotNull String path) {
         return getTypedObject(path, Boolean.class);
     }
 
     @Override
-    public List<?> getList(String path) {
+    public @Nullable List<?> getList(@NotNull String path) {
         return getTypedObject(path, List.class);
     }
 
     @Override
-    public boolean contains(String path) {
+    public boolean contains(@NotNull String path) {
         return getObject(path) != null;
     }
 
     @Override
-    public Set<String> getKeys(boolean onlyLeafNodes) {
+    public @NotNull Set<String> getKeys(boolean onlyLeafNodes) {
         if (root == null) {
             return Collections.emptySet();
         }
@@ -126,7 +138,7 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    public Set<String> getChildKeys(String path) {
+    public @NotNull Set<String> getChildKeys(@NotNull String path) {
         Object object = getObject(path);
         if (object instanceof Map) {
             String pathPrefix = path.isEmpty() ? "" : path + ".";
@@ -145,7 +157,7 @@ public class YamlFileReader implements PropertyReader {
      * @param result set to save keys to
      * @param onlyLeafNodes whether only leaf nodes should be added to the result set
      */
-    private void collectKeysIntoSet(String path, Map<String, Object> map, Set<String> result, boolean onlyLeafNodes) {
+    private void collectKeysIntoSet(@NotNull String path, @NotNull Map<String, Object> map, @NotNull Set<String> result, boolean onlyLeafNodes) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String childPath = path.isEmpty() ? entry.getKey() : path + "." + entry.getKey();
             if (!onlyLeafNodes || isLeafValue(entry.getValue())) {
@@ -158,20 +170,21 @@ public class YamlFileReader implements PropertyReader {
         }
     }
 
-    private static boolean isLeafValue(Object o) {
+    private static boolean isLeafValue(@Nullable Object o) {
         return !(o instanceof Map) || ((Map) o).isEmpty();
     }
 
     /**
      * Loads the values of the file.
      *
+     * @param splitDotPaths whether compound keys (keys with ".") should be split into nested paths
      * @return map with the values from the file
      */
-    protected Map<String, Object> loadFile() {
+    protected @Nullable Map<String, Object> loadFile(boolean splitDotPaths) {
         try (InputStream is = Files.newInputStream(path);
              InputStreamReader isr = new InputStreamReader(is, charset)) {
             Map<Object, Object> rootMap = new Yaml().load(isr);
-            return normalizeMap(rootMap);
+            return normalizeMap(rootMap, splitDotPaths);
         } catch (IOException e) {
             throw new ConfigMeException("Could not read file '" + path + "'", e);
         } catch (ClassCastException e) {
@@ -185,20 +198,21 @@ public class YamlFileReader implements PropertyReader {
      * Processes the map as read from SnakeYAML and may return a new, adjusted one.
      *
      * @param map the map to normalize
+     * @param splitDotPaths whether compound keys (keys with ".") should be split into nested paths
      * @return the normalized map (or same map if no changes are needed)
      */
-    @Nullable
-    protected Map<String, Object> normalizeMap(@Nullable Map<Object, Object> map) {
-        return new MapNormalizer().normalizeMap(map);
+    protected @Nullable Map<String, Object> normalizeMap(@Nullable Map<Object, Object> map,
+                                                         boolean splitDotPaths) {
+        return new MapNormalizer(splitDotPaths).normalizeMap(map);
     }
 
     // Scheduled for removal in favor of #getPath
     @Deprecated
-    protected final File getFile() {
+    protected final @NotNull File getFile() {
         return path.toFile();
     }
 
-    protected final Path getPath() {
+    protected final @NotNull Path getPath() {
         return path;
     }
 
@@ -206,9 +220,8 @@ public class YamlFileReader implements PropertyReader {
      * @return the root value; may be null if the file was empty
      * @deprecated use {@code getObject("")} instead
      */
-    @Nullable
     @Deprecated
-    protected final Map<String, Object> getRoot() {
+    protected final @Nullable Map<String, Object> getRoot() {
         return root;
     }
 
@@ -221,8 +234,7 @@ public class YamlFileReader implements PropertyReader {
      * @param <T> the class type
      * @return cast value at the given path, null if not applicable
      */
-    @Nullable
-    protected <T> T getTypedObject(String path, Class<T> clazz) {
+    protected <T> @Nullable T getTypedObject(@NotNull String path, @NotNull Class<T> clazz) {
         Object value = getObject(path);
         if (clazz.isInstance(value)) {
             return clazz.cast(value);
@@ -230,8 +242,7 @@ public class YamlFileReader implements PropertyReader {
         return null;
     }
 
-    @Nullable
-    private static Object getEntryIfIsMap(String key, Object value) {
+    private static @Nullable Object getEntryIfIsMap(@NotNull String key, @Nullable Object value) {
         if (value instanceof Map<?, ?>) {
             return ((Map<?, ?>) value).get(key);
         }

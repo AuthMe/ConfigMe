@@ -1,6 +1,8 @@
 package ch.jalu.configme.beanmapper.leafvaluehandler;
 
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -54,7 +56,7 @@ class CombiningLeafValueHandlerTest {
         }
 
         @Override
-        public Object convert(TypeInformation typeInformation, Object value) {
+        public @Nullable Object convert(@NotNull TypeInformation typeInformation, @Nullable Object value) {
             return suffix == null ? null : "value_" + suffix;
         }
 

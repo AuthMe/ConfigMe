@@ -1,8 +1,9 @@
 package ch.jalu.configme.beanmapper.leafvaluehandler;
 
 import ch.jalu.configme.utils.TypeInformation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 /**
  * A leaf value handler is used in {@link ch.jalu.configme.beanmapper.MapperImpl} to convert "simple" values from their
@@ -25,8 +26,7 @@ public interface LeafValueHandler {
      * @param value the value to convert
      * @return value of the given type, or null if not applicable
      */
-    @Nullable
-    Object convert(TypeInformation typeInformation, @Nullable Object value);
+    @Nullable Object convert(@NotNull TypeInformation typeInformation, @Nullable Object value);
 
     /**
      * Converts the given value to a type more suitable for exporting. Used by the mapper in
@@ -39,7 +39,6 @@ public interface LeafValueHandler {
      * @param value the value to convert to an export value, if possible
      * @return value to use in the export, or null if not applicable
      */
-    @Nullable
-    Object toExportValue(@Nullable Object value);
+    @Nullable Object toExportValue(@Nullable Object value);
 
 }

@@ -7,6 +7,7 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.YamlFileReader;
 import ch.jalu.configme.samples.TestConfiguration;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -158,7 +159,7 @@ class PlainMigrationServiceTest {
     private static class PlainMigrationServiceTestExtension extends PlainMigrationService {
 
         @Override
-        protected boolean performMigrations(PropertyReader reader, ConfigurationData configurationData) {
+        protected boolean performMigrations(@NotNull PropertyReader reader, @NotNull ConfigurationData configurationData) {
             // If contains -> return true = migration is necessary
             if (reader.contains("old.property")) {
                 return MIGRATION_REQUIRED;

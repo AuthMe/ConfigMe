@@ -6,7 +6,8 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Default implementation of {@link SettingsManager}. Use the {@link SettingsManagerBuilder} to create instances.
@@ -37,7 +38,7 @@ public class SettingsManagerImpl implements SettingsManager {
      * @param configurationData the configuration data
      * @param migrationService migration service to check the property resource with
      */
-    protected SettingsManagerImpl(PropertyResource resource, ConfigurationData configurationData,
+    protected SettingsManagerImpl(@NotNull PropertyResource resource, @NotNull ConfigurationData configurationData,
                                   @Nullable MigrationService migrationService) {
         this.configurationData = configurationData;
         this.resource = resource;
@@ -53,7 +54,7 @@ public class SettingsManagerImpl implements SettingsManager {
      * @return the property's value
      */
     @Override
-    public <T> T getProperty(Property<T> property) {
+    public <T> T getProperty(@NotNull Property<T> property) {
         return configurationData.getValue(property);
     }
 
@@ -65,7 +66,7 @@ public class SettingsManagerImpl implements SettingsManager {
      * @param <T> the property's type
      */
     @Override
-    public <T> void setProperty(Property<T> property, T value) {
+    public <T> void setProperty(@NotNull Property<T> property, @NotNull T value) {
         configurationData.setValue(property, value);
     }
 
@@ -93,16 +94,15 @@ public class SettingsManagerImpl implements SettingsManager {
         }
     }
 
-    protected final PropertyResource getPropertyResource() {
+    protected final @NotNull PropertyResource getPropertyResource() {
         return resource;
     }
 
-    protected final ConfigurationData getConfigurationData() {
+    protected final @NotNull ConfigurationData getConfigurationData() {
         return configurationData;
     }
 
-    @Nullable
-    protected final MigrationService getMigrationService() {
+    protected final @Nullable MigrationService getMigrationService() {
         return migrationService;
     }
 }

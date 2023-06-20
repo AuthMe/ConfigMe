@@ -4,10 +4,11 @@ import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyPathTraverser.PathElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,22 +17,25 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class YamlFileResource implements PropertyResource {
 
     private final Path path;
-    private final YamlFileResourceOptions options;
+    private final @NotNull YamlFileResourceOptions options;
     private final String indentationSpace;
-    private Yaml yamlObject;
+    private @Nullable Yaml yamlObject;
 
-    public YamlFileResource(Path path) {
+    public YamlFileResource(@NotNull Path path) {
         this(path, YamlFileResourceOptions.builder().build());
     }
 
-    public YamlFileResource(Path path, YamlFileResourceOptions options) {
+    public YamlFileResource(@NotNull Path path, @NotNull YamlFileResourceOptions options) {
         this.path = path;
         this.options = options;
         this.indentationSpace = options.getIndentation();
@@ -44,23 +48,23 @@ public class YamlFileResource implements PropertyResource {
      * @deprecated scheduled for removal
      */
     @Deprecated
-    public YamlFileResource(File file) {
+    public YamlFileResource(@NotNull File file) {
         this(file.toPath());
     }
 
     @Override
-    public PropertyReader createReader() {
-        return new YamlFileReader(path, options.getCharset());
+    public @NotNull PropertyReader createReader() {
+        return new YamlFileReader(path, options.getCharset(), options.splitDotPaths());
     }
 
     @Override
-    public void exportProperties(ConfigurationData configurationData) {
+    public void exportProperties(@NotNull ConfigurationData configurationData) {
         try (OutputStream os = Files.newOutputStream(path);
              OutputStreamWriter writer = new OutputStreamWriter(os, options.getCharset())) {
             PropertyPathTraverser pathTraverser = new PropertyPathTraverser(configurationData);
             for (Property<?> property : configurationData.getProperties()) {
                 final Object exportValue = getExportValue(property, configurationData);
-                exportValue(writer, pathTraverser, property.getPath(), exportValue);
+                exportValue(writer, pathTraverser, Arrays.asList(property.getPath().split("\\.")), exportValue);
             }
             writer.append("\n");
             writer.flush();
@@ -71,13 +75,13 @@ public class YamlFileResource implements PropertyResource {
         }
     }
 
-    protected final Path getPath() {
+    protected final @NotNull Path getPath() {
         return path;
     }
 
     // Scheduled for removal in favor of #getPath
     @Deprecated
-    protected final File getFile() {
+    protected final @NotNull File getFile() {
         return path.toFile();
     }
 
@@ -86,36 +90,42 @@ public class YamlFileResource implements PropertyResource {
      *
      * @param writer the file writer to write with
      * @param pathTraverser the path traverser (e.g. keeps track of which path elements are new)
-     * @param path the path to export at
+     * @param pathElements all elements that make up the path to the value
      * @param value the value to export
      * @throws IOException .
      */
-    protected void exportValue(Writer writer, PropertyPathTraverser pathTraverser,
-                               String path, Object value) throws IOException {
+    protected void exportValue(@NotNull Writer writer, @NotNull PropertyPathTraverser pathTraverser,
+                               @NotNull List<String> pathElements, @Nullable Object value) throws IOException {
         if (value == null) {
             return;
         }
 
         if (value instanceof Map<?, ?> && !((Map<?, ?>) value).isEmpty()) {
-            final String pathPrefix = path.isEmpty() ? "" : path + ".";
+            final Map<String, ?> mapValue = (Map<String, ?>) value;
 
-            for (Map.Entry<String, ?> entry : ((Map<String, ?>) value).entrySet()) {
-                exportValue(writer, pathTraverser, pathPrefix + entry.getKey(), entry.getValue());
+            for (Map.Entry<String, ?> entry : mapValue.entrySet()) {
+                List<String> pathElementsForEntry = combinePathElementsAndMapEntryKey(pathElements, entry.getKey());
+                exportValue(writer, pathTraverser, pathElementsForEntry, entry.getValue());
             }
         } else {
-            List<PathElement> pathElements = pathTraverser.getPathElements(path);
+            List<PathElement> newPathElements = pathTraverser.getPathElements(pathElements);
+            final boolean isRootProperty = newPathElements.size() == 1 && "".equals(newPathElements.get(0).getName());
 
-            for (PathElement pathElement : pathElements) {
+            for (PathElement pathElement : newPathElements) {
                 writeIndentingBetweenLines(writer, pathElement);
                 writeComments(writer, pathElement.getIndentationLevel(), pathElement);
-                writer.append(getNewLineIfNotFirstElement(pathElement))
-                      .append(indent(pathElement.getIndentationLevel()))
-                      .append(escapePathElementIfNeeded(pathElement.getName()))
-                      .append(":");
+                writer.append(getNewLineIfNotFirstElement(pathElement));
+                if (!isRootProperty) {
+                    writer.append(indent(pathElement.getIndentationLevel()))
+                          .append(escapePathElementIfNeeded(pathElement.getName()))
+                          .append(":");
+                }
+            }
+            if (!isRootProperty) {
+                writer.append(" ");
             }
 
-            writer.append(" ")
-                  .append(toYamlIndented(value, pathElements.get(pathElements.size() - 1).getIndentationLevel()));
+            writer.append(toYamlIndented(value, newPathElements.get(newPathElements.size() - 1).getIndentationLevel()));
         }
     }
 
@@ -127,7 +137,7 @@ public class YamlFileResource implements PropertyResource {
      * @param pathElement the path element for which the comments are being generated
      * @throws IOException .
      */
-    protected void writeComments(Writer writer, int indentation, PathElement pathElement) throws IOException {
+    protected void writeComments(@NotNull Writer writer, int indentation, @NotNull PathElement pathElement) throws IOException {
         if (pathElement.getComments().isEmpty()) {
             return;
         }
@@ -145,14 +155,36 @@ public class YamlFileResource implements PropertyResource {
         }
     }
 
-    private void writeIndentingBetweenLines(Writer writer, PathElement pathElement) throws IOException {
+    /**
+     * Combines two path element sources to a new list of path elements: the list of path elements that were given
+     * from the parent context and the map entry key from which one or more path elements should be derived.
+     *
+     * @param parentPathElements the path elements that were previously given
+     * @param mapEntryKey the key of a map entry which is added to the path
+     * @return path of the map entry based on previous elements and its key
+     */
+    protected List<String> combinePathElementsAndMapEntryKey(List<String> parentPathElements,
+                                                             String mapEntryKey) {
+        // If we were at the root just before, parent path elements is an empty string, which needs to be skipped
+        Stream<String> parentPathElems = parentPathElements.size() == 1 && "".equals(parentPathElements.get(0))
+            ? Stream.empty()
+            : parentPathElements.stream();
+        // Split map by '.' if so configured, otherwise retain entire key as one additional path element
+        Stream<String> pathElemsFromEntryKey = options.splitDotPaths()
+            ? Arrays.stream(mapEntryKey.split("\\."))
+            : Stream.of(mapEntryKey);
+        return Stream.concat(parentPathElems, pathElemsFromEntryKey)
+            .collect(Collectors.toList());
+    }
+
+    private void writeIndentingBetweenLines(@NotNull Writer writer, @NotNull PathElement pathElement) throws IOException {
         int numberOfEmptyLines = options.getNumberOfEmptyLinesBefore(pathElement);
         for (int i = 0; i < numberOfEmptyLines; ++i) {
             writer.append("\n");
         }
     }
 
-    private String getNewLineIfNotFirstElement(PathElement pathElement) {
+    private @NotNull String getNewLineIfNotFirstElement(@NotNull PathElement pathElement) {
         return pathElement.isFirstElement() && pathElement.getComments().isEmpty() ? "" : "\n";
     }
 
@@ -165,7 +197,7 @@ public class YamlFileResource implements PropertyResource {
      * @param indent level of indentation to use
      * @return the value as YAML at the given indentation level
      */
-    protected String toYamlIndented(@Nullable Object value, int indent) {
+    protected @NotNull String toYamlIndented(@Nullable Object value, int indent) {
         String representation = toYaml(value);
         String[] lines = representation.split("\\n");
         return String.join("\n" + indent(indent), lines);
@@ -217,7 +249,7 @@ public class YamlFileResource implements PropertyResource {
         return result.toString();
     }
 
-    protected String escapePathElementIfNeeded(String path) {
+    protected @NotNull String escapePathElementIfNeeded(@NotNull String path) {
         return getYamlObject().dump(path).trim();
     }
 
@@ -233,31 +265,31 @@ public class YamlFileResource implements PropertyResource {
      *
      * @return the YAML instance to use
      */
-    protected Yaml getYamlObject() {
+    protected @NotNull Yaml getYamlObject() {
         if (yamlObject == null) {
             yamlObject = createNewYaml();
         }
         return yamlObject;
     }
 
-    protected Yaml createNewYaml() {
+    protected @NotNull Yaml createNewYaml() {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setAllowUnicode(true);
         return new Yaml(options);
     }
 
-    protected final YamlFileResourceOptions getOptions() {
+    protected final @NotNull YamlFileResourceOptions getOptions() {
         return options;
     }
 
-    private <T> Object getExportValue(Property<T> property, ConfigurationData configurationData) {
+    private <T> @Nullable Object getExportValue(@NotNull Property<T> property, @NotNull ConfigurationData configurationData) {
         return property.toExportValue(configurationData.getValue(property));
     }
 
-    private static List<?> collectionToList(Collection<?> collection) {
+    private static @NotNull List<?> collectionToList(@NotNull Collection<?> collection) {
         return collection instanceof List<?>
-               ? (List<?>) collection
-               : new ArrayList<>(collection);
+            ? (List<?>) collection
+            : new ArrayList<>(collection);
     }
 }

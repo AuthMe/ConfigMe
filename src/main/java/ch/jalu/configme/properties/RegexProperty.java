@@ -3,6 +3,8 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,7 +21,7 @@ public class RegexProperty extends BaseProperty<Pattern> {
      * @param path the path of the property
      * @param defaultValue the default value of the property
      */
-    public RegexProperty(String path, Pattern defaultValue) {
+    public RegexProperty(@NotNull String path, @NotNull Pattern defaultValue) {
         super(path, defaultValue);
     }
 
@@ -29,12 +31,12 @@ public class RegexProperty extends BaseProperty<Pattern> {
      * @param path the path of the property
      * @param defaultRegexValue the default value of the property
      */
-    public RegexProperty(String path, String defaultRegexValue) {
+    public RegexProperty(@NotNull String path, @NotNull String defaultRegexValue) {
         this(path, Pattern.compile(defaultRegexValue));
     }
 
     @Override
-    protected Pattern getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+    protected @Nullable Pattern getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
         String pattern = reader.getString(getPath());
         if (pattern != null) {
             try {
@@ -46,7 +48,7 @@ public class RegexProperty extends BaseProperty<Pattern> {
     }
 
     @Override
-    public Object toExportValue(Pattern value) {
+    public @NotNull Object toExportValue(@NotNull Pattern value) {
         return value.pattern();
     }
 
@@ -57,7 +59,7 @@ public class RegexProperty extends BaseProperty<Pattern> {
      * @param settingsManager settings manager with which the configured pattern is retrieved
      * @return true if the value matches the pattern, false otherwise
      */
-    public boolean matches(String value, SettingsManager settingsManager) {
+    public boolean matches(@NotNull String value, @NotNull SettingsManager settingsManager) {
         Matcher matcher = settingsManager.getProperty(this).matcher(value);
         return matcher.matches();
     }

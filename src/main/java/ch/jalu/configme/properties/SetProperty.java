@@ -3,6 +3,8 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,7 +32,7 @@ public class SetProperty<T> extends BaseProperty<Set<T>> {
      * @param defaultValue the values that make up the entries of the default set
      */
     @SafeVarargs
-    public SetProperty(String path, PropertyType<T> type, T... defaultValue) {
+    public SetProperty(@NotNull String path, @NotNull PropertyType<T> type, @NotNull T @NotNull ... defaultValue) {
         this(path, type, newSet(defaultValue));
     }
 
@@ -41,14 +43,14 @@ public class SetProperty<T> extends BaseProperty<Set<T>> {
      * @param type the property type
      * @param defaultValue the default value of the property
      */
-    public SetProperty(String path, PropertyType<T> type, Set<T> defaultValue) {
+    public SetProperty(@NotNull String path, @NotNull PropertyType<T> type, @NotNull Set<T> defaultValue) {
         super(path, Collections.unmodifiableSet(defaultValue));
         Objects.requireNonNull(type, "type");
         this.type = type;
     }
 
     @Override
-    protected Set<T> getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+    protected Set<T> getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
         List<?> list = reader.getList(getPath());
 
         if (list != null) {
@@ -61,17 +63,17 @@ public class SetProperty<T> extends BaseProperty<Set<T>> {
     }
 
     @Override
-    public Object toExportValue(Set<T> value) {
+    public @NotNull Object toExportValue(@NotNull Set<T> value) {
         return value.stream()
             .map(type::toExportValue)
             .collect(Collectors.toList());
     }
 
-    protected Collector<T, ?, Set<T>> setCollector() {
+    protected @NotNull Collector<T, ?, Set<T>> setCollector() {
         return Collectors.collectingAndThen(Collectors.toCollection(LinkedHashSet::new), Collections::unmodifiableSet);
     }
 
-    private static <E> Set<E> newSet(E[] array) {
+    private static <E> @NotNull Set<E> newSet(E @NotNull [] array) {
         return Arrays.stream(array).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

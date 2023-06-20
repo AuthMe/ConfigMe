@@ -1,6 +1,7 @@
 package ch.jalu.configme.utils;
 
 import ch.jalu.configme.exception.ConfigMeException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,7 +22,7 @@ public final class Utils {
      *
      * @param file the file to create if it doesn't exist
      */
-    public static void createFileIfNotExists(Path file) {
+    public static void createFileIfNotExists(@NotNull Path file) {
         if (Files.exists(file)) {
             if (!Files.isRegularFile(file)) {
                 throw new ConfigMeException("Expected file but '" + file + "' is not a file");

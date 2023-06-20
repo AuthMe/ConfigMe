@@ -2,6 +2,7 @@ package ch.jalu.configme.migration;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The migration service is called when the settings manager is instantiated. It allows to
@@ -24,6 +25,6 @@ public interface MigrationService {
      * @return true if a migration has been performed, false otherwise. Indicates whether the configuration data should
      *         be saved to the configuration file or not
      */
-    boolean checkAndMigrate(PropertyReader reader, ConfigurationData configurationData);
+    boolean checkAndMigrate(@NotNull PropertyReader reader, @NotNull ConfigurationData configurationData);
 
 }
