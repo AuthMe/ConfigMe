@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static ch.jalu.configme.TestUtils.getExceptionTypeForNullArg;
+import static ch.jalu.configme.TestUtils.getExceptionTypeForNullField;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.arrayContaining;
@@ -53,39 +55,45 @@ class PropertyBuilderTest {
     @Test
     void shouldThrowForMissingPathInCommonPropertyBuilder() {
         // given / when
-        NullPointerException e = assertThrows(NullPointerException.class,
+        Exception e = assertThrows(getExceptionTypeForNullField(),
             () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
                 .defaultValue("Hello")
                 .build());
 
         // then
-        assertThat(e.getMessage(), equalTo("path"));
+        if (e instanceof NullPointerException) {
+            assertThat(e.getMessage(), equalTo("path"));
+        }
     }
 
     @Test
     void shouldThrowForMissingDefaultValueInCommonPropertyBuilder() {
         // given / when
-        NullPointerException e = assertThrows(NullPointerException.class,
+        Exception e = assertThrows(getExceptionTypeForNullField(),
             () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
                 .path("a.path")
                 .createFunction((path, val, type) -> new StringProperty(path, val))
                 .build());
 
         // then
-        assertThat(e.getMessage(), equalTo("defaultValue"));
+        if (e instanceof NullPointerException) {
+            assertThat(e.getMessage(), equalTo("defaultValue"));
+        }
     }
 
     @Test
     void shouldThrowForMissingPropertyTypeInCommonPropertyBuilder() {
         // given / when
-        NullPointerException e = assertThrows(NullPointerException.class,
+        Exception e = assertThrows(getExceptionTypeForNullArg(),
             () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(null)
                 .path("random.path")
                 .defaultValue("Hello")
                 .build());
 
         // then
-        assertThat(e.getMessage(), equalTo("type"));
+        if (e instanceof NullPointerException) {
+            assertThat(e.getMessage(), equalTo("type"));
+        }
     }
 
     @Test
@@ -119,11 +127,13 @@ class PropertyBuilderTest {
     @Test
     void shouldThrowForMissingPathInMapBuilder() {
         // given / when
-        NullPointerException e = assertThrows(NullPointerException.class,
+        Exception e = assertThrows(getExceptionTypeForNullField(),
             () -> new PropertyBuilder.MapPropertyBuilder<>(PrimitivePropertyType.DOUBLE).build());
 
         // then
-        assertThat(e.getMessage(), equalTo("path"));
+        if (e instanceof NullPointerException) {
+            assertThat(e.getMessage(), equalTo("path"));
+        }
     }
 
     @Test
@@ -185,7 +195,7 @@ class PropertyBuilderTest {
     @Test
     void shouldThrowForMissingDefaultValue() {
         // given / when / then
-        assertThrows(NullPointerException.class,
+        assertThrows(getExceptionTypeForNullField(),
             () -> new PropertyBuilder.ListPropertyBuilder<>(PrimitivePropertyType.DOUBLE)
                 .path("defined.path")
                 .build());

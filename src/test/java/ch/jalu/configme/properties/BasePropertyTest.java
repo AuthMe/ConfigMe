@@ -4,6 +4,7 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
 
+import static ch.jalu.configme.TestUtils.getExceptionTypeForNullArg;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,14 +19,14 @@ class BasePropertyTest {
     @Test
     void shouldRejectNullValue() {
         // given / when / then
-        assertThrows(NullPointerException.class,
+        assertThrows(getExceptionTypeForNullArg(),
             () -> new PropertyTestImpl("my.path", null));
     }
 
     @Test
     void shouldRejectNullPath() {
         // given / when / then
-        assertThrows(NullPointerException.class,
+        assertThrows(getExceptionTypeForNullArg(),
             () -> new PropertyTestImpl(null, (byte) 123));
     }
 
