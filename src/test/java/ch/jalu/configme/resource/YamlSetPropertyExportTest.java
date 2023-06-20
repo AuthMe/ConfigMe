@@ -7,6 +7,7 @@ import ch.jalu.configme.properties.BaseProperty;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.samples.TestEnum;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -73,7 +74,8 @@ class YamlSetPropertyExportTest {
         }
 
         @Override
-        protected Set<TestEnum> getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+        protected Set<TestEnum> getFromReader(@NotNull PropertyReader reader,
+                                              @NotNull ConvertErrorRecorder errorRecorder) {
             List<?> list = reader.getList(getPath());
             if (list == null) {
                 return null;

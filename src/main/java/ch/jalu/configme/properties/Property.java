@@ -52,7 +52,7 @@ public interface Property<T> {
      *
      * @return the default value
      */
-    @NotNull T getDefaultValue();
+    @Nullable T getDefaultValue();
 
     /**
      * Returns whether the value can be associated to the given property, i.e. whether it fulfills all

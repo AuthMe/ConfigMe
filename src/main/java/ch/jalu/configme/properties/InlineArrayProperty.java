@@ -40,7 +40,7 @@ public class InlineArrayProperty<T> extends BaseProperty<T[]> {
     }
 
     @Override
-    public Object toExportValue(T[] value) {
+    public Object toExportValue(T @NotNull [] value) {
         return inlineConverter.toExportValue(value);
     }
 }

@@ -36,7 +36,7 @@ public class TypeBasedProperty<T> extends BaseProperty<T> {
     }
 
     @Override
-    public @Nullable Object toExportValue(T value) {
+    public @Nullable Object toExportValue(@NotNull T value) {
         return type.toExportValue(value);
     }
 }

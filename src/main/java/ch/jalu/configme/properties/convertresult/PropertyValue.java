@@ -2,6 +2,7 @@ package ch.jalu.configme.properties.convertresult;
 
 import ch.jalu.configme.properties.Property;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Return value of {@link Property#determineValue}. Wraps the value to associate with the property, along with a field
@@ -26,7 +27,7 @@ public class PropertyValue<T> {
      * @param value the value associated with the property
      * @param isValidInResource true if the value in the resource was fully valid
      */
-    public PropertyValue(@NotNull T value, boolean isValidInResource) {
+    public PropertyValue(/* PV */ T value, boolean isValidInResource) {
         this.value = value;
         this.isValidInResource = isValidInResource;
     }
@@ -38,7 +39,7 @@ public class PropertyValue<T> {
      * @param <T> the value type
      * @return property value with the given value and the valid flag set to true
      */
-    public static <T> @NotNull PropertyValue<T> withValidValue(@NotNull T value) {
+    public static <T> @NotNull PropertyValue<T> withValidValue(/* PV */ T value) {
         return new PropertyValue<>(value, true);
     }
 
@@ -49,14 +50,14 @@ public class PropertyValue<T> {
      * @param <T> the value type
      * @return property value with the given value and the valid flag set to false
      */
-    public static <T> @NotNull PropertyValue<T> withValueRequiringRewrite(@NotNull T value) {
+    public static <T> @NotNull PropertyValue<T> withValueRequiringRewrite(/* PV */ T value) {
         return new PropertyValue<>(value, false);
     }
 
     /**
      * @return the value to associate with the property
      */
-    public @NotNull T getValue() {
+    public /* PV */ T getValue() {
         return value;
     }
 

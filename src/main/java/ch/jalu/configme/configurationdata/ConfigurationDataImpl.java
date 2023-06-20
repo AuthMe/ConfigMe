@@ -54,7 +54,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getValue(@NotNull Property<T> property) {
+    public <T> @NotNull T getValue(@NotNull Property<T> property) {
         Object value = values.get(property.getPath());
         if (value == null) {
             throw new ConfigMeException(format("No value exists for property with path '%s'. This may happen if "
@@ -65,7 +65,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
-    public <T> void setValue(@NotNull Property<T> property, @NotNull T value) {
+    public <T> void setValue(@NotNull Property<T> property, /* PV */ T value) {
         if (property.isValidValue(value)) {
             values.put(property.getPath(), value);
         } else {

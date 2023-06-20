@@ -64,7 +64,7 @@ public interface ConfigurationData {
      * @param <T> property type
      * @return value associated with the property, or null if not present
      */
-    <T> @Nullable T getValue(@NotNull Property<T> property);
+    <T> /* PV */ T getValue(@NotNull Property<T> property);
 
     /**
      * Sets the given value for the given property. May throw an exception
@@ -74,7 +74,7 @@ public interface ConfigurationData {
      * @param value the value to set
      * @param <T> the property type
      */
-    <T> void setValue(@NotNull Property<T> property, @NotNull T value);
+    <T> void setValue(@NotNull Property<T> property, /* PV */ T value);
 
     /**
      * Returns if the last call of {@link #initializeValues} had fully valid values in the resource
