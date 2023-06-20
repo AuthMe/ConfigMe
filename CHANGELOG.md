@@ -1,6 +1,12 @@
 # ConfigMe Changelog
 
 ## ConfigMe 1.x
+#### 1.3.1 (2023-06-20)
+- Update SnakeYAML dependency for security reasons ([#310](https://github.com/AuthMe/ConfigMe/issues/310))
+- Introduce ShortProperty, LongProperty and FloatProperty for convenience ([#260](https://github.com/AuthMe/ConfigMe/issues/268)) 
+
+:blue_book: [All changes in 1.3.1](https://github.com/AuthMe/ConfigMe/milestone/14?closed=1)
+
 #### 1.3.0 (2021-10-17)
 - Introduce option to NOT split paths that contain dots in the YAML file ([#214](https://github.com/AuthMe/ConfigMe/issues/214))
 - Add support for BigInteger and BigDecimal in bean properties ([#182](https://github.com/AuthMe/ConfigMe/issues/182))
