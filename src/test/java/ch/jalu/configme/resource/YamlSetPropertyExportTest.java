@@ -85,7 +85,7 @@ class YamlSetPropertyExportTest {
         }
 
         @Override
-        public List<String> toExportValue(Set<TestEnum> value) {
+        public List<String> toExportValue(@NotNull Set<TestEnum> value) {
             return transform(value, Enum::name);
         }
     }

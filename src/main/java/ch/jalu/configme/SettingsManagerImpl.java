@@ -66,7 +66,7 @@ public class SettingsManagerImpl implements SettingsManager {
      * @param <T> the property's type
      */
     @Override
-    public <T> void setProperty(@NotNull Property<T> property, /* PV */ T value) {
+    public <T> void setProperty(@NotNull Property<T> property, @NotNull T value) {
         configurationData.setValue(property, value);
     }
 

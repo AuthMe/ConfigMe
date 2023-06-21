@@ -59,14 +59,6 @@ public abstract class BaseProperty<T> implements Property<T> {
         return value != null;
     }
 
-    /*
-     * Overridden to set the param as @NotNull. If the value from #determineValue is not null and #isValidValue rejects
-     * nulls, it is guaranteed that this method will never be called with a null value.
-     */
-    @Override
-    @SuppressWarnings("NullableProblems")
-    public abstract @Nullable Object toExportValue(@NotNull T value);
-
     /**
      * Constructs the value of the property from the property reader. Returns null if no value is
      * available in the reader or if it cannot be used to construct a value for this property.

@@ -76,7 +76,7 @@ class BasePropertyTest {
         }
 
         @Override
-        public Object toExportValue(Byte value) {
+        public Object toExportValue(@NotNull Byte value) {
             return value;
         }
     }

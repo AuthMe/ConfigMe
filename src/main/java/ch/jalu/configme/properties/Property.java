@@ -24,10 +24,9 @@ public interface Property<T> {
     @NotNull String getPath();
 
     /**
-     * Returns the value, based on the given reader, which should be used for this property. By default
-     * this is the value as constructed from the reader, and otherwise the default value. Implementations
-     * of {@link BaseProperty} never return null. The return value must be in sync with
-     * {@link #isValidValue(Object)}.
+     * Returns the value, based on the given reader, which should be used for this property. By default,
+     * this is the value as constructed from the reader, and otherwise the default value (never null).
+     * The return value must be in sync with {@link #isValidValue(Object)}.
      *
      * @param propertyReader the reader to construct the value from (if possible)
      * @return the value to associate to this property
@@ -52,7 +51,7 @@ public interface Property<T> {
      *
      * @return the default value
      */
-    @Nullable T getDefaultValue();
+    @NotNull T getDefaultValue();
 
     /**
      * Returns whether the value can be associated to the given property, i.e. whether it fulfills all
@@ -82,6 +81,6 @@ public interface Property<T> {
      * @param value the value to convert to an export value
      * @return value to use for export, null to skip the property
      */
-    @Nullable Object toExportValue(@Nullable T value);
+    @Nullable Object toExportValue(@NotNull T value);
 
 }

@@ -160,15 +160,13 @@ public final class TestUtils {
     }
 
     /**
-     * Returns the expected exception type when a null value (from a field) is supplied where it is not allowed.
-     * See {@link #getExceptionTypeForNullArg()} for the background.
+     * Returns whether the code was compiled such that {@link NotNull} parameters are checked to ensure they are not
+     * null, which happens when the code is locally built in IntelliJ.
      *
-     * @return the expected exception type for a null state where it is not allowed (NPE or IllegalStateException)
+     * @return true if NotNull is checked in methods (= local IntelliJ builds), false otherwise
      */
-    public static Class<? extends Exception> getExceptionTypeForNullField() {
-        return getOrCaptureNullExceptionType().equals(NullPointerException.class)
-            ? NullPointerException.class
-            : IllegalStateException.class;
+    public static boolean hasBytecodeCheckForNotNullAnnotation() {
+        return !getOrCaptureNullExceptionType().equals(NullPointerException.class);
     }
 
     // -------------

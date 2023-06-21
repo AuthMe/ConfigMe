@@ -65,7 +65,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
-    public <T> void setValue(@NotNull Property<T> property, /* PV */ T value) {
+    public <T> void setValue(@NotNull Property<T> property, @NotNull T value) {
         if (property.isValidValue(value)) {
             values.put(property.getPath(), value);
         } else {

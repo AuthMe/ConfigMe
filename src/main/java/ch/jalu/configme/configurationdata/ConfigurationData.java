@@ -57,24 +57,22 @@ public interface ConfigurationData {
 
     /**
      * Returns the value associated with the given property. Only to be used with properties contained in
-     * {@link #getProperties()}. By default, never returns null (since base properties always resolve to a non-null
-     * value) and throws an exception if the property is unknown.
+     * {@link #getProperties()}. Throws an exception if the property is unknown.
      *
      * @param property the property to look up
      * @param <T> property type
-     * @return value associated with the property, or null if not present
+     * @return value associated with the property
      */
-    <T> /* PV */ T getValue(@NotNull Property<T> property);
+    <T> @NotNull T getValue(@NotNull Property<T> property);
 
     /**
-     * Sets the given value for the given property. May throw an exception
-     * if the value is not valid.
+     * Sets the given value for the given property. May throw an exception if the value is not valid.
      *
      * @param property the property to change the value for
      * @param value the value to set
      * @param <T> the property type
      */
-    <T> void setValue(@NotNull Property<T> property, /* PV */ T value);
+    <T> void setValue(@NotNull Property<T> property, @NotNull T value);
 
     /**
      * Returns if the last call of {@link #initializeValues} had fully valid values in the resource

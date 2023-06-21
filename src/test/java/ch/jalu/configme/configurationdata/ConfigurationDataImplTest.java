@@ -1,5 +1,6 @@
 package ch.jalu.configme.configurationdata;
 
+import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
@@ -65,8 +66,13 @@ class ConfigurationDataImplTest {
         ConfigurationData configData = new ConfigurationDataImpl(properties, Collections.emptyMap());
 
         // when / then
-        verifyException(() -> configData.setValue(properties.get(0), null),
-            ConfigMeException.class, "Invalid value");
+        if (TestUtils.hasBytecodeCheckForNotNullAnnotation()) {
+            verifyException(() -> configData.setValue(properties.get(0), null),
+                IllegalArgumentException.class, "Argument for @NotNull parameter 'value'");
+        } else {
+            verifyException(() -> configData.setValue(properties.get(0), null),
+                ConfigMeException.class, "Invalid value");
+        }
     }
 
     @Test
