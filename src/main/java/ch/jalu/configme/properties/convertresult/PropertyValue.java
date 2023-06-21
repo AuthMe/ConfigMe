@@ -2,6 +2,7 @@ package ch.jalu.configme.properties.convertresult;
 
 import ch.jalu.configme.properties.Property;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Return value of {@link Property#determineValue}. Wraps the value to associate with the property, along with a field

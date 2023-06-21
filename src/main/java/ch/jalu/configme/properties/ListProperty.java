@@ -47,7 +47,8 @@ public class ListProperty<T> extends BaseProperty<List<T>> {
     }
 
     @Override
-    protected @Nullable List<T> getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
+    protected @Nullable List<T> getFromReader(@NotNull PropertyReader reader,
+                                              @NotNull ConvertErrorRecorder errorRecorder) {
         List<?> list = reader.getList(getPath());
 
         if (list != null) {

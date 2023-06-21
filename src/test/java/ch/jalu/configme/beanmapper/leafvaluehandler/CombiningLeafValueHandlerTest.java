@@ -1,9 +1,11 @@
 package ch.jalu.configme.beanmapper.leafvaluehandler;
 
+import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.utils.TypeInformation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.TypeInfo;
 
 import java.util.Arrays;
 
@@ -26,9 +28,9 @@ class CombiningLeafValueHandlerTest {
         CombiningLeafValueHandler result2 = new CombiningLeafValueHandler(Arrays.asList(t1, t2));
 
         // then
-        assertThat(result1.convert(null, null), equalTo("value_1"));
+        assertThat(result1.convert(new TypeInformation(String.class), null), equalTo("value_1"));
         assertThat(result1.toExportValue(null), equalTo("export_1"));
-        assertThat(result2.convert(null, null), equalTo("value_1"));
+        assertThat(result2.convert(new TypeInformation(String.class), null), equalTo("value_1"));
         assertThat(result2.toExportValue(null), equalTo("export_1"));
     }
 
@@ -43,7 +45,7 @@ class CombiningLeafValueHandlerTest {
         CombiningLeafValueHandler result = new CombiningLeafValueHandler(t1, t2, t3);
 
         // then
-        assertThat(result.convert(null, null), equalTo("value_2"));
+        assertThat(result.convert(new TypeInformation(String.class), null), equalTo("value_2"));
         assertThat(result.toExportValue(null), equalTo("export_2"));
     }
 

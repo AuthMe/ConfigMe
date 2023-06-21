@@ -2,8 +2,10 @@ package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
+import static ch.jalu.configme.TestUtils.getExceptionTypeForNullArg;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,14 +20,14 @@ class BasePropertyTest {
     @Test
     void shouldRejectNullValue() {
         // given / when / then
-        assertThrows(NullPointerException.class,
+        assertThrows(getExceptionTypeForNullArg(),
             () -> new PropertyTestImpl("my.path", null));
     }
 
     @Test
     void shouldRejectNullPath() {
         // given / when / then
-        assertThrows(NullPointerException.class,
+        assertThrows(getExceptionTypeForNullArg(),
             () -> new PropertyTestImpl(null, (byte) 123));
     }
 
@@ -66,7 +68,7 @@ class BasePropertyTest {
         }
 
         @Override
-        protected Byte getFromReader(PropertyReader reader, ConvertErrorRecorder errorRecorder) {
+        protected Byte getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
             Integer value = reader.getInt(getPath());
             return value != null && value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE
                 ? value.byteValue()
@@ -74,7 +76,7 @@ class BasePropertyTest {
         }
 
         @Override
-        public Object toExportValue(Byte value) {
+        public Object toExportValue(@NotNull Byte value) {
             return value;
         }
     }

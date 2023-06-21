@@ -117,7 +117,8 @@ public class MapNormalizer {
      * @param path the key with which the value should be looked up from the map
      * @return the nested map, as stored under the path in the given map
      */
-    protected @NotNull Map<String, Object> getOrInsertMap(@NotNull Map<String, Object> parentMap, @NotNull String path) {
+    protected @NotNull Map<String, Object> getOrInsertMap(@NotNull Map<String, Object> parentMap,
+                                                          @NotNull String path) {
         Object value = parentMap.get(path);
         if (value instanceof Map<?, ?>) {
             return (Map<String, Object>) value;

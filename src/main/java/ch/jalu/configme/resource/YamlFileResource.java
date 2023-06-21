@@ -137,7 +137,8 @@ public class YamlFileResource implements PropertyResource {
      * @param pathElement the path element for which the comments are being generated
      * @throws IOException .
      */
-    protected void writeComments(@NotNull Writer writer, int indentation, @NotNull PathElement pathElement) throws IOException {
+    protected void writeComments(@NotNull Writer writer, int indentation,
+                                 @NotNull PathElement pathElement) throws IOException {
         if (pathElement.getComments().isEmpty()) {
             return;
         }
@@ -177,7 +178,8 @@ public class YamlFileResource implements PropertyResource {
             .collect(Collectors.toList());
     }
 
-    private void writeIndentingBetweenLines(@NotNull Writer writer, @NotNull PathElement pathElement) throws IOException {
+    private void writeIndentingBetweenLines(@NotNull Writer writer,
+                                            @NotNull PathElement pathElement) throws IOException {
         int numberOfEmptyLines = options.getNumberOfEmptyLinesBefore(pathElement);
         for (int i = 0; i < numberOfEmptyLines; ++i) {
             writer.append("\n");
@@ -283,7 +285,8 @@ public class YamlFileResource implements PropertyResource {
         return options;
     }
 
-    private <T> @Nullable Object getExportValue(@NotNull Property<T> property, @NotNull ConfigurationData configurationData) {
+    private <T> @Nullable Object getExportValue(@NotNull Property<T> property,
+                                                @NotNull ConfigurationData configurationData) {
         return property.toExportValue(configurationData.getValue(property));
     }
 

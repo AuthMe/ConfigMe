@@ -30,7 +30,8 @@ public class ConfigurationDataImpl implements ConfigurationData {
      * @param allProperties all known properties
      * @param allComments map of comments by path
      */
-    protected ConfigurationDataImpl(@NotNull List<? extends Property<?>> allProperties, @NotNull Map<String, List<String>> allComments) {
+    protected ConfigurationDataImpl(@NotNull List<? extends Property<?>> allProperties,
+                                    @NotNull Map<String, List<String>> allComments) {
         this.properties = Collections.unmodifiableList(allProperties);
         this.allComments = Collections.unmodifiableMap(allComments);
         this.values = new HashMap<>();
@@ -53,7 +54,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getValue(@NotNull Property<T> property) {
+    public <T> @NotNull T getValue(@NotNull Property<T> property) {
         Object value = values.get(property.getPath());
         if (value == null) {
             throw new ConfigMeException(format("No value exists for property with path '%s'. This may happen if "

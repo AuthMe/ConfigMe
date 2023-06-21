@@ -23,7 +23,8 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
      * @param type the property type
      * @param arrayProducer array constructor (desired array size as argument)
      */
-    public ArrayProperty(@NotNull String path, T @NotNull [] defaultValue, @NotNull PropertyType<T> type, @NotNull IntFunction<T[]> arrayProducer) {
+    public ArrayProperty(@NotNull String path, T @NotNull [] defaultValue, @NotNull PropertyType<T> type,
+                         @NotNull IntFunction<T[]> arrayProducer) {
         super(path, defaultValue);
         Objects.requireNonNull(type, "type");
         Objects.requireNonNull(arrayProducer, "arrayProducer");
@@ -32,7 +33,8 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
     }
 
     @Override
-    protected T @Nullable [] getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
+    protected T @Nullable [] getFromReader(@NotNull PropertyReader reader,
+                                           @NotNull ConvertErrorRecorder errorRecorder) {
         Object object = reader.getObject(this.getPath());
         if (object instanceof Collection<?>) {
             Collection<?> collection = (Collection<?>) object;

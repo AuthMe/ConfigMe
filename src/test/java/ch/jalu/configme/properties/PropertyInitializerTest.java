@@ -21,8 +21,15 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newRegexProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newSetProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalBooleanProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.optionalDoubleProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalEnumProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.optionalFloatProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalIntegerProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.optionalListProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.optionalLongProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.optionalRegexProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.optionalSetProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.optionalShortProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalStringProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.setProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.typeBasedProperty;
@@ -41,7 +48,7 @@ class PropertyInitializerTest {
         assertThat(newProperty("my.path", 12), instanceOf(IntegerProperty.class));
         assertThat(newProperty("my.path", 10L), instanceOf(LongProperty.class));
         assertThat(newProperty("my.path", 3.5f), instanceOf(FloatProperty.class));
-        assertThat(newProperty("my.path", -8.4), instanceOf(DoubleProperty.class));
+        assertThat(newProperty("my.path", -8.4d), instanceOf(DoubleProperty.class));
         assertThat(newProperty("my.path", "default"), instanceOf(StringProperty.class));
         assertThat(newProperty(TestEnum.class, "my.path", TestEnum.FIRST), instanceOf(EnumProperty.class));
         assertThat(newRegexProperty("reg.path", "abc?"), instanceOf(RegexProperty.class));
@@ -55,9 +62,16 @@ class PropertyInitializerTest {
         assertThat(newBeanProperty(WorldGroupConfig.class, "worlds", new WorldGroupConfig()), instanceOf(BeanProperty.class));
 
         assertThat(optionalBooleanProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalShortProperty("path"), instanceOf(OptionalProperty.class));
         assertThat(optionalIntegerProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalLongProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalFloatProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalDoubleProperty("path"), instanceOf(OptionalProperty.class));
         assertThat(optionalStringProperty("path"), instanceOf(OptionalProperty.class));
         assertThat(optionalEnumProperty(TestEnum.class, "path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalRegexProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalListProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalSetProperty("path"), instanceOf(OptionalProperty.class));
     }
 
     @Test

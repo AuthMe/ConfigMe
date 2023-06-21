@@ -88,7 +88,8 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param clazz the class to which the properties belong
      * @param properties the properties that will be used on the class
      */
-    protected void validateProperties(@NotNull Class<?> clazz, @NotNull Collection<BeanPropertyDescription> properties) {
+    protected void validateProperties(@NotNull Class<?> clazz,
+                                      @NotNull Collection<BeanPropertyDescription> properties) {
         Set<String> names = new HashSet<>(properties.size());
         properties.forEach(property -> {
             if (property.getName().isEmpty()) {
@@ -151,7 +152,8 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param properties the properties to sort
      * @return sorted properties
      */
-    protected @NotNull List<PropertyDescriptor> sortPropertiesList(@NotNull Class<?> clazz, @NotNull List<PropertyDescriptor> properties) {
+    protected @NotNull List<PropertyDescriptor> sortPropertiesList(@NotNull Class<?> clazz,
+                                                                   @NotNull List<PropertyDescriptor> properties) {
         Map<String, Integer> fieldNameByIndex = createFieldNameOrderMap(clazz);
         int maxIndex = fieldNameByIndex.size();
 

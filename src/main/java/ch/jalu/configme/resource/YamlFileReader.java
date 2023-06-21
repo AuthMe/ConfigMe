@@ -157,7 +157,8 @@ public class YamlFileReader implements PropertyReader {
      * @param result set to save keys to
      * @param onlyLeafNodes whether only leaf nodes should be added to the result set
      */
-    private void collectKeysIntoSet(@NotNull String path, @NotNull Map<String, Object> map, @NotNull Set<String> result, boolean onlyLeafNodes) {
+    private void collectKeysIntoSet(@NotNull String path, @NotNull Map<String, Object> map, @NotNull Set<String> result,
+                                    boolean onlyLeafNodes) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String childPath = path.isEmpty() ? entry.getKey() : path + "." + entry.getKey();
             if (!onlyLeafNodes || isLeafValue(entry.getValue())) {

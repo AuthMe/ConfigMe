@@ -55,7 +55,8 @@ public final class SettingsManagerBuilder {
      * @param resourceOptions the resource options
      * @return settings manager builder
      */
-    public static @NotNull SettingsManagerBuilder withYamlFile(@NotNull Path path, @NotNull YamlFileResourceOptions resourceOptions) {
+    public static @NotNull SettingsManagerBuilder withYamlFile(@NotNull Path path,
+                                                               @NotNull YamlFileResourceOptions resourceOptions) {
         Utils.createFileIfNotExists(path);
         return new SettingsManagerBuilder(new YamlFileResource(path, resourceOptions));
     }
@@ -67,7 +68,8 @@ public final class SettingsManagerBuilder {
      * @param resourceOptions the resource options
      * @return settings manager builder
      */
-    public static @NotNull SettingsManagerBuilder withYamlFile(@NotNull File file, @NotNull YamlFileResourceOptions resourceOptions) {
+    public static @NotNull SettingsManagerBuilder withYamlFile(@NotNull File file,
+                                                               @NotNull YamlFileResourceOptions resourceOptions) {
         return withYamlFile(file.toPath(), resourceOptions);
     }
 
@@ -88,7 +90,8 @@ public final class SettingsManagerBuilder {
      * @return this builder
      */
     @SafeVarargs
-    public final @NotNull SettingsManagerBuilder configurationData(@NotNull Class<? extends SettingsHolder>... classes) {
+    public final @NotNull SettingsManagerBuilder configurationData(
+                                                                  @NotNull Class<? extends SettingsHolder>... classes) {
         this.configurationData = ConfigurationDataBuilder.createConfiguration(classes);
         return this;
     }

@@ -83,7 +83,8 @@ public class YamlFileResourceOptions {
             return this;
         }
 
-        public @NotNull Builder numberOfLinesBeforeFunction(@NotNull ToIntFunction<PathElement> numberOfLinesBeforeFunction) {
+        public @NotNull Builder numberOfLinesBeforeFunction(
+                                                      @NotNull ToIntFunction<PathElement> numberOfLinesBeforeFunction) {
             this.numberOfLinesBeforeFunction = numberOfLinesBeforeFunction;
             return this;
         }

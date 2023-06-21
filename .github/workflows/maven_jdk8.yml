@@ -21,24 +21,11 @@ jobs:
       - name: Build with Maven
         run: mvn -B --file pom.xml package jacoco:report
 
-      # Set environment variables for Coveralls. Copied from https://github.com/trautonen/coveralls-maven-plugin/issues/136
-      - name: Set branch name and PR number
-        # Coveralls only works on master, so disable this step if we're elsewhere
-        if: github.ref == 'refs/heads/master'
-        id: refs
-        env:
-          BRANCH_NAME_OR_REF: ${{ github.head_ref || github.ref }}
-        run: |
-          echo "::set-output name=branch_name::${BRANCH_NAME_OR_REF#refs/heads/}"
-          echo "::set-output name=pr_number::$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")"
-      - name: Coveralls Maven plugin
-        env:
-          CI_NAME: Github
-          CI_BUILD_NUMBER: ${{ github.run_id }}
-          CI_BUILD_URL: https://github.com/${{ github.repository }}/commit/${{ github.event.after }}/checks
-          CI_BRANCH: ${{ steps.refs.outputs.branch_name }}
-          CI_PULL_REQUEST: ${{ steps.refs.outputs.pr_number }}
-        run: |
-          mvn coveralls:report \
-          --no-transfer-progress \
-          -D repoToken=${{ secrets.COVERALLS_TOKEN }}
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+        if: github.event_name != 'pull_request'
+        with:
+          base-path: src/main/java
+          # The file is optional, but the documentation says it's better to specify it.
+          file: target/site/jacoco/jacoco.xml
+

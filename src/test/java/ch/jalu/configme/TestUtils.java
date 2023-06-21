@@ -2,6 +2,7 @@ package ch.jalu.configme;
 
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import org.hamcrest.Matcher;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.function.Executable;
 
 import java.io.IOException;
@@ -31,6 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Utilities for testing.
  */
 public final class TestUtils {
+
+    private static Class<? extends Exception> expectedNullArgExceptionType;
 
     private TestUtils() {
     }
@@ -142,6 +145,30 @@ public final class TestUtils {
         }
     }
 
+    /**
+     * Returns the expected exception type when a null argument is supplied where it is not allowed.
+     * <p>
+     * Background: Due to usage of IntelliJ's &#64;{@link NotNull} annotation, when compiled locally, IntelliJ adds
+     * bytecode to guard against null which throws an IllegalStateException or an IllegalArgumentException. When code
+     * is built outside of IntelliJ (e.g. Maven build), the guards are not added to the bytecode. This results in
+     * different exceptions being thrown.
+     *
+     * @return the expected exception type for a null argument where it is not allowed (NPE or IllegalArgumentException)
+     */
+    public static Class<? extends Exception> getExceptionTypeForNullArg() {
+        return getOrCaptureNullExceptionType();
+    }
+
+    /**
+     * Returns whether the code was compiled such that {@link NotNull} parameters are checked to ensure they are not
+     * null, which happens when the code is locally built in IntelliJ.
+     *
+     * @return true if NotNull is checked in methods (= local IntelliJ builds), false otherwise
+     */
+    public static boolean hasBytecodeCheckForNotNullAnnotation() {
+        return !getOrCaptureNullExceptionType().equals(NullPointerException.class);
+    }
+
     // -------------
     // Convenience methods
     // -------------
@@ -185,5 +212,21 @@ public final class TestUtils {
         Matcher<PropertyValue> valueMatcher = hasProperty("value", equalTo(expectedValue));
         Matcher<PropertyValue> validFlagMatcher = hasProperty("validInResource", equalTo(expectedValid));
         return both(valueMatcher).and(validFlagMatcher);
+    }
+
+    private static Class<? extends Exception> getOrCaptureNullExceptionType() {
+        if (expectedNullArgExceptionType == null) {
+            try {
+                notNullMethod(null);
+                throw new IllegalStateException("Expected NPE or IAE");
+            } catch (NullPointerException | IllegalArgumentException e) {
+                expectedNullArgExceptionType = e.getClass();
+            }
+        }
+        return expectedNullArgExceptionType;
+    }
+
+    private static void notNullMethod(@NotNull Object arg) {
+        arg.toString();
     }
 }

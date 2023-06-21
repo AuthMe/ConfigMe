@@ -29,6 +29,6 @@ public interface PropertyType<T> {
      * @param value the value to convert
      * @return the value to use in the property export
      */
-    @Nullable Object toExportValue(T value);
+    @Nullable Object toExportValue(@Nullable T value);
 
 }

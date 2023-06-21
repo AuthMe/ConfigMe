@@ -22,18 +22,18 @@ public interface SettingsManager {
     /**
      * Gets the given property from the configuration.
      *
-     * @param property The property to retrieve
-     * @param <T> The property's type
-     * @return The property's value
+     * @param property the property to retrieve
+     * @param <T> the property's type
+     * @return the property's value
      */
-    <T> T getProperty(@NotNull Property<T> property);
+    <T> @NotNull T getProperty(@NotNull Property<T> property);
 
     /**
      * Sets a new value for the given property.
      *
-     * @param property The property to modify
-     * @param value The new value to assign to the property
-     * @param <T> The property's type
+     * @param property the property to modify
+     * @param value the new value to assign to the property
+     * @param <T> the property's type
      */
     <T> void setProperty(@NotNull Property<T> property, @NotNull T value);
 

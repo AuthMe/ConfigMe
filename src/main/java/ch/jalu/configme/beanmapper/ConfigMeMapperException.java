@@ -47,7 +47,8 @@ public class ConfigMeMapperException extends ConfigMeException {
      * @param message basic message to extend
      * @param cause the cause
      */
-    public ConfigMeMapperException(@NotNull MappingContext mappingContext, @NotNull String message, @Nullable Throwable cause) {
+    public ConfigMeMapperException(@NotNull MappingContext mappingContext, @NotNull String message,
+                                   @Nullable Throwable cause) {
         super(constructMessage(mappingContext, message), cause);
     }
 

@@ -52,7 +52,8 @@ public class PrimitivePropertyType<T> implements PropertyType<T> {
      * @param convertFunction function to convert to the given type
      * @param exportValueFunction function to convert a value to its export value
      */
-    public PrimitivePropertyType(@NotNull Function<Object, T> convertFunction, @NotNull Function<T, Object> exportValueFunction) {
+    public PrimitivePropertyType(@NotNull Function<Object, T> convertFunction,
+                                 @NotNull Function<T, Object> exportValueFunction) {
         this.convertFunction = convertFunction;
         this.exportValueFunction = exportValueFunction;
     }

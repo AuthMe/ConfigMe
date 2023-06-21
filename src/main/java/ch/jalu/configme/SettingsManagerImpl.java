@@ -54,7 +54,7 @@ public class SettingsManagerImpl implements SettingsManager {
      * @return the property's value
      */
     @Override
-    public <T> T getProperty(@NotNull Property<T> property) {
+    public <T> @NotNull T getProperty(@NotNull Property<T> property) {
         return configurationData.getValue(property);
     }
 

@@ -36,7 +36,8 @@ public class RegexProperty extends BaseProperty<Pattern> {
     }
 
     @Override
-    protected @Nullable Pattern getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
+    protected @Nullable Pattern getFromReader(@NotNull PropertyReader reader,
+                                              @NotNull ConvertErrorRecorder errorRecorder) {
         String pattern = reader.getString(getPath());
         if (pattern != null) {
             try {

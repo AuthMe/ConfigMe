@@ -64,7 +64,8 @@ public class MapperImpl implements Mapper {
         this(new BeanDescriptionFactoryImpl(), StandardLeafValueHandlers.getDefaultLeafValueHandler());
     }
 
-    public MapperImpl(@NotNull BeanDescriptionFactory beanDescriptionFactory, @NotNull LeafValueHandler leafValueHandler) {
+    public MapperImpl(@NotNull BeanDescriptionFactory beanDescriptionFactory,
+                      @NotNull LeafValueHandler leafValueHandler) {
         this.beanDescriptionFactory = beanDescriptionFactory;
         this.leafValueHandler = leafValueHandler;
     }
@@ -77,7 +78,8 @@ public class MapperImpl implements Mapper {
         return leafValueHandler;
     }
 
-    protected @NotNull MappingContext createRootMappingContext(@NotNull TypeInformation beanType, @NotNull ConvertErrorRecorder errorRecorder) {
+    protected @NotNull MappingContext createRootMappingContext(@NotNull TypeInformation beanType,
+                                                               @NotNull ConvertErrorRecorder errorRecorder) {
         return MappingContextImpl.createRoot(beanType, errorRecorder);
     }
 
@@ -151,7 +153,8 @@ public class MapperImpl implements Mapper {
     // ---------
 
     @Override
-    public @Nullable Object convertToBean(@Nullable Object value, @NotNull TypeInformation beanType, @NotNull ConvertErrorRecorder errorRecorder) {
+    public @Nullable Object convertToBean(@Nullable Object value, @NotNull TypeInformation beanType,
+                                          @NotNull ConvertErrorRecorder errorRecorder) {
         if (value == null) {
             return null;
         }

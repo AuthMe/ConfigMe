@@ -21,7 +21,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert("unknown", null);
+        TimeUnit result = propertyType.convert("unknown", new ConvertErrorRecorder());
 
         // then
         assertThat(result, nullValue());
