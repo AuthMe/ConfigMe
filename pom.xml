@@ -40,7 +40,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.jdkVersion>1.8</project.jdkVersion>
 
-        <junit.version>5.9.2</junit.version>
+        <junit.version>5.9.3</junit.version>
         <mockito.version>4.11.0</mockito.version>
     </properties>
 
