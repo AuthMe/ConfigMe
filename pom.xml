@@ -189,7 +189,7 @@
             <version>2.0</version>
         </dependency>
 
-        <!-- FindBugs, has implementation for @Nullable -->
+        <!-- Annotations for @NotNull and @Nullable -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
