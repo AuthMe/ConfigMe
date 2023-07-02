@@ -46,7 +46,7 @@ public class MapNormalizer {
 
     /**
      * Processes the given value if it is a Map and returns an Optional with a new Map if the input
-     * value is not in its "normalized form." Recursively visits and replaces nested maps.
+     * value is not in its "normalized form". Recursively visits and replaces nested maps.
      *
      * @param value the value to process
      * @return optional with a new map to replace the given one with, empty optional if not needed or not applicable
