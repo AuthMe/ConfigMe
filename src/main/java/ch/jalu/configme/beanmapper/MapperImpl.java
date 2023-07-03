@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * <b>The mapper only considers properties which have both a getter and a setter method.</b> Any Java class without
  * at least one property with both a getter <i>and</i> a setter is not considered as a JavaBean class. Such classes can
  * be supported by implementing a custom {@link LeafValueHandler} that performs the conversion from the value coming
- * from the property reader to an object of the class' type.
+ * from the property reader to an object of the class's type.
  * <p>
  * <b>Recursion:</b> the mapping of values to a JavaBean is performed recursively, i.e. a JavaBean may have other
  * JavaBeans as fields and generic types at any arbitrary "depth".

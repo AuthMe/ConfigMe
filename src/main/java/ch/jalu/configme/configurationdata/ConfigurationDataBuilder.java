@@ -148,7 +148,7 @@ public class ConfigurationDataBuilder {
 
     /**
      * Returns all fields of the class which should be considered as potential {@link Property} definitions.
-     * Considers the class' parents.
+     * Considers the class's parents.
      *
      * @param clazz the class whose fields should be returned
      * @return stream of all the fields to process

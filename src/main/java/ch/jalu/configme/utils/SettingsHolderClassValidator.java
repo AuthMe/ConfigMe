@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  * Finds potential technical or quality issues with a project's property declarations. This class is intended to
  * be used in a unit test.
  * <p>
- * This class' methods can be overridden for custom behavior. Depending on your needs, you can call the main
+ * This class's methods can be overridden for custom behavior. Depending on your needs, you can call the main
  * {@code validate} method and override single validation methods you want to customize or disable, or call the
  * individual validation methods separately.
  */
