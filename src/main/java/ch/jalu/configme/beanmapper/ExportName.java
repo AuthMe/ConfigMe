@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Documented
+@Deprecated // Scheduled for removal. If you need this, please comment in https://github.com/AuthMe/ConfigMe/issues/336
 public @interface ExportName {
 
     /**
