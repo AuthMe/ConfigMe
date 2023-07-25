@@ -227,7 +227,7 @@ public class YamlFileReader implements PropertyReader {
     }
 
     /**
-     * Gets the object at the given path and safely casts it to the given class' type. Returns null
+     * Gets the object at the given path and safely casts it to the given class's type. Returns null
      * if no value is available or if it cannot be cast.
      *
      * @param path the path to retrieve

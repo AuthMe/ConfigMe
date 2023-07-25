@@ -41,7 +41,7 @@ public interface ConfigurationData {
     /**
      * Returns all comments registered to this configuration data. Typically for tests and
      * debugging only. Use {@link #getCommentsForSection(String)} if you are not interested
-     * in the entirety of comments.
+     * in the entirety of the comments.
      *
      * @return read-only view of all comments
      */

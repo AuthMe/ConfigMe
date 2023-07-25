@@ -27,14 +27,14 @@ import java.util.stream.Collectors;
  * {@code length} and should be mapped from the property resource's value at path {@code definition}, the mapper will
  * look up {@code definition.length} to get the value of the JavaBean property.
  * <p>
- * Classes must be JavaBeans. These are simple classes with private fields, accompanied with getters and setters.
+ * Classes must be JavaBeans. These are simple classes with private fields, accompanied by getters and setters.
  * <b>The mapper only considers properties which have both a getter and a setter method.</b> Any Java class without
  * at least one property with both a getter <i>and</i> a setter is not considered as a JavaBean class. Such classes can
  * be supported by implementing a custom {@link LeafValueHandler} that performs the conversion from the value coming
- * from the property reader to an object of the class' type.
+ * from the property reader to an object of the class's type.
  * <p>
  * <b>Recursion:</b> the mapping of values to a JavaBean is performed recursively, i.e. a JavaBean may have other
- * JavaBeans as fields and generic types at any arbitrary "depth."
+ * JavaBeans as fields and generic types at any arbitrary "depth".
  * <p>
  * <b>Collections</b> are only supported if they are explicitly typed, i.e. a field of {@code List<String>}
  * is supported but {@code List<?>} and {@code List<T extends Number>} are not supported. Specifically, you may

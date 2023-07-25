@@ -39,7 +39,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * Returns all properties of the given bean class for which there exists a getter and setter.
      *
      * @param clazz the bean property to process
-     * @return the bean class' properties to handle
+     * @return the bean class's properties to handle
      */
     @Override
     public @NotNull Collection<BeanPropertyDescription> getAllProperties(@NotNull Class<?> clazz) {
@@ -83,7 +83,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
     }
 
     /**
-     * Validates the class' properties.
+     * Validates the class's properties.
      *
      * @param clazz the class to which the properties belong
      * @param properties the properties that will be used on the class
@@ -185,11 +185,11 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
     }
 
     /**
-     * Returns a list of the class' parents, including the given class itself, with the top-most parent
+     * Returns a list of the class's parents, including the given class itself, with the top-most parent
      * coming first. Does not include the Object class.
      *
      * @param clazz the class whose parents should be collected
-     * @return list of all of the class' parents, sorted by highest class in the hierarchy to lowest
+     * @return list with all of the class's parents, sorted by highest class in the hierarchy to lowest
      */
     protected @NotNull List<Class<?>> collectClassAndAllParents(@NotNull Class<?> clazz) {
         List<Class<?>> parents = new ArrayList<>();
