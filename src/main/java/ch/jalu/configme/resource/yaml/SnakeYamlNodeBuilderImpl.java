@@ -13,6 +13,7 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,7 +56,7 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
             node = createSequenceNode(stream, path, configurationData);
         } else {
             throw new IllegalArgumentException("Unsupported value of type: "
-                + (value == null ? null : value.getClass()));
+                + (value == null ? null : value.getClass().getName()));
         }
 
         List<CommentLine> commentLines = collectComments(obj, path, configurationData, numberOfNewLines);
@@ -78,7 +79,7 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
 
     @Override
     public void transferComments(@NotNull Node valueNode, @NotNull Node keyNode) {
-        if (!valueNode.getBlockComments().isEmpty()) {
+        if (valueNode.getBlockComments() != null && !valueNode.getBlockComments().isEmpty()) {
             keyNode.setBlockComments(valueNode.getBlockComments());
             valueNode.setBlockComments(Collections.emptyList());
         }
@@ -89,7 +90,9 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
     }
 
     protected @NotNull Node createNumberNode(@NotNull Number value) {
-        Tag tag = (value instanceof Double || value instanceof Float) ? Tag.FLOAT : Tag.INT;
+        Tag tag = (value instanceof Double || value instanceof Float || value instanceof BigDecimal)
+            ? Tag.FLOAT
+            : Tag.INT;
         return new ScalarNode(tag, value.toString(), null, null, DumperOptions.ScalarStyle.PLAIN);
     }
 
@@ -128,6 +131,16 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
         return new MappingNode(Tag.MAP, nodeEntries, DumperOptions.FlowStyle.BLOCK);
     }
 
+    /**
+     * Creates comments based on all possible sources (number of empty lines, configuration data,
+     * {@link ValueWithComments}) and returns them as SnakeYAML comment lines.
+     *
+     * @param value the export value
+     * @param path the path the value is located at
+     * @param configurationData the configuration data instance
+     * @param numberOfNewLines number of new lines to add to the beginning of the comments
+     * @return comment lines representing all defined comments
+     */
     protected @NotNull List<CommentLine> collectComments(@NotNull Object value, @NotNull String path,
                                                          @NotNull ConfigurationData configurationData,
                                                          int numberOfNewLines) {

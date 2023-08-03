@@ -32,7 +32,7 @@ public class SnakeYamlNodeContainerImpl implements SnakeYamlNodeContainer {
                                                                      @NotNull Supplier<List<String>> commentsSupplier) {
         Object value = values.computeIfAbsent(name, k -> new SnakeYamlNodeContainerImpl(commentsSupplier.get()));
         if (!(value instanceof SnakeYamlNodeContainer)) {
-            throw new IllegalStateException("Unexpectedly found " + value.getClass() + " in '" + name + "'");
+            throw new IllegalStateException("Unexpectedly found " + value.getClass().getName() + " in '" + name + "'");
         }
         return (SnakeYamlNodeContainer) value;
     }

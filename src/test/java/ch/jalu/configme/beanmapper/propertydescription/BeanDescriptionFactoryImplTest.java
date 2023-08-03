@@ -1,6 +1,7 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
 
+import ch.jalu.configme.Comment;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
 import ch.jalu.configme.samples.beanannotations.BeanWithEmptyName;
@@ -40,8 +41,14 @@ class BeanDescriptionFactoryImplTest {
 
         // then
         assertThat(descriptions, hasSize(2));
-        assertThat(getDescription("size", descriptions).getTypeInformation(), equalTo(new TypeInformation(int.class)));
-        assertThat(getDescription("name", descriptions).getTypeInformation(), equalTo(new TypeInformation(String.class)));
+
+        BeanPropertyDescription sizeProperty = getDescription("size", descriptions);
+        assertThat(sizeProperty.getTypeInformation(), equalTo(new TypeInformation(int.class)));
+        assertThat(sizeProperty.getComments(), contains("Size of this entry (cm)"));
+
+        BeanPropertyDescription nameProperty = getDescription("name", descriptions);
+        assertThat(nameProperty.getTypeInformation(), equalTo(new TypeInformation(String.class)));
+        assertThat(nameProperty.getComments(), empty());
     }
 
     @Test
@@ -162,6 +169,7 @@ class BeanDescriptionFactoryImplTest {
     private static final class SampleBean {
 
         private String name;
+        @Comment("Size of this entry (cm)")
         private int size;
         private long longField; // static "getter" method
         private UUID uuid = UUID.randomUUID(); // no setter

@@ -2,6 +2,8 @@ package ch.jalu.configme.beanmapper.command;
 
 import ch.jalu.configme.Comment;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -14,6 +16,16 @@ public class ExecutionDetails {
     @Comment("The higher the number, the more important")
     private Double importance;
     private Set<String> privileges;
+
+    public ExecutionDetails() {
+    }
+
+    public ExecutionDetails(Executor executor, double importance, boolean isOptional, String... privileges) {
+        this.executor = executor;
+        this.optional = isOptional;
+        this.importance = importance;
+        this.privileges = new LinkedHashSet<>(Arrays.asList(privileges));
+    }
 
     public Executor getExecutor() {
         return executor;

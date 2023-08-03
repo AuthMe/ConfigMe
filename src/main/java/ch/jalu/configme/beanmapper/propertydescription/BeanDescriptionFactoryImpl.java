@@ -86,6 +86,13 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
             comments);
     }
 
+    /**
+     * Returns the comments that are defined on the property. Comments are found by looking for an &#64;{@link Comment}
+     * annotation on a field with the same name as the property.
+     *
+     * @param descriptor the property descriptor
+     * @return comments for the property (never null)
+     */
     protected @NotNull List<String> getComments(@NotNull PropertyDescriptor descriptor) {
         try {
             Field field = descriptor.getWriteMethod().getDeclaringClass().getDeclaredField(descriptor.getName());
