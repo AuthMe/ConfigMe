@@ -8,7 +8,7 @@ test:
 sample:
     ratio:
         order: FIRST
-        fields: 
+        fields:
         - Australia
         - Burundi
         - Colombia
@@ -21,25 +21,25 @@ features:
         # Skip boring features?
         skip: false
         # Add some boring colors here (gray, beige, ...)
-        colors: 
+        colors:
         - beige
         - gray
         dustLevel: 2.4
-
+    
     # Cool features
 
-    # Contains cool settings
+        # Contains cool settings
     cool:
         # Enable cool features?
         enabled: true
         # List of cool options to use
-        options: 
+        options:
         - Dinosaurs
         - Explosions
         - Big trucks
 security:
     # Forbidden names
-    forbiddenNames: 
+    forbiddenNames:
     - admin
     - staff
     - moderator

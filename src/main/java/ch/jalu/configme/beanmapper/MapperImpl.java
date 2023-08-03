@@ -6,6 +6,7 @@ import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ValueWithComments;
 import ch.jalu.configme.utils.TypeInformation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -107,6 +108,9 @@ public class MapperImpl implements Mapper {
         for (BeanPropertyDescription property : beanDescriptionFactory.getAllProperties(value.getClass())) {
             Object exportValueOfProperty = toExportValue(property.getValue(value));
             if (exportValueOfProperty != null) {
+                if (!property.getComments().isEmpty()) {
+                    exportValueOfProperty = new ValueWithComments(exportValueOfProperty, property.getComments());
+                }
                 mappedBean.put(property.getName(), exportValueOfProperty);
             }
         }

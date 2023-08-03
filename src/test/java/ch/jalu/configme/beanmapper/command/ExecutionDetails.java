@@ -1,5 +1,7 @@
 package ch.jalu.configme.beanmapper.command;
 
+import ch.jalu.configme.Comment;
+
 import java.util.Set;
 
 /**
@@ -9,6 +11,7 @@ public class ExecutionDetails {
 
     private Executor executor;
     private boolean optional;
+    @Comment("The higher the number, the more important")
     private Double importance;
     private Set<String> privileges;
 

@@ -1,5 +1,6 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
+import ch.jalu.configme.Comment;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.beanmapper.ExportName;
 import ch.jalu.configme.utils.TypeInformation;
@@ -11,6 +12,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -75,11 +77,26 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
             return null;
         }
 
+        List<String> comments = getComments(descriptor);
         return new BeanPropertyDescriptionImpl(
             getPropertyName(descriptor),
             createTypeInfo(descriptor),
             descriptor.getReadMethod(),
-            descriptor.getWriteMethod());
+            descriptor.getWriteMethod(),
+            comments);
+    }
+
+    protected @NotNull List<String> getComments(@NotNull PropertyDescriptor descriptor) {
+        try {
+            Field field = descriptor.getWriteMethod().getDeclaringClass().getDeclaredField(descriptor.getName());
+            Comment comment = field.getAnnotation(Comment.class);
+            if (comment != null) {
+                return Arrays.asList(comment.value());
+            }
+        } catch (NoSuchFieldException ignore) {
+        }
+
+        return Collections.emptyList();
     }
 
     /**

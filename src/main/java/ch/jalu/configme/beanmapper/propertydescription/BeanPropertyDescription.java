@@ -5,6 +5,8 @@ import ch.jalu.configme.utils.TypeInformation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * Represents a property within a bean class, as used in {@link ch.jalu.configme.beanmapper.MapperImpl}.
  * There, for instance, there is a {@link BeanDescriptionFactory} field responsible for creating bean descriptions.
@@ -39,4 +41,7 @@ public interface BeanPropertyDescription {
      * @return the value of the property (can be null)
      */
     @Nullable Object getValue(@NotNull Object bean);
+
+    @NotNull List<String> getComments();
+
 }

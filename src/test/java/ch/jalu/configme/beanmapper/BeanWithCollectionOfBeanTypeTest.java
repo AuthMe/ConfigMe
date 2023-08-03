@@ -1,5 +1,6 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
@@ -75,13 +76,13 @@ class BeanWithCollectionOfBeanTypeTest {
             "message-key:",
             "    color: blue",
             "    text: outside",
-            "    extra: ",
-            "    - color: green",
-            "      text: inner1",
-            "      extra: []",
-            "    - color: blue",
-            "      text: inner2",
-            "      extra: []"
+            "    extra:",
+            "    -   color: green",
+            "        text: inner1",
+            "        extra: []",
+            "    -   color: blue",
+            "        text: inner2",
+            "        extra: []"
         ));
     }
 
@@ -155,6 +156,7 @@ class BeanWithCollectionOfBeanTypeTest {
         private String color;
         private String text;
         private List<ChatComponent> extra = new ArrayList<>();
+        @Comment("Optional: additional info")
         private Optional<ExtendedChatComponent> conditionalElem = Optional.empty();
 
         public ChatComponent() {

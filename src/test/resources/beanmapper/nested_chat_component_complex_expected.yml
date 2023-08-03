@@ -1,16 +1,17 @@
 message-key:
     color: green
     text: outside
-    extra: 
-    - color: yellow
-      text: inner1
-      extra: []
-    - color: blue
-      text: inner2
-      extra:
-      - color: red
-        text: level2 text
+    extra:
+    -   color: yellow
+        text: inner1
         extra: []
+    -   color: blue
+        text: inner2
+        extra:
+        -   color: red
+            text: level2 text
+            extra: []
+    # Optional: additional info
     conditionalElem:
         color: orange
         text: orange extension
@@ -24,15 +25,16 @@ message-key:
             med:
                 color: gray
                 text: med text
-                extra: 
-                - color: green
-                  text: med child
-                  extra: []
+                extra:
+                -   color: green
+                    text: med child
+                    extra: []
                 conditionals: {}
             high:
                 color: black
                 text: high text
                 extra: []
+                # Optional: additional info
                 conditionalElem:
                     color: teal
                     text: teal addition

@@ -61,7 +61,7 @@ class YamlSetPropertyExportTest {
         assertThat(Files.readAllLines(configFile), contains(
             "sample:",
             "    ratio:",
-            "        fields: ",
+            "        fields:",
             "        - FIRST",
             "        - SECOND",
             "        - THIRD"));

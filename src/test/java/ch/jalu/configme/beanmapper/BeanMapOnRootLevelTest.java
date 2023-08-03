@@ -74,6 +74,7 @@ class BeanMapOnRootLevelTest {
 
     @Test
     void shouldLoadMapFromFile() throws IOException {
+        // given
         String yaml = "medium:\n"
             + "\n    name: \"med\"\n"
             + "\n    lore:\n"
@@ -96,6 +97,7 @@ class BeanMapOnRootLevelTest {
 
     @Test
     void shouldExportValuesAsEmptyMap() throws IOException {
+        // given
         String yaml = "medium:\n"
             + "\n    name: \"med\"\n"
             + "\n    lore:\n"
@@ -118,6 +120,7 @@ class BeanMapOnRootLevelTest {
 
     @Test
     void shouldExportValuesAsEmptyMapIncludingComments() throws IOException {
+        // given
         String yaml = "medium:\n"
             + "\n    name: \"med\"\n"
             + "\n    lore:\n"
