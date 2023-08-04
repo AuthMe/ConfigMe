@@ -22,4 +22,12 @@ public @interface Comment {
      */
     String @NotNull [] value();
 
+    /**
+     * Defines if the comment should be repeated if it would be included multiple times. Relevant only for bean
+     * properties: if a class used in a collection has comments, the comments will either be included on the first
+     * entry if {@code false}, or on each entry if {@code true}.
+     *
+     * @return whether to repeat the comment if the same field is exported multiple times
+     */
+    boolean repeat() default false;
 }

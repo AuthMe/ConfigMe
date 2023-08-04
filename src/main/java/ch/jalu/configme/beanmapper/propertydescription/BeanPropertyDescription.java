@@ -1,11 +1,8 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.utils.TypeInformation;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Represents a property within a bean class, as used in {@link ch.jalu.configme.beanmapper.MapperImpl}.
@@ -45,6 +42,6 @@ public interface BeanPropertyDescription {
     /**
      * @return the comments to add when this property is exported
      */
-    @NotNull List<String> getComments();
+    @NotNull BeanPropertyComments getComments();
 
 }

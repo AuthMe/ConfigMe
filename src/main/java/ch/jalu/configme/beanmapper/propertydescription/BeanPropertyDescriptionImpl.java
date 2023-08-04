@@ -7,8 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Default implementation of {@link BeanPropertyDescription}.
@@ -19,7 +17,7 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
     private final TypeInformation typeInformation;
     private final Method getter;
     private final Method setter;
-    private final List<String> comments;
+    private final BeanPropertyComments comments;
 
     /**
      * Constructor.
@@ -32,7 +30,7 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
     @Deprecated // Will be removed in ConfigMe 2.0. Use the constructor with the 'comments' argument.
     public BeanPropertyDescriptionImpl(@NotNull String name, @NotNull TypeInformation typeInformation,
                                        @NotNull Method getter, @NotNull Method setter) {
-        this(name, typeInformation, getter, setter, Collections.emptyList());
+        this(name, typeInformation, getter, setter, BeanPropertyComments.EMPTY);
     }
 
     /**
@@ -42,9 +40,11 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
      * @param typeInformation type of the property
      * @param getter getter for the property
      * @param setter setter for the property
+     * @param comments the comments for this property
      */
     public BeanPropertyDescriptionImpl(@NotNull String name, @NotNull TypeInformation typeInformation,
-                                       @NotNull Method getter, @NotNull Method setter, @NotNull List<String> comments) {
+                                       @NotNull Method getter, @NotNull Method setter,
+                                       @NotNull BeanPropertyComments comments) {
         this.name = name;
         this.typeInformation = typeInformation;
         this.getter = getter;
@@ -93,7 +93,7 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
     }
 
     @Override
-    public @NotNull List<String> getComments() {
+    public @NotNull BeanPropertyComments getComments() {
         return comments;
     }
 

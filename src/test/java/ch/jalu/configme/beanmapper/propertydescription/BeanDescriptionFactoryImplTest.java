@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.sameInstance;
 
 /**
  * Test for {@link BeanDescriptionFactoryImpl}.
@@ -44,11 +45,11 @@ class BeanDescriptionFactoryImplTest {
 
         BeanPropertyDescription sizeProperty = getDescription("size", descriptions);
         assertThat(sizeProperty.getTypeInformation(), equalTo(new TypeInformation(int.class)));
-        assertThat(sizeProperty.getComments(), contains("Size of this entry (cm)"));
+        assertThat(sizeProperty.getComments().getComments(), contains("Size of this entry (cm)"));
 
         BeanPropertyDescription nameProperty = getDescription("name", descriptions);
         assertThat(nameProperty.getTypeInformation(), equalTo(new TypeInformation(String.class)));
-        assertThat(nameProperty.getComments(), empty());
+        assertThat(nameProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
     }
 
     @Test

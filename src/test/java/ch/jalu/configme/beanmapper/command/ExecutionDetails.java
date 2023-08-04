@@ -13,7 +13,7 @@ public class ExecutionDetails {
 
     private Executor executor;
     private boolean optional;
-    @Comment("The higher the number, the more important")
+    @Comment(value = "The higher the number, the more important", repeat = true)
     private Double importance;
     private Set<String> privileges;
 

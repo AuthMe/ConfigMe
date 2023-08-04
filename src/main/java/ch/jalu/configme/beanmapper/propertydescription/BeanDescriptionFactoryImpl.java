@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -77,7 +78,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
             return null;
         }
 
-        List<String> comments = getComments(descriptor);
+        BeanPropertyComments comments = getComments(descriptor);
         return new BeanPropertyDescriptionImpl(
             getPropertyName(descriptor),
             createTypeInfo(descriptor),
@@ -93,17 +94,18 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param descriptor the property descriptor
      * @return comments for the property (never null)
      */
-    protected @NotNull List<String> getComments(@NotNull PropertyDescriptor descriptor) {
+    protected @NotNull BeanPropertyComments getComments(@NotNull PropertyDescriptor descriptor) {
         try {
             Field field = descriptor.getWriteMethod().getDeclaringClass().getDeclaredField(descriptor.getName());
             Comment comment = field.getAnnotation(Comment.class);
             if (comment != null) {
-                return Arrays.asList(comment.value());
+                UUID uniqueId = comment.repeat() ? null : UUID.randomUUID();
+                return new BeanPropertyComments(Arrays.asList(comment.value()), uniqueId);
             }
         } catch (NoSuchFieldException ignore) {
         }
 
-        return Collections.emptyList();
+        return BeanPropertyComments.EMPTY;
     }
 
     /**

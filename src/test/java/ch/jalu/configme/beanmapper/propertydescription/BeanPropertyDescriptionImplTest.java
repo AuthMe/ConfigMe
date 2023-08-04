@@ -9,8 +9,8 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -87,7 +87,7 @@ public class BeanPropertyDescriptionImplTest {
         // then
         assertThat(property.getName(), equalTo("name"));
         assertThat(property.getTypeInformation(), equalTo(new TypeInformation(String.class)));
-        assertThat(property.getComments(), empty());
+        assertThat(property.getComments(), sameInstance(BeanPropertyComments.EMPTY));
     }
 
     private static BeanPropertyDescription getDescriptor(String name, Class<?> clazz) {
