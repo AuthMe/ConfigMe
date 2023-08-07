@@ -1,13 +1,20 @@
 package ch.jalu.configme;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
+import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.migration.PlainMigrationService;
+import ch.jalu.configme.migration.VersionMigrationService;
+import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.properties.PropertyInitializer;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
 import ch.jalu.configme.resource.YamlFileResourceOptions;
 import ch.jalu.configme.samples.TestConfiguration;
+import ch.jalu.configme.samples.TestVersionConfiguration;
+import ch.jalu.configme.utils.MigrationUtils;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -17,6 +24,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
 
 import static ch.jalu.configme.TestUtils.copyFileFromResources;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
@@ -155,5 +164,71 @@ class SettingsManagerBuilderTest {
 
         // then
         assertThat(settingsManager.getProperty(TestConfiguration.SYSTEM_NAME), equalTo("Custom sys name"));
+    }
+
+    /**
+     * This method tests the {@link VersionMigrationService} class.
+     * @author gamerover98
+     */
+    @Test
+    void shouldMigrateFromVersion1ToVersion2() throws IOException {
+        // given
+        Path file = copyFileFromResources("/config-version-1-sample.yml", temporaryFolder);
+        long initialFileSize = Files.size(file);
+
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
+        MigrationService migrationService = new TestVersionMigrationServiceImpl();
+
+        // when
+        SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
+            .configurationData(configurationData)
+            .migrationService(migrationService)
+            .create();
+
+        // then
+        // check that file was written to (migration services notices incomplete file)
+        assertThat(Files.size(file), greaterThan(initialFileSize));
+
+        PropertyReader reader = manager.getPropertyResource().createReader();
+
+        assertThat(TestVersionConfiguration.VERSION_NUMBER.determineValue(reader).getValue(), equalTo(2));
+        assertThat(TestVersionConfiguration.SHELF_POPATOES.determineValue(reader).getValue(), equalTo(4));
+        assertThat(TestVersionConfiguration.SHELF_TOMATOES.determineValue(reader).getValue(), equalTo(10));
+    }
+
+    /**
+     * @author gamerover98
+     */
+    static class TestVersionMigrationServiceImpl extends VersionMigrationService {
+
+        @Override
+        protected @NotNull Collection<Migration> migrations() {
+            return Collections.singletonList(
+                new Migration() {
+
+                    @Override
+                    public int fromVersion() {
+                        return 1;
+                    }
+
+                    @Override
+                    public int toVersion() {
+                        return 2;
+                    }
+
+                    @Override
+                    public void migrate(@NotNull PropertyReader reader, @NotNull ConfigurationData configurationData) {
+                        Property<Integer> oldPotatoesProperty = PropertyInitializer.newProperty("potatoes", 4);
+                        Property<Integer> oldTomatoesProperty = PropertyInitializer.newProperty("tomatoes", 10);
+
+                        Property<Integer> newPotatoesProperty = PropertyInitializer.newProperty("shelf.potatoes", 4);
+                        Property<Integer> newTomatoesProperty = PropertyInitializer.newProperty("shelf.tomatoes", 10);
+
+                        MigrationUtils.moveProperty(oldPotatoesProperty, newPotatoesProperty, reader, configurationData);
+                        MigrationUtils.moveProperty(oldTomatoesProperty, newTomatoesProperty, reader, configurationData);
+                    }
+                }
+            );
+        }
     }
 }

@@ -7,6 +7,7 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.YamlFileReader;
 import ch.jalu.configme.samples.TestConfiguration;
+import ch.jalu.configme.utils.MigrationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -111,7 +112,7 @@ class PlainMigrationServiceTest {
         ConfigurationData configurationData = mock(ConfigurationData.class);
 
         // when
-        boolean result = PlainMigrationService.moveProperty(
+        boolean result = MigrationUtils.moveProperty(
             TestConfiguration.DURATION_IN_SECONDS, TestConfiguration.VERSION_NUMBER, reader, configurationData);
 
         // then
@@ -126,7 +127,7 @@ class PlainMigrationServiceTest {
         ConfigurationData configurationData = mock(ConfigurationData.class);
 
         // when
-        boolean result = PlainMigrationService.moveProperty(
+        boolean result = MigrationUtils.moveProperty(
             TestConfiguration.DURATION_IN_SECONDS, TestConfiguration.VERSION_NUMBER, reader, configurationData);
 
         // then
@@ -142,7 +143,7 @@ class PlainMigrationServiceTest {
         Property<Integer> oldProperty = new IntegerProperty("path.does.not.exist", 3);
 
         // when
-        boolean result = PlainMigrationService.moveProperty(
+        boolean result = MigrationUtils.moveProperty(
             oldProperty, TestConfiguration.VERSION_NUMBER, reader, configurationData);
 
         // then
