@@ -24,14 +24,6 @@ public abstract class VersionMigrationService implements MigrationService {
 
     @Override
     public boolean checkAndMigrate(@NotNull PropertyReader reader, @NotNull ConfigurationData configurationData) {
-
-        int currentVersion = getCurrentVersion(reader, configurationData);
-
-        // prevent people from manually lowering the start config version value.
-        if (currentVersion < getStartConfigVersionValue()) {
-            setCurrentVersion(configurationData, getStartConfigVersionValue());
-        }
-
         if (performMigrations(reader, configurationData) == MIGRATION_REQUIRED
             || !configurationData.areAllValuesValidInResource()) {
             return MIGRATION_REQUIRED;
