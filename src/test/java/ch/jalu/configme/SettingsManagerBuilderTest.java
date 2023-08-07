@@ -24,21 +24,17 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Collections;
 
 import static ch.jalu.configme.TestUtils.copyFileFromResources;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for {@link SettingsManagerBuilder}.
@@ -173,11 +169,11 @@ class SettingsManagerBuilderTest {
     @Test
     void shouldMigrateFromVersion1ToVersion2() throws IOException {
         // given
-        Path file = copyFileFromResources("/config-version-1-sample.yml", temporaryFolder);
+        Path file = copyFileFromResources("/versions/config-old-version-sample.yml", temporaryFolder);
         long initialFileSize = Files.size(file);
 
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
-        MigrationService migrationService = new TestVersionMigrationServiceImpl();
+        MigrationService migrationService = getVersionMigrationService();
 
         // when
         SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
@@ -197,14 +193,87 @@ class SettingsManagerBuilderTest {
     }
 
     /**
+     * This method tests the {@link VersionMigrationService} class.
      * @author gamerover98
      */
-    static class TestVersionMigrationServiceImpl extends VersionMigrationService {
+    @Test
+    void shouldNotMigrateAndKeepConfigValues() throws IOException {
+        // given
+        Path file = copyFileFromResources("/versions/config-current-version-sample.yml", temporaryFolder);
+        long initialFileSize = Files.size(file);
 
-        @Override
-        protected @NotNull Collection<Migration> migrations() {
-            return Collections.singletonList(
-                new Migration() {
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
+        MigrationService migrationService = getVersionMigrationService();
+
+        // when
+        SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
+            .configurationData(configurationData)
+            .migrationService(migrationService)
+            .create();
+
+        // then
+        // the file won't change.
+        assertThat(Files.size(file), equalTo(initialFileSize));
+
+        PropertyReader reader = manager.getPropertyResource().createReader();
+
+        assertThat(TestVersionConfiguration.VERSION_NUMBER.determineValue(reader).getValue(), equalTo(2));
+        assertThat(TestVersionConfiguration.SHELF_POPATOES.determineValue(reader).getValue(), equalTo(4));
+        assertThat(TestVersionConfiguration.SHELF_TOMATOES.determineValue(reader).getValue(), equalTo(10));
+    }
+
+    /**
+     * This method tests the {@link VersionMigrationService} class.
+     * @author gamerover98
+     */
+    @Test
+    void shouldNotMigrateTheNextVersionAndThrowException() {
+        // given
+        Path file = copyFileFromResources("/versions/config-next-version-sample.yml", temporaryFolder);
+
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
+        MigrationService migrationService = getVersionMigrationService();
+
+        // throws an illegal state because the config version is greater than the current version.
+        assertThrows(
+            IllegalStateException.class,
+            () -> SettingsManagerBuilder.withYamlFile(file)
+                .configurationData(configurationData)
+                .migrationService(migrationService)
+                .create());
+    }
+
+    /**
+     * This method tests the {@link VersionMigrationService} class.
+     * @author gamerover98
+     */
+    @Test
+    void shouldNotMigrateFromAnInvalidVersionAndThrowException() {
+        // given
+        Path file = copyFileFromResources("/versions/config-invalid-version-sample.yml", temporaryFolder);
+
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
+        MigrationService migrationService = getVersionMigrationService();
+
+        // throws an illegal state because the config version is lower than the start version.
+        assertThrows(
+            IllegalStateException.class,
+            () -> SettingsManagerBuilder.withYamlFile(file)
+                .configurationData(configurationData)
+                .migrationService(migrationService)
+                .create());
+    }
+
+    /**
+     * @return the not-null instance of a {@link VersionMigrationService} for test purposes.
+     * @author gamerover98
+     */
+    @NotNull
+    private static VersionMigrationService getVersionMigrationService() {
+        return new VersionMigrationService(
+            2, // current configuration version
+            Collections.singletonList(
+                new VersionMigrationService.Migration() {
 
                     @Override
                     public int fromVersion() {
@@ -228,7 +297,6 @@ class SettingsManagerBuilderTest {
                         MigrationUtils.moveProperty(oldTomatoesProperty, newTomatoesProperty, reader, configurationData);
                     }
                 }
-            );
-        }
+            ));
     }
 }

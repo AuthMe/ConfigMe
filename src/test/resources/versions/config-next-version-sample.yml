@@ -1,0 +1,7 @@
+version: 3
+shelf:
+  potatoes: 4
+  tomatoes: 10
+  onions: 14
+warehouse:
+  garlic: 9
