@@ -7,8 +7,9 @@ import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.SettingsHolder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * <b>VMS - Version Migration Service</b>
@@ -27,19 +28,28 @@ public class VersionMigrationService implements MigrationService {
     private final Property<Integer> versionProperty;
 
     /**
-     * A collection of {@link VersionMigration}.
+     * A map where the key is the start version and the
+     * value is an implementation of the {@link VersionMigration}.
      */
-    private final Collection<VersionMigration> migrations;
+    private final Map<Integer, VersionMigration> migrationMap;
 
     /**
      * @param versionProperty The not-null version {@link Property} from the {@link SettingsHolder}.
-     * @param migrations A not-null collection of migrations.
+     * @param migrationMap A not-null collection of migrations.
      * @throws IllegalArgumentException if the versionPropertyType is empty.
      */
     public VersionMigrationService(@NotNull Property<Integer> versionProperty,
-                                   @NotNull Collection<VersionMigration> migrations) {
+                                   @NotNull Map<Integer, VersionMigration> migrationMap) {
         this.versionProperty = versionProperty;
-        this.migrations = Collections.unmodifiableCollection(migrations);
+        // The migrationMap field will be an unmodifiable LinkedHashMap ordered by the key.
+        this.migrationMap = Collections.unmodifiableMap(
+            migrationMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(
+                    LinkedHashMap::new,
+                    (map, entry) -> map.put(entry.getKey(), entry.getValue()),
+                    LinkedHashMap::putAll));
     }
 
     @Override
@@ -56,11 +66,13 @@ public class VersionMigrationService implements MigrationService {
     }
 
     /**
-     * @return The unmodifiable {@link Collection< VersionMigration >} of migrations.
+     * @return The unmodifiable {@link Map} of migrations where the key
+     *         is the start version and the value is an implementation
+     *         of the {@link VersionMigration}.
      */
     @NotNull
-    public Collection<VersionMigration> getMigrations() {
-        return this.migrations;
+    public Map<Integer, VersionMigration> getMigrationMap() {
+        return this.migrationMap;
     }
 
     /**
@@ -75,7 +87,7 @@ public class VersionMigrationService implements MigrationService {
      */
     protected boolean performMigrations(@NotNull PropertyReader reader, @NotNull ConfigurationData configurationData) {
         boolean migrationResult = NO_MIGRATION_NEEDED;
-        
+
         int readConfigVersion = versionProperty.determineValue(reader).getValue();
         int configVersion = versionProperty.getDefaultValue();
 
@@ -96,13 +108,15 @@ public class VersionMigrationService implements MigrationService {
         } else {
 
             // Migrate the configuration from version 1 to 2 to 3, and so on
-            for (VersionMigration migration : migrations) {
-                int fromVersion = migration.fromVersion();
-                int toVersion = migration.toVersion();
+            for (Map.Entry<Integer, VersionMigration> migrationEntry : migrationMap.entrySet()) {
+                VersionMigration versionMigration = migrationEntry.getValue();
+
+                int fromVersion = migrationEntry.getKey();
+                int toVersion = versionMigration.targetVersion();
 
                 // Start the migration.
                 if (readConfigVersion == fromVersion) {
-                    migration.migrate(reader, configurationData);
+                    versionMigration.migrate(reader, configurationData);
                     configurationData.setValue(versionProperty, toVersion);
                     migrationResult = MIGRATION_REQUIRED;
                 }

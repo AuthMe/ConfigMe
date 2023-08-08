@@ -25,7 +25,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static ch.jalu.configme.TestUtils.copyFileFromResources;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
@@ -297,33 +298,33 @@ class SettingsManagerBuilderTest {
      */
     @NotNull
     private static VersionMigrationService getVersionMigrationService(@NotNull Property<Integer> verionProperty) {
-        return new VersionMigrationService(
-            verionProperty,
-            Collections.singletonList(
-                new VersionMigration() {
+        Map<Integer, VersionMigration> migrationMap = new HashMap<>();
+        migrationMap.put(1, new From1To2VersionMigration());
 
-                    @Override
-                    public int fromVersion() {
-                        return 1;
-                    }
+        return new VersionMigrationService(verionProperty, migrationMap);
+    }
 
-                    @Override
-                    public int toVersion() {
-                        return 2;
-                    }
+    /**
+     * A simple implementation to migrate the config file from version 1 to version 2.
+     * @author gamerover98
+     */
+    private static class From1To2VersionMigration implements VersionMigration {
 
-                    @Override
-                    public void migrate(@NotNull PropertyReader reader, @NotNull ConfigurationData configurationData) {
-                        Property<Integer> oldPotatoesProperty = PropertyInitializer.newProperty("potatoes", 4);
-                        Property<Integer> oldTomatoesProperty = PropertyInitializer.newProperty("tomatoes", 10);
+        @Override
+        public int targetVersion() {
+            return 2;
+        }
 
-                        Property<Integer> newPotatoesProperty = PropertyInitializer.newProperty("shelf.potatoes", 4);
-                        Property<Integer> newTomatoesProperty = PropertyInitializer.newProperty("shelf.tomatoes", 10);
+        @Override
+        public void migrate(@NotNull PropertyReader reader, @NotNull ConfigurationData configurationData) {
+            Property<Integer> oldPotatoesProperty = PropertyInitializer.newProperty("potatoes", 4);
+            Property<Integer> oldTomatoesProperty = PropertyInitializer.newProperty("tomatoes", 10);
 
-                        MigrationUtils.moveProperty(oldPotatoesProperty, newPotatoesProperty, reader, configurationData);
-                        MigrationUtils.moveProperty(oldTomatoesProperty, newTomatoesProperty, reader, configurationData);
-                    }
-                }
-            ));
+            Property<Integer> newPotatoesProperty = PropertyInitializer.newProperty("shelf.potatoes", 4);
+            Property<Integer> newTomatoesProperty = PropertyInitializer.newProperty("shelf.tomatoes", 10);
+
+            MigrationUtils.moveProperty(oldPotatoesProperty, newPotatoesProperty, reader, configurationData);
+            MigrationUtils.moveProperty(oldTomatoesProperty, newTomatoesProperty, reader, configurationData);
+        }
     }
 }

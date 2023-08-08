@@ -8,12 +8,7 @@ import ch.jalu.configme.migration.Migration;
 public interface VersionMigration extends Migration {
 
     /**
-     * @return The current version value (such as 1).
+     * @return the configuration version this migration converts to (e.g. 2)
      */
-    int fromVersion();
-
-    /**
-     * @return The next version value (such as 2).
-     */
-    int toVersion();
+    int targetVersion();
 }
