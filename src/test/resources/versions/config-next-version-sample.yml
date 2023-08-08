@@ -1,7 +1,7 @@
 version: 3
 shelf:
-  potatoes: 4
-  tomatoes: 10
+  potatoes: 100
+  tomatoes: 200
   onions: 14
 warehouse:
   garlic: 9

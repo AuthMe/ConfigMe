@@ -173,7 +173,7 @@ class SettingsManagerBuilderTest {
         long initialFileSize = Files.size(file);
 
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
-        MigrationService migrationService = getVersionMigrationService();
+        MigrationService migrationService = getVersionMigrationService(TestVersionConfiguration.VERSION_NUMBER);
 
         // when
         SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
@@ -203,7 +203,7 @@ class SettingsManagerBuilderTest {
         long initialFileSize = Files.size(file);
 
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
-        MigrationService migrationService = getVersionMigrationService();
+        MigrationService migrationService = getVersionMigrationService(TestVersionConfiguration.VERSION_NUMBER);
 
         // when
         SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
@@ -223,45 +223,68 @@ class SettingsManagerBuilderTest {
     }
 
     /**
-     * This method tests the {@link VersionMigrationService} class.
-     * @author gamerover98
+     * This test reads the "config-next-version-sample.yml" file containing a "version: 3" property.
+     * The {@link VersionMigrationService} should set the version to 2, leaving the rest to
+     * the {@link SettingsHolder}.
+     *
+     * Author: gamerover98
      */
     @Test
-    void shouldNotMigrateTheNextVersionAndThrowException() {
+    void shouldNotMigrateFromNextVersionButResetConfig() {
         // given
         Path file = copyFileFromResources("/versions/config-next-version-sample.yml", temporaryFolder);
 
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
-        MigrationService migrationService = getVersionMigrationService();
+        MigrationService migrationService = getVersionMigrationService(TestVersionConfiguration.VERSION_NUMBER);
 
-        // throws an illegal state because the config version is greater than the current version.
-        assertThrows(
-            IllegalStateException.class,
-            () -> SettingsManagerBuilder.withYamlFile(file)
-                .configurationData(configurationData)
-                .migrationService(migrationService)
-                .create());
+        // when
+        SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
+            .configurationData(configurationData)
+            .migrationService(migrationService)
+            .create();
+
+        // then
+        // the file is reset to the current version.
+        PropertyReader reader = manager.getPropertyResource().createReader();
+
+        // the version has been changed from 3 to 2, and the file has been restored to the current SettingsHolder version.
+        assertThat(TestVersionConfiguration.VERSION_NUMBER.determineValue(reader).getValue(), equalTo(2));
+        // The values of shelf.potatoes and shelf.tomatoes remain the same as their YAML route hasn't changed.
+        assertThat(TestVersionConfiguration.SHELF_POPATOES.determineValue(reader).getValue(), equalTo(100));
+        assertThat(TestVersionConfiguration.SHELF_TOMATOES.determineValue(reader).getValue(), equalTo(200));
     }
 
     /**
-     * This method tests the {@link VersionMigrationService} class.
-     * @author gamerover98
+     * This test reads the "config-invalid-version-sample.yml" file which contains a "version: -12345" property.
+     * The {@link VersionMigrationService} should attempt to migrate, but no tasks are executed.
+     * Then, the version property should be reset to the default version number, and the rest is handled by
+     * the {@link SettingsHolder}.
+     *
+     * Author: gamerover98
      */
     @Test
-    void shouldNotMigrateFromAnInvalidVersionAndThrowException() {
+    void shouldNotMigrateFromOldVersionButResetConfig() {
         // given
         Path file = copyFileFromResources("/versions/config-invalid-version-sample.yml", temporaryFolder);
 
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
-        MigrationService migrationService = getVersionMigrationService();
+        MigrationService migrationService = getVersionMigrationService(TestVersionConfiguration.VERSION_NUMBER);
 
-        // throws an illegal state because the config version is lower than the start version.
-        assertThrows(
-            IllegalStateException.class,
-            () -> SettingsManagerBuilder.withYamlFile(file)
-                .configurationData(configurationData)
-                .migrationService(migrationService)
-                .create());
+        // when
+        SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
+            .configurationData(configurationData)
+            .migrationService(migrationService)
+            .create();
+
+        // then
+        // the file is reset to the current version.
+        PropertyReader reader = manager.getPropertyResource().createReader();
+
+        // the version has been changed from 3 to 2, and the file has been restored to the current SettingsHolder version.
+        assertThat(TestVersionConfiguration.VERSION_NUMBER.determineValue(reader).getValue(), equalTo(2));
+        // the values of shelf.potatoes and shelf.tomatoes have been reset as they didn't match the old YAML routes
+        assertThat(TestVersionConfiguration.SHELF_POPATOES.determineValue(reader).getValue(), equalTo(40));
+        assertThat(TestVersionConfiguration.SHELF_TOMATOES.determineValue(reader).getValue(), equalTo(100));
     }
 
     /**
@@ -269,9 +292,9 @@ class SettingsManagerBuilderTest {
      * @author gamerover98
      */
     @NotNull
-    private static VersionMigrationService getVersionMigrationService() {
+    private static VersionMigrationService getVersionMigrationService(@NotNull Property<Integer> verionProperty) {
         return new VersionMigrationService(
-            2, // current configuration version
+            verionProperty,
             Collections.singletonList(
                 new VersionMigrationService.Migration() {
 
