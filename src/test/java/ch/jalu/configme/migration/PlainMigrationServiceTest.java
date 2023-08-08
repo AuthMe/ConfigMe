@@ -7,7 +7,6 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.YamlFileReader;
 import ch.jalu.configme.samples.TestConfiguration;
-import ch.jalu.configme.utils.MigrationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,9 +21,7 @@ import java.nio.file.Path;
 import static ch.jalu.configme.configurationdata.ConfigurationDataBuilder.createConfiguration;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 
 /**
  * Test for {@link PlainMigrationService}.
@@ -103,52 +100,6 @@ class PlainMigrationServiceTest {
         // then
         assertThat(result, equalTo(true));
         assertThat(configurationData.getValue(TestConfiguration.DURATION_IN_SECONDS), equalTo(0));
-    }
-
-    @Test
-    void shouldMoveProperty() {
-        // given
-        PropertyReader reader = createReaderSpy(INCOMPLETE_CONFIG);
-        ConfigurationData configurationData = mock(ConfigurationData.class);
-
-        // when
-        boolean result = MigrationUtils.moveProperty(
-            TestConfiguration.DURATION_IN_SECONDS, TestConfiguration.VERSION_NUMBER, reader, configurationData);
-
-        // then
-        assertThat(result, equalTo(true));
-        verify(configurationData).setValue(TestConfiguration.VERSION_NUMBER, 22);
-    }
-
-    @Test
-    void shouldNotMovePropertyIfAlreadyExists() {
-        // given
-        PropertyReader reader = createReaderSpy(COMPLETE_CONFIG);
-        ConfigurationData configurationData = mock(ConfigurationData.class);
-
-        // when
-        boolean result = MigrationUtils.moveProperty(
-            TestConfiguration.DURATION_IN_SECONDS, TestConfiguration.VERSION_NUMBER, reader, configurationData);
-
-        // then
-        assertThat(result, equalTo(true)); // still true because value is present at path
-        verifyNoInteractions(configurationData);
-    }
-
-    @Test
-    void shouldReturnFalseIfOldPathDoesNotExist() {
-        // given
-        PropertyReader reader = createReaderSpy(INCOMPLETE_CONFIG);
-        ConfigurationData configurationData = mock(ConfigurationData.class);
-        Property<Integer> oldProperty = new IntegerProperty("path.does.not.exist", 3);
-
-        // when
-        boolean result = MigrationUtils.moveProperty(
-            oldProperty, TestConfiguration.VERSION_NUMBER, reader, configurationData);
-
-        // then
-        assertThat(result, equalTo(false));
-        verifyNoInteractions(configurationData);
     }
 
     private PropertyReader createReaderSpy(String file) {

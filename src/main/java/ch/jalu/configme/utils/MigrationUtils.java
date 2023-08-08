@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 public final class MigrationUtils {
 
     private MigrationUtils() {
-        // nothing to do.
     }
 
     /**

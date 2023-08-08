@@ -4,11 +4,10 @@ import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
-import ch.jalu.configme.SettingsHolder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,28 +27,31 @@ public class VersionMigrationService implements MigrationService {
     private final Property<Integer> versionProperty;
 
     /**
-     * A map where the key is the start version and the
-     * value is an implementation of the {@link VersionMigration}.
+     * All known migrations held by start version.
      */
-    private final Map<Integer, VersionMigration> migrationMap;
+    private final Map<Integer, VersionMigration> migrationsByStartVersion;
 
     /**
-     * @param versionProperty The not-null version {@link Property} from the {@link SettingsHolder}.
-     * @param migrationMap A not-null collection of migrations.
-     * @throws IllegalArgumentException if the versionPropertyType is empty.
+     * Constructor.
+     *
+     * @param versionProperty the property that contains the configuration version
+     * @param migrations all known migrations
      */
     public VersionMigrationService(@NotNull Property<Integer> versionProperty,
-                                   @NotNull Map<Integer, VersionMigration> migrationMap) {
+                                   @NotNull Iterable<VersionMigration> migrations) {
         this.versionProperty = versionProperty;
-        // The migrationMap field will be an unmodifiable LinkedHashMap ordered by the key.
-        this.migrationMap = Collections.unmodifiableMap(
-            migrationMap.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(
-                    LinkedHashMap::new,
-                    (map, entry) -> map.put(entry.getKey(), entry.getValue()),
-                    LinkedHashMap::putAll));
+        this.migrationsByStartVersion = validateAndGroupMigrationsByFromVersion(migrations);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param versionProperty the property that contains the configuration version
+     * @param migrations all known migrations
+     */
+    public VersionMigrationService(@NotNull Property<Integer> versionProperty,
+                                   @NotNull VersionMigration... migrations) {
+        this(versionProperty, Arrays.asList(migrations));
     }
 
     @Override
@@ -57,26 +59,16 @@ public class VersionMigrationService implements MigrationService {
         return performMigrations(reader, configurationData) || !configurationData.areAllValuesValidInResource();
     }
 
-    /**
-     * @return The not-null version property from the {@link SettingsHolder}.
-     */
-    @NotNull
-    public Property<Integer> getVersionProperty() {
-        return this.versionProperty;
+    protected final @NotNull Property<Integer> getVersionProperty() {
+        return versionProperty;
+    }
+
+    protected final @NotNull Map<Integer, VersionMigration> getMigrationsByStartVersion() {
+        return migrationsByStartVersion;
     }
 
     /**
-     * @return The unmodifiable {@link Map} of migrations where the key
-     *         is the start version and the value is an implementation
-     *         of the {@link VersionMigration}.
-     */
-    @NotNull
-    public Map<Integer, VersionMigration> getMigrationMap() {
-        return this.migrationMap;
-    }
-
-    /**
-     * Perform the migration by using the versioning system.
+     * Performs the migration by using the versioning system.
      * <p>
      * Note that the settings manager automatically saves the resource
      * if the migration service returns {@link #MIGRATION_REQUIRED} from {@link #checkAndMigrate}.
@@ -86,53 +78,72 @@ public class VersionMigrationService implements MigrationService {
      * @return true if a migration has been performed, false otherwise (see constants on {@link MigrationService})
      */
     protected boolean performMigrations(@NotNull PropertyReader reader, @NotNull ConfigurationData configurationData) {
-        boolean migrationResult = NO_MIGRATION_NEEDED;
-
         int readConfigVersion = versionProperty.determineValue(reader).getValue();
         int configVersion = versionProperty.getDefaultValue();
 
         // No action needed, versions match.
         if (readConfigVersion == configVersion) {
-            return migrationResult;
+            return NO_MIGRATION_NEEDED;
         }
 
-        /*
-         * If the version read from the current config file is higher than
-         * the current default value of the SettingsHolder version property,
-         * we need to reset the configuration to the current SettingsHolder version.
-         */
-        if (readConfigVersion > configVersion) {
-            // Reset the config version and delegate the rest to ConfigMe.
-            configurationData.setValue(versionProperty, configVersion);
-            migrationResult = MIGRATION_REQUIRED;
-        } else {
+        // Migrate the configuration from version 1 to 2 to 3, and so on
+        runApplicableMigrations(readConfigVersion, reader, configurationData);
+        // We set the current version regardless of what migrations were run: if there was no migration for the version
+        // or the migrations didn't end up at the current config version, triggering a resave still means that all
+        // stored values correspond to the current structure, so it's safe to assume we're up-to-date.
+        configurationData.setValue(versionProperty, configVersion);
 
-            // Migrate the configuration from version 1 to 2 to 3, and so on
-            for (Map.Entry<Integer, VersionMigration> migrationEntry : migrationMap.entrySet()) {
-                VersionMigration versionMigration = migrationEntry.getValue();
+        return MIGRATION_REQUIRED;
+    }
 
-                int fromVersion = migrationEntry.getKey();
-                int toVersion = versionMigration.targetVersion();
+    /**
+     * Runs applicable migrations successively: if a migration is found for the read config version, it is run and its
+     * {@link VersionMigration#targetVersion() target version} is noted. If a migration exists for the target version,
+     * it is also run, and so forth.
+     *
+     * @param readConfigVersion the version that was read in the configuration file
+     * @param reader the reader with which the configuration file can be read
+     * @param configurationData the configuration data
+     * @return the target version of the last migration that was run, or the read config version if no migration was run
+     */
+    protected int runApplicableMigrations(int readConfigVersion,
+                                          @NotNull PropertyReader reader,
+                                          @NotNull ConfigurationData configurationData) {
+        int updatedVersion = readConfigVersion;
+        VersionMigration migration = migrationsByStartVersion.get(readConfigVersion);
+        while (migration != null) {
+            migration.migrate(reader, configurationData);
 
-                // Start the migration.
-                if (readConfigVersion == fromVersion) {
-                    versionMigration.migrate(reader, configurationData);
-                    configurationData.setValue(versionProperty, toVersion);
-                    migrationResult = MIGRATION_REQUIRED;
-                }
-            }
+            updatedVersion = migration.targetVersion();
+            migration = migrationsByStartVersion.get(updatedVersion);
+        }
+        return updatedVersion;
+    }
 
-            /*
-             * If there are no migrations, reset the file similarly to when
-             * the read config version is higher than the current default value (as mentioned above).
-             */
-            if (migrationResult == NO_MIGRATION_NEEDED) {
-                // Reset the config version and delegate the rest to ConfigMe.
-                configurationData.setValue(versionProperty, configVersion);
-                migrationResult = MIGRATION_REQUIRED;
+    protected Map<Integer, VersionMigration> validateAndGroupMigrationsByFromVersion(
+                                                                                Iterable<VersionMigration> migrations) {
+        Map<Integer, VersionMigration> migrationsByStartVersion = new HashMap<>();
+        for (VersionMigration migration : migrations) {
+            validateVersions(migration);
+            int fromVersion = migration.fromVersion();
+
+            if (migrationsByStartVersion.put(fromVersion, migration) != null) {
+                throw new IllegalArgumentException(
+                    "Multiple migrations were provided for start version " + fromVersion);
             }
         }
+        return migrationsByStartVersion;
+    }
 
-        return migrationResult;
+    protected void validateVersions(VersionMigration migration) {
+        if (migration.targetVersion() > versionProperty.getDefaultValue()) {
+            throw new IllegalArgumentException("The migration from version " + migration.fromVersion() + " to version "
+                + migration.targetVersion() + " has an invalid target version. Current configuration version is: "
+                + versionProperty.getDefaultValue());
+        } else if (migration.fromVersion() >= migration.targetVersion()) {
+            throw new IllegalArgumentException(
+                "A migration from version " + migration.fromVersion() + " to version " + migration.targetVersion()
+                    + " was supplied, but it is expected that the target version be larger than the start version");
+        }
     }
 }

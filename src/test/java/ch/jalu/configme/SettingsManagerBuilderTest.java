@@ -168,8 +168,8 @@ class SettingsManagerBuilderTest {
     }
 
     /**
-     * This method tests the {@link VersionMigrationService} class.
-     * @author gamerover98
+     * Tests the integration of {@link VersionMigrationService} with the settings manager. A migration is triggered
+     * by it due to the contents in the YAML file.
      */
     @Test
     void shouldMigrateFromVersion1ToVersion2() throws IOException {
@@ -178,7 +178,8 @@ class SettingsManagerBuilderTest {
         long initialFileSize = Files.size(file);
 
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
-        MigrationService migrationService = getVersionMigrationService(TestVersionConfiguration.VERSION_NUMBER);
+        MigrationService migrationService = new VersionMigrationService(
+            TestVersionConfiguration.VERSION_NUMBER, new From1To2VersionMigration());
 
         // when
         SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
@@ -187,7 +188,7 @@ class SettingsManagerBuilderTest {
             .create();
 
         // then
-        // check that file was written to (migration services notices incomplete file)
+        // check that file was written to
         assertThat(Files.size(file), greaterThan(initialFileSize));
 
         PropertyReader reader = manager.getPropertyResource().createReader();
@@ -198,117 +199,14 @@ class SettingsManagerBuilderTest {
     }
 
     /**
-     * This method tests the {@link VersionMigrationService} class.
-     * @author gamerover98
-     */
-    @Test
-    void shouldNotMigrateAndKeepConfigValues() throws IOException {
-        // given
-        Path file = copyFileFromResources("/versions/config-current-version-sample.yml", temporaryFolder);
-        long initialFileSize = Files.size(file);
-
-        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
-        MigrationService migrationService = getVersionMigrationService(TestVersionConfiguration.VERSION_NUMBER);
-
-        // when
-        SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
-            .configurationData(configurationData)
-            .migrationService(migrationService)
-            .create();
-
-        // then
-        // the file won't change.
-        assertThat(Files.size(file), equalTo(initialFileSize));
-
-        PropertyReader reader = manager.getPropertyResource().createReader();
-
-        assertThat(TestVersionConfiguration.VERSION_NUMBER.determineValue(reader).getValue(), equalTo(2));
-        assertThat(TestVersionConfiguration.SHELF_POPATOES.determineValue(reader).getValue(), equalTo(4));
-        assertThat(TestVersionConfiguration.SHELF_TOMATOES.determineValue(reader).getValue(), equalTo(10));
-    }
-
-    /**
-     * This test reads the "config-next-version-sample.yml" file containing a "version: 3" property.
-     * The {@link VersionMigrationService} should set the version to 2, leaving the rest to
-     * the {@link SettingsHolder}.
-     *
-     * Author: gamerover98
-     */
-    @Test
-    void shouldNotMigrateFromNextVersionButResetConfig() {
-        // given
-        Path file = copyFileFromResources("/versions/config-next-version-sample.yml", temporaryFolder);
-
-        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
-        MigrationService migrationService = getVersionMigrationService(TestVersionConfiguration.VERSION_NUMBER);
-
-        // when
-        SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
-            .configurationData(configurationData)
-            .migrationService(migrationService)
-            .create();
-
-        // then
-        // the file is reset to the current version.
-        PropertyReader reader = manager.getPropertyResource().createReader();
-
-        // the version has been changed from 3 to 2, and the file has been restored to the current SettingsHolder version.
-        assertThat(TestVersionConfiguration.VERSION_NUMBER.determineValue(reader).getValue(), equalTo(2));
-        // The values of shelf.potatoes and shelf.tomatoes remain the same as their YAML route hasn't changed.
-        assertThat(TestVersionConfiguration.SHELF_POPATOES.determineValue(reader).getValue(), equalTo(100));
-        assertThat(TestVersionConfiguration.SHELF_TOMATOES.determineValue(reader).getValue(), equalTo(200));
-    }
-
-    /**
-     * This test reads the "config-invalid-version-sample.yml" file which contains a "version: -12345" property.
-     * The {@link VersionMigrationService} should attempt to migrate, but no tasks are executed.
-     * Then, the version property should be reset to the default version number, and the rest is handled by
-     * the {@link SettingsHolder}.
-     *
-     * Author: gamerover98
-     */
-    @Test
-    void shouldNotMigrateFromOldVersionButResetConfig() {
-        // given
-        Path file = copyFileFromResources("/versions/config-invalid-version-sample.yml", temporaryFolder);
-
-        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(TestVersionConfiguration.class);
-        MigrationService migrationService = getVersionMigrationService(TestVersionConfiguration.VERSION_NUMBER);
-
-        // when
-        SettingsManagerImpl manager = (SettingsManagerImpl) SettingsManagerBuilder.withYamlFile(file)
-            .configurationData(configurationData)
-            .migrationService(migrationService)
-            .create();
-
-        // then
-        // the file is reset to the current version.
-        PropertyReader reader = manager.getPropertyResource().createReader();
-
-        // the version has been changed from 3 to 2, and the file has been restored to the current SettingsHolder version.
-        assertThat(TestVersionConfiguration.VERSION_NUMBER.determineValue(reader).getValue(), equalTo(2));
-        // the values of shelf.potatoes and shelf.tomatoes have been reset as they didn't match the old YAML routes
-        assertThat(TestVersionConfiguration.SHELF_POPATOES.determineValue(reader).getValue(), equalTo(40));
-        assertThat(TestVersionConfiguration.SHELF_TOMATOES.determineValue(reader).getValue(), equalTo(100));
-    }
-
-    /**
-     * @return the not-null instance of a {@link VersionMigrationService} for test purposes.
-     * @author gamerover98
-     */
-    @NotNull
-    private static VersionMigrationService getVersionMigrationService(@NotNull Property<Integer> verionProperty) {
-        Map<Integer, VersionMigration> migrationMap = new HashMap<>();
-        migrationMap.put(1, new From1To2VersionMigration());
-
-        return new VersionMigrationService(verionProperty, migrationMap);
-    }
-
-    /**
      * A simple implementation to migrate the config file from version 1 to version 2.
-     * @author gamerover98
      */
-    private static class From1To2VersionMigration implements VersionMigration {
+    private static final class From1To2VersionMigration implements VersionMigration {
+
+        @Override
+        public int fromVersion() {
+            return 1;
+        }
 
         @Override
         public int targetVersion() {
@@ -320,8 +218,8 @@ class SettingsManagerBuilderTest {
             Property<Integer> oldPotatoesProperty = PropertyInitializer.newProperty("potatoes", 4);
             Property<Integer> oldTomatoesProperty = PropertyInitializer.newProperty("tomatoes", 10);
 
-            Property<Integer> newPotatoesProperty = PropertyInitializer.newProperty("shelf.potatoes", 4);
-            Property<Integer> newTomatoesProperty = PropertyInitializer.newProperty("shelf.tomatoes", 10);
+            Property<Integer> newPotatoesProperty = TestVersionConfiguration.SHELF_POPATOES;
+            Property<Integer> newTomatoesProperty = TestVersionConfiguration.SHELF_TOMATOES;
 
             MigrationUtils.moveProperty(oldPotatoesProperty, newPotatoesProperty, reader, configurationData);
             MigrationUtils.moveProperty(oldTomatoesProperty, newTomatoesProperty, reader, configurationData);
