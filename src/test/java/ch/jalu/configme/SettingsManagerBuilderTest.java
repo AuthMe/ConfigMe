@@ -4,7 +4,8 @@ import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.migration.PlainMigrationService;
-import ch.jalu.configme.migration.VersionMigrationService;
+import ch.jalu.configme.migration.version.VersionMigration;
+import ch.jalu.configme.migration.version.VersionMigrationService;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.PropertyInitializer;
 import ch.jalu.configme.resource.PropertyReader;
@@ -29,12 +30,15 @@ import java.util.Collections;
 import static ch.jalu.configme.TestUtils.copyFileFromResources;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for {@link SettingsManagerBuilder}.
@@ -296,7 +300,7 @@ class SettingsManagerBuilderTest {
         return new VersionMigrationService(
             verionProperty,
             Collections.singletonList(
-                new VersionMigrationService.Migration() {
+                new VersionMigration() {
 
                     @Override
                     public int fromVersion() {

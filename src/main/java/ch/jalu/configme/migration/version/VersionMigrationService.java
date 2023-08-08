@@ -1,6 +1,7 @@
-package ch.jalu.configme.migration;
+package ch.jalu.configme.migration.version;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
+import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.SettingsHolder;
@@ -26,9 +27,9 @@ public class VersionMigrationService implements MigrationService {
     private final Property<Integer> versionProperty;
 
     /**
-     * A collection of {@link Migration}.
+     * A collection of {@link VersionMigration}.
      */
-    private final Collection<Migration> migrations;
+    private final Collection<VersionMigration> migrations;
 
     /**
      * @param versionProperty The not-null version {@link Property} from the {@link SettingsHolder}.
@@ -36,7 +37,7 @@ public class VersionMigrationService implements MigrationService {
      * @throws IllegalArgumentException if the versionPropertyType is empty.
      */
     public VersionMigrationService(@NotNull Property<Integer> versionProperty,
-                                   @NotNull Collection<Migration> migrations) {
+                                   @NotNull Collection<VersionMigration> migrations) {
         this.versionProperty = versionProperty;
         this.migrations = Collections.unmodifiableCollection(migrations);
     }
@@ -55,10 +56,10 @@ public class VersionMigrationService implements MigrationService {
     }
 
     /**
-     * @return The unmodifiable {@link Collection<Migration>} of migrations.
+     * @return The unmodifiable {@link Collection< VersionMigration >} of migrations.
      */
     @NotNull
-    public Collection<Migration> getMigrations() {
+    public Collection<VersionMigration> getMigrations() {
         return this.migrations;
     }
 
@@ -95,7 +96,7 @@ public class VersionMigrationService implements MigrationService {
         } else {
 
             // Migrate the configuration from version 1 to 2 to 3, and so on
-            for (Migration migration : migrations) {
+            for (VersionMigration migration : migrations) {
                 int fromVersion = migration.fromVersion();
                 int toVersion = migration.toVersion();
 
@@ -119,26 +120,5 @@ public class VersionMigrationService implements MigrationService {
         }
 
         return migrationResult;
-    }
-
-    public interface Migration {
-
-        /**
-         * @return The current version value (such as 1).
-         */
-        int fromVersion();
-
-        /**
-         * @return The next version value (such as 2).
-         */
-        int toVersion();
-
-        /**
-         * Migrate the configuration to the next version.
-         *
-         * @param reader the property reader to read the configuration file from
-         * @param configurationData configuration data to update a property's value
-         */
-        void migrate(@NotNull PropertyReader reader, @NotNull ConfigurationData configurationData);
     }
 }
