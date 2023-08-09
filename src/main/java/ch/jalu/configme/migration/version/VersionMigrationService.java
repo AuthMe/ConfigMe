@@ -11,11 +11,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <b>VMS - Version Migration Service</b>
+ * Version-based {@link MigrationService} implementation that uses a {@code Property<Integer>} to track configuration
+ * versions, based on which it triggers migrations. The application's current configuration value is taken from the
+ * property's {@link Property#getDefaultValue() default value}, which should be incremented whenever a new migration is
+ * desired.
  * <p>
- *   This {@link MigrationService} can be useful to easily manage the migration from
- *   an old config version to a new one without generating issues.
- * </p>
+ * To define a migration, create a new implementation of {@link VersionMigration} and provide it to this service's
+ * constructor. Ensure that each migration's starting version is unique and valid, and that the target version is not
+ * greater than the default value of the version property.
+ * <p>
+ * This service triggers migrations and resaves the configuration if the version read from the configuration file is not
+ * equal to the version property's default value. Migrations are applied successively from the stored version to the
+ * target version of each migration, ensuring proper migration order. For example, if a service has a migration from
+ * version 1 to 2, and one from version 2 to 3, then both migrations are run if the version in the config file is 1.
+ * On the other hand, if one migration migrates from version 1 to 3 and another one from 2 to 3, then only the former
+ * would be run in the same scenario.
+ * <p>
+ * Regardless of which migrations were run (or if any were run at all), the version in the config file is set to the
+ * version property's default value at the end of the execution. This ensures that invalid versions (like a value that
+ * was manually changed) are fixed. Since only known properties are saved to the config file, storing the current
+ * default value as version most appropriately reflects the structure of the configuration file.
+ * <p>
+ * It is recommended to create a migration for each incremental version change for simplicity (i.e. 1 to 2,
+ * 2 to 3, ...). However, you can also define non-sequential migrations: a migration can migrate from 1 to 4,
+ * another from 2 to 3, and one from 3 to 4 to migrate any older version to version 4.
  *
  * @author gamerover98
  */
