@@ -8,6 +8,7 @@ import ch.jalu.configme.resource.yaml.SnakeYamlNodeBuilder;
 import ch.jalu.configme.resource.yaml.SnakeYamlNodeBuilderImpl;
 import ch.jalu.configme.resource.yaml.SnakeYamlNodeContainer;
 import ch.jalu.configme.resource.yaml.SnakeYamlNodeContainerImpl;
+import ch.jalu.configme.utils.StreamUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
@@ -22,14 +23,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class YamlFileResource implements PropertyResource {
 
     private final Path path;
     private final @NotNull YamlFileResourceOptions options;
-    private final int indentationSize;
     private @Nullable Yaml yamlObject;
 
     public YamlFileResource(@NotNull Path path) {
@@ -39,7 +38,6 @@ public class YamlFileResource implements PropertyResource {
     public YamlFileResource(@NotNull Path path, @NotNull YamlFileResourceOptions options) {
         this.path = path;
         this.options = options;
-        this.indentationSize = options.getIndentationSize();
     }
 
     /**
@@ -68,8 +66,9 @@ public class YamlFileResource implements PropertyResource {
         for (Property<?> property : properties) {
             Object exportValue = getExportValue(property, configurationData);
             if (exportValue != null) {
-                List<PathElement> pathElements = pathTraverser.getPathElements(property.getPath());
-                exportValue(configurationData, root, pathElements, nodeBuilder, property.getPath(), exportValue);
+                String path = property.getPath();
+                List<PathElement> pathElements = pathTraverser.getPathElements(path);
+                createAndAddYamlNode(exportValue, path, pathElements, root, configurationData, nodeBuilder);
             }
         }
 
@@ -90,16 +89,28 @@ public class YamlFileResource implements PropertyResource {
         }
     }
 
-    private void exportValue(@NotNull ConfigurationData configurationData,
-                             @NotNull SnakeYamlNodeContainer rootContainer,
-                             @NotNull List<PathElement> pathElements, @NotNull SnakeYamlNodeBuilder nodeBuilder,
-                             @NotNull String path, @NotNull Object exportValue) {
+    /**
+     * Creates a YAML node for the export value and stores it, along with any comments for intermediate paths that
+     * have not been visited yet.
+     *
+     * @param exportValue the export value to store
+     * @param path the path the export value is for
+     * @param pathElements the path elements of this property's path
+     * @param rootContainer the root YAML node container for storing the export value
+     * @param configurationData the configuration data (for the retrieval of comments)
+     * @param nodeBuilder YAML node builder
+     */
+    protected void createAndAddYamlNode(@NotNull Object exportValue, @NotNull String path,
+                                        @NotNull List<PathElement> pathElements,
+                                        @NotNull SnakeYamlNodeContainer rootContainer,
+                                        @NotNull ConfigurationData configurationData,
+                                        @NotNull SnakeYamlNodeBuilder nodeBuilder) {
         SnakeYamlNodeContainer container = rootContainer;
         for (PathElement pathElement : pathElements) {
             if (pathElement.isEndOfPath()) {
                 int emptyLines = options.getNumberOfEmptyLinesBefore(pathElement);
                 container.putNode(pathElement.getName(),
-                    nodeBuilder.toYamlNode(exportValue, path, configurationData, emptyLines));
+                    nodeBuilder.createYamlNode(exportValue, path, configurationData, emptyLines));
             } else {
                 container = container.getOrCreateChildContainer(pathElement.getName(),
                     () -> getCommentsForPathElement(configurationData, pathElement));
@@ -111,7 +122,7 @@ public class YamlFileResource implements PropertyResource {
     protected List<String> getCommentsForPathElement(@NotNull ConfigurationData configurationData,
                                                      @NotNull PathElement pathElement) {
         return Stream.concat(
-                    IntStream.range(0, options.getNumberOfEmptyLinesBefore(pathElement)).mapToObj(i -> "\n"),
+                    StreamUtils.repeat("\n", options.getNumberOfEmptyLinesBefore(pathElement)),
                     configurationData.getCommentsForSection(pathElement.getFullPath()).stream())
             .collect(Collectors.toList());
     }
@@ -150,7 +161,7 @@ public class YamlFileResource implements PropertyResource {
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setAllowUnicode(true);
         options.setProcessComments(true);
-        options.setIndent(indentationSize);
+        options.setIndent(this.options.getIndentationSize());
         return new Yaml(options);
     }
 

@@ -17,7 +17,7 @@ public class PropertyPathTraverser {
 
     /** The last path that was processed. */
     private String lastPath;
-    private boolean isFirstProperty = true;
+    private boolean isFirstElement = true;
 
     /**
      * Returns all path elements of the given path.
@@ -35,14 +35,14 @@ public class PropertyPathTraverser {
         int level = 0;
         for (int i = 0; i < totalParts; ++i) {
             fullPathBuilder.append(pathParts[i]);
-            PathElement element = new PathElement(level, pathParts[i], fullPathBuilder.toString(), isFirstProperty);
+            PathElement element = new PathElement(level, pathParts[i], fullPathBuilder.toString(), isFirstElement);
             element.setEndOfPath(i == totalParts - 1);
             element.setFirstOfGroup(levelOfFirstNewPart == level);
             pathElements.add(element);
 
             ++level;
             fullPathBuilder.append(".");
-            isFirstProperty = false;
+            isFirstElement = false;
         }
         lastPath = path;
         return pathElements;
@@ -56,7 +56,7 @@ public class PropertyPathTraverser {
      * @param path the new path
      * @return the level of the first new path element
      */
-    private int returnLevelOfFirstNewPathElement(@NotNull String path) {
+    protected int returnLevelOfFirstNewPathElement(@NotNull String path) {
         if (lastPath == null) {
             return 0;
         }
@@ -134,22 +134,22 @@ public class PropertyPathTraverser {
             return isFirstOfGroup;
         }
 
-        void setFirstOfGroup(boolean firstOfGroup) {
+        protected void setFirstOfGroup(boolean firstOfGroup) {
             isFirstOfGroup = firstOfGroup;
         }
 
         /**
-         * Returns if this path element is at the end, i.e. whether it represents a leaf path that is associated to
+         * Returns whether this path element represents the final part of a path, indicating that it is associated with
          * a property. For example, given a property {@code config.datasource.driver.version}, the path element for
          * {@code version} returns true for this method.
          *
-         * @return true if this element is the final part of the given path
+         * @return true if this element is the last part of the path (i.e. if it's a "leaf element")
          */
         public boolean isEndOfPath() {
             return isEndOfPath;
         }
 
-        void setEndOfPath(boolean isEndOfPath) {
+        protected void setEndOfPath(boolean isEndOfPath) {
             this.isEndOfPath = isEndOfPath;
         }
     }

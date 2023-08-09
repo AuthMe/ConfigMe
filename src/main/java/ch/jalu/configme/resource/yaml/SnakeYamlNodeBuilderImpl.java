@@ -2,6 +2,7 @@ package ch.jalu.configme.resource.yaml;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.properties.convertresult.ValueWithComments;
+import ch.jalu.configme.utils.StreamUtils;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.comments.CommentLine;
@@ -22,7 +23,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -32,8 +32,8 @@ import java.util.stream.StreamSupport;
 public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
 
     @Override
-    public @NotNull Node toYamlNode(@NotNull Object obj, @NotNull String path,
-                                    @NotNull ConfigurationData configurationData, int numberOfNewLines) {
+    public @NotNull Node createYamlNode(@NotNull Object obj, @NotNull String path,
+                                        @NotNull ConfigurationData configurationData, int numberOfNewLines) {
         Object value = ValueWithComments.unwrapValue(obj);
         if (value instanceof Enum<?>) {
             value = ((Enum<?>) value).name();
@@ -108,7 +108,7 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
         List<Node> values = entries
             .map(entry -> {
                 String entryPath = pathPrefix.concat(Integer.toString(counter.getAndIncrement()));
-                return toYamlNode(entry, entryPath, configurationData, 0);
+                return createYamlNode(entry, entryPath, configurationData, 0);
             })
             .collect(Collectors.toList());
 
@@ -122,7 +122,7 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
 
         for (Map.Entry<String, ?> entry : value.entrySet()) {
             Node keyNode = createKeyNode(entry.getKey());
-            Node valueNode = toYamlNode(entry.getValue(), pathPrefix.concat(entry.getKey()), configurationData, 0);
+            Node valueNode = createYamlNode(entry.getValue(), pathPrefix.concat(entry.getKey()), configurationData, 0);
             transferComments(valueNode, keyNode);
 
             nodeEntries.add(new NodeTuple(keyNode, valueNode));
@@ -144,12 +144,9 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
     protected @NotNull List<CommentLine> collectComments(@NotNull Object value, @NotNull String path,
                                                          @NotNull ConfigurationData configurationData,
                                                          int numberOfNewLines) {
-        Stream<String> emptyLineStream = IntStream.range(0, numberOfNewLines)
-            .mapToObj(i -> "\n");
+        Stream<String> emptyLineStream = StreamUtils.repeat("\n", numberOfNewLines);
         Stream<String> configDataStream = configurationData.getCommentsForSection(path).stream();
-        Stream<String> additionalCommentsStream = (value instanceof ValueWithComments)
-            ? ((ValueWithComments) value).getComments().stream()
-            : Stream.empty();
+        Stream<String> additionalCommentsStream = ValueWithComments.streamThroughCommentsIfApplicable(value);
 
         return Stream.of(emptyLineStream, configDataStream, additionalCommentsStream)
             .flatMap(Function.identity())

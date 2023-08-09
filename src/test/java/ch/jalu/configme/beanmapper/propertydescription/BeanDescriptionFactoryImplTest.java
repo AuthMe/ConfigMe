@@ -3,6 +3,7 @@ package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
+import ch.jalu.configme.beanmapper.command.ExecutionDetails;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
 import ch.jalu.configme.samples.beanannotations.BeanWithEmptyName;
 import ch.jalu.configme.samples.beanannotations.BeanWithNameClash;
@@ -25,6 +26,8 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
 /**
@@ -155,6 +158,43 @@ class BeanDescriptionFactoryImplTest {
             () -> factory.getAllProperties(BeanWithEmptyName.class),
             ConfigMeMapperException.class,
             "may not be empty");
+    }
+
+    @Test
+    void shouldReturnCommentsWithUuidIfNotRepeatable() {
+        // given
+        BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
+
+        // when
+        Collection<BeanPropertyDescription> sampleBeanProperties = factory.getAllProperties(SampleBean.class);
+        Collection<BeanPropertyDescription> sampleBeanProperties2 = factory.getAllProperties(SampleBean.class);
+
+        // then
+        BeanPropertyComments sizeComments = getDescription("size", sampleBeanProperties).getComments();
+        assertThat(sizeComments.getComments(), contains("Size of this entry (cm)"));
+        assertThat(sizeComments.getUuid(), notNullValue());
+
+        // Actually ensure that we have the same UUID if we fetch properties for the same class again
+        // -> there's no point in the UUID otherwise!
+        BeanPropertyComments sizeComments2 = getDescription("size", sampleBeanProperties2).getComments();
+        assertThat(sizeComments2.getUuid(), equalTo(sizeComments.getUuid()));
+    }
+
+    @Test
+    void shouldReturnCommentsWithoutUuid() {
+        // given
+        BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
+
+        // when
+        Collection<BeanPropertyDescription> execDetailsProperties = factory.getAllProperties(ExecutionDetails.class);
+
+        // then
+        BeanPropertyComments executorComments = getDescription("executor", execDetailsProperties).getComments();
+        assertThat(executorComments, sameInstance(BeanPropertyComments.EMPTY));
+
+        BeanPropertyComments importanceComments = getDescription("importance", execDetailsProperties).getComments();
+        assertThat(importanceComments.getComments(), contains("The higher the number, the more important"));
+        assertThat(importanceComments.getUuid(), nullValue());
     }
 
     private static BeanPropertyDescription getDescription(String name,

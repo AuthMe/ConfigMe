@@ -148,4 +148,18 @@ class SnakeYamlNodeContainerImplTest {
         // then
         assertThat(rootNode, sameInstance(boolNode));
     }
+
+    @Test
+    void shouldThrowIfNoRootValueWasSaved() {
+        // given
+        SnakeYamlNodeContainer container = new SnakeYamlNodeContainerImpl(Collections.emptyList());
+        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", null, null, DumperOptions.ScalarStyle.PLAIN);
+        container.putNode("isTest", boolNode);
+
+        // when
+        IllegalStateException ex = assertThrows(IllegalStateException.class, container::getRootValueNode);
+
+        // then
+        assertThat(ex.getMessage(), equalTo("No value was stored for the root path ''"));
+    }
 }

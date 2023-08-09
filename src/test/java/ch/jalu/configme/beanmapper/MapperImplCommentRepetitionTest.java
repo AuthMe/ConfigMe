@@ -3,9 +3,7 @@ package ch.jalu.configme.beanmapper;
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.properties.convertresult.ValueWithComments;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,9 +21,6 @@ import static org.hamcrest.Matchers.instanceOf;
 class MapperImplCommentRepetitionTest {
 
     private final MapperImpl mapper = new MapperImpl();
-
-    @TempDir
-    public Path temporaryFolder;
 
     @Test
     void shouldExportAsExpected() {

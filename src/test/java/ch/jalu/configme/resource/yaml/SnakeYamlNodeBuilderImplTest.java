@@ -57,7 +57,7 @@ class SnakeYamlNodeBuilderImplTest {
         given(configurationData.getCommentsForSection(path)).willReturn(Collections.singletonList("Title text"));
 
         // when
-        Node node = nodeBuilder.toYamlNode(value, path, configurationData, 2);
+        Node node = nodeBuilder.createYamlNode(value, path, configurationData, 2);
 
         // then
         assertThat(node, instanceOf(ScalarNode.class));
@@ -82,7 +82,7 @@ class SnakeYamlNodeBuilderImplTest {
         given(configurationData.getCommentsForSection(path)).willReturn(Arrays.asList("comment 1", "comment 2"));
 
         // when
-        Node node = nodeBuilder.toYamlNode(value, path, configurationData, 0);
+        Node node = nodeBuilder.createYamlNode(value, path, configurationData, 0);
 
         // then
         assertThat(node, instanceOf(ScalarNode.class));
@@ -106,7 +106,7 @@ class SnakeYamlNodeBuilderImplTest {
         given(configurationData.getCommentsForSection(path)).willReturn(Collections.emptyList());
 
         // when
-        Node node = nodeBuilder.toYamlNode(value, path, configurationData, 0);
+        Node node = nodeBuilder.createYamlNode(value, path, configurationData, 0);
 
         // then
         assertThat(node, instanceOf(ScalarNode.class));
@@ -128,7 +128,7 @@ class SnakeYamlNodeBuilderImplTest {
         given(configurationData.getCommentsForSection(path)).willReturn(Collections.emptyList());
 
         // when
-        Node node = nodeBuilder.toYamlNode(value, path, configurationData, 1);
+        Node node = nodeBuilder.createYamlNode(value, path, configurationData, 1);
 
         // then
         assertThat(node, instanceOf(ScalarNode.class));
@@ -151,7 +151,7 @@ class SnakeYamlNodeBuilderImplTest {
         given(configurationData.getCommentsForSection(path)).willReturn(Collections.singletonList("Pi up to 12 digits"));
 
         // when
-        Node node = nodeBuilder.toYamlNode(value, path, configurationData, 1);
+        Node node = nodeBuilder.createYamlNode(value, path, configurationData, 1);
 
         // then
         assertThat(node, instanceOf(ScalarNode.class));
@@ -175,7 +175,7 @@ class SnakeYamlNodeBuilderImplTest {
         given(configurationData.getCommentsForSection(path)).willReturn(Collections.emptyList());
 
         // when
-        Node node = nodeBuilder.toYamlNode(value, path, configurationData, 0);
+        Node node = nodeBuilder.createYamlNode(value, path, configurationData, 0);
 
         // then
         assertThat(node, instanceOf(ScalarNode.class));
@@ -199,7 +199,7 @@ class SnakeYamlNodeBuilderImplTest {
         given(configurationData.getCommentsForSection(path + ".1")).willReturn(Collections.singletonList("\n"));
 
         // when
-        Node node = nodeBuilder.toYamlNode(value, path, configurationData, 1);
+        Node node = nodeBuilder.createYamlNode(value, path, configurationData, 1);
 
         // then
         verify(configurationData).getCommentsForSection(path);
@@ -240,7 +240,7 @@ class SnakeYamlNodeBuilderImplTest {
         String path = "calc.flags";
 
         // when
-        Node result = nodeBuilder.toYamlNode(value, path, configurationData, 0);
+        Node result = nodeBuilder.createYamlNode(value, path, configurationData, 0);
 
         // then
         verify(configurationData).getCommentsForSection(path);
@@ -282,7 +282,7 @@ class SnakeYamlNodeBuilderImplTest {
         given(configurationData.getCommentsForSection(path + ".A")).willReturn(Collections.singletonList("Alpha comp."));
 
         // when
-        Node result = nodeBuilder.toYamlNode(factors, path, configurationData, 0);
+        Node result = nodeBuilder.createYamlNode(factors, path, configurationData, 0);
 
         // then
         verify(configurationData).getCommentsForSection(path);
@@ -329,7 +329,7 @@ class SnakeYamlNodeBuilderImplTest {
         given(configurationData.getCommentsForSection(path)).willReturn(Collections.singletonList("Overridden factors"));
 
         // when
-        Node result = nodeBuilder.toYamlNode(factors, path, configurationData, 0);
+        Node result = nodeBuilder.createYamlNode(factors, path, configurationData, 0);
 
         // then
         verify(configurationData, only()).getCommentsForSection(path);
@@ -355,7 +355,7 @@ class SnakeYamlNodeBuilderImplTest {
         given(configurationData.getCommentsForSection(path)).willReturn(Collections.singletonList("Overridden factors"));
 
         // when
-        Node result = nodeBuilder.toYamlNode(new ValueWithComments(value, Arrays.asList("R1", "R2")), path,
+        Node result = nodeBuilder.createYamlNode(new ValueWithComments(value, Arrays.asList("R1", "R2")), path,
             configurationData, 1);
 
         // then
@@ -382,9 +382,9 @@ class SnakeYamlNodeBuilderImplTest {
 
         // when
         IllegalArgumentException ex1 = assertThrows(IllegalArgumentException.class,
-            () -> nodeBuilder.toYamlNode(Optional.of(3), "", configurationData, 3));
+            () -> nodeBuilder.createYamlNode(Optional.of(3), "", configurationData, 3));
         IllegalArgumentException ex2 = assertThrows(IllegalArgumentException.class,
-            () -> nodeBuilder.toYamlNode(null, "", configurationData, 3));
+            () -> nodeBuilder.createYamlNode(null, "", configurationData, 3));
 
         // then
         assertThat(ex1.getMessage(), equalTo("Unsupported value of type: java.util.Optional"));

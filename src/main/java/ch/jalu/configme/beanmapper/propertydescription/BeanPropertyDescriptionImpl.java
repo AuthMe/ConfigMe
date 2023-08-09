@@ -40,7 +40,7 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
      * @param typeInformation type of the property
      * @param getter getter for the property
      * @param setter setter for the property
-     * @param comments the comments for this property
+     * @param comments the comments of the property
      */
     public BeanPropertyDescriptionImpl(@NotNull String name, @NotNull TypeInformation typeInformation,
                                        @NotNull Method getter, @NotNull Method setter,

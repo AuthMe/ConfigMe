@@ -40,7 +40,7 @@ public interface BeanPropertyDescription {
     @Nullable Object getValue(@NotNull Object bean);
 
     /**
-     * @return the comments to add when this property is exported
+     * @return the comments associated with this property
      */
     @NotNull BeanPropertyComments getComments();
 

@@ -39,7 +39,11 @@ public class SnakeYamlNodeContainerImpl implements SnakeYamlNodeContainer {
 
     @Override
     public @NotNull Node getRootValueNode() {
-        return (Node) values.get("");
+        Object rootValue = values.get("");
+        if (rootValue == null) {
+            throw new IllegalStateException("No value was stored for the root path ''");
+        }
+        return (Node) rootValue;
     }
 
     @Override
