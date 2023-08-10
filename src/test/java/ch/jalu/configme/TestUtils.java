@@ -120,16 +120,6 @@ public final class TestUtils {
     // -------------
 
     /**
-     * Verifies that the provided executable throws an exception of the given type.
-     *
-     * @param executable the executable to check
-     * @param exceptionType the expected type of the exception
-     */
-    public static void verifyException(Executable executable, Class<? extends Exception> exceptionType) {
-        verifyException(executable, exceptionType, "");
-    }
-
-    /**
      * Verifies that the provided executable throws an exception of the given type whose message contains
      * the provided message excerpt.
      *

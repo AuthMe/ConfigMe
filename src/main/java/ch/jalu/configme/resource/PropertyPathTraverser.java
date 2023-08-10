@@ -1,7 +1,5 @@
 package ch.jalu.configme.resource;
 
-import ch.jalu.configme.configurationdata.ConfigurationData;
-import ch.jalu.configme.utils.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -9,70 +7,70 @@ import java.util.List;
 
 /**
  * Helper class for the export of properties: it keeps track of the previously traversed property
- * and returns which path parts are new and defines the level of indentation.
+ * and returns which path parts are new.
  * <p>
- * For example if the property for path {@code config.datasource.mysql.type} was exported and we now
+ * For example, if the property for path {@code config.datasource.mysql.type} was exported and we now
  * encounter the property for path {@code config.datasource.driver.version}, the newly encountered
  * sections are {@code driver} and {@code version}.
  */
 public class PropertyPathTraverser {
 
-    private final ConfigurationData configurationData;
-    /** Contains all path elements besides the last, e.g. {datasource, mysql} for "datasource.mysql.table". */
-    private List<String> parentPathElements = new ArrayList<>(0);
-    private boolean isFirstProperty = true;
-
-    public PropertyPathTraverser(@NotNull ConfigurationData configurationData) {
-        this.configurationData = configurationData;
-    }
+    /** The last path that was processed. */
+    private String lastPath;
+    private boolean isFirstElement = true;
 
     /**
-     * Returns all path elements for the given property that have not been traversed yet.
+     * Returns all path elements of the given path.
      *
-     * @param pathElements all elements that make up the path of the property
-     * @return the new path elements
+     * @param path the path to inspect
+     * @return path elements (with useful information)
      */
-    public @NotNull List<PathElement> getPathElements(@NotNull List<String> pathElements) {
-        List<String> commonPathParts = CollectionUtils.filterCommonStart(
-            parentPathElements, pathElements.subList(0, pathElements.size() - 1));
-        List<String> newPathParts = CollectionUtils.getRange(pathElements, commonPathParts.size());
+    public @NotNull List<PathElement> getPathElements(@NotNull String path) {
+        String[] pathParts = path.split("\\.");
+        int totalParts = pathParts.length;
+        int levelOfFirstNewPart = returnLevelOfFirstNewPathElement(path);
 
-        parentPathElements = pathElements.subList(0, pathElements.size() - 1);
+        StringBuilder fullPathBuilder = new StringBuilder();
+        List<PathElement> pathElements = new ArrayList<>(totalParts);
+        int level = 0;
+        for (int i = 0; i < totalParts; ++i) {
+            fullPathBuilder.append(pathParts[i]);
+            PathElement element = new PathElement(level, pathParts[i], fullPathBuilder.toString(), isFirstElement);
+            element.setEndOfPath(i == totalParts - 1);
+            element.setFirstOfGroup(levelOfFirstNewPart == level);
+            pathElements.add(element);
 
-        int indentationLevel = commonPathParts.size();
-        String prefix = commonPathParts.isEmpty() ? "" : String.join(".", commonPathParts) + ".";
-        return convertToPathElements(indentationLevel, prefix, newPathParts);
-    }
-
-    private @NotNull List<PathElement> convertToPathElements(int indentation, @NotNull String prefix,
-                                                             @NotNull List<String> elements) {
-        List<PathElement> pathElements = new ArrayList<>(elements.size());
-        for (String element : elements) {
-            List<String> comments = isFirstProperty
-                ? getCommentsIncludingRoot(prefix + element)
-                : configurationData.getCommentsForSection(prefix + element);
-            pathElements.add(new PathElement(indentation, element, comments, isFirstProperty));
-            isFirstProperty = false;
-            prefix += element + ".";
-            ++indentation;
+            ++level;
+            fullPathBuilder.append(".");
+            isFirstElement = false;
         }
-        pathElements.get(0).setFirstOfGroup(true);
+        lastPath = path;
         return pathElements;
     }
 
-    private @NotNull List<String> getCommentsIncludingRoot(@NotNull String path) {
-        List<String> rootComments = configurationData.getCommentsForSection("");
-        if ("".equals(path)) {
-            return rootComments;
+    /**
+     * Returns the hierarchy level of the highest path element that is being visited for the first time. For example,
+     * if we previously processed {@code config.datasource.mysql.type} and the given path is
+     * {@code config.datasource.driver.version}, then the level for the path element "driver" is returned (i.e. 2).
+     *
+     * @param path the new path
+     * @return the level of the first new path element
+     */
+    protected int returnLevelOfFirstNewPathElement(@NotNull String path) {
+        if (lastPath == null) {
+            return 0;
         }
-        List<String> sectionComments = configurationData.getCommentsForSection(path);
-        // One or the other list might be empty, but we only do this once so we can ignore performance considerations
-        if (sectionComments.isEmpty()) {
-            return rootComments;
+
+        int minLength = Math.min(lastPath.length(), path.length());
+        int i = 0;
+        int level = 0;
+        while (i < minLength && path.charAt(i) == lastPath.charAt(i)) {
+            if (path.charAt(i) == '.') {
+                ++level;
+            }
+            ++i;
         }
-        List<String> allComments = new ArrayList<>(rootComments);
-        allComments.addAll(sectionComments);
-        return allComments;
+        return level;
     }
 
     /**
@@ -83,41 +81,76 @@ public class PropertyPathTraverser {
 
         private final int indentationLevel;
         private final String name;
-        private final List<String> comments;
+        private final String fullPath;
         private final boolean isFirstElement;
         private boolean isFirstOfGroup;
+        private boolean isEndOfPath;
 
-        public PathElement(int indentationLevel, @NotNull String name, @NotNull List<String> comments,
+        public PathElement(int indentationLevel, @NotNull String name, @NotNull String fullPath,
                            boolean isFirstElement) {
             this.indentationLevel = indentationLevel;
             this.name = name;
-            this.comments = comments;
+            this.fullPath = fullPath;
             this.isFirstElement = isFirstElement;
         }
 
+        /**
+         * @return the hierarchy level of this path element
+         */
         public int getIndentationLevel() {
             return indentationLevel;
         }
 
+        /**
+         * @return the name of this path element (e.g. "driver")
+         */
         public @NotNull String getName() {
             return name;
         }
 
-        public @NotNull List<String> getComments() {
-            return comments;
+        /**
+         * @return the full path of this element (e.g. "config.datasource.driver")
+         */
+        public @NotNull String getFullPath() {
+            return fullPath;
         }
 
+        /**
+         * @return true if this path element is the <b>very first</b> element returned by the traverser; false otherwise
+         */
         public boolean isFirstElement() {
             return isFirstElement;
         }
 
+        /**
+         * Returns if this path element is the first new path element of a property. For example, if a property
+         * {@code config.datasource.mysql.type} was previously processed and we're now processing the path
+         * {@code config.datasource.driver.version}, then the path element representing {@code driver} is considered
+         * to be the first of the group.
+         *
+         * @return true if this path element is the first new element of the path, false otherwise
+         */
         public boolean isFirstOfGroup() {
             return isFirstOfGroup;
         }
 
-        void setFirstOfGroup(boolean firstOfGroup) {
+        protected void setFirstOfGroup(boolean firstOfGroup) {
             isFirstOfGroup = firstOfGroup;
         }
-    }
 
+        /**
+         * Returns whether this path element represents the final part of a path, indicating that it is associated with
+         * a property. For example, given a property {@code config.datasource.driver.version}, the path element for
+         * {@code version} returns true for this method.
+         *
+         * @return true if this element is the last part of the path (i.e. if it's a "leaf element")
+         */
+        public boolean isEndOfPath() {
+            return isEndOfPath;
+        }
+
+        protected void setEndOfPath(boolean isEndOfPath) {
+            this.isEndOfPath = isEndOfPath;
+        }
+    }
 }

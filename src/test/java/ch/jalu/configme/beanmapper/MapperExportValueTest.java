@@ -3,14 +3,13 @@ package ch.jalu.configme.beanmapper;
 import ch.jalu.configme.beanmapper.command.Command;
 import ch.jalu.configme.beanmapper.command.CommandConfig;
 import ch.jalu.configme.beanmapper.command.ExecutionDetails;
-import ch.jalu.configme.beanmapper.command.Executor;
+import ch.jalu.configme.properties.convertresult.ValueWithComments;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static ch.jalu.configme.beanmapper.command.Executor.CONSOLE;
@@ -29,11 +28,11 @@ class MapperExportValueTest {
     @Test
     void shouldCreatePropertyEntriesForCommandConfig() {
         // given
-        ExecutionDetails kickExecution = createExecution(CONSOLE, 0.4, true, "player.kick", "is.admin");
+        ExecutionDetails kickExecution = new ExecutionDetails(CONSOLE, 0.4, true, "player.kick", "is.admin");
         Command kickCommand = createCommand("kick", kickExecution, "name");
-        ExecutionDetails msgExecution = createExecution(USER, 1.0, false, "player.msg");
+        ExecutionDetails msgExecution = new ExecutionDetails(USER, 1.0, false, "player.msg");
         Command msgCommand = createCommand("msg", msgExecution, "name", "message");
-        ExecutionDetails vanishExecution = createExecution(USER, 0.1, true, "player.vanish");
+        ExecutionDetails vanishExecution = new ExecutionDetails(USER, 0.1, true, "player.vanish");
         Command vanishCommand = createCommand("vanish", vanishExecution);
 
         CommandConfig config = new CommandConfig();
@@ -101,7 +100,6 @@ class MapperExportValueTest {
         assertThat(values.get("arguments"), equalTo(command.getArguments()));
     }
 
-    @SuppressWarnings("unchecked")
     private static void checkCommandDetails(Object commandValues, Command command) {
         assertThat(commandValues, instanceOf(Map.class));
         Map<?, ?> values = (Map) commandValues;
@@ -114,7 +112,11 @@ class MapperExportValueTest {
         assertThat(executionMap.keySet(), containsInAnyOrder("executor", "optional", "importance", "privileges"));
         assertThat(executionMap.get("executor"), equalTo(command.getExecution().getExecutor().name()));
         assertThat(executionMap.get("optional"), equalTo(command.getExecution().isOptional()));
-        assertThat(executionMap.get("importance"), equalTo(command.getExecution().getImportance()));
+
+        assertThat(executionMap.get("importance"), instanceOf(ValueWithComments.class));
+        ValueWithComments importance = (ValueWithComments) executionMap.get("importance");
+        assertThat(importance.getComments(), contains("The higher the number, the more important"));
+        assertThat(importance.getValue(), equalTo(command.getExecution().getImportance()));
 
         assertThat(executionMap.get("privileges"), instanceOf(Collection.class));
         assertThat((Collection<?>) executionMap.get("privileges"), contains(command.getExecution().getPrivileges().toArray()));
@@ -126,15 +128,5 @@ class MapperExportValueTest {
         command.setExecution(executionDetails);
         command.setArguments(Arrays.asList(arguments));
         return command;
-    }
-
-    private static ExecutionDetails createExecution(Executor executor, double importance, boolean isOptional,
-                                                    String... privileges) {
-        ExecutionDetails execution = new ExecutionDetails();
-        execution.setImportance(importance);
-        execution.setOptional(isOptional);
-        execution.setExecutor(executor);
-        execution.setPrivileges(new LinkedHashSet<>(Arrays.asList(privileges)));
-        return execution;
     }
 }

@@ -138,7 +138,7 @@ class YamlFileResourceNewLineTest {
             "",
             "second:",
             "    a: 2",
-            "",
+            "    ",
             "    # b comm",
             "    b: 3"));
     }

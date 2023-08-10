@@ -4,19 +4,24 @@ import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
 import ch.jalu.configme.beanmapper.leafvaluehandler.StandardLeafValueHandlers;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
+import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ValueWithComments;
 import ch.jalu.configme.utils.TypeInformation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -90,6 +95,10 @@ public class MapperImpl implements Mapper {
 
     @Override
     public @Nullable Object toExportValue(@Nullable Object value) {
+        return toExportValue(value, new HashSet<>());
+    }
+
+    protected @Nullable Object toExportValue(@Nullable Object value, @NotNull Set<UUID> knownUniqueComments) {
         // Step 1: attempt simple value transformation
         Object simpleValue = leafValueHandler.toExportValue(value);
         if (simpleValue != null || value == null) {
@@ -97,7 +106,7 @@ public class MapperImpl implements Mapper {
         }
 
         // Step 2: handle special cases like Collection
-        simpleValue = createExportValueForSpecialTypes(value);
+        simpleValue = createExportValueForSpecialTypes(value, knownUniqueComments);
         if (simpleValue != null) {
             return unwrapReturnNull(simpleValue);
         }
@@ -105,8 +114,14 @@ public class MapperImpl implements Mapper {
         // Step 3: treat as bean
         Map<String, Object> mappedBean = new LinkedHashMap<>();
         for (BeanPropertyDescription property : beanDescriptionFactory.getAllProperties(value.getClass())) {
-            Object exportValueOfProperty = toExportValue(property.getValue(value));
+            Object exportValueOfProperty = toExportValue(property.getValue(value), knownUniqueComments);
             if (exportValueOfProperty != null) {
+                BeanPropertyComments propComments = property.getComments();
+                if (!propComments.getComments().isEmpty()
+                        && (propComments.getUuid() == null || !knownUniqueComments.contains(propComments.getUuid()))) {
+                    knownUniqueComments.add(propComments.getUuid());
+                    exportValueOfProperty = new ValueWithComments(exportValueOfProperty, propComments.getComments());
+                }
                 mappedBean.put(property.getName(), exportValueOfProperty);
             }
         }
@@ -119,26 +134,28 @@ public class MapperImpl implements Mapper {
      * signal that null should be used as the export value of the provided value.
      *
      * @param value the value to convert
+     * @param knownUniqueComments UUIDs of comments which should not be repeated that have already been included
      * @return the export value to use or {@link #RETURN_NULL}, or null if not applicable
      */
-    protected @Nullable Object createExportValueForSpecialTypes(@Nullable Object value) {
+    protected @Nullable Object createExportValueForSpecialTypes(@Nullable Object value,
+                                                                @NotNull Set<UUID> knownUniqueComments) {
         if (value instanceof Collection<?>) {
             return ((Collection<?>) value).stream()
-                .map(this::toExportValue)
+                .map(entry -> toExportValue(entry, knownUniqueComments))
                 .collect(Collectors.toList());
         }
 
         if (value instanceof Map<?, ?>) {
             Map<Object, Object> result = new LinkedHashMap<>();
             for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
-                result.put(entry.getKey(), toExportValue(entry.getValue()));
+                result.put(entry.getKey(), toExportValue(entry.getValue(), knownUniqueComments));
             }
             return result;
         }
 
         if (value instanceof Optional<?>) {
             Optional<?> optional = (Optional<?>) value;
-            return optional.map(this::toExportValue).orElse(RETURN_NULL);
+            return optional.map(v -> toExportValue(v, knownUniqueComments)).orElse(RETURN_NULL);
         }
 
         return null;

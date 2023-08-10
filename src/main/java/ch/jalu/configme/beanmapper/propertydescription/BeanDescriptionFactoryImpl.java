@@ -1,5 +1,6 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
+import ch.jalu.configme.Comment;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.beanmapper.ExportName;
 import ch.jalu.configme.utils.TypeInformation;
@@ -11,6 +12,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -75,11 +78,34 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
             return null;
         }
 
+        BeanPropertyComments comments = getComments(descriptor);
         return new BeanPropertyDescriptionImpl(
             getPropertyName(descriptor),
             createTypeInfo(descriptor),
             descriptor.getReadMethod(),
-            descriptor.getWriteMethod());
+            descriptor.getWriteMethod(),
+            comments);
+    }
+
+    /**
+     * Returns the comments that are defined on the property. Comments are found by looking for an &#64;{@link Comment}
+     * annotation on a field with the same name as the property.
+     *
+     * @param descriptor the property descriptor
+     * @return comments for the property (never null)
+     */
+    protected @NotNull BeanPropertyComments getComments(@NotNull PropertyDescriptor descriptor) {
+        try {
+            Field field = descriptor.getWriteMethod().getDeclaringClass().getDeclaredField(descriptor.getName());
+            Comment comment = field.getAnnotation(Comment.class);
+            if (comment != null) {
+                UUID uniqueId = comment.repeat() ? null : UUID.randomUUID();
+                return new BeanPropertyComments(Arrays.asList(comment.value()), uniqueId);
+            }
+        } catch (NoSuchFieldException ignore) {
+        }
+
+        return BeanPropertyComments.EMPTY;
     }
 
     /**

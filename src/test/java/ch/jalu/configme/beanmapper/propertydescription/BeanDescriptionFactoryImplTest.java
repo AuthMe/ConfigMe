@@ -1,7 +1,9 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
 
+import ch.jalu.configme.Comment;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
+import ch.jalu.configme.beanmapper.command.ExecutionDetails;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
 import ch.jalu.configme.samples.beanannotations.BeanWithEmptyName;
 import ch.jalu.configme.samples.beanannotations.BeanWithNameClash;
@@ -24,6 +26,9 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 
 /**
  * Test for {@link BeanDescriptionFactoryImpl}.
@@ -40,8 +45,14 @@ class BeanDescriptionFactoryImplTest {
 
         // then
         assertThat(descriptions, hasSize(2));
-        assertThat(getDescription("size", descriptions).getTypeInformation(), equalTo(new TypeInformation(int.class)));
-        assertThat(getDescription("name", descriptions).getTypeInformation(), equalTo(new TypeInformation(String.class)));
+
+        BeanPropertyDescription sizeProperty = getDescription("size", descriptions);
+        assertThat(sizeProperty.getTypeInformation(), equalTo(new TypeInformation(int.class)));
+        assertThat(sizeProperty.getComments().getComments(), contains("Size of this entry (cm)"));
+
+        BeanPropertyDescription nameProperty = getDescription("name", descriptions);
+        assertThat(nameProperty.getTypeInformation(), equalTo(new TypeInformation(String.class)));
+        assertThat(nameProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
     }
 
     @Test
@@ -149,6 +160,43 @@ class BeanDescriptionFactoryImplTest {
             "may not be empty");
     }
 
+    @Test
+    void shouldReturnCommentsWithUuidIfNotRepeatable() {
+        // given
+        BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
+
+        // when
+        Collection<BeanPropertyDescription> sampleBeanProperties = factory.getAllProperties(SampleBean.class);
+        Collection<BeanPropertyDescription> sampleBeanProperties2 = factory.getAllProperties(SampleBean.class);
+
+        // then
+        BeanPropertyComments sizeComments = getDescription("size", sampleBeanProperties).getComments();
+        assertThat(sizeComments.getComments(), contains("Size of this entry (cm)"));
+        assertThat(sizeComments.getUuid(), notNullValue());
+
+        // Actually ensure that we have the same UUID if we fetch properties for the same class again
+        // -> there's no point in the UUID otherwise!
+        BeanPropertyComments sizeComments2 = getDescription("size", sampleBeanProperties2).getComments();
+        assertThat(sizeComments2.getUuid(), equalTo(sizeComments.getUuid()));
+    }
+
+    @Test
+    void shouldReturnCommentsWithoutUuid() {
+        // given
+        BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
+
+        // when
+        Collection<BeanPropertyDescription> execDetailsProperties = factory.getAllProperties(ExecutionDetails.class);
+
+        // then
+        BeanPropertyComments executorComments = getDescription("executor", execDetailsProperties).getComments();
+        assertThat(executorComments, sameInstance(BeanPropertyComments.EMPTY));
+
+        BeanPropertyComments importanceComments = getDescription("importance", execDetailsProperties).getComments();
+        assertThat(importanceComments.getComments(), contains("The higher the number, the more important"));
+        assertThat(importanceComments.getUuid(), nullValue());
+    }
+
     private static BeanPropertyDescription getDescription(String name,
                                                           Collection<BeanPropertyDescription> descriptions) {
         for (BeanPropertyDescription description : descriptions) {
@@ -162,6 +210,7 @@ class BeanDescriptionFactoryImplTest {
     private static final class SampleBean {
 
         private String name;
+        @Comment("Size of this entry (cm)")
         private int size;
         private long longField; // static "getter" method
         private UUID uuid = UUID.randomUUID(); // no setter

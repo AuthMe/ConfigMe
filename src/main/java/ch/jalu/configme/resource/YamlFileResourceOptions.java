@@ -53,20 +53,6 @@ public class YamlFileResourceOptions {
         return splitDotPaths;
     }
 
-    /**
-     * @return the indentation to use for one level
-     */
-    public @NotNull String getIndentation() {
-        if (indentationSize == 4) {
-            return "    ";
-        }
-        StringBuilder sb = new StringBuilder(indentationSize);
-        for (int i = 0; i < indentationSize; ++i) {
-            sb.append(" ");
-        }
-        return sb.toString();
-    }
-
     protected final @Nullable ToIntFunction<PathElement> getIndentFunction() {
         return numberOfLinesBeforeFunction;
     }

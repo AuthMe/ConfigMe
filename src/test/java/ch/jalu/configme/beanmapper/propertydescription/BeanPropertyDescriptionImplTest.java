@@ -2,12 +2,15 @@ package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
+import ch.jalu.configme.utils.TypeInformation;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -69,6 +72,22 @@ public class BeanPropertyDescriptionImplTest {
         // then
         assertThat(output, equalTo("Found Bean property 'has-id' with getter "
             + "'public boolean ch.jalu.configme.samples.beanannotations.AnnotatedEntry.getHasId()'"));
+    }
+
+    @Test
+    void shouldCreateValuesWithLegacyConstructor() throws NoSuchMethodException {
+        // given
+        Method sizeGetter = SampleBean.class.getDeclaredMethod("getSize");
+        Method sizeSetter = SampleBean.class.getDeclaredMethod("setSize", int.class);
+
+        // when
+        BeanPropertyDescriptionImpl property =
+            new BeanPropertyDescriptionImpl("name", new TypeInformation(String.class), sizeGetter, sizeSetter);
+
+        // then
+        assertThat(property.getName(), equalTo("name"));
+        assertThat(property.getTypeInformation(), equalTo(new TypeInformation(String.class)));
+        assertThat(property.getComments(), sameInstance(BeanPropertyComments.EMPTY));
     }
 
     private static BeanPropertyDescription getDescriptor(String name, Class<?> clazz) {

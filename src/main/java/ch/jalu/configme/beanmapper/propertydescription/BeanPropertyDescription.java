@@ -1,7 +1,6 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.utils.TypeInformation;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,4 +38,10 @@ public interface BeanPropertyDescription {
      * @return the value of the property (can be null)
      */
     @Nullable Object getValue(@NotNull Object bean);
+
+    /**
+     * @return the comments associated with this property
+     */
+    @NotNull BeanPropertyComments getComments();
+
 }

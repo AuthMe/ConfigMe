@@ -20,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -53,7 +54,8 @@ class ConfigurationDataImplTest {
         ConfigurationData configData = new ConfigurationDataImpl(properties, Collections.emptyMap());
 
         // when / then
-        verifyException(() -> configData.getProperties().remove(0), UnsupportedOperationException.class);
+        assertThrows(UnsupportedOperationException.class,
+            () -> configData.getProperties().remove(0));
     }
 
     @Test
