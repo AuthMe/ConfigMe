@@ -33,6 +33,12 @@ public class BeanPropertyComments {
         return comments;
     }
 
+    /**
+     * UUID to identify this comment. Not-null when the comment should not be repeated if it could be part of the
+     * export multiple times.
+     *
+     * @return UUID if the comment should be unique, null otherwise
+     */
     public @Nullable UUID getUuid() {
         return uuid;
     }

@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Comment for properties which are also included in the YAML file upon saving. This annotation can be used on
+ * Comment for properties which are also included in the configuration file upon saving. This annotation can be used on
  * {@link ch.jalu.configme.properties.Property Property} fields, as well as on the fields of
  * bean classes that are used for {@link ch.jalu.configme.properties.BeanProperty bean properties}.
  */
