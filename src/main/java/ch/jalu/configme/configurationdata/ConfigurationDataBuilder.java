@@ -113,6 +113,7 @@ public class ConfigurationDataBuilder {
     protected @Nullable Property<?> getPropertyField(@NotNull Field field) {
         if (Property.class.isAssignableFrom(field.getType()) && Modifier.isStatic(field.getModifiers())) {
             try {
+                setFieldAccessibleIfNeeded(field);
                 return (Property<?>) field.get(null);
             } catch (IllegalAccessException e) {
                 throw new ConfigMeException("Could not fetch field '" + field.getName() + "' from class '"
@@ -120,6 +121,25 @@ public class ConfigurationDataBuilder {
             }
         }
         return null;
+    }
+
+    /**
+     * Sets the Field object to be accessible if needed; this makes the code support constants in Kotlin without the
+     * {@code @JvmField} annotation. This method only calls {@link Field#setAccessible} if it is needed to avoid
+     * potential issues with a security manager. Within Java itself, only {@code public static final} property fields
+     * are expected.
+     *
+     * @param field the field to process
+     */
+    protected void setFieldAccessibleIfNeeded(@NotNull Field field) {
+        try {
+            if (!Modifier.isPublic(field.getModifiers())) {
+                field.setAccessible(true);
+            }
+        } catch (Exception e) {
+            throw new ConfigMeException("Failed to modify access for field '" + field.getName() + "' from class '"
+                + field.getDeclaringClass().getSimpleName() + "'", e);
+        }
     }
 
     protected void collectSectionComments(@NotNull Class<? extends SettingsHolder> clazz) {
