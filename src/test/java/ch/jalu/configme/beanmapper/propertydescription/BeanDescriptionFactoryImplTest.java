@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static ch.jalu.configme.TestUtils.transform;
-import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -29,6 +28,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for {@link BeanDescriptionFactoryImpl}.
@@ -141,11 +141,13 @@ class BeanDescriptionFactoryImplTest {
         // given
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
-        // when / then
-        verifyException(
-            () -> factory.getAllProperties(BeanWithNameClash.class),
-            ConfigMeMapperException.class,
-            "multiple properties with name 'threshold'");
+        // when
+        ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
+            () -> factory.getAllProperties(BeanWithNameClash.class));
+
+        // then
+        assertThat(ex.getMessage(),
+            equalTo("class ch.jalu.configme.samples.beanannotations.BeanWithNameClash has multiple properties with name 'threshold'"));
     }
 
     @Test
@@ -153,11 +155,13 @@ class BeanDescriptionFactoryImplTest {
         // given
         BeanDescriptionFactory factory = new BeanDescriptionFactoryImpl();
 
-        // when / then
-        verifyException(
-            () -> factory.getAllProperties(BeanWithEmptyName.class),
-            ConfigMeMapperException.class,
-            "may not be empty");
+        // when
+        ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
+            () -> factory.getAllProperties(BeanWithEmptyName.class));
+
+        // then
+        assertThat(ex.getMessage(),
+            equalTo("Custom name of Bean property '' with getter 'public java.lang.String ch.jalu.configme.samples.beanannotations.BeanWithEmptyName.getAuthor()' may not be empty"));
     }
 
     @Test

@@ -10,10 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 import static ch.jalu.configme.TestUtils.transform;
-import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for {@link PropertyListBuilder}.
@@ -52,9 +53,12 @@ class PropertyListBuilderTest {
         properties.add(createPropertyWithPath("test.version"));
         properties.add(createPropertyWithPath("test.name"));
 
-        // when / then
-        verifyException(() -> properties.add(createPropertyWithPath("test.version")),
-            ConfigMeException.class, "already exists");
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> properties.add(createPropertyWithPath("test.version")));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Path at 'test.version' already exists"));
         assertThat(properties.create(), hasSize(2));
     }
 
@@ -68,9 +72,12 @@ class PropertyListBuilderTest {
         PropertyListBuilder properties = new PropertyListBuilder();
         properties.add(createPropertyWithPath("test.version"));
 
-        // when / then
-        verifyException(() -> properties.add(createPropertyWithPath("test.version.major")),
-            ConfigMeException.class, "Unexpected entry found");
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> properties.add(createPropertyWithPath("test.version.major")));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Unexpected entry found at path 'version'"));
         assertThat(properties.create(), hasSize(1));
     }
 
@@ -83,11 +90,16 @@ class PropertyListBuilderTest {
 
         Map<String, Object> internalMap = properties.getRootEntries();
         // Put an unknown object in test.version
-        ((Map<String, Object>) internalMap.get("test")).put("version", new Object());
+        Object unknownObject = new Object();
+        ((Map<String, Object>) internalMap.get("test")).put("version", unknownObject);
 
-        // when / then
-        verifyException(() -> properties.add(createPropertyWithPath("test.version.minor")),
-            ConfigMeException.class, "Value of unknown type found");
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> properties.add(createPropertyWithPath("test.version.minor")));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Value of unknown type found at 'version': " + unknownObject));
+        assertThat(properties.create(), hasSize(1));
     }
 
     private static Property<?> createPropertyWithPath(String path) {

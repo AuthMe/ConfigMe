@@ -22,11 +22,11 @@ import java.nio.file.Path;
 import java.util.HashMap;
 
 import static ch.jalu.configme.TestUtils.copyFileFromResources;
-import static ch.jalu.configme.TestUtils.verifyException;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -133,11 +133,14 @@ class BeanPropertyTest {
         // given
         Type stringComparable = TestFields.class.getDeclaredField("comparable").getGenericType();
 
-        // when / then
-        verifyException(() -> new BeanProperty<>(new TypeInformation(stringComparable),
-            "path.test", new HashMap<>(), DefaultMapper.getInstance()),
-            ConfigMeException.class,
-            "does not match bean type");
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> new BeanProperty<>(new TypeInformation(stringComparable),
+                "path.test", new HashMap<>(), DefaultMapper.getInstance()));
+
+        // then
+        assertThat(ex.getMessage(),
+            equalTo("Default value for path 'path.test' does not match bean type 'TypeInformation[type=java.lang.Comparable<java.lang.String>]'"));
     }
 
     private static final class TestFields {

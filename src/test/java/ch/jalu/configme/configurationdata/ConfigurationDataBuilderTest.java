@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static ch.jalu.configme.TestUtils.transform;
-import static ch.jalu.configme.TestUtils.verifyException;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -26,6 +25,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -59,29 +59,27 @@ class ConfigurationDataBuilderTest {
 
     @Test
     void shouldHandleSettingsHolderConstructorIssues() {
+        ConfigMeException ex;
+
         // Missing no-args constructor
-        verifyException(
-            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.MissingNoArgsConstructor.class),
-            ConfigMeException.class,
-            "Expected no-args constructor to be available");
+        ex = assertThrows(ConfigMeException.class,
+            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.MissingNoArgsConstructor.class));
+        assertThat(ex.getMessage(), startsWith("Expected no-args constructor to be available for class "));
 
         // Constructor throws exception
-        verifyException(
-            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.ThrowingConstructor.class),
-            ConfigMeException.class,
-            "Could not create instance");
+        ex = assertThrows(ConfigMeException.class,
+            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.ThrowingConstructor.class));
+        assertThat(ex.getMessage(), startsWith("Could not create instance of class "));
 
         // Class is abstract
-        verifyException(
-            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.AbstractClass.class),
-            ConfigMeException.class,
-            "Could not create instance");
+        ex = assertThrows(ConfigMeException.class,
+            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.AbstractClass.class));
+        assertThat(ex.getMessage(), startsWith("Could not create instance of class "));
 
         // Class is interface
-        verifyException(
-            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.InterfaceSettingsHolder.class),
-            ConfigMeException.class,
-            "Expected no-args constructor to be available");
+        ex = assertThrows(ConfigMeException.class,
+            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.InterfaceSettingsHolder.class));
+        assertThat(ex.getMessage(), startsWith("Expected no-args constructor to be available for interface "));
     }
 
     @Test

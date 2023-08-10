@@ -7,6 +7,7 @@ import ch.jalu.configme.samples.TestConfiguration;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +22,6 @@ import java.util.Set;
 
 import static ch.jalu.configme.TestUtils.createTemporaryFile;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
-import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -32,6 +32,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for {@link YamlFileReader}.
@@ -50,9 +51,13 @@ class YamlFileReaderTest {
         Path file = temporaryFolder.resolve("temp-file");
         Files.write(file, "123".getBytes());
 
-        // when / then
-        verifyException(() -> new YamlFileReader(file),
-            ConfigMeException.class, "Top-level is not a map");
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> new YamlFileReader(file));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Top-level is not a map in '" + file + "'"));
+        assertThat(ex.getCause(), instanceOf(ClassCastException.class));
     }
 
     @Test
@@ -60,9 +65,13 @@ class YamlFileReaderTest {
         // given
         Path file = temporaryFolder.resolve("test");
 
-        // when / then
-        verifyException(() -> new YamlFileReader(file),
-            ConfigMeException.class, "Could not read file");
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> new YamlFileReader(file));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Could not read file '" + file + "'"));
+        assertThat(ex.getCause(), instanceOf(IOException.class));
     }
 
     @Test
@@ -170,9 +179,13 @@ class YamlFileReaderTest {
         Path file = createTemporaryFile(temporaryFolder);
         Files.write(file, invalidYaml.getBytes());
 
-        // when / then
-        verifyException(() -> new YamlFileReader(file.toFile()),
-            ConfigMeException.class, "YAML error while trying to load file");
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> new YamlFileReader(file.toFile()));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("YAML error while trying to load file '" + file + "'"));
+        assertThat(ex.getCause(), instanceOf(YAMLException.class));
     }
 
     @Test

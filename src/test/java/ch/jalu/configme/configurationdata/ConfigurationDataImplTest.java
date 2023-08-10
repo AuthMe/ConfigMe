@@ -14,12 +14,14 @@ import java.util.List;
 import java.util.Map;
 
 import static ch.jalu.configme.TestUtils.containsAll;
-import static ch.jalu.configme.TestUtils.verifyException;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -67,13 +69,17 @@ class ConfigurationDataImplTest {
             newProperty("toast", "Toaster"));
         ConfigurationData configData = new ConfigurationDataImpl(properties, Collections.emptyMap());
 
-        // when / then
+        // when
+        Exception ex = assertThrows(Exception.class,
+            () -> configData.setValue(properties.get(0), null));
+
+        // then
         if (TestUtils.hasBytecodeCheckForNotNullAnnotation()) {
-            verifyException(() -> configData.setValue(properties.get(0), null),
-                IllegalArgumentException.class, "Argument for @NotNull parameter 'value'");
+            assertThat(ex, instanceOf(IllegalArgumentException.class));
+            assertThat(ex.getMessage(), containsString("Argument for @NotNull parameter 'value'"));
         } else {
-            verifyException(() -> configData.setValue(properties.get(0), null),
-                ConfigMeException.class, "Invalid value");
+            assertThat(ex, instanceOf(ConfigMeException.class));
+            assertThat(ex.getMessage(), matchesPattern("Invalid value for property '.*?': null"));
         }
     }
 
@@ -115,9 +121,13 @@ class ConfigurationDataImplTest {
         ConfigurationData configurationData = new ConfigurationDataImpl(properties, Collections.emptyMap());
         Property<Integer> nonExistentProperty = newProperty("my.bogus.path", 5);
 
-        // when / then
-        verifyException(() -> configurationData.getValue(nonExistentProperty), ConfigMeException.class,
-            "No value exists for property with path 'my.bogus.path'");
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> configurationData.getValue(nonExistentProperty));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("No value exists for property with path 'my.bogus.path'. "
+            + "This may happen if the property belongs to a SettingsHolder class which was not passed to the settings manager."));
     }
 
     @Test

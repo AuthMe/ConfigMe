@@ -42,7 +42,6 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 import static ch.jalu.configme.TestUtils.getJarPath;
-import static ch.jalu.configme.TestUtils.verifyException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -176,11 +175,14 @@ class MapperImplTest {
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/mapconfig.yml");
         MapperImpl mapper = new MapperImpl();
 
-        // when / then
-        verifyException(
-            () -> mapper.convertToBean(reader.getObject(""), MapWithNonStringKeys.class, new ConvertErrorRecorder()),
-            ConfigMeMapperException.class,
-            "The key type of maps may only be of String type");
+        // when
+        ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
+            () -> mapper.convertToBean(reader.getObject(""), MapWithNonStringKeys.class, new ConvertErrorRecorder()));
+
+        // then
+        assertThat(ex.getMessage(), equalTo(
+            "The key type of maps may only be of String type, for mapping of: "
+                + "[Path: 'map', type: 'java.util.Map<java.lang.Integer, java.lang.Integer>']"));
     }
 
     @Test
@@ -189,11 +191,13 @@ class MapperImplTest {
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
         MapperImpl mapper = new MapperImpl();
 
-        // when / then
-        verifyException(
-            () -> mapper.convertToBean(reader.getObject(""), UnsupportedCollection.class, new ConvertErrorRecorder()),
-            ConfigMeMapperException.class,
-            "Unsupported collection type");
+        // when
+        ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
+            () -> mapper.convertToBean(reader.getObject(""), UnsupportedCollection.class, new ConvertErrorRecorder()));
+
+        // then
+        assertThat(ex.getMessage(),
+            equalTo("Unsupported collection type 'interface java.util.Deque', for mapping of: [Path: 'collection', type: 'java.util.Deque<java.lang.Double>']"));
     }
 
     @Test
@@ -202,11 +206,13 @@ class MapperImplTest {
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
         MapperImpl mapper = new MapperImpl();
 
-        // when / then
-        verifyException(
-            () -> mapper.convertToBean(reader.getObject(""), UntypedCollection.class, new ConvertErrorRecorder()),
-            ConfigMeMapperException.class,
-            "The generic type 0 is not well defined, for mapping of: [Path: 'collection', type: 'interface java.util.List']");
+        // when
+        ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
+            () -> mapper.convertToBean(reader.getObject(""), UntypedCollection.class, new ConvertErrorRecorder()));
+
+        // then
+        assertThat(ex.getMessage(),
+            equalTo("The generic type 0 is not well defined, for mapping of: [Path: 'collection', type: 'interface java.util.List']"));
     }
 
     @Test
@@ -215,11 +221,13 @@ class MapperImplTest {
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/mapconfig.yml");
         MapperImpl mapper = new MapperImpl();
 
-        // when / then
-        verifyException(
-            () -> mapper.convertToBean(reader.getObject(""), UntypedMap.class, new ConvertErrorRecorder()),
-            ConfigMeMapperException.class,
-            "The generic type 1 is not well defined, for mapping of: [Path: 'map', type: 'java.util.Map<java.lang.String, ?>']");
+        // when
+        ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
+            () -> mapper.convertToBean(reader.getObject(""), UntypedMap.class, new ConvertErrorRecorder()));
+
+        // then
+        assertThat(ex.getMessage(),
+            equalTo("The generic type 1 is not well defined, for mapping of: [Path: 'map', type: 'java.util.Map<java.lang.String, ?>']"));
     }
 
     @Test
@@ -228,11 +236,13 @@ class MapperImplTest {
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
         MapperImpl mapper = new MapperImpl();
 
-        // when / then
-        verifyException(
-            () -> mapper.convertToBean(reader.getObject(""), GenericCollection.class, new ConvertErrorRecorder()),
-            ConfigMeMapperException.class,
-            "The generic type 0 is not well defined, for mapping of: [Path: 'collection', type: 'java.util.List<? extends java.lang.String>']");
+        // when
+        ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
+            () -> mapper.convertToBean(reader.getObject(""), GenericCollection.class, new ConvertErrorRecorder()));
+
+        // then
+        assertThat(ex.getMessage(),
+            equalTo("The generic type 0 is not well defined, for mapping of: [Path: 'collection', type: 'java.util.List<? extends java.lang.String>']"));
     }
 
     @Test
@@ -242,11 +252,12 @@ class MapperImplTest {
         Class<?> type = new HashMap() { }.getClass();
         MappingContext context = createContextWithType(type);
 
-        // when / then
-        verifyException(
-            () -> mapper.createMapMatchingType(context),
-            ConfigMeMapperException.class,
-            "Unsupported map type '" + type + "', for mapping of: [" + context.createDescription() + "]");
+        // when
+        ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
+            () -> mapper.createMapMatchingType(context));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Unsupported map type '" + type + "', for mapping of: [" + context.createDescription() + "]"));
     }
 
     @Test

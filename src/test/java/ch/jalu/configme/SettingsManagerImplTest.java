@@ -28,13 +28,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import static ch.jalu.configme.TestUtils.copyFileFromResources;
-import static ch.jalu.configme.TestUtils.verifyException;
 import static ch.jalu.configme.configurationdata.ConfigurationDataBuilder.createConfiguration;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
@@ -226,12 +226,14 @@ class SettingsManagerImplTest {
         String value = "test";
         given(property.isValidValue(value)).willReturn(false);
 
-        // when / then
-        verifyException(() -> createManager().setProperty(property, value),
-            ConfigMeException.class,
-            "Invalid value for property '" + property + "'");
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> createManager().setProperty(property, value));
+
+        // then
         // Note: the exception is actually thrown by ConfigurationDataImpl but with this test we ensure
         // that exceptions thrown by configuration data are passed up the calling hierarchy
+        assertThat(ex.getMessage(), equalTo("Invalid value for property '" + property + "': test"));
     }
 
     private void verifyWasMigrationServiceChecked() {

@@ -3,7 +3,6 @@ package ch.jalu.configme;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.function.Executable;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -20,13 +19,10 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Utilities for testing.
@@ -118,22 +114,6 @@ public final class TestUtils {
     // -------------
     // Exception verification
     // -------------
-
-    /**
-     * Verifies that the provided executable throws an exception of the given type whose message contains
-     * the provided message excerpt.
-     *
-     * @param executable the executable to check
-     * @param exceptionType the expected type of the exception
-     * @param messageExcerpt the text the exception message should contain
-     */
-    public static void verifyException(Executable executable, Class<? extends Exception> exceptionType,
-                                       String messageExcerpt) {
-        Exception e = assertThrows(exceptionType, executable);
-        if (!messageExcerpt.isEmpty()) {
-            assertThat(e.getMessage(), containsString(messageExcerpt));
-        }
-    }
 
     /**
      * Returns the expected exception type when a null argument is supplied where it is not allowed.
