@@ -40,8 +40,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.jdkVersion>1.8</project.jdkVersion>
 
-        <junit.version>5.9.2</junit.version>
-        <mockito.version>4.11.0</mockito.version>
+        <version.junit>5.10.0</version.junit>
+        <version.mockito>4.11.0</version.mockito>
     </properties>
 
     <distributionManagement>
@@ -75,13 +75,13 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-release-plugin</artifactId>
-                        <version>3.0.0</version>
+                        <version>3.0.1</version>
                     </plugin>
                     <!-- Source plugin -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.1</version>
+                        <version>3.3.0</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -109,7 +109,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
+                        <version>3.1.0</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -157,7 +157,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.2</version>
                 <configuration>
                     <!-- Force the right file encoding during unit testing -->
                     <argLine>-Dfile.encoding=${project.build.sourceEncoding} @{argLine}</argLine>
@@ -186,14 +186,14 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>2.0</version>
+            <version>2.1</version>
         </dependency>
 
         <!-- Annotations for @NotNull and @Nullable -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>23.0.0</version>
+            <version>24.0.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -202,13 +202,13 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
-            <version>${junit.version}</version>
+            <version>${version.junit}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
-            <version>${junit.version}</version>
+            <version>${version.junit}</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -220,7 +220,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
-            <version>${mockito.version}</version>
+            <version>${version.mockito}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>hamcrest-core</artifactId>
@@ -231,7 +231,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>${mockito.version}</version>
+            <version>${version.mockito}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
