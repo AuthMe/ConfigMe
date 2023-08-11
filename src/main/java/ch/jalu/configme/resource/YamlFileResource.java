@@ -156,6 +156,11 @@ public class YamlFileResource implements PropertyResource {
         return yamlObject;
     }
 
+    /**
+     * Creates a new SnakeYAML object with the appropriate options.
+     *
+     * @return the YAML instance for exporting values
+     */
     protected @NotNull Yaml createNewYaml() {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);

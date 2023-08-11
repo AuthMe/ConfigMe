@@ -139,6 +139,12 @@ public class VersionMigrationService implements MigrationService {
         return updatedVersion;
     }
 
+    /**
+     * Validates the given migrations and returns them as a map of migration by its start version.
+     *
+     * @param migrations the migrations to validate and group
+     * @return map with all migrations by the migration's start version
+     */
     protected Map<Integer, VersionMigration> validateAndGroupMigrationsByFromVersion(
                                                                                 Iterable<VersionMigration> migrations) {
         Map<Integer, VersionMigration> migrationsByStartVersion = new HashMap<>();
@@ -154,6 +160,11 @@ public class VersionMigrationService implements MigrationService {
         return migrationsByStartVersion;
     }
 
+    /**
+     * Validates the from-version and to-version of the migration.
+     *
+     * @param migration the migration to validate
+     */
     protected void validateVersions(VersionMigration migration) {
         if (migration.targetVersion() > versionProperty.getDefaultValue()) {
             throw new IllegalArgumentException("The migration from version " + migration.fromVersion() + " to version "

@@ -100,6 +100,14 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
         return new ScalarNode(Tag.BOOL, String.valueOf(value), null, null, DumperOptions.ScalarStyle.PLAIN);
     }
 
+    /**
+     * Creates a SnakeYAML node representing a sequence of the entries in the stream.
+     *
+     * @param entries stream of the entries (from a Java collection or array)
+     * @param path the property path
+     * @param configurationData the configuration data (to retrieve comments)
+     * @return SnakeYAML node representing the entries
+     */
     protected @NotNull Node createSequenceNode(@NotNull Stream<?> entries, @NotNull String path,
                                                @NotNull ConfigurationData configurationData) {
         AtomicInteger counter = new AtomicInteger();
@@ -115,6 +123,14 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
         return new SequenceNode(Tag.SEQ, values, DumperOptions.FlowStyle.BLOCK);
     }
 
+    /**
+     * Creates a SnakeYAML node representing a map (collection of key-value pairs).
+     *
+     * @param value the map whose values should be in the returned node
+     * @param path the property path
+     * @param configurationData the configuration data (to retrieve comments)
+     * @return SnakeYAML node representing the given map
+     */
     protected @NotNull Node createMapNode(@NotNull Map<String, ?> value, String path,
                                           @NotNull ConfigurationData configurationData) {
         String pathPrefix = path.isEmpty() ? "" : path.concat(".");

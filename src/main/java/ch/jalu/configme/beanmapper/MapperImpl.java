@@ -98,6 +98,13 @@ public class MapperImpl implements Mapper {
         return toExportValue(value, new HashSet<>());
     }
 
+    /**
+     * Transforms the given value to an object suitable for the export to a configuration file.
+     *
+     * @param value the value to transform
+     * @param knownUniqueComments UUIDs of comments which should not be repeated that have already been included
+     * @return export value to use
+     */
     protected @Nullable Object toExportValue(@Nullable Object value, @NotNull Set<UUID> knownUniqueComments) {
         // Step 1: attempt simple value transformation
         Object simpleValue = leafValueHandler.toExportValue(value);
