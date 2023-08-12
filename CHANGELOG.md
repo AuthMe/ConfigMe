@@ -1,6 +1,19 @@
 # ConfigMe Changelog
 
 ## ConfigMe 1.x
+#### 1.4.0 (2023-08-12)
+- Annotated all methods with `@NotNull` and `@Nullable` for better type inference in Kotlin ([#235](https://github.com/AuthMe/ConfigMe/pull/235), [#318](https://github.com/AuthMe/ConfigMe/issues/318))
+- Support `@Comment` on fields of bean properties ([#18](https://github.com/AuthMe/ConfigMe/issues/18))
+  - Please read about [breaking changes](https://github.com/AuthMe/ConfigMe/issues/18#issuecomment-1663973493) if you extend `YamlFileResource` or other internals.
+- New: `VersionMigrationService` to run migrations based on a version in the config file ([#344](https://github.com/AuthMe/ConfigMe/issues/344))
+  - Breaking change: PlainMigrationService#moveProperty has been moved to MigrationUtils#moveProperty
+- `@Comment` now supports new lines within texts, meaning you can use text blocks to define comments ([#334](https://github.com/AuthMe/ConfigMe/issues/334))
+- Private `Property` fields are supported in SettingsHolder classes (integrates better with Kotlin) ([#133](https://github.com/AuthMe/ConfigMe/issues/133))
+- PropertyInitializer: added `optionalDoubleProperty` and other optional flavors ([#311](https://github.com/AuthMe/ConfigMe/issues/311))
+- The concrete Property type is used as the return value for all PropertyInitializer methods ([#321](https://github.com/AuthMe/ConfigMe/issues/321))
+
+:blue_book: [All changes in 1.4.0](https://github.com/AuthMe/ConfigMe/milestone/13?closed=1)
+
 #### 1.3.1 (2023-06-20)
 - Update SnakeYAML dependency for security reasons ([#310](https://github.com/AuthMe/ConfigMe/issues/310))
 - Introduce ShortProperty, LongProperty and FloatProperty for convenience ([#260](https://github.com/AuthMe/ConfigMe/issues/268)) 
