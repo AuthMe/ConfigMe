@@ -70,11 +70,13 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
     }
 
     @Override
-    public @NotNull CommentLine createCommentLine(@NotNull String comment) {
+    public @NotNull Stream<CommentLine> createCommentLines(@NotNull String comment) {
         if ("\n".equals(comment)) {
-            return new CommentLine(null, null, "", CommentType.BLANK_LINE);
+            return Stream.of(new CommentLine(null, null, "", CommentType.BLANK_LINE));
         }
-        return new CommentLine(null, null, " ".concat(comment), CommentType.BLOCK);
+
+        return Arrays.stream(comment.split("\\n", -1))
+            .map(text -> new CommentLine(null, null, " ".concat(text), CommentType.BLOCK));
     }
 
     @Override
@@ -166,7 +168,7 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
 
         return Stream.of(emptyLineStream, configDataStream, additionalCommentsStream)
             .flatMap(Function.identity())
-            .map(this::createCommentLine)
+            .flatMap(this::createCommentLines)
             .collect(Collectors.toList());
     }
 }

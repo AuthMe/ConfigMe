@@ -9,7 +9,9 @@ import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.properties.BeanProperty;
+import ch.jalu.configme.properties.IntegerProperty;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.properties.StringProperty;
 import ch.jalu.configme.properties.convertresult.ValueWithComments;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -101,10 +103,45 @@ class YamlFileResourceCommentsExportTest {
         ));
     }
 
+    @Test
+    void shouldSupportNewLinesInComments() throws IOException {
+        // given
+        Path file = TestUtils.createTemporaryFile(tempFolder);
+
+        YamlFileResource yamlResource = new YamlFileResource(file);
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(CommentWithNewLinesHolder.class);
+        configurationData.setValue(CommentWithNewLinesHolder.NAME, "Tim");
+        configurationData.setValue(CommentWithNewLinesHolder.SIZE, 8);
+
+        // when
+        yamlResource.exportProperties(configurationData);
+
+        // then
+        assertThat(Files.readAllLines(file), contains(
+            "# Core section",
+            "# Contains some test properties",
+            "# with many comments",
+            "# More text",
+            "# Another text",
+            "core:",
+            "    # Name",
+            "    # ",
+            "    # Chose whatever name you want",
+            "    # ",
+            "    name: Tim",
+            "    # ",
+            "    # Size prop",
+            "    # Defines text size",
+            "    size: 8"));
+    }
+
     public static final class RootPropertyHolder implements SettingsHolder {
 
         public static final Property<Command> COMMAND = new BeanWithExportCommentProperty<>(
             Command.class, "", new Command(), "By default, help is run");
+
+        private RootPropertyHolder() {
+        }
 
         @Override
         public void registerComments(@NotNull CommentsConfiguration conf) {
@@ -117,6 +154,9 @@ class YamlFileResourceCommentsExportTest {
         @Comment({"Command to run", "\n", "Don't forget to save!"})
         public static final Property<Command> COMMAND2 = new BeanWithExportCommentProperty<>(
             Command.class, "", new Command(), "This command is run on startup");
+
+        private RootPropertyHolder2() {
+        }
 
     }
 
@@ -137,6 +177,33 @@ class YamlFileResourceCommentsExportTest {
                 return null;
             }
             return new ValueWithComments(exportValue, Collections.singletonList(comment));
+        }
+    }
+
+    public static final class CommentWithNewLinesHolder implements SettingsHolder {
+
+        // #347: Use a text block once our Java version supports it
+        @Comment("Name\n\nChose whatever name you want\n")
+        public static final Property<String> NAME = new StringProperty("core.name", "Bob");
+
+        public static final Property<Integer> SIZE = new IntegerProperty("core.size", 3) {
+
+            @Override
+            public Object toExportValue(@NotNull Integer value) {
+                return new ValueWithComments(value,
+                    Collections.singletonList("\nSize prop\nDefines text size"));
+            }
+        };
+
+        private CommentWithNewLinesHolder() {
+        }
+
+        @Override
+        public void registerComments(@NotNull CommentsConfiguration conf) {
+            conf.setComment("core",
+                "Core section\nContains some test properties\nwith many comments",
+                "More text",
+                "Another text");
         }
     }
 }

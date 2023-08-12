@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -396,14 +397,31 @@ class SnakeYamlNodeBuilderImplTest {
     @Test
     void shouldCreateCommentNodes() {
         // given / when
-        CommentLine nodeForEmptyString = nodeBuilder.createCommentLine("");
-        CommentLine nodeForNewLine = nodeBuilder.createCommentLine("\n");
-        CommentLine nodeForText = nodeBuilder.createCommentLine("Text");
+        List<CommentLine> nodeForEmptyString = nodeBuilder.createCommentLines("").collect(Collectors.toList());
+        List<CommentLine> nodeForNewLine = nodeBuilder.createCommentLines("\n").collect(Collectors.toList());
+        List<CommentLine> nodeForText = nodeBuilder.createCommentLines("Text").collect(Collectors.toList());
 
         // then
-        assertThat(nodeForEmptyString, isBlockComment(" "));
-        assertThat(nodeForNewLine, isBlankComment());
-        assertThat(nodeForText, isBlockComment(" Text"));
+        assertThat(nodeForEmptyString, contains(isBlockComment(" ")));
+        assertThat(nodeForNewLine, contains(isBlankComment()));
+        assertThat(nodeForText, contains(isBlockComment(" Text")));
+    }
+
+    @Test
+    void shouldCreateCommentNodesForTextWithNewLines() {
+        // given
+        String text = "Alpha\nBravo\n\nCharlie\n";
+
+        // when
+        List<CommentLine> commentLines = nodeBuilder.createCommentLines(text).collect(Collectors.toList());
+
+        // then
+        assertThat(commentLines, hasSize(5));
+        assertThat(commentLines.get(0), isBlockComment(" Alpha"));
+        assertThat(commentLines.get(1), isBlockComment(" Bravo"));
+        assertThat(commentLines.get(2), isBlockComment(" "));
+        assertThat(commentLines.get(3), isBlockComment(" Charlie"));
+        assertThat(commentLines.get(4), isBlockComment(" "));
     }
 
     @Test

@@ -69,7 +69,7 @@ public class SnakeYamlNodeContainerImpl implements SnakeYamlNodeContainer {
 
         Node mappingNode = createRootNode(entryNodes);
         List<CommentLine> commentLines = comments.stream()
-            .map(nodeBuilder::createCommentLine)
+            .flatMap(nodeBuilder::createCommentLines)
             .collect(Collectors.toList());
         mappingNode.setBlockComments(commentLines);
         return mappingNode;

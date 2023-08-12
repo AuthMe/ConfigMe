@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.comments.CommentLine;
 import org.yaml.snakeyaml.nodes.Node;
 
+import java.util.stream.Stream;
+
 /**
  * Creates SnakeYAML nodes for values and comments.
  */
@@ -31,13 +33,14 @@ public interface SnakeYamlNodeBuilder {
     @NotNull Node createKeyNode(@NotNull String key);
 
     /**
-     * Creates a SnakeYAML {@link CommentLine} to represent the given comment. If the comment is equal to the new line
-     * character {@code \n}, the created comment line represents a blank line.
+     * Creates SnakeYAML {@link CommentLine} objects to represent the given comment. If the comment is equal to the
+     * new line character {@code \n}, one comment line representing a blank line is returned. Otherwise, a comment line
+     * is created for each line (the text is split by {@code \n}).
      *
      * @param comment the comment to represent as CommentLine
-     * @return appropriate comment line object for the given comment
+     * @return stream with comment line objects representing the given comment
      */
-    @NotNull CommentLine createCommentLine(@NotNull String comment);
+    @NotNull Stream<CommentLine> createCommentLines(@NotNull String comment);
 
     /**
      * Transfers the comments from the value node to the key node. Logically, comments are associated with values,
