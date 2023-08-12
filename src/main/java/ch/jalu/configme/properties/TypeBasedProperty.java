@@ -39,4 +39,11 @@ public class TypeBasedProperty<T> extends BaseProperty<T> {
     public @Nullable Object toExportValue(@NotNull T value) {
         return type.toExportValue(value);
     }
+
+    /**
+     * @return the property type this property makes use of
+     */
+    public PropertyType<T> getType() {
+        return type;
+    }
 }
