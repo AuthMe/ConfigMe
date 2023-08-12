@@ -137,7 +137,7 @@ class YamlFileResourceTest {
         // given
         Path file = temporaryFolder.resolve("file");
         Files.createFile(file);
-        YamlFileResource resource = new YamlFileResource(file.toFile());
+        YamlFileResource resource = new YamlFileResource(file);
 
         // when
         PropertyReader readerBeforeCopy = resource.createReader();
@@ -326,12 +326,10 @@ class YamlFileResourceTest {
 
         // when
         Path returnedPath = resource.getPath();
-        File returnedFile = resource.getFile();
         YamlFileResourceOptions returnedOptions = resource.getOptions();
 
         // then
         assertThat(returnedPath, sameInstance(configFile));
-        assertThat(returnedFile, sameInstance(givenFile));
         assertThat(returnedOptions, sameInstance(options));
     }
 

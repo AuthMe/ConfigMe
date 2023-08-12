@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -61,17 +60,6 @@ public class YamlFileReader implements PropertyReader {
         this.path = path;
         this.charset = charset;
         this.root = loadFile(splitDotPaths);
-    }
-
-    /**
-     * Constructor (legacy). Prefer the constructors taking {@link Path}.
-     *
-     * @param file the file to load
-     * @deprecated scheduled for removal in favor of Path
-     */
-    @Deprecated
-    public YamlFileReader(@NotNull File file) {
-        this(file.toPath(), StandardCharsets.UTF_8);
     }
 
     @Override
@@ -205,12 +193,6 @@ public class YamlFileReader implements PropertyReader {
     protected @Nullable Map<String, Object> normalizeMap(@Nullable Map<Object, Object> map,
                                                          boolean splitDotPaths) {
         return new MapNormalizer(splitDotPaths).normalizeMap(map);
-    }
-
-    // Scheduled for removal in favor of #getPath
-    @Deprecated
-    protected final @NotNull File getFile() {
-        return path.toFile();
     }
 
     protected final @NotNull Path getPath() {

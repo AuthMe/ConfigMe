@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -181,7 +180,7 @@ class YamlFileReaderTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> new YamlFileReader(file.toFile()));
+            () -> new YamlFileReader(file));
 
         // then
         assertThat(ex.getMessage(), equalTo("YAML error while trying to load file '" + file + "'"));
@@ -196,11 +195,9 @@ class YamlFileReaderTest {
 
         // when
         Path result = reader.getPath();
-        File resultFile = reader.getFile();
 
         // then
         assertThat(result, sameInstance(configFile));
-        assertThat(resultFile, equalTo(configFile.toFile()));
         assertThat(reader.getRoot(), nullValue());
         assertThat(reader.getKeys(true), empty());
         assertThat(reader.getChildKeys(""), empty());
