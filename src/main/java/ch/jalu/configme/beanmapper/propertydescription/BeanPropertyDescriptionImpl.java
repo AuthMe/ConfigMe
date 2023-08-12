@@ -26,20 +26,6 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
      * @param typeInformation type of the property
      * @param getter getter for the property
      * @param setter setter for the property
-     */
-    @Deprecated // Will be removed in ConfigMe 2.0. Use the constructor with the 'comments' argument.
-    public BeanPropertyDescriptionImpl(@NotNull String name, @NotNull TypeInformation typeInformation,
-                                       @NotNull Method getter, @NotNull Method setter) {
-        this(name, typeInformation, getter, setter, BeanPropertyComments.EMPTY);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param name name of the property in the export
-     * @param typeInformation type of the property
-     * @param getter getter for the property
-     * @param setter setter for the property
      * @param comments the comments of the property
      */
     public BeanPropertyDescriptionImpl(@NotNull String name, @NotNull TypeInformation typeInformation,
