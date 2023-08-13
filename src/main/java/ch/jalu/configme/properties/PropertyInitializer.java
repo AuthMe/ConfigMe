@@ -229,29 +229,35 @@ public class PropertyInitializer {
     // --------------
     // Property builders
     // --------------
-    public static <T> PropertyBuilder.@NotNull TypeBasedPropertyBuilder<T> typeBasedProperty(
-                                                                                        @NotNull PropertyType<T> type) {
+
+    @NotNull
+    public static <T> PropertyBuilder.TypeBasedPropertyBuilder<T> typeBasedProperty(@NotNull PropertyType<T> type) {
         return new PropertyBuilder.TypeBasedPropertyBuilder<>(type);
     }
 
-    public static <T> PropertyBuilder.@NotNull ListPropertyBuilder<T> listProperty(@NotNull PropertyType<T> type) {
+    @NotNull
+    public static <T> PropertyBuilder.ListPropertyBuilder<T> listProperty(@NotNull PropertyType<T> type) {
         return new PropertyBuilder.ListPropertyBuilder<>(type);
     }
 
-    public static <T> PropertyBuilder.@NotNull SetPropertyBuilder<T> setProperty(@NotNull PropertyType<T> type) {
+    @NotNull
+    public static <T> PropertyBuilder.SetPropertyBuilder<T> setProperty(@NotNull PropertyType<T> type) {
         return new PropertyBuilder.SetPropertyBuilder<>(type);
     }
 
-    public static <T> PropertyBuilder.@NotNull MapPropertyBuilder<T> mapProperty(@NotNull PropertyType<T> type) {
+    @NotNull
+    public static <T> PropertyBuilder.MapPropertyBuilder<T> mapProperty(@NotNull PropertyType<T> type) {
         return new PropertyBuilder.MapPropertyBuilder<>(type);
     }
 
-    public static <T> PropertyBuilder.@NotNull ArrayPropertyBuilder<T> arrayProperty(@NotNull PropertyType<T> type,
-                                                                              @NotNull IntFunction<T[]> arrayProducer) {
+    @NotNull
+    public static <T> PropertyBuilder.ArrayPropertyBuilder<T> arrayProperty(@NotNull PropertyType<T> type,
+                                                                            @NotNull IntFunction<T[]> arrayProducer) {
         return new PropertyBuilder.ArrayPropertyBuilder<>(type, arrayProducer);
     }
 
-    public static <T> PropertyBuilder.@NotNull InlineArrayPropertyBuilder<T> inlineArrayProperty(
+    @NotNull
+    public static <T> PropertyBuilder.InlineArrayPropertyBuilder<T> inlineArrayProperty(
                                                                      @NotNull InlineArrayConverter<T> inlineConverter) {
         return new PropertyBuilder.InlineArrayPropertyBuilder<>(inlineConverter);
     }
