@@ -41,7 +41,7 @@ public class YamlFileResource implements PropertyResource {
 
     @Override
     public @NotNull PropertyReader createReader() {
-        return new YamlFileReader(path, options.getCharset(), options.splitDotPaths());
+        return new YamlFileReader(path, options.getCharset());
     }
 
     @Override

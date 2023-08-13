@@ -49,10 +49,7 @@ class YamlFileResourceNoSplitPathsTest {
         MapProperty<Integer> groupsProperty = mapProperty(PrimitivePropertyType.INTEGER)
             .path("groups")
             .build();
-        YamlFileResourceOptions fileResourceOptions = YamlFileResourceOptions.builder()
-            .splitDotPaths(false)
-            .build();
-        YamlFileResource resource = new YamlFileResource(file, fileResourceOptions);
+        YamlFileResource resource = new YamlFileResource(file);
 
         // when
         PropertyValue<Map<String, Integer>> readGroups = groupsProperty.determineValue(resource.createReader());
@@ -84,10 +81,7 @@ class YamlFileResourceNoSplitPathsTest {
         newSections.put("abc", TestEnum.FOURTH);
         configurationData.setValue(sectionsProperty, newSections);
 
-        YamlFileResourceOptions fileResourceOptions = YamlFileResourceOptions.builder()
-            .splitDotPaths(false)
-            .build();
-        YamlFileResource resource = new YamlFileResource(file, fileResourceOptions);
+        YamlFileResource resource = new YamlFileResource(file);
 
         // when
         resource.exportProperties(configurationData);
