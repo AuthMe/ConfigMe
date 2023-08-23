@@ -8,9 +8,9 @@ updates:
   target-branch: dependencies
   ignore:
     - dependency-name: "org.mockito:mockito-core"
-      version: ">= 5"
+      versions: ">= 5"
     - dependency-name: "org.mockito:mockito-junit-jupiter"
-      version: ">= 5"
+      versions: ">= 5"
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
