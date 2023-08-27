@@ -143,6 +143,9 @@ class UniqueCommentTest {
         public static final Property<Optional<ServerCollection>> ALT =
             new OptionalProperty<>(new BeanProperty<>(ServerCollection.class, "alternative", new ServerCollection()));
 
+        private ServerSettingHolder() {
+        }
+
         private static Map<String, ServerCollection> createDefaultWorldsMap() {
             Map<String, ServerCollection> serversByKey = new LinkedHashMap<>();
             serversByKey.put("foo", new ServerCollection(false, "base", "moon"));

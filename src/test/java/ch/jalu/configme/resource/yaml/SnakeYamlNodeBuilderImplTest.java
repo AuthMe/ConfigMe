@@ -487,14 +487,11 @@ class SnakeYamlNodeBuilderImplTest {
         // given
         UUID uniqueCommentId = UUID.fromString("0000-00-00-00-001");
         Object value = new ValueWithComments(true, Arrays.asList("com", "com"), uniqueCommentId);
-        String path = "some.path";
         ConfigurationData configurationData = mock(ConfigurationData.class);
-        given(configurationData.getCommentsForSection(path)).willReturn(Arrays.asList("CD1", "\n", "CD2"));
-
         nodeBuilder.createYamlNode(value, "some.path", configurationData, 0);
 
         // when
-        Set<UUID> usedCommentIds = nodeBuilder.getUsedCommentIds();
+        Set<UUID> usedCommentIds = nodeBuilder.getUsedUniqueCommentIds();
 
         // then
         assertThat(usedCommentIds, contains(uniqueCommentId));

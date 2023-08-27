@@ -34,7 +34,7 @@ import java.util.stream.StreamSupport;
  */
 public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
 
-    private final Set<UUID> usedCommentIds = new HashSet<>();
+    private final Set<UUID> usedUniqueCommentIds = new HashSet<>();
 
     @Override
     public @NotNull Node createYamlNode(@NotNull Object obj, @NotNull String path,
@@ -170,7 +170,7 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
         Stream<String> emptyLineStream = StreamUtils.repeat("\n", numberOfNewLines);
         Stream<String> configDataStream = configurationData.getCommentsForSection(path).stream();
         Stream<String> additionalCommentsStream =
-            ValueWithComments.streamThroughCommentsIfApplicable(value, usedCommentIds);
+            ValueWithComments.streamThroughCommentsIfApplicable(value, usedUniqueCommentIds);
 
         return Stream.of(emptyLineStream, configDataStream, additionalCommentsStream)
             .flatMap(Function.identity())
@@ -181,7 +181,7 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
     /**
      * @return UUIDs of comments which should not be repeated that have already been included
      */
-    protected final @NotNull Set<UUID> getUsedCommentIds() {
-        return usedCommentIds;
+    protected final @NotNull Set<UUID> getUsedUniqueCommentIds() {
+        return usedUniqueCommentIds;
     }
 }

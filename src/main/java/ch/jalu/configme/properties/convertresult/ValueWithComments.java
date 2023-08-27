@@ -24,8 +24,8 @@ public class ValueWithComments {
     /**
      * Constructor.
      * <p>
-     * The UUID is associated with the comments and should be not null if the comments should only appear once. Set it
-     * to a random UUID if the comments might appear multiple times, e.g. because they were defined on a type that
+     * The UUID is associated with the comments and should be not null if the comments should only appear once.
+     * Use a random UUID if the comments might appear multiple times, e.g. because they were defined on a type that
      * a property uses in a collection. If repetition is desired, or if you're creating an object in simple cases where
      * the comment cannot be repeated, you can use the constructor {@link #ValueWithComments(Object, List)}.
      *
@@ -63,6 +63,9 @@ public class ValueWithComments {
         return comments;
     }
 
+    /**
+     * @return UUID to identify the comments, if the comments should only be included the first time they're encountered
+     */
     public @Nullable UUID getUniqueCommentId() {
         return uniqueCommentId;
     }
@@ -82,8 +85,10 @@ public class ValueWithComments {
     }
 
     /**
-     * Returns a stream with the comments on the given object, if it is a {@link ValueWithComments}. An empty
-     * stream is returned otherwise.
+     * Returns a stream with the comments on the given object, if it is a {@link ValueWithComments} and its comments
+     * aren't specified to be unique, or if the comments are encountered for the first time. An empty stream is returned
+     * if the object is not an instance of this class, or if the comments are defined to be unique and were already
+     * encountered (as determined by the set of used comment IDs).
      *
      * @param object the object to get comments from, if applicable
      * @param usedCommentIds UUIDs of comments which should not be repeated that have already been included
