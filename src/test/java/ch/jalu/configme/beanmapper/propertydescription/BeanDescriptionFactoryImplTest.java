@@ -11,7 +11,7 @@ import ch.jalu.configme.samples.beanannotations.BeanWithExportNameExtension;
 import ch.jalu.configme.samples.beanannotations.BeanWithNameClash;
 import ch.jalu.configme.samples.inheritance.Child;
 import ch.jalu.configme.samples.inheritance.Middle;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
 import org.junit.jupiter.api.Test;
 
 import java.beans.Transient;
@@ -48,11 +48,11 @@ class BeanDescriptionFactoryImplTest {
         assertThat(descriptions, hasSize(2));
 
         BeanPropertyDescription sizeProperty = getDescription("size", descriptions);
-        assertThat(sizeProperty.getTypeInformation(), equalTo(new TypeInformation(int.class)));
+        assertThat(sizeProperty.getTypeInformation(), equalTo(new TypeInfo(int.class)));
         assertThat(sizeProperty.getComments().getComments(), contains("Size of this entry (cm)"));
 
         BeanPropertyDescription nameProperty = getDescription("name", descriptions);
-        assertThat(nameProperty.getTypeInformation(), equalTo(new TypeInformation(String.class)));
+        assertThat(nameProperty.getTypeInformation(), equalTo(new TypeInfo(String.class)));
         assertThat(nameProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
     }
 

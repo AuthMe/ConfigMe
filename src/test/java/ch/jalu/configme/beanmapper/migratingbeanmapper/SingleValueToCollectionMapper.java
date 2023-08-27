@@ -1,7 +1,8 @@
 package ch.jalu.configme.beanmapper.migratingbeanmapper;
 
 import ch.jalu.configme.beanmapper.MapperImpl;
-import ch.jalu.configme.beanmapper.MappingContext;
+import ch.jalu.configme.beanmapper.context.MappingContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -14,14 +15,14 @@ import java.util.Collections;
 public class SingleValueToCollectionMapper extends MapperImpl {
 
     @Override
-    protected Collection<?> createCollection(MappingContext context, Object value) {
+    protected Collection<?> convertToCollection(@NotNull MappingContext context, Object value) {
         if (!(value instanceof Iterable)) {
-            Collection<?> coll = super.createCollection(context, Collections.singleton(value));
+            Collection<?> coll = super.convertToCollection(context, Collections.singleton(value));
             // Register error to trigger a rewrite with the proper structure
             context.registerError("Found single value where a collection is expected");
             return isCollectionWithOneElement(coll) ? coll : null;
         }
-        return super.createCollection(context, value);
+        return super.convertToCollection(context, value);
     }
 
     private static boolean isCollectionWithOneElement(Collection<?> coll) {

@@ -1,7 +1,8 @@
-package ch.jalu.configme.beanmapper;
+package ch.jalu.configme.beanmapper.context;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.configme.utils.PathUtils;
+import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,13 +10,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MappingContextImpl implements MappingContext {
 
-    private final String path;
-    private final TypeInformation typeInformation;
+    private final String beanPath;
+    private final TypeInfo typeInformation;
     private final ConvertErrorRecorder errorRecorder;
 
-    protected MappingContextImpl(@NotNull String path, @NotNull TypeInformation typeInformation,
+    protected MappingContextImpl(@NotNull String beanPath, @NotNull TypeInfo typeInformation,
                                  @NotNull ConvertErrorRecorder errorRecorder) {
-        this.path = path;
+        this.beanPath = beanPath;
         this.typeInformation = typeInformation;
         this.errorRecorder = errorRecorder;
     }
@@ -27,32 +28,39 @@ public class MappingContextImpl implements MappingContext {
      * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return root mapping context
      */
-    public static @NotNull MappingContextImpl createRoot(@NotNull TypeInformation typeInformation,
+    public static @NotNull MappingContextImpl createRoot(@NotNull TypeInfo typeInformation,
                                                          @NotNull ConvertErrorRecorder errorRecorder) {
         return new MappingContextImpl("", typeInformation, errorRecorder);
     }
 
     @Override
-    public @NotNull MappingContext createChild(@NotNull String subPath, @NotNull TypeInformation typeInformation) {
-        if (path.isEmpty()) {
-            return new MappingContextImpl(subPath, typeInformation, errorRecorder);
-        }
-        return new MappingContextImpl(path + "." + subPath, typeInformation, errorRecorder);
+    public @NotNull MappingContext createChild(@NotNull String subPath, @NotNull TypeInfo typeInformation) {
+        String childPath = PathUtils.concatSpecifierAware(beanPath, subPath);
+        return new MappingContextImpl(childPath, typeInformation, errorRecorder);
+    }
+
+    public @NotNull String getBeanPath() {
+        return beanPath;
     }
 
     @Override
-    public @NotNull TypeInformation getTypeInformation() {
+    public @NotNull TypeInfo getTargetType() {
         return typeInformation;
     }
 
     @Override
     public @NotNull String createDescription() {
-        return "Path: '" + path + "', type: '" + typeInformation.getType() + "'";
+        return "Bean path: '" + beanPath + "', type: '" + typeInformation.getType() + "'";
     }
 
     @Override
     public void registerError(@NotNull String reason) {
-        errorRecorder.setHasError("At path '" + path + "': " + reason);
+        errorRecorder.setHasError("For bean path '" + beanPath + "': " + reason);
+    }
+
+    @Override
+    public @NotNull ConvertErrorRecorder getErrorRecorder() {
+        return errorRecorder;
     }
 
     @Override

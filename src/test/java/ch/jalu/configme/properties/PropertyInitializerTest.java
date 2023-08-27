@@ -2,7 +2,9 @@ package ch.jalu.configme.properties;
 
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
 import ch.jalu.configme.properties.inlinearray.StandardInlineArrayConverters;
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.BooleanType;
+import ch.jalu.configme.properties.types.NumberType;
+import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 
@@ -76,11 +78,11 @@ class PropertyInitializerTest {
 
     @Test
     void shouldInstantiateBuilders() {
-        assertThat(typeBasedProperty(PrimitivePropertyType.STRING), instanceOf(PropertyBuilder.TypeBasedPropertyBuilder.class));
-        assertThat(listProperty(PrimitivePropertyType.INTEGER), instanceOf(PropertyBuilder.ListPropertyBuilder.class));
-        assertThat(setProperty(PrimitivePropertyType.FLOAT), instanceOf(PropertyBuilder.SetPropertyBuilder.class));
-        assertThat(mapProperty(PrimitivePropertyType.DOUBLE), instanceOf(PropertyBuilder.MapPropertyBuilder.class));
-        assertThat(arrayProperty(PrimitivePropertyType.BOOLEAN, Boolean[]::new), instanceOf(PropertyBuilder.ArrayPropertyBuilder.class));
+        assertThat(typeBasedProperty(StringType.STRING), instanceOf(PropertyBuilder.TypeBasedPropertyBuilder.class));
+        assertThat(listProperty(NumberType.INTEGER), instanceOf(PropertyBuilder.ListPropertyBuilder.class));
+        assertThat(setProperty(NumberType.FLOAT), instanceOf(PropertyBuilder.SetPropertyBuilder.class));
+        assertThat(mapProperty(NumberType.DOUBLE), instanceOf(PropertyBuilder.MapPropertyBuilder.class));
+        assertThat(arrayProperty(BooleanType.BOOLEAN, Boolean[]::new), instanceOf(PropertyBuilder.ArrayPropertyBuilder.class));
         assertThat(inlineArrayProperty(StandardInlineArrayConverters.FLOAT), instanceOf(PropertyBuilder.InlineArrayPropertyBuilder.class));
     }
 

@@ -5,7 +5,7 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.properties.Property;
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.StringType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -84,7 +84,7 @@ class YamlFileResourceEscapingTest {
 
         public static final Property<List<String>> SHAPE = newListProperty("shape");
 
-        public static final Property<Map<String, String>> INGREDIENTS = mapProperty(PrimitivePropertyType.STRING)
+        public static final Property<Map<String, String>> INGREDIENTS = mapProperty(StringType.STRING)
             .path("ingredients")
             .build();
 

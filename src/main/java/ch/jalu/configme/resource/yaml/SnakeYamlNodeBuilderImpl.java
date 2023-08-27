@@ -2,6 +2,7 @@ package ch.jalu.configme.resource.yaml;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.properties.convertresult.ValueWithComments;
+import ch.jalu.configme.utils.PathUtils;
 import ch.jalu.configme.utils.StreamUtils;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
@@ -28,6 +29,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static ch.jalu.configme.utils.PathUtils.specifierForIndex;
+import static ch.jalu.configme.utils.PathUtils.specifierForMapKey;
 
 /**
  * Default implementation of {@link SnakeYamlNodeBuilder}: creates SnakeYAML nodes for values and comments.
@@ -118,11 +122,10 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
     protected @NotNull Node createSequenceNode(@NotNull Stream<?> entries, @NotNull String path,
                                                @NotNull ConfigurationData configurationData) {
         AtomicInteger counter = new AtomicInteger();
-        String pathPrefix = path.isEmpty() ? "" : path.concat(".");
 
         List<Node> values = entries
             .map(entry -> {
-                String entryPath = pathPrefix.concat(Integer.toString(counter.getAndIncrement()));
+                String entryPath = PathUtils.concatSpecifierAware(path, specifierForIndex(counter.getAndIncrement()));
                 return createYamlNode(entry, entryPath, configurationData, 0);
             })
             .collect(Collectors.toList());
@@ -140,12 +143,12 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
      */
     protected @NotNull Node createMapNode(@NotNull Map<String, ?> value, String path,
                                           @NotNull ConfigurationData configurationData) {
-        String pathPrefix = path.isEmpty() ? "" : path.concat(".");
         List<NodeTuple> nodeEntries = new ArrayList<>(value.size());
 
         for (Map.Entry<String, ?> entry : value.entrySet()) {
             Node keyNode = createKeyNode(entry.getKey());
-            Node valueNode = createYamlNode(entry.getValue(), pathPrefix.concat(entry.getKey()), configurationData, 0);
+            String entryPath = PathUtils.concatSpecifierAware(path, specifierForMapKey(entry));
+            Node valueNode = createYamlNode(entry.getValue(), entryPath, configurationData, 0);
             transferComments(valueNode, keyNode);
 
             nodeEntries.add(new NodeTuple(keyNode, valueNode));

@@ -13,7 +13,7 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -104,7 +104,7 @@ class BeanPropertyTest {
         Object value = new Object();
         given(reader.getObject(path)).willReturn(value);
         WorldGroupConfig groupConfig = new WorldGroupConfig();
-        given(mapper.convertToBean(eq(value), eq(new TypeInformation(WorldGroupConfig.class)), any(ConvertErrorRecorder.class)))
+        given(mapper.convertToBean(eq(value), eq(new TypeInfo(WorldGroupConfig.class)), any(ConvertErrorRecorder.class)))
             .willReturn(groupConfig);
 
         // when
@@ -121,7 +121,7 @@ class BeanPropertyTest {
 
 
         // when
-        BeanProperty<Comparable<String>> property = new BeanProperty<>(new TypeInformation(stringComparable),
+        BeanProperty<Comparable<String>> property = new BeanProperty<>(new TypeInfo(stringComparable),
             "path.test", "defaultValue", DefaultMapper.getInstance());
 
         // then
@@ -135,12 +135,12 @@ class BeanPropertyTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> new BeanProperty<>(new TypeInformation(stringComparable),
+            () -> new BeanProperty<>(new TypeInfo(stringComparable),
                 "path.test", new HashMap<>(), DefaultMapper.getInstance()));
 
         // then
         assertThat(ex.getMessage(),
-            equalTo("Default value for path 'path.test' does not match bean type 'TypeInformation[type=java.lang.Comparable<java.lang.String>]'"));
+            equalTo("Default value for path 'path.test' does not match bean type 'TypeInfo[type=java.lang.Comparable<java.lang.String>]'"));
     }
 
     private static final class TestFields {

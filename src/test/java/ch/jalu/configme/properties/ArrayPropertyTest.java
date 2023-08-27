@@ -2,7 +2,7 @@ package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,7 @@ class ArrayPropertyTest {
         ArrayProperty<String> property = new ArrayProperty<>(
             "singleton",
             new String[] {"multiline", "message"},
-            PrimitivePropertyType.STRING, String[]::new);
+            StringType.STRING, String[]::new);
 
         given(reader.getObject("singleton")).willReturn("hello");
 
@@ -47,11 +47,10 @@ class ArrayPropertyTest {
     @Test
     void shouldHandleNull() {
         // given
-        // given
         ArrayProperty<String> property = new ArrayProperty<>(
             "singleton",
             new String[] {"multiline", "message"},
-            PrimitivePropertyType.STRING, String[]::new);
+            StringType.STRING, String[]::new);
 
         given(reader.getObject("singleton")).willReturn(null);
 
@@ -68,7 +67,7 @@ class ArrayPropertyTest {
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {"multiline", "message"},
-            PrimitivePropertyType.STRING, String[]::new);
+            StringType.STRING, String[]::new);
         given(reader.getObject("array")).willReturn(Arrays.asList("qwerty", "123"));
 
         // when
@@ -84,7 +83,7 @@ class ArrayPropertyTest {
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {"multiline", "message c:"},
-            PrimitivePropertyType.STRING, String[]::new);
+            StringType.STRING, String[]::new);
 
         given(reader.getObject("array")).willReturn(null);
 
@@ -101,7 +100,7 @@ class ArrayPropertyTest {
         Property<String[]> property = new ArrayProperty<>(
             "array",
             new String[] {},
-            PrimitivePropertyType.STRING, String[]::new);
+            StringType.STRING, String[]::new);
 
         String[] givenArray = new String[] {"hello, chert", "how in hell?"};
 

@@ -4,7 +4,7 @@ import ch.jalu.configme.beanmapper.DefaultMapper;
 import ch.jalu.configme.beanmapper.Mapper;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.types.BeanPropertyType;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 
 public class BeanProperty<T> extends TypeBasedProperty<T> {
@@ -27,10 +27,10 @@ public class BeanProperty<T> extends TypeBasedProperty<T> {
      * @param defaultValue the default value
      * @param mapper the mapper to map with
      */
-    protected BeanProperty(@NotNull TypeInformation beanType, @NotNull String path, @NotNull T defaultValue,
+    protected BeanProperty(@NotNull TypeInfo beanType, @NotNull String path, @NotNull T defaultValue,
                            @NotNull Mapper mapper) {
         super(path, defaultValue, new BeanPropertyType<>(beanType, mapper));
-        if (!beanType.getSafeToWriteClass().isInstance(defaultValue)) {
+        if (!beanType.toClass().isInstance(defaultValue)) {
             throw new ConfigMeException(
                 "Default value for path '" + path + "' does not match bean type '" + beanType + "'");
         }

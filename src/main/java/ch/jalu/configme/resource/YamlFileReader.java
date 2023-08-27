@@ -1,6 +1,7 @@
 package ch.jalu.configme.resource;
 
 import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.utils.PathUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
@@ -137,7 +138,7 @@ public class YamlFileReader implements PropertyReader {
     private void collectKeysIntoSet(@NotNull String path, @NotNull Map<String, Object> map, @NotNull Set<String> result,
                                     boolean onlyLeafNodes) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String childPath = path.isEmpty() ? entry.getKey() : path + "." + entry.getKey();
+            String childPath = PathUtils.concat(path, entry.getKey());
             if (!onlyLeafNodes || isLeafValue(entry.getValue())) {
                 result.add(childPath);
             }

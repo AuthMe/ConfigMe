@@ -21,7 +21,7 @@ public class EnumPropertyTest {
         // given
         Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject(property.getPath())).willReturn("Entry_B");
+        given(reader.getObject(property.getPath())).willReturn("ENTRY_B");
 
         // when
         PropertyValue<TestEnum> result = property.determineValue(reader);

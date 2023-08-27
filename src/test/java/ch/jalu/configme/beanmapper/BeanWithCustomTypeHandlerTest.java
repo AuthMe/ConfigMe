@@ -4,16 +4,18 @@ import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.beanmapper.leafvaluehandler.AbstractLeafValueHandler;
-import ch.jalu.configme.beanmapper.leafvaluehandler.CombiningLeafValueHandler;
-import ch.jalu.configme.beanmapper.leafvaluehandler.StandardLeafValueHandlers;
+import ch.jalu.configme.beanmapper.leafvaluehandler.MapperLeafType;
+import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
 import ch.jalu.configme.properties.BeanProperty;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.typeresolver.TypeInfo;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -83,26 +85,26 @@ class BeanWithCustomTypeHandlerTest {
 
         MapperWithCustomIntSupport() {
             super(new BeanDescriptionFactoryImpl(),
-                new CombiningLeafValueHandler(StandardLeafValueHandlers.getDefaultLeafValueHandler(),
-                    new CustomIntegerLeafValueHandler()));
+                  LeafValueHandlerImpl.builder().addDefaults().addType(new CustomIntegerLeafValueHandler()).build());
         }
     }
 
     /**
      * Provides {@link CustomInteger} when reading from and writing to a property resource.
      */
-    public static final class CustomIntegerLeafValueHandler extends AbstractLeafValueHandler {
+    public static final class CustomIntegerLeafValueHandler implements MapperLeafType {
 
         @Override
-        protected @Nullable Object convert(@Nullable Class<?> clazz, @Nullable Object value) {
-            if (clazz == CustomInteger.class && value instanceof Number) {
+        public @Nullable Object convert(@Nullable Object value, @NotNull TypeInfo targetType,
+                                        @NotNull ConvertErrorRecorder errorRecorder) {
+            if (targetType.isAssignableFrom(CustomInteger.class) && value instanceof Number) {
                 return new CustomInteger(((Number) value).intValue(), false);
             }
             return null;
         }
 
         @Override
-        public @Nullable Object toExportValue(@Nullable Object value) {
+        public @Nullable Object toExportValueIfApplicable(@Nullable Object value) {
             if (value instanceof CustomInteger) {
                 return ((CustomInteger) value).value;
             }
@@ -131,7 +133,7 @@ class BeanWithCustomTypeHandlerTest {
     }
 
     /**
-     * Range collection: bean type as used in the the bean property of {@link MyTestSettings}.
+     * Range collection: bean type as used in the bean property of {@link MyTestSettings}.
      */
     public static class RangeCollection {
 

@@ -1,7 +1,7 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.PropertyValue;
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +29,7 @@ class ListPropertyTest {
     @Test
     void shouldReturnValueFromResource() {
         // given
-        Property<List<Integer>> property = new ListProperty<>("list", PrimitivePropertyType.INTEGER);
+        Property<List<Integer>> property = new ListProperty<>("list", NumberType.INTEGER);
         given(reader.getList("list")).willReturn((List) Arrays.asList(3, 5, 7.0));
 
         // when
@@ -42,7 +42,7 @@ class ListPropertyTest {
     @Test
     void shouldReturnDefaultValue() {
         // given
-        Property<List<Integer>> property = new ListProperty<>("list", PrimitivePropertyType.INTEGER, 8, 9, 10);
+        Property<List<Integer>> property = new ListProperty<>("list", NumberType.INTEGER, 8, 9, 10);
         given(reader.getList("list")).willReturn(null);
 
         // when
@@ -55,7 +55,7 @@ class ListPropertyTest {
     @Test
     void shouldReturnValueAsExportValue() {
         // given
-        Property<List<Integer>> property = new ListProperty<>("list", PrimitivePropertyType.INTEGER, Arrays.asList(-2, 16));
+        Property<List<Integer>> property = new ListProperty<>("list", NumberType.INTEGER, Arrays.asList(-2, 16));
 
         // when
         Object result = property.toExportValue(Arrays.asList(128, -256, 512));

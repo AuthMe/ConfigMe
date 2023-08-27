@@ -2,7 +2,8 @@ package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.inlinearray.StandardInlineArrayConverters;
 import ch.jalu.configme.properties.types.EnumPropertyType;
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.NumberType;
+import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,7 @@ class PropertyBuilderTest {
     @Test
     void shouldCreateCommonProperty() {
         // given / when
-        Property<Integer> result = new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.INTEGER)
+        Property<Integer> result = new PropertyBuilder.TypeBasedPropertyBuilder<>(NumberType.INTEGER)
             .path("my.path.test")
             .defaultValue(3)
             .build();
@@ -41,7 +42,7 @@ class PropertyBuilderTest {
     @Test
     void shouldCreateCommonPropertyWithCustomFunction() {
         // given / when
-        Property<String> result = new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
+        Property<String> result = new PropertyBuilder.TypeBasedPropertyBuilder<>(StringType.STRING)
             .path("my.path")
             .defaultValue("seven")
             .createFunction((path, val, type) -> new StringProperty(path, val))
@@ -55,7 +56,7 @@ class PropertyBuilderTest {
     void shouldThrowForMissingPathInCommonPropertyBuilder() {
         // given / when
         Exception e = assertThrows(getExceptionTypeForNullArg(),
-            () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
+            () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(StringType.STRING)
                 .defaultValue("Hello")
                 .build());
 
@@ -69,7 +70,7 @@ class PropertyBuilderTest {
     void shouldThrowForMissingDefaultValueInCommonPropertyBuilder() {
         // given / when
         Exception e = assertThrows(getExceptionTypeForNullArg(),
-            () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(PrimitivePropertyType.STRING)
+            () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(StringType.STRING)
                 .path("a.path")
                 .createFunction((path, val, type) -> new StringProperty(path, val))
                 .build());
@@ -98,7 +99,7 @@ class PropertyBuilderTest {
     @Test
     void shouldCreateMapProperty() {
         // given / when
-        MapProperty<Double> result = new PropertyBuilder.MapPropertyBuilder<>(PrimitivePropertyType.DOUBLE)
+        MapProperty<Double> result = new PropertyBuilder.MapPropertyBuilder<>(NumberType.DOUBLE)
             .path("the.path")
             .defaultEntry("leet", 1337.0)
             .defaultEntry("all", 411.411)
@@ -115,7 +116,7 @@ class PropertyBuilderTest {
     @Test
     void shouldCreateMapPropertyWithEmptyMapAsDefault() {
         // given / when
-        MapProperty<Double> result = new PropertyBuilder.MapPropertyBuilder<>(PrimitivePropertyType.DOUBLE)
+        MapProperty<Double> result = new PropertyBuilder.MapPropertyBuilder<>(NumberType.DOUBLE)
             .path("some.path")
             .build();
 
@@ -127,7 +128,7 @@ class PropertyBuilderTest {
     void shouldThrowForMissingPathInMapBuilder() {
         // given / when
         Exception e = assertThrows(getExceptionTypeForNullArg(),
-            () -> new PropertyBuilder.MapPropertyBuilder<>(PrimitivePropertyType.DOUBLE).build());
+            () -> new PropertyBuilder.MapPropertyBuilder<>(NumberType.DOUBLE).build());
 
         // then
         if (e instanceof NullPointerException) {
@@ -138,7 +139,7 @@ class PropertyBuilderTest {
     @Test
     void shouldCreateArrayProperty() {
         // given / when
-        Property<Long[]> property = new PropertyBuilder.ArrayPropertyBuilder<>(PrimitivePropertyType.LONG, Long[]::new)
+        Property<Long[]> property = new PropertyBuilder.ArrayPropertyBuilder<>(NumberType.LONG, Long[]::new)
             .path("given.path")
             .defaultValue(5L, 11L, 23L)
             .build();
@@ -180,7 +181,7 @@ class PropertyBuilderTest {
     @Test
     void shouldCreateSetProperty() {
         // given / when
-        Property<Set<Integer>> property = new PropertyBuilder.SetPropertyBuilder<>(PrimitivePropertyType.INTEGER)
+        Property<Set<Integer>> property = new PropertyBuilder.SetPropertyBuilder<>(NumberType.INTEGER)
             .path("path.to.set")
             .defaultValue(1, 4, 2, 5)
             .build();
@@ -195,7 +196,7 @@ class PropertyBuilderTest {
     void shouldThrowForMissingDefaultValue() {
         // given / when / then
         assertThrows(getExceptionTypeForNullArg(),
-            () -> new PropertyBuilder.ListPropertyBuilder<>(PrimitivePropertyType.DOUBLE)
+            () -> new PropertyBuilder.ListPropertyBuilder<>(NumberType.DOUBLE)
                 .path("defined.path")
                 .build());
     }

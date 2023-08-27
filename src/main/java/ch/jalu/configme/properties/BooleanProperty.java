@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.BooleanType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,6 +9,6 @@ import org.jetbrains.annotations.NotNull;
 public class BooleanProperty extends TypeBasedProperty<Boolean> {
 
     public BooleanProperty(@NotNull String path, @NotNull Boolean defaultValue) {
-        super(path, defaultValue, PrimitivePropertyType.BOOLEAN);
+        super(path, defaultValue, BooleanType.BOOLEAN);
     }
 }

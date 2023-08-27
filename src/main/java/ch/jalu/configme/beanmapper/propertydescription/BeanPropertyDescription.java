@@ -1,6 +1,6 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +20,7 @@ public interface BeanPropertyDescription {
     /**
      * @return property type
      */
-    @NotNull TypeInformation getTypeInformation();
+    @NotNull TypeInfo getTypeInformation();
 
     /**
      * Sets the given value on the provided bean for this property. The value should correspond
