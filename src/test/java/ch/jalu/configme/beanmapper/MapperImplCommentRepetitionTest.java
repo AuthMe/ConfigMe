@@ -14,6 +14,8 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 /**
  * Test for the handling of comments in {@link MapperImpl}.
@@ -51,6 +53,7 @@ class MapperImplCommentRepetitionTest {
             if (i == 0) {
                 assertThat(titleValue, instanceOf(ValueWithComments.class));
                 assertThat(((ValueWithComments) titleValue).getComments(), contains("Song title"));
+                assertThat(((ValueWithComments) titleValue).getUniqueCommentId(), notNullValue());
                 assertThat(((ValueWithComments) titleValue).getValue(), equalTo(songs.getSongs().get(i).getTitle()));
             } else {
                 assertThat(titleValue, equalTo(songs.getSongs().get(i).getTitle()));
@@ -60,6 +63,7 @@ class MapperImplCommentRepetitionTest {
             Object yearValue = songValues.get("year");
             assertThat(yearValue, instanceOf(ValueWithComments.class));
             assertThat(((ValueWithComments) yearValue).getComments(), contains("Release year"));
+            assertThat(((ValueWithComments) yearValue).getUniqueCommentId(), nullValue());
             assertThat(((ValueWithComments) yearValue).getValue(), equalTo(songs.getSongs().get(i).getYear()));
         }
     }
