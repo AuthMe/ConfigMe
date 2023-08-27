@@ -4,10 +4,13 @@ import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.StringProperty;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static ch.jalu.configme.TestUtils.transform;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -100,6 +103,54 @@ class PropertyListBuilderTest {
         // then
         assertThat(ex.getMessage(), equalTo("Value of unknown type found at 'version': " + unknownObject));
         assertThat(properties.create(), hasSize(1));
+    }
+
+    @Test
+    void shouldSupportRootProperty() {
+        // given
+        PropertyListBuilder listBuilder = new PropertyListBuilder();
+        Property<?> rootProperty = createPropertyWithPath("");
+        listBuilder.add(rootProperty);
+
+        // when
+        List<Property<?>> properties = listBuilder.create();
+
+        // then
+        assertThat(properties, contains(rootProperty));
+    }
+
+    @Test
+    void shouldThrowForRootPathAndOtherProperty() {
+        // given
+        PropertyListBuilder properties = new PropertyListBuilder();
+        properties.add(createPropertyWithPath(""));
+        properties.add(createPropertyWithPath("enabled"));
+
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class, properties::create);
+
+        // then
+        assertThat(ex.getMessage(),
+            equalTo("A property at the root path (\"\") cannot be defined alongside other properties as the paths would conflict"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("malformedPropertyPaths")
+    void shouldThrowForMalformedPropertyPath(String path) {
+        // given
+        PropertyListBuilder properties = new PropertyListBuilder();
+
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> properties.add(createPropertyWithPath(path)));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("The path at '" + path + "' is malformed: dots may not be at "
+            + "the beginning or end of a path, and dots may not appear multiple times successively."));
+    }
+
+    static Stream<String> malformedPropertyPaths() {
+        return Stream.of(".", "..", ".security", "security.", "alf..beta", "security.hash..version.minor");
     }
 
     private static Property<?> createPropertyWithPath(String path) {
