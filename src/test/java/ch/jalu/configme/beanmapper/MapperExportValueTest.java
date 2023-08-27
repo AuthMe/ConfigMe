@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.nullValue;
 
 /**
  * Test for {@link MapperImpl}, specifically for {@link MapperImpl#toExportValue}.
@@ -116,6 +117,7 @@ class MapperExportValueTest {
         assertThat(executionMap.get("importance"), instanceOf(ValueWithComments.class));
         ValueWithComments importance = (ValueWithComments) executionMap.get("importance");
         assertThat(importance.getComments(), contains("The higher the number, the more important"));
+        assertThat(importance.getUniqueCommentId(), nullValue());
         assertThat(importance.getValue(), equalTo(command.getExecution().getImportance()));
 
         assertThat(executionMap.get("privileges"), instanceOf(Collection.class));

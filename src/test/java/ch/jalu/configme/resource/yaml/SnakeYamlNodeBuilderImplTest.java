@@ -25,6 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -478,6 +480,21 @@ class SnakeYamlNodeBuilderImplTest {
         assertThat(comments.get(1), isBlockComment(" CD1"));
         assertThat(comments.get(2), isBlankComment());
         assertThat(comments.get(3), isBlockComment(" CD2"));
+    }
+
+    @Test
+    void shouldReturnCollectionOfUsedUniqueIds() {
+        // given
+        UUID uniqueCommentId = UUID.fromString("0000-00-00-00-001");
+        Object value = new ValueWithComments(true, Arrays.asList("com", "com"), uniqueCommentId);
+        ConfigurationData configurationData = mock(ConfigurationData.class);
+        nodeBuilder.createYamlNode(value, "some.path", configurationData, 0);
+
+        // when
+        Set<UUID> usedCommentIds = nodeBuilder.getUsedUniqueCommentIds();
+
+        // then
+        assertThat(usedCommentIds, contains(uniqueCommentId));
     }
 
     static Matcher<Node> isScalarNode(Tag expectedTag, String expectedValue) {

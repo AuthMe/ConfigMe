@@ -18,8 +18,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -30,6 +33,8 @@ import java.util.stream.StreamSupport;
  * Default implementation of {@link SnakeYamlNodeBuilder}: creates SnakeYAML nodes for values and comments.
  */
 public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
+
+    private final Set<UUID> usedUniqueCommentIds = new HashSet<>();
 
     @Override
     public @NotNull Node createYamlNode(@NotNull Object obj, @NotNull String path,
@@ -164,11 +169,19 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
                                                          int numberOfNewLines) {
         Stream<String> emptyLineStream = StreamUtils.repeat("\n", numberOfNewLines);
         Stream<String> configDataStream = configurationData.getCommentsForSection(path).stream();
-        Stream<String> additionalCommentsStream = ValueWithComments.streamThroughCommentsIfApplicable(value);
+        Stream<String> additionalCommentsStream =
+            ValueWithComments.streamThroughCommentsIfApplicable(value, usedUniqueCommentIds);
 
         return Stream.of(emptyLineStream, configDataStream, additionalCommentsStream)
             .flatMap(Function.identity())
             .flatMap(this::createCommentLines)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * @return UUIDs of comments which should not be repeated that have already been included
+     */
+    protected final @NotNull Set<UUID> getUsedUniqueCommentIds() {
+        return usedUniqueCommentIds;
     }
 }

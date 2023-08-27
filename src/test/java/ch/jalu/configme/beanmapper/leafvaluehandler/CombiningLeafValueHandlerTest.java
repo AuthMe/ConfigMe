@@ -1,11 +1,9 @@
 package ch.jalu.configme.beanmapper.leafvaluehandler;
 
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
 import ch.jalu.configme.utils.TypeInformation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.TypeInfo;
 
 import java.util.Arrays;
 

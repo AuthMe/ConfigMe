@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * Builds a list of known properties in an ordered and grouped manner.
- *
+ * <p>
  * It guarantees that the added entries:
  * <ul>
  *   <li>are grouped by path, e.g. all "DataSource.mysql" properties are together, and "DataSource.mysql" properties
@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class PropertyListBuilder {
 
-    private @NotNull Map<String, Object> rootEntries = new LinkedHashMap<>();
+    private final @NotNull Map<String, Object> rootEntries = new LinkedHashMap<>();
 
     /**
      * Adds the property to the list builder.
@@ -32,17 +32,16 @@ public class PropertyListBuilder {
      * @param property the property to add
      */
     public void add(@NotNull Property<?> property) {
-        String[] paths = property.getPath().split("\\.");
-        Map<String, Object> map = rootEntries;
-        for (int i = 0; i < paths.length - 1; ++i) {
-            map = getChildMap(map, paths[i]);
-        }
+        String[] pathElements = property.getPath().split("\\.", -1);
+        Map<String, Object> mapForProperty = getMapBeforeLastElement(pathElements);
 
-        final String end = paths[paths.length - 1];
-        if (map.containsKey(end)) {
+        final String lastElement = pathElements[pathElements.length - 1];
+        if (mapForProperty.containsKey(lastElement)) {
             throw new ConfigMeException("Path at '" + property.getPath() + "' already exists");
+        } else if (pathElements.length > 1 && lastElement.equals("")) {
+            throwExceptionForMalformedPath(property.getPath());
         }
-        map.put(end, property);
+        mapForProperty.put(lastElement, property);
     }
 
     /**
@@ -54,7 +53,34 @@ public class PropertyListBuilder {
     public @NotNull List<Property<?>> create() {
         List<Property<?>> result = new ArrayList<>();
         collectEntries(rootEntries, result);
+        if (result.size() > 1 && rootEntries.containsKey("")) {
+            throw new ConfigMeException("A property at the root path (\"\") cannot be defined alongside "
+                + "other properties as the paths would conflict");
+        }
         return result;
+    }
+
+    /**
+     * Returns the nested map for the given path parts in which a property can be saved (for the last element
+     * in the path parts). Throws an exception if the path is malformed.
+     *
+     * @param pathParts the path elements (i.e. the property path split by ".")
+     * @return the map to store the property in
+     */
+    protected @NotNull Map<String, Object> getMapBeforeLastElement(String @NotNull [] pathParts) {
+        Map<String, Object> map = rootEntries;
+        for (int i = 0; i < pathParts.length - 1; ++i) {
+            map = getChildMap(map, pathParts[i]);
+            if (pathParts[i].equals("")) {
+                throwExceptionForMalformedPath(String.join(".", pathParts));
+            }
+        }
+        return map;
+    }
+
+    protected void throwExceptionForMalformedPath(@NotNull String path) {
+        throw new ConfigMeException("The path at '" + path + "' is malformed: dots may not be at the beginning or end "
+            + "of a path, and dots may not appear multiple times successively.");
     }
 
     protected final @NotNull Map<String, Object> getRootEntries() {

@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,4 +52,15 @@ class TypeBasedPropertyTest {
         assertThat(property.toExportValue(given), equalTo(given));
     }
 
+    @Test
+    void shouldReturnPropertyType() {
+        // given
+        TypeBasedProperty<Integer> property = new TypeBasedProperty<>("common.size", 5, PrimitivePropertyType.INTEGER);
+
+        // when
+        PropertyType<Integer> type = property.getType();
+
+        // then
+        assertThat(type, equalTo(PrimitivePropertyType.INTEGER));
+    }
 }

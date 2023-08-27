@@ -127,7 +127,8 @@ public class MapperImpl implements Mapper {
                 if (!propComments.getComments().isEmpty()
                         && (propComments.getUuid() == null || !knownUniqueComments.contains(propComments.getUuid()))) {
                     knownUniqueComments.add(propComments.getUuid());
-                    exportValueOfProperty = new ValueWithComments(exportValueOfProperty, propComments.getComments());
+                    exportValueOfProperty = new ValueWithComments(exportValueOfProperty,
+                        propComments.getComments(), propComments.getUuid());
                 }
                 mappedBean.put(property.getName(), exportValueOfProperty);
             }
