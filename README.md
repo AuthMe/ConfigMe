@@ -30,7 +30,7 @@ Start using ConfigMe by adding this to your pom.xml:
     <dependency>
         <groupId>ch.jalu</groupId>
         <artifactId>configme</artifactId>
-        <version>1.4.0</version>
+        <version>1.4.1</version>
     </dependency>
 </dependencies>
 ```
