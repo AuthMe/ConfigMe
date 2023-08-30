@@ -3,6 +3,7 @@ package ch.jalu.configme.beanmapper.migratingbeanmapper;
 import ch.jalu.configme.beanmapper.MapperImpl;
 import ch.jalu.configme.beanmapper.context.MappingContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +16,7 @@ import java.util.Collections;
 public class SingleValueToCollectionMapper extends MapperImpl {
 
     @Override
-    protected Collection<?> convertToCollection(@NotNull MappingContext context, Object value) {
+    protected @Nullable Collection<?> convertToCollection(@NotNull MappingContext context, @Nullable Object value) {
         if (!(value instanceof Iterable)) {
             Collection<?> coll = super.convertToCollection(context, Collections.singleton(value));
             // Register error to trigger a rewrite with the proper structure

@@ -8,6 +8,7 @@ import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.YamlFileResource;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -119,12 +120,12 @@ class MapPropertyTest {
     private static class AlwaysFourPropertyType implements PropertyType<Integer> {
 
         @Override
-        public Integer convert(Object object, @NotNull ConvertErrorRecorder errorRecorder) {
+        public @Nullable Integer convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
             return object == null ? null : 4;
         }
 
         @Override
-        public Object toExportValue(@NotNull Integer value) {
+        public @NotNull Integer toExportValue(@NotNull Integer value) {
             return value;
         }
     }

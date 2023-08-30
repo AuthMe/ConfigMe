@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 class NumberTypeTest {
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("argsForNumberTypeHandlerClasses")
+    @MethodSource("argsForNumberTypeClasses")
     void shouldDefineWhichClassesAreSupported(NumberType<?> numberType,
                                               Class<?> referenceType,
                                               Class<?> primitiveType) {
@@ -57,8 +57,8 @@ class NumberTypeTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("argsForNumberTypeHandlerClasses")
-    void shouldReturnNumberClassAndResolverNumberHandler(NumberType<?> numberType, Class<?> referenceType) {
+    @MethodSource("argsForNumberTypeClasses")
+    void shouldReturnNumberClassAndResolverNumberType(NumberType<?> numberType, Class<?> referenceType) {
         // given / when
         Class<?> numberClass = numberType.getType();
         ch.jalu.typeresolver.numbers.NumberType<?> internalNumberType = numberType.getTypeResolverNumberType();
@@ -69,7 +69,7 @@ class NumberTypeTest {
         assertThat(internalNumberType, equalTo(StandardNumberType.fromClass(numberClass)));
     }
 
-    static List<Arguments> argsForNumberTypeHandlerClasses() {
+    static List<Arguments> argsForNumberTypeClasses() {
         return Arrays.asList(
             Arguments.of(NumberType.BYTE, Byte.class, byte.class),
             Arguments.of(NumberType.SHORT, Short.class, short.class),
@@ -83,43 +83,9 @@ class NumberTypeTest {
 
     @ParameterizedTest
     @MethodSource("argsForNumberConversions")
-    void shouldConvertFromNumber(NumberType<?> numberHandler,
-                                 Number input, Number expectedResult) {
-        // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
-
-        // when
-        Number result = numberHandler.convert(input, errorRecorder);
-
-        // then
-        assertThat(result, equalTo(expectedResult));
-        assertThat(errorRecorder.isFullyValid(), equalTo(true));
-    }
-
-    static List<Arguments> argsForNumberConversions() {
-        return Arrays.asList(
-            Arguments.of(NumberType.BYTE, 30L, (byte) 30),
-            Arguments.of(NumberType.BYTE, -6663.2, Byte.MIN_VALUE),
-            Arguments.of(NumberType.SHORT, -45, (short) -45),
-            Arguments.of(NumberType.SHORT, -872368723L, Short.MIN_VALUE),
-            Arguments.of(NumberType.INTEGER, 3.5f, 3),
-            Arguments.of(NumberType.INTEGER, Long.MAX_VALUE, Integer.MAX_VALUE),
-            Arguments.of(NumberType.LONG, 42, 42L),
-            Arguments.of(NumberType.LONG, -Float.MAX_VALUE, Long.MIN_VALUE),
-            Arguments.of(NumberType.FLOAT, 3, 3f),
-            Arguments.of(NumberType.FLOAT, Double.MAX_VALUE, Float.MAX_VALUE),
-            Arguments.of(NumberType.DOUBLE, (byte) 42, 42d),
-            Arguments.of(NumberType.DOUBLE, new BigDecimal("3E500"), Double.MAX_VALUE),
-            Arguments.of(NumberType.BIG_INTEGER, 1.1415, BigInteger.ONE),
-            Arguments.of(NumberType.BIG_INTEGER, -9898762420L, new BigInteger("-9898762420")),
-            Arguments.of(NumberType.BIG_DECIMAL, 0.69, new BigDecimal("0.69")),
-            Arguments.of(NumberType.BIG_DECIMAL, BigInteger.valueOf(123456789), new BigDecimal("123456789")));
-    }
-
-    @ParameterizedTest
-    @MethodSource("argsForStringConversions")
-    void shouldConvertFromString(NumberType<?> numberType,
-                                 String input, Number expectedResult) {
+    void shouldConvertFromNumber(NumberType<?> numberType,
+                                 Number input, Number expectedResult,
+                                 boolean isFullyValid) {
         // given
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
@@ -128,25 +94,61 @@ class NumberTypeTest {
 
         // then
         assertThat(result, equalTo(expectedResult));
-        assertThat(errorRecorder.isFullyValid(), equalTo(true));
+        assertThat(errorRecorder.isFullyValid(), equalTo(isFullyValid));
+    }
+
+    static List<Arguments> argsForNumberConversions() {
+        return Arrays.asList(
+            Arguments.of(NumberType.BYTE, 30L, (byte) 30, true),
+            Arguments.of(NumberType.BYTE, -6663.2, Byte.MIN_VALUE, false),
+            Arguments.of(NumberType.SHORT, -45, (short) -45, true),
+            Arguments.of(NumberType.SHORT, -872368723L, Short.MIN_VALUE, false),
+            Arguments.of(NumberType.INTEGER, 3.5f, 3, true),
+            Arguments.of(NumberType.INTEGER, Long.MAX_VALUE, Integer.MAX_VALUE, false),
+            Arguments.of(NumberType.LONG, 42, 42L, true),
+            Arguments.of(NumberType.LONG, -Float.MAX_VALUE, Long.MIN_VALUE, false),
+            Arguments.of(NumberType.FLOAT, 3, 3f, true),
+            Arguments.of(NumberType.FLOAT, Double.MAX_VALUE, Float.MAX_VALUE, false),
+            Arguments.of(NumberType.DOUBLE, (byte) 42, 42d, true),
+            Arguments.of(NumberType.DOUBLE, new BigDecimal("3E500"), Double.MAX_VALUE, false),
+            Arguments.of(NumberType.BIG_INTEGER, 1.1415, BigInteger.ONE, true),
+            Arguments.of(NumberType.BIG_INTEGER, -9898762420L, new BigInteger("-9898762420"), true),
+            Arguments.of(NumberType.BIG_DECIMAL, 0.69, new BigDecimal("0.69"), true),
+            Arguments.of(NumberType.BIG_DECIMAL, BigInteger.valueOf(123456789), new BigDecimal("123456789"), true));
+    }
+
+    @ParameterizedTest
+    @MethodSource("argsForStringConversions")
+    void shouldConvertFromString(NumberType<?> numberType,
+                                 String input, Number expectedResult,
+                                 boolean isFullyValid) {
+        // given
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+
+        // when
+        Number result = numberType.convert(input, errorRecorder);
+
+        // then
+        assertThat(result, equalTo(expectedResult));
+        assertThat(errorRecorder.isFullyValid(), equalTo(isFullyValid));
     }
 
     static List<Arguments> argsForStringConversions() {
         return Arrays.asList(
-            Arguments.of(NumberType.BYTE, "30.8", (byte) 30),
-            Arguments.of(NumberType.BYTE, "-200", Byte.MIN_VALUE),
-            Arguments.of(NumberType.SHORT, "-45", (short) -45),
-            Arguments.of(NumberType.SHORT, "872368723", Short.MAX_VALUE),
-            Arguments.of(NumberType.INTEGER, "3.5", 3),
-            Arguments.of(NumberType.LONG, "50", 50L),
-            Arguments.of(NumberType.LONG, "-12345.67", -12345L),
-            Arguments.of(NumberType.FLOAT, "3", 3f),
-            Arguments.of(NumberType.FLOAT, "-503.24", -503.24f),
-            Arguments.of(NumberType.DOUBLE, "0.75", 0.75d),
-            Arguments.of(NumberType.DOUBLE, "4", 4.0),
-            Arguments.of(NumberType.BIG_INTEGER, "1.1415", BigInteger.ONE),
-            Arguments.of(NumberType.BIG_INTEGER, "-9898762420", new BigInteger("-9898762420")),
-            Arguments.of(NumberType.BIG_DECIMAL, "0.69", new BigDecimal("0.69")));
+            Arguments.of(NumberType.BYTE, "30.8", (byte) 30, true),
+            Arguments.of(NumberType.BYTE, "-200", Byte.MIN_VALUE, false),
+            Arguments.of(NumberType.SHORT, "-45", (short) -45, true),
+            Arguments.of(NumberType.SHORT, "872368723", Short.MAX_VALUE, false),
+            Arguments.of(NumberType.INTEGER, "3.5", 3, true),
+            Arguments.of(NumberType.LONG, "50", 50L, true),
+            Arguments.of(NumberType.LONG, "-12345.67", -12345L, true),
+            Arguments.of(NumberType.FLOAT, "3", 3f, true),
+            Arguments.of(NumberType.FLOAT, "-503.24", -503.24f, true),
+            Arguments.of(NumberType.DOUBLE, "0.75", 0.75d, true),
+            Arguments.of(NumberType.DOUBLE, "4", 4.0, true),
+            Arguments.of(NumberType.BIG_INTEGER, "1.1415", BigInteger.ONE, true),
+            Arguments.of(NumberType.BIG_INTEGER, "-9898762420", new BigInteger("-9898762420"), true),
+            Arguments.of(NumberType.BIG_DECIMAL, "0.69", new BigDecimal("0.69"), true));
     }
 
     @ParameterizedTest
@@ -254,6 +256,30 @@ class NumberTypeTest {
         assertThat(NumberType.BIG_DECIMAL.toExportValue(BigDecimal.valueOf(8523327856898475L)), equalTo("8523327856898475"));
         assertThat(NumberType.BIG_DECIMAL.toExportValue(BigDecimal.valueOf(-456, -30)), equalTo("-456000000000000000000000000000000"));
         assertThat(NumberType.BIG_DECIMAL.toExportValue(BigDecimal.valueOf(-456, -101)), equalTo("-4.56E+103"));
+    }
+
+    @Test
+    void shouldNotProduceExportValueForUnhandledTypes() {
+        // given / when / then
+        assertThat(NumberType.INTEGER.toExportValueIfApplicable(3), equalTo(3));
+        assertThat(NumberType.INTEGER.toExportValueIfApplicable(3L), nullValue());
+        assertThat(NumberType.INTEGER.toExportValueIfApplicable(3.0), nullValue());
+        assertThat(NumberType.INTEGER.toExportValueIfApplicable(new BigDecimal("3")), nullValue());
+
+        assertThat(NumberType.LONG.toExportValueIfApplicable(3), nullValue());
+        assertThat(NumberType.LONG.toExportValueIfApplicable(3L), equalTo(3L));
+        assertThat(NumberType.LONG.toExportValueIfApplicable(3.0), nullValue());
+        assertThat(NumberType.LONG.toExportValueIfApplicable(new BigDecimal("3")), nullValue());
+
+        assertThat(NumberType.DOUBLE.toExportValueIfApplicable(3), nullValue());
+        assertThat(NumberType.DOUBLE.toExportValueIfApplicable(3L), nullValue());
+        assertThat(NumberType.DOUBLE.toExportValueIfApplicable(3.0), equalTo(3.0));
+        assertThat(NumberType.DOUBLE.toExportValueIfApplicable(new BigDecimal("3")), nullValue());
+
+        assertThat(NumberType.BIG_DECIMAL.toExportValueIfApplicable(3), nullValue());
+        assertThat(NumberType.BIG_DECIMAL.toExportValueIfApplicable(3L), nullValue());
+        assertThat(NumberType.BIG_DECIMAL.toExportValueIfApplicable(3.0), nullValue());
+        assertThat(NumberType.BIG_DECIMAL.toExportValueIfApplicable(new BigDecimal("3")), equalTo("3"));
     }
 
     /**

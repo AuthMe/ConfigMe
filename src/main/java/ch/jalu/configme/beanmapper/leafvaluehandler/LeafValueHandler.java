@@ -11,12 +11,12 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * The bean mapper handles complex types such as maps and collections, and recursively calls the bean mapping process
  * accordingly. This class complements the mapper by halting this process and providing "leaf values" to be set into
- * Java beans, indicating that the mapper doesn't need to visit a type.
+ * Java beans.
  * <p>
  * The default implementation is {@link LeafValueHandlerImpl}. With the aid of {@link MapperLeafType} entries, it
- * provides leaf type conversions when applicable. To implement additional conversions, you can implement your own
- * {@link MapperLeafType} implementation and add it to {@link LeafValueHandlerImpl}. Alternatively, a custom
- * implementation of this interface can be created if more control is needed.
+ * provides conversions for the leaf types it supports. To implement additional conversions, implement your own
+ * {@link MapperLeafType} implementations and add them to {@link LeafValueHandlerImpl}. Alternatively, you can create
+ * your own implementation of this interface if you need more control over the conversion process.
  */
 public interface LeafValueHandler {
 
@@ -32,7 +32,7 @@ public interface LeafValueHandler {
 
     /**
      * Converts the value of a property to a value suitable for exporting. This method converts the opposite
-     * way of {@link #convert}. Null is returned if the value cannot be converted as a leaf type.
+     * way of {@link #convert}. Null is returned if this leaf value handler does not support the object's type.
      *
      * @param value the value to convert
      * @param exportContext the export context (usually not needed)

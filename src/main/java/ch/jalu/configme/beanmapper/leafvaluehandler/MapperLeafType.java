@@ -15,7 +15,7 @@ public interface MapperLeafType {
 
     /**
      * Converts the given value to the specified target type, if possible. Returns null otherwise.
-     * This method <b>must</b> either return {@code null} or an object of the given type.
+     * This method <b>must</b> either return {@code null} or an object of the given target type.
      *
      * @param value the value to convert
      * @param targetType the required type
@@ -26,8 +26,8 @@ public interface MapperLeafType {
                              @NotNull ConvertErrorRecorder errorRecorder);
 
     /**
-     * Converts the given value to a type more suitable for exporting. Used by the mapper
-     * when {@link ch.jalu.configme.properties.Property#toExportValue} is called on a bean property.
+     * Converts the given value to a type suitable for exporting. Used by the mapper
+     * when {@link ch.jalu.configme.beanmapper.MapperImpl#toExportValue(Object)} is called.
      * Returns null if the leaf value handler cannot handle the value.
      * <p>
      * Return {@link ch.jalu.configme.beanmapper.MapperImpl#RETURN_NULL} to signal that null should be used

@@ -27,8 +27,8 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 import static ch.jalu.configme.utils.PathUtils.OPTIONAL_SPECIFIER;
-import static ch.jalu.configme.utils.PathUtils.specifierForIndex;
-import static ch.jalu.configme.utils.PathUtils.specifierForMapKey;
+import static ch.jalu.configme.utils.PathUtils.pathSpecifierForIndex;
+import static ch.jalu.configme.utils.PathUtils.pathSpecifierForMapKey;
 
 /**
  * Implementation of {@link Mapper}.
@@ -136,7 +136,7 @@ public class MapperImpl implements Mapper {
             if (exportValueOfProperty != null) {
                 BeanPropertyComments propComments = property.getComments();
                 if (exportContext.shouldInclude(propComments)) {
-                    exportContext.getUsedUniqueCommentIds().add(propComments.getUuid());
+                    exportContext.registerComment(propComments);
                     exportValueOfProperty = new ValueWithComments(exportValueOfProperty,
                         propComments.getComments(), propComments.getUuid());
                 }
@@ -161,8 +161,9 @@ public class MapperImpl implements Mapper {
             int index = 0;
             List<Object> result = new ArrayList<>();
             for (Object entry : (Iterable<?>) value) {
-                ExportContext entryContext = exportContext.createChildContext(specifierForIndex(index));
+                ExportContext entryContext = exportContext.createChildContext(pathSpecifierForIndex(index));
                 result.add(toExportValue(entry, entryContext));
+                ++index;
             }
             return result;
         }
@@ -170,7 +171,7 @@ public class MapperImpl implements Mapper {
         if (value instanceof Map<?, ?>) {
             Map<Object, Object> result = new LinkedHashMap<>();
             for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
-                ExportContext entryContext = exportContext.createChildContext(specifierForMapKey(entry));
+                ExportContext entryContext = exportContext.createChildContext(pathSpecifierForMapKey(entry));
                 result.put(entry.getKey(), toExportValue(entry.getValue(), entryContext));
             }
             return result;
@@ -264,7 +265,7 @@ public class MapperImpl implements Mapper {
 
             int index = 0;
             for (Object entry : (Iterable<?>) value) {
-                MappingContext entryContext = context.createChild(specifierForIndex(index), entryType);
+                MappingContext entryContext = context.createChild(pathSpecifierForIndex(index), entryType);
                 Object convertedEntry = convertValueForType(entryContext, entry);
                 if (convertedEntry == null) {
                     context.registerError("Cannot convert value at index " + index);
@@ -315,7 +316,7 @@ public class MapperImpl implements Mapper {
             Map<String, ?> entries = (Map<String, ?>) value;
             Map result = createMapMatchingType(context);
             for (Map.Entry<String, ?> entry : entries.entrySet()) {
-                MappingContext entryContext = context.createChild(specifierForMapKey(entry), mapValueType);
+                MappingContext entryContext = context.createChild(pathSpecifierForMapKey(entry), mapValueType);
                 Object mappedValue = convertValueForType(entryContext, entry.getValue());
                 if (mappedValue == null) {
                     context.registerError("Cannot map value for key " + entry.getKey());

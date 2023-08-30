@@ -40,8 +40,8 @@ class PathUtilsTest {
     @Test
     void shouldCreateIndexSpecifier() {
         // given / when / then
-        assertThat(PathUtils.specifierForIndex(0), equalTo("[0]"));
-        assertThat(PathUtils.specifierForIndex(4), equalTo("[4]"));
+        assertThat(PathUtils.pathSpecifierForIndex(0), equalTo("[0]"));
+        assertThat(PathUtils.pathSpecifierForIndex(4), equalTo("[4]"));
     }
 
     @Test
@@ -54,9 +54,9 @@ class PathUtilsTest {
         List<Map.Entry<Object, Boolean>> mapEntries = new ArrayList<>(map.entrySet());
 
         // when / then
-        assertThat(PathUtils.specifierForMapKey(mapEntries.get(0)), equalTo("[k=name]"));
-        assertThat(PathUtils.specifierForMapKey(mapEntries.get(1)), equalTo("[k=1337]"));
-        assertThat(PathUtils.specifierForMapKey("toast"), equalTo("[k=toast]"));
+        assertThat(PathUtils.pathSpecifierForMapKey(mapEntries.get(0)), equalTo("[k=name]"));
+        assertThat(PathUtils.pathSpecifierForMapKey(mapEntries.get(1)), equalTo("[k=1337]"));
+        assertThat(PathUtils.pathSpecifierForMapKey("toast"), equalTo("[k=toast]"));
     }
 
     @Test

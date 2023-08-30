@@ -11,32 +11,32 @@ import org.jetbrains.annotations.NotNull;
 public class MappingContextImpl implements MappingContext {
 
     private final String beanPath;
-    private final TypeInfo typeInformation;
+    private final TypeInfo targetType;
     private final ConvertErrorRecorder errorRecorder;
 
-    protected MappingContextImpl(@NotNull String beanPath, @NotNull TypeInfo typeInformation,
+    protected MappingContextImpl(@NotNull String beanPath, @NotNull TypeInfo targetType,
                                  @NotNull ConvertErrorRecorder errorRecorder) {
         this.beanPath = beanPath;
-        this.typeInformation = typeInformation;
+        this.targetType = targetType;
         this.errorRecorder = errorRecorder;
     }
 
     /**
      * Creates an initial context (used at the start of a mapping process).
      *
-     * @param typeInformation the required type
+     * @param targetType the required type
      * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return root mapping context
      */
-    public static @NotNull MappingContextImpl createRoot(@NotNull TypeInfo typeInformation,
+    public static @NotNull MappingContextImpl createRoot(@NotNull TypeInfo targetType,
                                                          @NotNull ConvertErrorRecorder errorRecorder) {
-        return new MappingContextImpl("", typeInformation, errorRecorder);
+        return new MappingContextImpl("", targetType, errorRecorder);
     }
 
     @Override
-    public @NotNull MappingContext createChild(@NotNull String subPath, @NotNull TypeInfo typeInformation) {
+    public @NotNull MappingContext createChild(@NotNull String subPath, @NotNull TypeInfo targetType) {
         String childPath = PathUtils.concatSpecifierAware(beanPath, subPath);
-        return new MappingContextImpl(childPath, typeInformation, errorRecorder);
+        return new MappingContextImpl(childPath, targetType, errorRecorder);
     }
 
     public @NotNull String getBeanPath() {
@@ -45,17 +45,12 @@ public class MappingContextImpl implements MappingContext {
 
     @Override
     public @NotNull TypeInfo getTargetType() {
-        return typeInformation;
+        return targetType;
     }
 
     @Override
     public @NotNull String createDescription() {
-        return "Bean path: '" + beanPath + "', type: '" + typeInformation.getType() + "'";
-    }
-
-    @Override
-    public void registerError(@NotNull String reason) {
-        errorRecorder.setHasError("For bean path '" + beanPath + "': " + reason);
+        return "Bean path: '" + beanPath + "', type: '" + targetType.getType() + "'";
     }
 
     @Override

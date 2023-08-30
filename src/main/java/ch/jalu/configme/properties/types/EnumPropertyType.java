@@ -39,7 +39,7 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
     }
 
     @Override
-    public @NotNull Object toExportValue(@NotNull E value) {
+    public @NotNull String toExportValue(@NotNull E value) {
         return value.name();
     }
 

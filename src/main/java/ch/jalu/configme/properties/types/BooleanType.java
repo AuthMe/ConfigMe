@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Type handler for boolean values.
+ * Property type and mapper leaf type for boolean values.
  */
 public class BooleanType extends PropertyAndLeafType<Boolean> {
 
@@ -32,7 +32,7 @@ public class BooleanType extends PropertyAndLeafType<Boolean> {
     }
 
     @Override
-    public @NotNull Object toExportValue(@NotNull Boolean value) {
+    public @NotNull Boolean toExportValue(@NotNull Boolean value) {
         return value;
     }
 
@@ -51,9 +51,9 @@ public class BooleanType extends PropertyAndLeafType<Boolean> {
     protected @Nullable Boolean convertFromString(@NotNull String value) {
         // Note: Explicitly check for true/false because Boolean#parseBoolean returns false for
         // any value it doesn't recognize
-        if ("true".equals(value)) {
+        if ("true".equalsIgnoreCase(value)) {
             return true;
-        } else if ("false".equals(value)) {
+        } else if ("false".equalsIgnoreCase(value)) {
             return false;
         }
         return null;

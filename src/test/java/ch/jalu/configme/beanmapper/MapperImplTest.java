@@ -253,7 +253,7 @@ class MapperImplTest {
         // given
         MapperImpl mapper = new MapperImpl();
         Class<?> type = new HashMap() { }.getClass();
-        MappingContext context = createContextWithType(type);
+        MappingContext context = createContextWithTargetType(type);
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
@@ -267,10 +267,10 @@ class MapperImplTest {
     void shouldCreateCorrectMapType() {
         // given
         MapperImpl mapper = new MapperImpl();
-        MappingContext interfaceCtx = createContextWithType(Map.class);
-        MappingContext hashCtx = createContextWithType(HashMap.class);
-        MappingContext navigableCtx = createContextWithType(NavigableMap.class);
-        MappingContext treeCtx = createContextWithType(TreeMap.class);
+        MappingContext interfaceCtx = createContextWithTargetType(Map.class);
+        MappingContext hashCtx = createContextWithTargetType(HashMap.class);
+        MappingContext navigableCtx = createContextWithTargetType(NavigableMap.class);
+        MappingContext treeCtx = createContextWithTargetType(TreeMap.class);
 
         // when / then
         assertThat(mapper.createMapMatchingType(interfaceCtx), instanceOf(LinkedHashMap.class));
@@ -427,7 +427,7 @@ class MapperImplTest {
         MapperImpl mapper = new MapperImpl();
 
         // when
-        Object command = mapper.createBeanMatchingType(createContextWithType(Command.class));
+        Object command = mapper.createBeanMatchingType(createContextWithTargetType(Command.class));
 
         // then
         assertThat(command, instanceOf(Command.class));
@@ -440,7 +440,7 @@ class MapperImplTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> mapper.createBeanMatchingType(createContextWithType(Iterable.class)));
+            () -> mapper.createBeanMatchingType(createContextWithTargetType(Iterable.class)));
 
         // then
         assertThat(ex.getMessage(), containsString("It is required to have a default constructor"));
@@ -481,8 +481,8 @@ class MapperImplTest {
         return new YamlFileReader(getJarPath(file));
     }
 
-    private static MappingContext createContextWithType(Class<?> clazz) {
-        TypeInfo type = new TypeInfo(clazz);
+    private static MappingContext createContextWithTargetType(Class<?> targetType) {
+        TypeInfo type = new TypeInfo(targetType);
         MappingContextImpl root = MappingContextImpl.createRoot(type, new ConvertErrorRecorder());
         return root.createChild("path.in.test", type);
     }

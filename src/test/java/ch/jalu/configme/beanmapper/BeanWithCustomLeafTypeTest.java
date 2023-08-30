@@ -28,11 +28,11 @@ import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Tests that the bean mapper can be extended to support custom types. Bean properties with fields of a
- * {@link CustomInteger custom type} are used, which are handled by an additional custom value handler.
+ * {@link CustomInteger custom type} are used, which are handled by a custom mapper leaf type.
  *
  * @see <a href="https://github.com/AuthMe/ConfigMe/issues/182">Issue #182</a>
  */
-class BeanWithCustomTypeHandlerTest {
+class BeanWithCustomLeafTypeTest {
 
     @TempDir
     Path tempDir;
@@ -79,20 +79,20 @@ class BeanWithCustomTypeHandlerTest {
     }
 
     /**
-     * Mapper extension with a custom type handler so that {@link CustomInteger} is supported.
+     * Mapper extension with a custom leaf type so that {@link CustomInteger} is supported.
      */
     public static final class MapperWithCustomIntSupport extends MapperImpl {
 
         MapperWithCustomIntSupport() {
             super(new BeanDescriptionFactoryImpl(),
-                  LeafValueHandlerImpl.builder().addDefaults().addType(new CustomIntegerLeafValueHandler()).build());
+                  LeafValueHandlerImpl.builder().addDefaults().addType(new CustomIntegerLeafType()).build());
         }
     }
 
     /**
      * Provides {@link CustomInteger} when reading from and writing to a property resource.
      */
-    public static final class CustomIntegerLeafValueHandler implements MapperLeafType {
+    public static final class CustomIntegerLeafType implements MapperLeafType {
 
         @Override
         public @Nullable Object convert(@Nullable Object value, @NotNull TypeInfo targetType,

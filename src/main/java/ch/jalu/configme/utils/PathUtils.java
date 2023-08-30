@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 /**
- * Util for textual paths like property paths or, for example, paths when traversing YAML.
+ * Util for String paths like property paths or paths formed while traversing a YAML document.
  */
 public final class PathUtils {
 
@@ -59,7 +59,7 @@ public final class PathUtils {
      * @param index the index
      * @return string targeting the index of a parent (the parent being a collection or an array)
      */
-    public static @NotNull String specifierForIndex(int index) {
+    public static @NotNull String pathSpecifierForIndex(int index) {
         return "[" + index + "]";
     }
 
@@ -67,12 +67,12 @@ public final class PathUtils {
      * Creates a path suffix specifying that it is for the key of the given entry, e.g. "[k=name]" if "name" is
      * the key in the given entry.
      * <p>
-     * ConfigMe expects keys to always be of type String; this method does not require it to avoid unnecessary casts.
+     * ConfigMe expects maps to always have String keys; this method does not require it to avoid unnecessary casts.
      *
      * @param entry the index
      * @return string targeting a specific entry of the parent (the parent being a map)
      */
-    public static @NotNull String specifierForMapKey(@NotNull Map.Entry<?, ?> entry) {
+    public static @NotNull String pathSpecifierForMapKey(@NotNull Map.Entry<?, ?> entry) {
         return "[k=" + entry.getKey() + "]";
     }
 
@@ -82,7 +82,7 @@ public final class PathUtils {
      * @param key the key
      * @return string targeting a specific entry of the parent (the parent being a map)
      */
-    public static @NotNull String specifierForMapKey(@NotNull String key) {
+    public static @NotNull String pathSpecifierForMapKey(@NotNull String key) {
         return "[k=" + key + "]";
     }
 

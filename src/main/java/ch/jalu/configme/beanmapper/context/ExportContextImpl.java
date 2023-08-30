@@ -1,5 +1,6 @@
 package ch.jalu.configme.beanmapper.context;
 
+import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
 import ch.jalu.configme.utils.PathUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +27,11 @@ public class ExportContextImpl implements ExportContext {
         this.usedUniqueCommentIds = usedUniqueCommentIds;
     }
 
+    /**
+     * Creates an initial context for the export of a bean value.
+     *
+     * @return root export context
+     */
     public static @NotNull ExportContextImpl createRoot() {
         return new ExportContextImpl("", new HashSet<>());
     }
@@ -42,7 +48,15 @@ public class ExportContextImpl implements ExportContext {
     }
 
     @Override
-    public @NotNull Set<UUID> getUsedUniqueCommentIds() {
-        return usedUniqueCommentIds;
+    public boolean shouldInclude(@NotNull BeanPropertyComments comments) {
+        return !comments.getComments().isEmpty()
+            && (comments.getUuid() == null || !usedUniqueCommentIds.contains(comments.getUuid()));
+    }
+
+    @Override
+    public void registerComment(@NotNull BeanPropertyComments comments) {
+        if (comments.getUuid() != null) {
+            usedUniqueCommentIds.add(comments.getUuid());
+        }
     }
 }

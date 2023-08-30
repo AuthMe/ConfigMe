@@ -4,7 +4,9 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static ch.jalu.typeresolver.TypeInfo.of;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,8 +52,10 @@ class BooleanTypeTest {
         // when / then
         assertThat(BooleanType.BOOLEAN.convert("true", errorRecorder), equalTo(true));
         assertThat(BooleanType.BOOLEAN.convert("false", errorRecorder), equalTo(false));
-        assertThat(BooleanType.BOOLEAN.convert("FALSE", errorRecorder), nullValue());
+        assertThat(BooleanType.BOOLEAN.convert("FALSE", errorRecorder), equalTo(false));
+        assertThat(BooleanType.BOOLEAN.convert("True", errorRecorder), equalTo(true));
         assertThat(BooleanType.BOOLEAN.convert("other", errorRecorder), nullValue());
+        assertThat(BooleanType.BOOLEAN.convert("t", errorRecorder), nullValue());
         assertThat(BooleanType.BOOLEAN.convert("", errorRecorder), nullValue());
     }
 
@@ -65,9 +69,33 @@ class BooleanTypeTest {
     }
 
     @Test
+    void shouldReturnNullForUnsupportedTypes() {
+        // given
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+
+        // when / then
+        assertThat(BooleanType.BOOLEAN.convert(3, of(Boolean.class), errorRecorder), nullValue());
+        assertThat(BooleanType.BOOLEAN.convert(1, of(boolean.class), errorRecorder), nullValue());
+        assertThat(BooleanType.BOOLEAN.convert('t', of(Boolean.class), errorRecorder), nullValue());
+        assertThat(BooleanType.BOOLEAN.convert(TimeUnit.MINUTES, of(Boolean.class), errorRecorder), nullValue());
+    }
+
+    @Test
     void shouldExportValueAsBoolean() {
         // given / when / then
         assertThat(BooleanType.BOOLEAN.toExportValue(true), equalTo(true));
         assertThat(BooleanType.BOOLEAN.toExportValue(false), equalTo(false));
+    }
+
+    @Test
+    void shouldCreateExportValueOnlyForBooleans() {
+        // given / when / then
+        assertThat(BooleanType.BOOLEAN.toExportValueIfApplicable(true), equalTo(true));
+        assertThat(BooleanType.BOOLEAN.toExportValueIfApplicable(false), equalTo(false));
+
+        assertThat(BooleanType.BOOLEAN.toExportValueIfApplicable(3), nullValue());
+        assertThat(BooleanType.BOOLEAN.toExportValueIfApplicable(null), nullValue());
+        assertThat(BooleanType.BOOLEAN.toExportValueIfApplicable("false"), nullValue());
+        assertThat(BooleanType.BOOLEAN.toExportValueIfApplicable(new ArrayList<>()), nullValue());
     }
 }

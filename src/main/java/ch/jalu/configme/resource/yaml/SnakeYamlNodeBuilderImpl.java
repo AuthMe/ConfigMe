@@ -2,7 +2,6 @@ package ch.jalu.configme.resource.yaml;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.properties.convertresult.ValueWithComments;
-import ch.jalu.configme.utils.PathUtils;
 import ch.jalu.configme.utils.StreamUtils;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
@@ -30,8 +29,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static ch.jalu.configme.utils.PathUtils.specifierForIndex;
-import static ch.jalu.configme.utils.PathUtils.specifierForMapKey;
+import static ch.jalu.configme.utils.PathUtils.concatSpecifierAware;
+import static ch.jalu.configme.utils.PathUtils.pathSpecifierForIndex;
+import static ch.jalu.configme.utils.PathUtils.pathSpecifierForMapKey;
 
 /**
  * Default implementation of {@link SnakeYamlNodeBuilder}: creates SnakeYAML nodes for values and comments.
@@ -125,7 +125,7 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
 
         List<Node> values = entries
             .map(entry -> {
-                String entryPath = PathUtils.concatSpecifierAware(path, specifierForIndex(counter.getAndIncrement()));
+                String entryPath = concatSpecifierAware(path, pathSpecifierForIndex(counter.getAndIncrement()));
                 return createYamlNode(entry, entryPath, configurationData, 0);
             })
             .collect(Collectors.toList());
@@ -147,7 +147,7 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
 
         for (Map.Entry<String, ?> entry : value.entrySet()) {
             Node keyNode = createKeyNode(entry.getKey());
-            String entryPath = PathUtils.concatSpecifierAware(path, specifierForMapKey(entry));
+            String entryPath = concatSpecifierAware(path, pathSpecifierForMapKey(entry));
             Node valueNode = createYamlNode(entry.getValue(), entryPath, configurationData, 0);
             transferComments(valueNode, keyNode);
 

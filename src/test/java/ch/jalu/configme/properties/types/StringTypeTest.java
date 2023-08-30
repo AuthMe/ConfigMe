@@ -75,4 +75,18 @@ class StringTypeTest {
         assertThat(StringType.STRING.toExportValue("Abc"), equalTo("Abc"));
         assertThat(StringType.STRING_LOWER_CASE.toExportValue("tests"), equalTo("tests"));
     }
+
+    @Test
+    void shouldNotReturnExportValueIfIsNotString() {
+        // given / when / then
+        assertThat(StringType.STRING.toExportValueIfApplicable("test"), equalTo("test"));
+        assertThat(StringType.STRING_LOWER_CASE.toExportValueIfApplicable("test"), equalTo("test"));
+
+        assertThat(StringType.STRING.toExportValueIfApplicable(5), nullValue());
+        assertThat(StringType.STRING_LOWER_CASE.toExportValueIfApplicable(5), nullValue());
+        assertThat(StringType.STRING.toExportValueIfApplicable(null), nullValue());
+        assertThat(StringType.STRING_LOWER_CASE.toExportValueIfApplicable(null), nullValue());
+        assertThat(StringType.STRING.toExportValueIfApplicable('t'), nullValue());
+        assertThat(StringType.STRING_LOWER_CASE.toExportValueIfApplicable('t'), nullValue());
+    }
 }

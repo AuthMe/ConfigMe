@@ -14,10 +14,10 @@ public interface MappingContext {
      * Creates a child context with the given path addition ("name") and type information.
      *
      * @param name additional path element to append to this context's path
-     * @param typeInformation the required type
+     * @param targetType the required type
      * @return new child context
      */
-    @NotNull MappingContext createChild(@NotNull String name, @NotNull TypeInfo typeInformation);
+    @NotNull MappingContext createChild(@NotNull String name, @NotNull TypeInfo targetType);
 
     /**
      * Returns the path, from the root of the bean, that is being mapped. In other words, this is a local path
@@ -28,7 +28,7 @@ public interface MappingContext {
     @NotNull String getBeanPath();
 
     /**
-     * @return the required type the value needs to be mapped to
+     * @return the type the value should be mapped to
      */
     @NotNull TypeInfo getTargetType();
 
@@ -46,8 +46,8 @@ public interface MappingContext {
     }
 
     /**
-     * Convenience method: gets the generic type info for the given index and ensures that the generic type information
-     * exists and that it can be converted into a safe-to-write class. Throws an exception otherwise.
+     * Convenience method: returns the type argument at the given index, guaranteeing that it exists
+     * and that it can be converted to a safe-to-write class. Throws an exception otherwise.
      *
      * @param index the index to get generic type info for
      * @return the generic type info (throws exception if absent or not precise enough)
@@ -72,7 +72,9 @@ public interface MappingContext {
      *
      * @param reason the error reason (ignored by the default context implementation)
      */
-    void registerError(@NotNull String reason);
+    default void registerError(@NotNull String reason) {
+        getErrorRecorder().setHasError("For bean path '" + getBeanPath() + "': " + reason);
+    }
 
     /**
      * @return error recorder to register errors even when a value can be created

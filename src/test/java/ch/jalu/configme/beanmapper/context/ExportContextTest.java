@@ -38,7 +38,7 @@ class ExportContextTest {
         ExportContext root2Child = root2.createChildContext("bravo");
 
         UUID uuid = UUID.randomUUID();
-        root1Child.getUsedUniqueCommentIds().add(uuid);
+        root1Child.registerComment(new BeanPropertyComments(Collections.singletonList("test"), uuid));
 
         BeanPropertyComments comments = new BeanPropertyComments(Arrays.asList("1", "2"), uuid);
 

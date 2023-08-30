@@ -21,8 +21,7 @@ import java.util.stream.Stream;
 /**
  * Default implementation of {@link LeafValueHandler}. A leaf value handler is used in
  * {@link ch.jalu.configme.beanmapper.MapperImpl} to provide "simple" values that the mapper does not have to
- * visit further. This implementation makes use of {@link MapperLeafType} instances, which perform the
- * actual conversions.
+ * visit further. This implementation uses {@link MapperLeafType} instances, which perform the actual conversions.
  */
 public class LeafValueHandlerImpl implements LeafValueHandler {
 
@@ -47,7 +46,7 @@ public class LeafValueHandlerImpl implements LeafValueHandler {
     }
 
     /**
-     * Returns a builder to create a leaf value handler with leaf types.
+     * Returns a builder to create a leaf value handler.
      *
      * @return leaf value handler builder
      */
@@ -93,9 +92,8 @@ public class LeafValueHandlerImpl implements LeafValueHandler {
 
     @Override
     public @Nullable Object toExportValue(@Nullable Object value, @NotNull ExportContext exportContext) {
-        Object exportValue;
         for (MapperLeafType leafType : leafTypes) {
-            exportValue = leafType.toExportValueIfApplicable(value);
+            Object exportValue = leafType.toExportValueIfApplicable(value);
             if (exportValue != null) {
                 return exportValue;
             }
