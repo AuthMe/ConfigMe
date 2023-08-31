@@ -1,10 +1,10 @@
 # ConfigMe
-[![Build Status](https://travis-ci.org/AuthMe/ConfigMe.svg?branch=master)](https://travis-ci.org/AuthMe/ConfigMe)
+[![Build Status](https://github.com/AuthMe/ConfigMe/actions/workflows/maven_jdk8.yml/badge.svg)](https://github.com/AuthMe/ConfigMe/actions?query=branch%3Amaster)
 [![Coverage Status](https://coveralls.io/repos/github/AuthMe/ConfigMe/badge.svg?branch=master)](https://coveralls.io/github/AuthMe/ConfigMe?branch=master)
 [![Javadocs](https://www.javadoc.io/badge/ch.jalu/configme.svg)](https://www.javadoc.io/doc/ch.jalu/configme)
 [![Code Climate](https://codeclimate.com/github/AuthMe/ConfigMe/badges/gpa.svg)](https://codeclimate.com/github/AuthMe/ConfigMe)
 
-A simple configuration management library with out of the box YAML support.
+A simple configuration management library with YAML support out of the box.
 
 - Lightweight
 - Flexible
