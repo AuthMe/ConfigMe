@@ -197,6 +197,18 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- org.reflections: For introspection in tests -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.10.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.28.0-GA</version> <!-- keep in sync with reflections -->
+        </dependency>
+
         <!-- Unit testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
