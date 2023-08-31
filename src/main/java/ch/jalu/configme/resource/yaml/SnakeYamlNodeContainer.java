@@ -20,7 +20,8 @@ public interface SnakeYamlNodeContainer {
      * @param commentsSupplier supplier with comments to set if the container has to be created
      * @return container for the given path name
      */
-    @NotNull SnakeYamlNodeContainer getOrCreateChildContainer(String name, Supplier<List<String>> commentsSupplier);
+    @NotNull SnakeYamlNodeContainer getOrCreateChildContainer(@NotNull String name,
+                                                              @NotNull Supplier<List<String>> commentsSupplier);
 
     /**
      * Returns the SnakeYAML node at the root path (empty string). Used as root of the YAML document when the

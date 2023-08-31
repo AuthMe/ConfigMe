@@ -16,7 +16,7 @@ public interface InlineArrayConverter<T> {
      * @param in the string to convert from
      * @return array with elements based on the input String, never null
      */
-    @NotNull T @NotNull [] fromString(String in);
+    @NotNull T @NotNull [] fromString(@NotNull String in);
 
     /**
      * Converts the provided array to its String representation (opposite of {@link #fromString(String)}).

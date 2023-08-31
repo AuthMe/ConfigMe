@@ -35,7 +35,7 @@ public interface ConfigurationData {
      * @param path the path for which the comments should be retrieved
      * @return list of comments, never null
      */
-    @NotNull List<String> getCommentsForSection(String path);
+    @NotNull List<String> getCommentsForSection(@NotNull String path);
 
     /**
      * Returns all comments registered to this configuration data. Typically for tests and

@@ -3,6 +3,7 @@ package ch.jalu.configme;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -44,7 +45,7 @@ public final class TestUtils {
      * @param path the absolute path to the file
      * @return the Path object to the file
      */
-    public static Path getJarPath(String path) {
+    public static Path getJarPath(@NotNull String path) {
         String filePath = getUriOrThrow(path).getPath();
         // Windows prepends the path with a '/' or '\', which Paths cannot handle
         String appropriatePath = System.getProperty("os.name").contains("indow")
@@ -60,7 +61,7 @@ public final class TestUtils {
      * @param temporaryFolder the temporary folder to copy into
      * @return the created copy
      */
-    public static Path copyFileFromResources(String path, Path temporaryFolder) {
+    public static @NotNull Path copyFileFromResources(@NotNull String path, @NotNull Path temporaryFolder) {
         try {
             Path source = getJarPath(path);
             Path destination = temporaryFolder.resolve(source.getFileName());
@@ -72,7 +73,7 @@ public final class TestUtils {
         }
     }
 
-    public static Path createTemporaryFile(Path folder) {
+    public static @NotNull Path createTemporaryFile(@NotNull Path folder) {
         try {
             return Files.createTempFile(folder, "configme", "test");
         } catch (IOException e) {
@@ -80,7 +81,7 @@ public final class TestUtils {
         }
     }
 
-    private static URI getUriOrThrow(String path) {
+    private static @NotNull URI getUriOrThrow(@NotNull String path) {
         URL url = TestUtils.class.getResource(path);
         if (url == null) {
             throw new IllegalStateException("File '" + path + "' could not be loaded");
@@ -103,7 +104,7 @@ public final class TestUtils {
      * @param <E> the element's type
      * @return the created matcher
      */
-    public static <E> Matcher<Iterable<? extends E>> containsAll(Iterable<E> elements) {
+    public static <E> @NotNull Matcher<Iterable<? extends E>> containsAll(@NotNull Iterable<E> elements) {
         List<Matcher<? super E>> matchers = new ArrayList<>();
         for (E elem : elements) {
             matchers.add(equalTo(elem));
@@ -125,7 +126,7 @@ public final class TestUtils {
      *
      * @return the expected exception type for a null argument where it is not allowed (NPE or IllegalArgumentException)
      */
-    public static Class<? extends Exception> getExceptionTypeForNullArg() {
+    public static @NotNull Class<? extends Exception> getExceptionTypeForNullArg() {
         return getOrCaptureNullExceptionType();
     }
 
@@ -152,7 +153,8 @@ public final class TestUtils {
      * @param <R> the result type
      * @return the transformed list
      */
-    public static <T, R> List<R> transform(Collection<T> coll, Function<? super T, ? extends R> transformer) {
+    public static <T, R> @NotNull List<R> transform(@NotNull Collection<T> coll,
+                                                    @NotNull Function<? super T, ? extends R> transformer) {
         return coll.stream().map(transformer).collect(Collectors.toList());
     }
 
@@ -163,7 +165,7 @@ public final class TestUtils {
      * @param expectedValue the value expected to be contained in the property value
      * @return matcher for fully valid property value
      */
-    public static Matcher<PropertyValue> isValidValueOf(Object expectedValue) {
+    public static @NotNull Matcher<PropertyValue> isValidValueOf(@NotNull Object expectedValue) {
         return isPropertyValueOf(expectedValue, true);
     }
 
@@ -174,17 +176,18 @@ public final class TestUtils {
      * @param expectedValue the value expected to be contained in the property value
      * @return matcher for property value with error
      */
-    public static Matcher<PropertyValue> isErrorValueOf(Object expectedValue) {
+    public static @NotNull Matcher<PropertyValue> isErrorValueOf(@NotNull Object expectedValue) {
         return isPropertyValueOf(expectedValue, false);
     }
 
-    private static Matcher<PropertyValue> isPropertyValueOf(Object expectedValue, boolean expectedValid) {
+    private static @NotNull Matcher<PropertyValue> isPropertyValueOf(@Nullable Object expectedValue,
+                                                                     boolean expectedValid) {
         Matcher<PropertyValue> valueMatcher = hasProperty("value", equalTo(expectedValue));
         Matcher<PropertyValue> validFlagMatcher = hasProperty("validInResource", equalTo(expectedValid));
         return both(valueMatcher).and(validFlagMatcher);
     }
 
-    private static Class<? extends Exception> getOrCaptureNullExceptionType() {
+    private static @NotNull Class<? extends Exception> getOrCaptureNullExceptionType() {
         if (expectedNullArgExceptionType == null) {
             try {
                 notNullMethod(null);

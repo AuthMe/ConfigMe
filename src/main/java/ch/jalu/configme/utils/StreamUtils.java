@@ -1,5 +1,7 @@
 package ch.jalu.configme.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -19,7 +21,7 @@ public final class StreamUtils {
      * @param <T> element type
      * @return stream with the element the requested number of times
      */
-    public static <T> Stream<T> repeat(T element, int numberOfTimes) {
+    public static <T> @NotNull Stream<T> repeat(@NotNull T element, int numberOfTimes) {
         return IntStream.range(0, numberOfTimes)
             .mapToObj(i -> element);
     }

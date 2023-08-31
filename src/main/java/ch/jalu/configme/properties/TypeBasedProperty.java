@@ -43,7 +43,7 @@ public class TypeBasedProperty<T> extends BaseProperty<T> {
     /**
      * @return the property type this property makes use of
      */
-    public PropertyType<T> getType() {
+    public @NotNull PropertyType<T> getType() {
         return type;
     }
 }

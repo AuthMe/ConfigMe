@@ -27,7 +27,7 @@ public abstract class PropertyAndLeafType<T> implements PropertyType<T>, MapperL
      *
      * @param clazz the class this type implementation produces
      */
-    public PropertyAndLeafType(Class<T> clazz) {
+    public PropertyAndLeafType(@NotNull Class<T> clazz) {
         this.clazz = clazz;
     }
 

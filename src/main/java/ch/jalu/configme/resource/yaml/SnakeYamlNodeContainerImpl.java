@@ -75,15 +75,15 @@ public class SnakeYamlNodeContainerImpl implements SnakeYamlNodeContainer {
         return mappingNode;
     }
 
-    protected Node createRootNode(List<NodeTuple> entryNodes) {
+    protected @NotNull Node createRootNode(@NotNull List<NodeTuple> entryNodes) {
         return new MappingNode(Tag.MAP, entryNodes, DumperOptions.FlowStyle.BLOCK);
     }
 
-    protected final List<String> getComments() {
+    protected final @NotNull List<String> getComments() {
         return comments;
     }
 
-    protected final Map<String, Object> getValues() {
+    protected final @NotNull Map<String, Object> getValues() {
         return values;
     }
 }

@@ -141,7 +141,7 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
      * @param configurationData the configuration data (to retrieve comments)
      * @return SnakeYAML node representing the given map
      */
-    protected @NotNull Node createMapNode(@NotNull Map<String, ?> value, String path,
+    protected @NotNull Node createMapNode(@NotNull Map<String, ?> value, @NotNull String path,
                                           @NotNull ConfigurationData configurationData) {
         List<NodeTuple> nodeEntries = new ArrayList<>(value.size());
 
