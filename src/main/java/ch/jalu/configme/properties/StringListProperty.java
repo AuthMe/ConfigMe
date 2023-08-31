@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.StringType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -11,11 +11,11 @@ import java.util.List;
 public class StringListProperty extends ListProperty<String> {
 
     public StringListProperty(@NotNull String path, @NotNull String... defaultValue) {
-        super(path, PrimitivePropertyType.STRING, defaultValue);
+        super(path, StringType.STRING, defaultValue);
     }
 
     public StringListProperty(@NotNull String path, @NotNull List<String> defaultValue) {
-        super(path, PrimitivePropertyType.STRING, defaultValue);
+        super(path, StringType.STRING, defaultValue);
     }
 
     @Override

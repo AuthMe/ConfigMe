@@ -1,7 +1,7 @@
 package ch.jalu.configme.beanmapper;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,17 +17,17 @@ public interface Mapper {
      * is a Map of values.
      *
      * @param value the value to convert (typically a Map)
-     * @param typeInformation the required type
+     * @param targetType the required type
      * @param errorRecorder error recorder to register errors even if a valid value is returned
      * @return object of the given type, or null if not possible
      */
-    @Nullable Object convertToBean(@Nullable Object value, @NotNull TypeInformation typeInformation,
+    @Nullable Object convertToBean(@Nullable Object value, @NotNull TypeInfo targetType,
                                    @NotNull ConvertErrorRecorder errorRecorder);
 
     /**
      * Converts the given value to an object of the given class, if possible. Returns null otherwise.
      * This is a convenience method as typed alternative to
-     * {@link #convertToBean(Object, TypeInformation, ConvertErrorRecorder)}.
+     * {@link #convertToBean(Object, TypeInfo, ConvertErrorRecorder)}.
      *
      * @param value the value to convert (typically a Map)
      * @param clazz the required class
@@ -35,11 +35,10 @@ public interface Mapper {
      * @param <T> the class type
      * @return object of the given type, or null if not possible
      */
-    @Nullable
     @SuppressWarnings("unchecked")
-    default <T> T convertToBean(@Nullable Object value, @NotNull Class<T> clazz,
-                                @NotNull ConvertErrorRecorder errorRecorder) {
-        return (T) convertToBean(value, new TypeInformation(clazz), errorRecorder);
+    default <T> @Nullable T convertToBean(@Nullable Object value, @NotNull Class<T> clazz,
+                                          @NotNull ConvertErrorRecorder errorRecorder) {
+        return (T) convertToBean(value, new TypeInfo(clazz), errorRecorder);
     }
 
     /**
@@ -50,6 +49,6 @@ public interface Mapper {
      * @param object the object to convert to its export value
      * @return export value to use
      */
-    @Nullable Object toExportValue(@Nullable Object object);
+    @Nullable Object toExportValue(@NotNull Object object);
 
 }

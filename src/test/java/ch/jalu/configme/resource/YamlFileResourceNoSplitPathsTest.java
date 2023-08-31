@@ -6,7 +6,7 @@ import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.properties.MapProperty;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.properties.types.EnumPropertyType;
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -46,7 +46,7 @@ class YamlFileResourceNoSplitPathsTest {
             + "\n  com.example.vip: 20";
         Files.write(file, yaml.getBytes(StandardCharsets.UTF_8));
 
-        MapProperty<Integer> groupsProperty = mapProperty(PrimitivePropertyType.INTEGER)
+        MapProperty<Integer> groupsProperty = mapProperty(NumberType.INTEGER)
             .path("groups")
             .build();
         YamlFileResource resource = new YamlFileResource(file);

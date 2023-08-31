@@ -3,7 +3,7 @@ package ch.jalu.configme.beanmapper.propertydescription;
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.beanmapper.ExportName;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -157,8 +157,8 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
         return descriptor.getName();
     }
 
-    protected @NotNull TypeInformation createTypeInfo(@NotNull PropertyDescriptor descriptor) {
-        return new TypeInformation(descriptor.getWriteMethod().getGenericParameterTypes()[0]);
+    protected @NotNull TypeInfo createTypeInfo(@NotNull PropertyDescriptor descriptor) {
+        return new TypeInfo(descriptor.getWriteMethod().getGenericParameterTypes()[0]);
     }
 
     /**

@@ -4,16 +4,18 @@ import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.beanmapper.leafvaluehandler.AbstractLeafValueHandler;
-import ch.jalu.configme.beanmapper.leafvaluehandler.CombiningLeafValueHandler;
-import ch.jalu.configme.beanmapper.leafvaluehandler.StandardLeafValueHandlers;
+import ch.jalu.configme.beanmapper.leafvaluehandler.MapperLeafType;
+import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
 import ch.jalu.configme.properties.BeanProperty;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.typeresolver.TypeInfo;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,11 +28,11 @@ import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Tests that the bean mapper can be extended to support custom types. Bean properties with fields of a
- * {@link CustomInteger custom type} are used, which are handled by an additional custom value handler.
+ * {@link CustomInteger custom type} are used, which are handled by a custom mapper leaf type.
  *
  * @see <a href="https://github.com/AuthMe/ConfigMe/issues/182">Issue #182</a>
  */
-class BeanWithCustomTypeHandlerTest {
+class BeanWithCustomLeafTypeTest {
 
     @TempDir
     Path tempDir;
@@ -77,32 +79,32 @@ class BeanWithCustomTypeHandlerTest {
     }
 
     /**
-     * Mapper extension with a custom type handler so that {@link CustomInteger} is supported.
+     * Mapper extension with a custom leaf type so that {@link CustomInteger} is supported.
      */
     public static final class MapperWithCustomIntSupport extends MapperImpl {
 
         MapperWithCustomIntSupport() {
             super(new BeanDescriptionFactoryImpl(),
-                new CombiningLeafValueHandler(StandardLeafValueHandlers.getDefaultLeafValueHandler(),
-                    new CustomIntegerLeafValueHandler()));
+                  LeafValueHandlerImpl.builder().addDefaults().addType(new CustomIntegerLeafType()).build());
         }
     }
 
     /**
      * Provides {@link CustomInteger} when reading from and writing to a property resource.
      */
-    public static final class CustomIntegerLeafValueHandler extends AbstractLeafValueHandler {
+    public static final class CustomIntegerLeafType implements MapperLeafType {
 
         @Override
-        protected @Nullable Object convert(@Nullable Class<?> clazz, @Nullable Object value) {
-            if (clazz == CustomInteger.class && value instanceof Number) {
+        public @Nullable Object convert(@Nullable Object value, @NotNull TypeInfo targetType,
+                                        @NotNull ConvertErrorRecorder errorRecorder) {
+            if (targetType.isAssignableFrom(CustomInteger.class) && value instanceof Number) {
                 return new CustomInteger(((Number) value).intValue(), false);
             }
             return null;
         }
 
         @Override
-        public @Nullable Object toExportValue(@Nullable Object value) {
+        public @Nullable Object toExportValueIfApplicable(@Nullable Object value) {
             if (value instanceof CustomInteger) {
                 return ((CustomInteger) value).value;
             }
@@ -131,7 +133,7 @@ class BeanWithCustomTypeHandlerTest {
     }
 
     /**
-     * Range collection: bean type as used in the the bean property of {@link MyTestSettings}.
+     * Range collection: bean type as used in the bean property of {@link MyTestSettings}.
      */
     public static class RangeCollection {
 

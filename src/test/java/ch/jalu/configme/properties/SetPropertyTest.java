@@ -1,7 +1,7 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.PropertyValue;
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +24,7 @@ class SetPropertyTest {
     @Test
     void shouldReturnValueFromSource() {
         // given
-        SetProperty<Double> property = new SetProperty<>("error.codes", PrimitivePropertyType.DOUBLE,
+        SetProperty<Double> property = new SetProperty<>("error.codes", NumberType.DOUBLE,
             1.414, 1.732, 2.0);
         PropertyReader reader = mock(PropertyReader.class);
         List list = Arrays.asList(3.6, 6.9, 10.2);
@@ -41,7 +41,7 @@ class SetPropertyTest {
     @Test
     void shouldReturnDefaultValue() {
         // given
-        SetProperty<Integer> property = new SetProperty<>("error.codes", PrimitivePropertyType.INTEGER,
+        SetProperty<Integer> property = new SetProperty<>("error.codes", NumberType.INTEGER,
             -27, -8);
         PropertyReader reader = mock(PropertyReader.class);
         given(reader.getList("error.codes")).willReturn(null);
@@ -57,7 +57,7 @@ class SetPropertyTest {
     @Test
     void shouldCreateExportValue() {
         // given
-        SetProperty<Double> property = new SetProperty<>("error.codes", PrimitivePropertyType.DOUBLE,
+        SetProperty<Double> property = new SetProperty<>("error.codes", NumberType.DOUBLE,
             1.414, 1.732, 2.0);
         Set<Double> value = new LinkedHashSet<>(Arrays.asList(2.14, 3.28, 5.56));
 

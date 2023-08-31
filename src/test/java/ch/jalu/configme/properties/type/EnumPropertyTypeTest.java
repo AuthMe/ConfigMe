@@ -4,6 +4,7 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.EnumPropertyType;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.StandardOpenOption;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -87,4 +88,12 @@ class EnumPropertyTypeTest {
         assertThat(result, equalTo("DAYS"));
     }
 
+    @Test
+    void shouldReturnEnumClass() {
+        // given
+        EnumPropertyType<StandardOpenOption> propertyType = new EnumPropertyType<>(StandardOpenOption.class);
+
+        // when / then
+        assertThat(propertyType.getType(), equalTo(StandardOpenOption.class));
+    }
 }

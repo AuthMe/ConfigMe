@@ -1,5 +1,6 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.exception.ConfigMeException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

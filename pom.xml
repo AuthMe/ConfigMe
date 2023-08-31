@@ -189,6 +189,13 @@
             <version>2.2</version>
         </dependency>
 
+        <!-- TypeInfo and other utils -->
+        <dependency>
+            <groupId>ch.jalu</groupId>
+            <artifactId>typeresolver</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+
         <!-- Annotations for @NotNull and @Nullable -->
         <dependency>
             <groupId>org.jetbrains</groupId>

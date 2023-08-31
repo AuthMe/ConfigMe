@@ -198,16 +198,16 @@ class SnakeYamlNodeBuilderImplTest {
         ConfigurationData configurationData = mock(ConfigurationData.class);
         String path = "calc.coefficients";
         given(configurationData.getCommentsForSection(path)).willReturn(Collections.singletonList("Coefficients"));
-        given(configurationData.getCommentsForSection(path + ".0")).willReturn(Collections.emptyList());
-        given(configurationData.getCommentsForSection(path + ".1")).willReturn(Collections.singletonList("\n"));
+        given(configurationData.getCommentsForSection(path + "[0]")).willReturn(Collections.emptyList());
+        given(configurationData.getCommentsForSection(path + "[1]")).willReturn(Collections.singletonList("\n"));
 
         // when
         Node node = nodeBuilder.createYamlNode(value, path, configurationData, 1);
 
         // then
         verify(configurationData).getCommentsForSection(path);
-        verify(configurationData).getCommentsForSection(path + ".0");
-        verify(configurationData).getCommentsForSection(path + ".1");
+        verify(configurationData).getCommentsForSection(path + "[0]");
+        verify(configurationData).getCommentsForSection(path + "[1]");
         verifyNoMoreInteractions(configurationData);
 
         assertThat(node, instanceOf(SequenceNode.class));
@@ -247,9 +247,9 @@ class SnakeYamlNodeBuilderImplTest {
 
         // then
         verify(configurationData).getCommentsForSection(path);
-        verify(configurationData).getCommentsForSection(path + ".0");
-        verify(configurationData).getCommentsForSection(path + ".1");
-        verify(configurationData).getCommentsForSection(path + ".2");
+        verify(configurationData).getCommentsForSection(path + "[0]");
+        verify(configurationData).getCommentsForSection(path + "[1]");
+        verify(configurationData).getCommentsForSection(path + "[2]");
         verifyNoMoreInteractions(configurationData);
 
         assertThat(result, instanceOf(SequenceNode.class));
@@ -282,16 +282,16 @@ class SnakeYamlNodeBuilderImplTest {
         String path = "calc.factors";
 
         given(configurationData.getCommentsForSection(path)).willReturn(Collections.singletonList("\n"));
-        given(configurationData.getCommentsForSection(path + ".A")).willReturn(Collections.singletonList("Alpha comp."));
+        given(configurationData.getCommentsForSection(path + "[k=A]")).willReturn(Collections.singletonList("Alpha comp."));
 
         // when
         Node result = nodeBuilder.createYamlNode(factors, path, configurationData, 0);
 
         // then
         verify(configurationData).getCommentsForSection(path);
-        verify(configurationData).getCommentsForSection(path + ".S");
-        verify(configurationData).getCommentsForSection(path + ".A");
-        verify(configurationData).getCommentsForSection(path + ".C");
+        verify(configurationData).getCommentsForSection(path + "[k=S]");
+        verify(configurationData).getCommentsForSection(path + "[k=A]");
+        verify(configurationData).getCommentsForSection(path + "[k=C]");
         verifyNoMoreInteractions(configurationData);
 
         assertThat(result, instanceOf(MappingNode.class));
