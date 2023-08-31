@@ -8,7 +8,10 @@ import ch.jalu.configme.beanmapper.command.Executor;
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommand;
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommandConfig;
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexOptionalTypeConfig;
+import ch.jalu.configme.beanmapper.context.MappingContext;
+import ch.jalu.configme.beanmapper.context.MappingContextImpl;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
+import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.typeissues.GenericCollection;
 import ch.jalu.configme.beanmapper.typeissues.MapWithNonStringKeys;
@@ -23,7 +26,7 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.YamlFileReader;
 import ch.jalu.configme.samples.TestEnum;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -153,7 +156,7 @@ class MapperImplTest {
         assertThat(config.getCommands().keySet(), contains("refresh", "open", "cancel"));
         Command cancelCommand = config.getCommands().get("cancel");
         assertThat(cancelCommand.getArguments(), empty());
-        assertThat(cancelCommand.getExecution().getPrivileges(), contains("action.cancel", "true", "1.23"));
+        assertThat(cancelCommand.getExecution().getPrivileges(), contains("action.cancel", "true", "1.23", "[nested, list, uh oh!]"));
     }
 
     @Test
@@ -182,7 +185,7 @@ class MapperImplTest {
         // then
         assertThat(ex.getMessage(), equalTo(
             "The key type of maps may only be of String type, for mapping of: "
-                + "[Path: 'map', type: 'java.util.Map<java.lang.Integer, java.lang.Integer>']"));
+                + "[Bean path: 'map', type: 'java.util.Map<java.lang.Integer, java.lang.Integer>']"));
     }
 
     @Test
@@ -197,7 +200,7 @@ class MapperImplTest {
 
         // then
         assertThat(ex.getMessage(),
-            equalTo("Unsupported collection type 'interface java.util.Deque', for mapping of: [Path: 'collection', type: 'java.util.Deque<java.lang.Double>']"));
+            equalTo("Unsupported collection type 'interface java.util.Deque', for mapping of: [Bean path: 'collection', type: 'java.util.Deque<java.lang.Double>']"));
     }
 
     @Test
@@ -212,7 +215,7 @@ class MapperImplTest {
 
         // then
         assertThat(ex.getMessage(),
-            equalTo("The generic type 0 is not well defined, for mapping of: [Path: 'collection', type: 'interface java.util.List']"));
+            equalTo("The type argument at index 0 is not well defined, for mapping of: [Bean path: 'collection', type: 'interface java.util.List']"));
     }
 
     @Test
@@ -227,7 +230,7 @@ class MapperImplTest {
 
         // then
         assertThat(ex.getMessage(),
-            equalTo("The generic type 1 is not well defined, for mapping of: [Path: 'map', type: 'java.util.Map<java.lang.String, ?>']"));
+            equalTo("The type argument at index 1 is not well defined, for mapping of: [Bean path: 'map', type: 'java.util.Map<java.lang.String, ?>']"));
     }
 
     @Test
@@ -242,7 +245,7 @@ class MapperImplTest {
 
         // then
         assertThat(ex.getMessage(),
-            equalTo("The generic type 0 is not well defined, for mapping of: [Path: 'collection', type: 'java.util.List<? extends java.lang.String>']"));
+            equalTo("The type argument at index 0 is not well defined, for mapping of: [Bean path: 'collection', type: 'java.util.List<? extends java.lang.String>']"));
     }
 
     @Test
@@ -250,7 +253,7 @@ class MapperImplTest {
         // given
         MapperImpl mapper = new MapperImpl();
         Class<?> type = new HashMap() { }.getClass();
-        MappingContext context = createContextWithType(type);
+        MappingContext context = createContextWithTargetType(type);
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
@@ -264,10 +267,10 @@ class MapperImplTest {
     void shouldCreateCorrectMapType() {
         // given
         MapperImpl mapper = new MapperImpl();
-        MappingContext interfaceCtx = createContextWithType(Map.class);
-        MappingContext hashCtx = createContextWithType(HashMap.class);
-        MappingContext navigableCtx = createContextWithType(NavigableMap.class);
-        MappingContext treeCtx = createContextWithType(TreeMap.class);
+        MappingContext interfaceCtx = createContextWithTargetType(Map.class);
+        MappingContext hashCtx = createContextWithTargetType(HashMap.class);
+        MappingContext navigableCtx = createContextWithTargetType(NavigableMap.class);
+        MappingContext treeCtx = createContextWithTargetType(TreeMap.class);
 
         // when / then
         assertThat(mapper.createMapMatchingType(interfaceCtx), instanceOf(LinkedHashMap.class));
@@ -424,7 +427,7 @@ class MapperImplTest {
         MapperImpl mapper = new MapperImpl();
 
         // when
-        Object command = mapper.createBeanMatchingType(createContextWithType(Command.class));
+        Object command = mapper.createBeanMatchingType(createContextWithTargetType(Command.class));
 
         // then
         assertThat(command, instanceOf(Command.class));
@@ -436,19 +439,19 @@ class MapperImplTest {
         MapperImpl mapper = new MapperImpl();
 
         // when
-        ConfigMeException e = assertThrows(ConfigMeException.class,
-            () -> mapper.createBeanMatchingType(createContextWithType(Iterable.class)));
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> mapper.createBeanMatchingType(createContextWithTargetType(Iterable.class)));
 
         // then
-        assertThat(e.getMessage(), containsString("It is required to have a default constructor"));
-        assertThat(e.getCause(), instanceOf(NoSuchMethodException.class));
+        assertThat(ex.getMessage(), containsString("It is required to have a default constructor"));
+        assertThat(ex.getCause(), instanceOf(NoSuchMethodException.class));
     }
 
     @Test
     void shouldReturnFields() {
         // given
         BeanDescriptionFactory descriptionFactory = mock(BeanDescriptionFactory.class);
-        LeafValueHandler leafValueHandler = mock(LeafValueHandler.class);
+        LeafValueHandlerImpl leafValueHandler = mock(LeafValueHandlerImpl.class);
         MapperImpl mapper = new MapperImpl(descriptionFactory, leafValueHandler);
 
         // when
@@ -478,8 +481,8 @@ class MapperImplTest {
         return new YamlFileReader(getJarPath(file));
     }
 
-    private static MappingContext createContextWithType(Class<?> clazz) {
-        TypeInformation type = new TypeInformation(clazz);
+    private static MappingContext createContextWithTargetType(Class<?> targetType) {
+        TypeInfo type = new TypeInfo(targetType);
         MappingContextImpl root = MappingContextImpl.createRoot(type, new ConvertErrorRecorder());
         return root.createChild("path.in.test", type);
     }

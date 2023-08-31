@@ -7,7 +7,7 @@ import ch.jalu.configme.demo.beans.CoordinateSystem;
 import ch.jalu.configme.demo.beans.Location;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.BeanPropertyType;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -29,7 +29,7 @@ class BeanPropertyTypeTest {
     @Test
     void shouldReturnConvertedValue() {
         // given
-        TypeInformation typeInformation = new TypeInformation(Location.class);
+        TypeInfo typeInformation = new TypeInfo(Location.class);
         Mapper mapper = mock(Mapper.class);
         Location location = new Location();
         location.setLatitude(360f);
@@ -48,7 +48,7 @@ class BeanPropertyTypeTest {
     @Test
     void shouldReturnValueAsExportValue() {
         // given
-        TypeInformation typeInformation = new TypeInformation(Location.class);
+        TypeInfo typeInformation = new TypeInfo(Location.class);
         Location location = new Location();
         location.setLatitude(360f);
         location.setLongitude(123f);

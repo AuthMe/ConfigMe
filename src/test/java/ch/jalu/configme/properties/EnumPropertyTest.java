@@ -14,7 +14,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link EnumProperty}.
  */
-public class EnumPropertyTest {
+class EnumPropertyTest {
 
     @Test
     void shouldReturnCorrectEnumValue() {

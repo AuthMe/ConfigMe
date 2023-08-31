@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.StringType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -17,7 +17,7 @@ public class StringSetProperty extends SetProperty<String> {
      * @param defaultValue the values that make up the entries of the default set
      */
     public StringSetProperty(@NotNull String path, @NotNull String @NotNull... defaultValue) {
-        super(path, PrimitivePropertyType.STRING, defaultValue);
+        super(path, StringType.STRING, defaultValue);
     }
 
     /**
@@ -27,7 +27,7 @@ public class StringSetProperty extends SetProperty<String> {
      * @param defaultValue the values that make up the entries of the default set
      */
     public StringSetProperty(@NotNull String path, @NotNull Set<String> defaultValue) {
-        super(path, PrimitivePropertyType.STRING, defaultValue);
+        super(path, StringType.STRING, defaultValue);
     }
 
     @Override

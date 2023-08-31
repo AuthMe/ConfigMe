@@ -1,13 +1,24 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.typeresolver.EnumUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Property type for an enum type.
+ *
+ * @param <E> the enum type
+ */
 public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
 
-    private Class<E> enumType;
+    private final Class<E> enumType;
 
+    /**
+     * Constructor. You can also create instances with {@link EnumPropertyType#of}.
+     *
+     * @param enumType the enum type this type should convert to
+     */
     public EnumPropertyType(@NotNull Class<E> enumType) {
         this.enumType = enumType;
     }
@@ -17,29 +28,22 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public @Nullable E convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
-        // If object is enum, then return this object, casting to E
-        if (enumType.isInstance(object)) {
+        if (object instanceof String) {
+            return EnumUtils.tryValueOfCaseInsensitive(enumType, (String) object).orElse(null);
+        } else if (enumType.isInstance(object)) {
             return (E) object;
         }
-
-        // If object is not string, then we return null, because else we cant find an enum
-        if (!(object instanceof String)) {
-            return null;
-        }
-
-        String name = (String) object;
-        for (E entry : enumType.getEnumConstants()) {
-            if (entry.name().equalsIgnoreCase(name)) {
-                return entry;
-            }
-        }
-
         return null;
     }
 
     @Override
-    public @NotNull Object toExportValue(@NotNull E value) {
+    public @NotNull String toExportValue(@NotNull E value) {
         return value.name();
+    }
+
+    public final @NotNull Class<E> getType() {
+        return enumType;
     }
 }

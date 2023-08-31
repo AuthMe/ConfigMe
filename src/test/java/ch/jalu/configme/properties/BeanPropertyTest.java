@@ -10,14 +10,16 @@ import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.types.BeanPropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
+import ch.jalu.typeresolver.reference.TypeReference;
+import ch.jalu.typeresolver.typeimpl.WildcardTypeImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.util.HashMap;
 
@@ -104,7 +106,7 @@ class BeanPropertyTest {
         Object value = new Object();
         given(reader.getObject(path)).willReturn(value);
         WorldGroupConfig groupConfig = new WorldGroupConfig();
-        given(mapper.convertToBean(eq(value), eq(new TypeInformation(WorldGroupConfig.class)), any(ConvertErrorRecorder.class)))
+        given(mapper.convertToBean(eq(value), eq(new TypeInfo(WorldGroupConfig.class)), any(ConvertErrorRecorder.class)))
             .willReturn(groupConfig);
 
         // when
@@ -115,13 +117,12 @@ class BeanPropertyTest {
     }
 
     @Test
-    void shouldAllowInstantiationWithGenerics() throws NoSuchFieldException {
+    void shouldAllowInstantiationWithGenerics() {
         // given
-        Type stringComparable = TestFields.class.getDeclaredField("comparable").getGenericType();
-
+        TypeInfo comparableType = new TypeReference<Comparable<String>>() { };
 
         // when
-        BeanProperty<Comparable<String>> property = new BeanProperty<>(new TypeInformation(stringComparable),
+        BeanProperty<Comparable<String>> property = new BeanProperty<>(comparableType,
             "path.test", "defaultValue", DefaultMapper.getInstance());
 
         // then
@@ -129,21 +130,50 @@ class BeanPropertyTest {
     }
 
     @Test
-    void shouldThrowForObviouslyWrongDefaultValue() throws NoSuchFieldException {
+    void shouldThrowForObviouslyWrongDefaultValue() {
         // given
-        Type stringComparable = TestFields.class.getDeclaredField("comparable").getGenericType();
+        TypeInfo comparableType = new TypeReference<Comparable<String>>() { };
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> new BeanProperty<>(new TypeInformation(stringComparable),
+            () -> new BeanProperty<>(comparableType,
                 "path.test", new HashMap<>(), DefaultMapper.getInstance()));
 
         // then
         assertThat(ex.getMessage(),
-            equalTo("Default value for path 'path.test' does not match bean type 'TypeInformation[type=java.lang.Comparable<java.lang.String>]'"));
+            equalTo("Default value for path 'path.test' does not match bean type 'TypeInfo[type=java.lang.Comparable<java.lang.String>]'"));
     }
 
-    private static final class TestFields {
-        private Comparable<String> comparable;
+    @Test
+    void shouldThrowForTypeInfoThatCannotBeConvertedToClass() {
+        // given
+        TypeInfo wildcardType = new TypeInfo(WildcardTypeImpl.newUnboundedWildcard());
+
+        // when
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            () -> new BeanProperty<>(wildcardType,
+                "path.test", new HashMap<>(), DefaultMapper.getInstance()));
+
+        // then
+        assertThat(ex.getMessage(),
+            equalTo("The bean type 'TypeInfo[type=?]' cannot be converted to Class. Use a constructor with a custom BeanPropertyType."));
+    }
+
+    @Test
+    void shouldCreateBeanPropertyWithCustomType() {
+        // given
+        String path = "";
+        Mapper mapper = DefaultMapper.getInstance();
+        BeanPropertyType<Executor> executorType = new BeanPropertyType<Executor>(new TypeInfo(Executor.class), mapper) {
+
+        };
+
+        Executor defaultValue = Executor.CONSOLE;
+
+        // when
+        BeanProperty<Executor> property = new BeanProperty<>(path, executorType, defaultValue);
+
+        // then
+        assertThat(property.getType(), equalTo(executorType));
     }
 }

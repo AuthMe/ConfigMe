@@ -4,7 +4,7 @@
 
     <groupId>ch.jalu</groupId>
     <artifactId>configme</artifactId>
-    <version>1.4.2-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
 
     <name>ConfigMe</name>
     <description>A simple configuration management library</description>
@@ -187,6 +187,13 @@
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>2.2</version>
+        </dependency>
+
+        <!-- TypeInfo and other utils -->
+        <dependency>
+            <groupId>ch.jalu</groupId>
+            <artifactId>typeresolver</artifactId>
+            <version>0.1.0</version>
         </dependency>
 
         <!-- Annotations for @NotNull and @Nullable -->

@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.NumberType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,6 +9,6 @@ import org.jetbrains.annotations.NotNull;
 public class DoubleProperty extends TypeBasedProperty<Double> {
 
     public DoubleProperty(@NotNull String path, double defaultValue) {
-        super(path, defaultValue, PrimitivePropertyType.DOUBLE);
+        super(path, defaultValue, NumberType.DOUBLE);
     }
 }

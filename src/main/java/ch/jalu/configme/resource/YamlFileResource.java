@@ -15,7 +15,6 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Node;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -40,20 +39,9 @@ public class YamlFileResource implements PropertyResource {
         this.options = options;
     }
 
-    /**
-     * Constructor (legacy). Prefer {@link #YamlFileResource(Path)}.
-     *
-     * @param file the file
-     * @deprecated scheduled for removal
-     */
-    @Deprecated
-    public YamlFileResource(@NotNull File file) {
-        this(file.toPath());
-    }
-
     @Override
     public @NotNull PropertyReader createReader() {
-        return new YamlFileReader(path, options.getCharset(), options.splitDotPaths());
+        return new YamlFileReader(path, options.getCharset());
     }
 
     @Override
@@ -129,12 +117,6 @@ public class YamlFileResource implements PropertyResource {
 
     protected final @NotNull Path getPath() {
         return path;
-    }
-
-    // Scheduled for removal in favor of #getPath
-    @Deprecated
-    protected final @NotNull File getFile() {
-        return path.toFile();
     }
 
     /**
