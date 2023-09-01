@@ -1,19 +1,16 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.SettingsManager;
-import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
-import ch.jalu.configme.resource.PropertyReader;
+import ch.jalu.configme.properties.types.RegexType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * Property whose value is a regex pattern.
  */
-public class RegexProperty extends BaseProperty<Pattern> {
+public class RegexProperty extends TypeBasedProperty<Pattern> {
 
     /**
      * Constructor.
@@ -22,7 +19,7 @@ public class RegexProperty extends BaseProperty<Pattern> {
      * @param defaultValue the default value of the property
      */
     public RegexProperty(@NotNull String path, @NotNull Pattern defaultValue) {
-        super(path, defaultValue);
+        super(path, defaultValue, RegexType.REGEX);
     }
 
     /**
@@ -33,24 +30,6 @@ public class RegexProperty extends BaseProperty<Pattern> {
      */
     public RegexProperty(@NotNull String path, @NotNull String defaultRegexValue) {
         this(path, Pattern.compile(defaultRegexValue));
-    }
-
-    @Override
-    protected @Nullable Pattern getFromReader(@NotNull PropertyReader reader,
-                                              @NotNull ConvertErrorRecorder errorRecorder) {
-        String pattern = reader.getString(getPath());
-        if (pattern != null) {
-            try {
-                return Pattern.compile(pattern);
-            } catch (PatternSyntaxException ignored) {
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public @NotNull Object toExportValue(@NotNull Pattern value) {
-        return value.pattern();
     }
 
     /**
