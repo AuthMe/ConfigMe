@@ -35,7 +35,7 @@ class RegexPropertyTest {
         // given
         RegexProperty property = new RegexProperty("names.whitelist", "s_.*?");
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getString("names.whitelist")).willReturn("m[0-9]+");
+        given(reader.getObject("names.whitelist")).willReturn("m[0-9]+");
         ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorder();
 
         // when

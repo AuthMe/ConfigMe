@@ -5,6 +5,7 @@ import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.BooleanType;
 import ch.jalu.configme.properties.types.NumberType;
+import ch.jalu.configme.properties.types.RegexType;
 import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +73,8 @@ public class LeafValueHandlerImpl implements LeafValueHandler {
                 NumberType.BYTE,
                 NumberType.SHORT,
                 NumberType.BIG_INTEGER,
-                NumberType.BIG_DECIMAL)
+                NumberType.BIG_DECIMAL,
+                RegexType.REGEX)
             .collect(Collectors.toCollection(ArrayList::new));
     }
 

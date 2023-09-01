@@ -7,6 +7,7 @@ import ch.jalu.configme.beanmapper.context.MappingContextImpl;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.BooleanType;
 import ch.jalu.configme.properties.types.NumberType;
+import ch.jalu.configme.properties.types.RegexType;
 import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.typeresolver.typeimpl.WildcardTypeImpl;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ class LeafValueHandlerImplTest {
         List<MapperLeafType> leafTypes = LeafValueHandlerImpl.createDefaultLeafTypes();
 
         // then
-        assertThat(leafTypes, hasSize(11));
+        assertThat(leafTypes, hasSize(12));
         assertThat(leafTypes.get(0), sameInstance(BooleanType.BOOLEAN));
         assertThat(leafTypes.get(1), sameInstance(StringType.STRING));
         assertThat(leafTypes.get(2), sameInstance(NumberType.INTEGER));
@@ -67,6 +68,7 @@ class LeafValueHandlerImplTest {
         assertThat(leafTypes.get(8), sameInstance(NumberType.SHORT));
         assertThat(leafTypes.get(9), sameInstance(NumberType.BIG_INTEGER));
         assertThat(leafTypes.get(10), sameInstance(NumberType.BIG_DECIMAL));
+        assertThat(leafTypes.get(11), sameInstance(RegexType.REGEX));
     }
 
     @Test
@@ -96,12 +98,13 @@ class LeafValueHandlerImplTest {
 
         // then
         List<MapperLeafType> leafTypes = valueHandler.getLeafTypes();
-        assertThat(leafTypes, hasSize(5));
+        assertThat(leafTypes, hasSize(6));
         assertThat(leafTypes.get(0), sameInstance(leafType1));
         assertThat(leafTypes.get(1), sameInstance(BooleanType.BOOLEAN));
         assertThat(leafTypes.get(2), sameInstance(StringType.STRING));
         assertThat(leafTypes.get(3), instanceOf(EnumLeafType.class));
-        assertThat(leafTypes.get(4), sameInstance(leafType2));
+        assertThat(leafTypes.get(4), sameInstance(RegexType.REGEX));
+        assertThat(leafTypes.get(5), sameInstance(leafType2));
     }
 
     @Test
