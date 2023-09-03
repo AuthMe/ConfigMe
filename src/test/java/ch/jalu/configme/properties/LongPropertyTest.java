@@ -4,6 +4,8 @@ import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static ch.jalu.configme.TestUtils.isErrorValueOf;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
@@ -15,6 +17,7 @@ import static org.mockito.Mockito.when;
 /**
  * Test for {@link LongProperty}.
  */
+@ExtendWith(MockitoExtension.class)
 class LongPropertyTest {
 
     private static PropertyReader reader;

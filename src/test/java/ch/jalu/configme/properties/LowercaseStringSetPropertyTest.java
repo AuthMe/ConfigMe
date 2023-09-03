@@ -4,6 +4,8 @@ import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.when;
 /**
  * Test for {@link LowercaseStringSetProperty}.
  */
+@ExtendWith(MockitoExtension.class)
 class LowercaseStringSetPropertyTest {
 
     private static PropertyReader reader;

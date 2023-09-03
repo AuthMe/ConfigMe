@@ -4,6 +4,8 @@ import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -19,6 +21,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link SetProperty}.
  */
+@ExtendWith(MockitoExtension.class)
 class SetPropertyTest {
 
     @Test

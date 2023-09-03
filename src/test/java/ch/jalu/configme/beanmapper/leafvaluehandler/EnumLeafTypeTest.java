@@ -5,6 +5,8 @@ import ch.jalu.configme.samples.TestEnum;
 import ch.jalu.typeresolver.reference.TypeReference;
 import ch.jalu.typeresolver.typeimpl.WildcardTypeImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +21,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 /**
  * Test for {@link EnumLeafType}.
  */
+@ExtendWith(MockitoExtension.class)
 class EnumLeafTypeTest {
 
     private final EnumLeafType enumLeafType = new EnumLeafType();

@@ -31,7 +31,9 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -61,6 +63,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link MapperImpl}.
  */
+@ExtendWith(MockitoExtension.class)
 class MapperImplTest {
 
     @Test

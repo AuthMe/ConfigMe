@@ -4,6 +4,8 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.inlinearray.StandardInlineArrayConverters;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,6 +15,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link InlineArrayProperty}.
  */
+@ExtendWith(MockitoExtension.class)
 class InlineArrayPropertyTest {
 
     @Test

@@ -18,7 +18,9 @@ import ch.jalu.typeresolver.TypeInfo;
 import ch.jalu.typeresolver.reference.TypeReference;
 import ch.jalu.typeresolver.typeimpl.WildcardTypeImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -37,6 +39,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link BeanProperty} and its integration with {@link YamlFileResource}.
  */
+@ExtendWith(MockitoExtension.class)
 class BeanPropertyTest {
 
     @TempDir

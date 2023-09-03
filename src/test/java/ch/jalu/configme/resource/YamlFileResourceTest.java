@@ -11,9 +11,10 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.TestConfiguration;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -40,12 +41,12 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link YamlFileResource}.
  */
+@ExtendWith(MockitoExtension.class)
 class YamlFileResourceTest {
 
     private static final String COMPLETE_FILE = "/config-sample.yml";
@@ -319,8 +320,6 @@ class YamlFileResourceTest {
     void shouldReturnFieldsOfResource() {
         // given
         Path configFile = mock(Path.class);
-        File givenFile = mock(File.class);
-        given(configFile.toFile()).willReturn(givenFile);
         YamlFileResourceOptions options = mock(YamlFileResourceOptions.class);
         YamlFileResource resource = new YamlFileResource(configFile, options);
 

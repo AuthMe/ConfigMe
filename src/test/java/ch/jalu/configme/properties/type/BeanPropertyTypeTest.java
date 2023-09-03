@@ -9,6 +9,8 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.BeanPropertyType;
 import ch.jalu.typeresolver.TypeInfo;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link BeanPropertyType}.
  */
+@ExtendWith(MockitoExtension.class)
 class BeanPropertyTypeTest {
 
     @Test

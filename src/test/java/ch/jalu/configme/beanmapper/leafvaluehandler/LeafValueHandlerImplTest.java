@@ -11,6 +11,8 @@ import ch.jalu.configme.properties.types.RegexType;
 import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.typeresolver.typeimpl.WildcardTypeImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link LeafValueHandlerImpl}.
  */
+@ExtendWith(MockitoExtension.class)
 class LeafValueHandlerImplTest {
 
     @Test

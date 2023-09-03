@@ -4,9 +4,11 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.typeresolver.TypeInfo;
 import ch.jalu.typeresolver.numbers.StandardNumberType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -29,6 +31,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 /**
  * Test for {@link NumberType}.
  */
+@ExtendWith(MockitoExtension.class)
 class NumberTypeTest {
 
     @ParameterizedTest(name = "{0}")

@@ -6,7 +6,9 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.TestConfiguration;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.IOException;
@@ -36,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Test for {@link YamlFileReader}.
  */
+@ExtendWith(MockitoExtension.class)
 class YamlFileReaderTest {
 
     private static final String COMPLETE_FILE = "/config-sample.yml";

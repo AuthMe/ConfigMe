@@ -2,7 +2,9 @@ package ch.jalu.configme.utils;
 
 import ch.jalu.configme.exception.ConfigMeException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link Utils}.
  */
+@ExtendWith(MockitoExtension.class)
 class UtilsTest {
 
     @TempDir
