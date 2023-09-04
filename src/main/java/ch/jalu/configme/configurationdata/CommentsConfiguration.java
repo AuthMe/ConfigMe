@@ -43,8 +43,8 @@ public class CommentsConfiguration {
     public void setComment(@NotNull String path, @NotNull String... commentLines) {
         List<String> replaced = comments.put(path, Collections.unmodifiableList(Arrays.asList(commentLines)));
         
-        if(replaced != null) {
-            throw new IllegalStateException("Comment lines already exists for the path " + path);
+        if (replaced != null) {
+            throw new IllegalStateException("Comment lines already exists for the path '" + path + "'");
         }
     }
 

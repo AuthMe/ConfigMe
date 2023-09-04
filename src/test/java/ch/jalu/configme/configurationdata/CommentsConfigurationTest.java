@@ -29,7 +29,7 @@ class CommentsConfigurationTest {
         IllegalStateException ex = assertThrows(IllegalStateException.class, () -> conf.setComment(path, "New Comment"));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Comment lines already exists for the path " + path));
+        assertThat(ex.getMessage(), equalTo("Comment lines already exists for the path 'config.me'"));
         assertThat(conf.getAllComments().keySet(), contains(path));
         assertThat(conf.getAllComments().get(path), contains("New Comment"));
     }
@@ -45,7 +45,7 @@ class CommentsConfigurationTest {
         IllegalStateException ex = assertThrows(IllegalStateException.class, ()-> conf.setComment("com.acme", "Acme new comment", "1, 2, 3"));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Comment lines already exists for the path com.acme"));
+        assertThat(ex.getMessage(), equalTo("Comment lines already exists for the path 'com.acme'"));
 
         Map<String, List<String>> allComments = conf.getAllComments();
         assertThat(allComments.keySet(), containsInAnyOrder("com.acme", "other.path"));
