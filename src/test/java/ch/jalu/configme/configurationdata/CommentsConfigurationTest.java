@@ -11,7 +11,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -31,8 +30,7 @@ class CommentsConfigurationTest {
 
         // then
         assertThat(ex.getMessage(), equalTo("Comment lines already exists for the path " + path));
-        assertEquals(conf.getAllComments().size(), 1);
-        assertEquals(conf.getAllComments().get(path).size(), 1);
+        assertThat(conf.getAllComments().keySet(), contains(path));
         assertThat(conf.getAllComments().get(path), contains("New Comment"));
     }
 
