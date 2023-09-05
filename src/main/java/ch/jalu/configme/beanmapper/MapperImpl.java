@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import static ch.jalu.configme.utils.PathUtils.OPTIONAL_SPECIFIER;
-import static ch.jalu.configme.utils.PathUtils.pathSpecifierForIndex;
-import static ch.jalu.configme.utils.PathUtils.pathSpecifierForMapKey;
+import static ch.jalu.configme.internal.PathUtils.OPTIONAL_SPECIFIER;
+import static ch.jalu.configme.internal.PathUtils.pathSpecifierForIndex;
+import static ch.jalu.configme.internal.PathUtils.pathSpecifierForMapKey;
 
 /**
  * Implementation of {@link Mapper}.

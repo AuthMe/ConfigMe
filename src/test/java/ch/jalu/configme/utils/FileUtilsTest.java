@@ -30,10 +30,10 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
 /**
- * Test for {@link Utils}.
+ * Test for {@link FileUtils}.
  */
 @ExtendWith(MockitoExtension.class)
-class UtilsTest {
+class FileUtilsTest {
 
     @TempDir
     public Path temporaryFolder;
@@ -45,8 +45,8 @@ class UtilsTest {
         Path otherFile = temporaryFolder.resolve("big/path/in/middle/toFile.png");
 
         // when
-        Utils.createFileIfNotExists(file);
-        Utils.createFileIfNotExists(otherFile);
+        FileUtils.createFileIfNotExists(file);
+        FileUtils.createFileIfNotExists(otherFile);
 
         // then
         assertThat(Files.exists(file), equalTo(true));
@@ -57,7 +57,7 @@ class UtilsTest {
     void shouldThrowForFolderAsFile() {
         // given / when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> Utils.createFileIfNotExists(temporaryFolder));
+            () -> FileUtils.createFileIfNotExists(temporaryFolder));
 
         // then
         assertThat(ex.getMessage(), matchesPattern("Expected file but '.*?' is not a file"));
@@ -69,11 +69,11 @@ class UtilsTest {
         // given
         Path parent = temporaryFolder.resolve("foo");
         Path file = temporaryFolder.resolve("foo/foo.txt");
-        Utils.createFileIfNotExists(parent);
+        FileUtils.createFileIfNotExists(parent);
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> Utils.createFileIfNotExists(file));
+            () -> FileUtils.createFileIfNotExists(file));
 
         // then
         assertThat(ex.getMessage(), matchesPattern("Failed to create parent folders for '.*?foo.txt'"));
@@ -97,7 +97,7 @@ class UtilsTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> Utils.createFileIfNotExists(child));
+            () -> FileUtils.createFileIfNotExists(child));
 
         // then
         assertThat(ex.getMessage(), matchesPattern("Failed to create file '.*?'"));

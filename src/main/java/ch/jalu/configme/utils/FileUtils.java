@@ -8,11 +8,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Utilities class.
+ * Class with file utilities.
  */
-public final class Utils {
+public final class FileUtils {
 
-    private Utils() {
+    private FileUtils() {
     }
 
     /**

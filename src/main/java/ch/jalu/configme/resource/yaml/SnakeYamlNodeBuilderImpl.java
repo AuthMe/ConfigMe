@@ -1,8 +1,9 @@
 package ch.jalu.configme.resource.yaml;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
+import ch.jalu.configme.internal.StreamUtils;
 import ch.jalu.configme.properties.convertresult.ValueWithComments;
-import ch.jalu.configme.utils.StreamUtils;
+
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.comments.CommentLine;
@@ -29,9 +30,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static ch.jalu.configme.utils.PathUtils.concatSpecifierAware;
-import static ch.jalu.configme.utils.PathUtils.pathSpecifierForIndex;
-import static ch.jalu.configme.utils.PathUtils.pathSpecifierForMapKey;
+import static ch.jalu.configme.internal.PathUtils.concatSpecifierAware;
+import static ch.jalu.configme.internal.PathUtils.pathSpecifierForIndex;
+import static ch.jalu.configme.internal.PathUtils.pathSpecifierForMapKey;
 
 /**
  * Default implementation of {@link SnakeYamlNodeBuilder}: creates SnakeYAML nodes for values and comments.
