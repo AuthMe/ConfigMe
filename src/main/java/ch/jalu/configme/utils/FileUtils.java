@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Utilities class.
+ * Class with file utilities.
  */
 public final class FileUtils {
 
