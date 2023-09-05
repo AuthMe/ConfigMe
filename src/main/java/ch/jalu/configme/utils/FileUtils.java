@@ -10,9 +10,9 @@ import java.nio.file.Path;
 /**
  * Utilities class.
  */
-public final class Utils {
+public final class FileUtils {
 
-    private Utils() {
+    private FileUtils() {
     }
 
     /**

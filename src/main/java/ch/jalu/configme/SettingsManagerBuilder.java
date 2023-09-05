@@ -7,7 +7,7 @@ import ch.jalu.configme.migration.PlainMigrationService;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
 import ch.jalu.configme.resource.YamlFileResourceOptions;
-import ch.jalu.configme.utils.Utils;
+import ch.jalu.configme.utils.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
 import org.jetbrains.annotations.Nullable;
@@ -57,7 +57,7 @@ public final class SettingsManagerBuilder {
      */
     public static @NotNull SettingsManagerBuilder withYamlFile(@NotNull Path path,
                                                                @NotNull YamlFileResourceOptions resourceOptions) {
-        Utils.createFileIfNotExists(path);
+        FileUtils.createFileIfNotExists(path);
         return new SettingsManagerBuilder(new YamlFileResource(path, resourceOptions));
     }
 
