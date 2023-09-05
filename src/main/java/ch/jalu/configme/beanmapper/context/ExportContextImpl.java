@@ -1,7 +1,8 @@
 package ch.jalu.configme.beanmapper.context;
 
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
-import ch.jalu.configme.utils.PathUtils;
+import ch.jalu.configme.internal.PathUtils;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;

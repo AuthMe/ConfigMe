@@ -17,6 +17,10 @@ import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static ch.jalu.configme.internal.PathUtils.OPTIONAL_SPECIFIER;
+import static ch.jalu.configme.internal.PathUtils.pathSpecifierForIndex;
+import static ch.jalu.configme.internal.PathUtils.pathSpecifierForMapKey;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -25,10 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
-
-import static ch.jalu.configme.utils.PathUtils.OPTIONAL_SPECIFIER;
-import static ch.jalu.configme.utils.PathUtils.pathSpecifierForIndex;
-import static ch.jalu.configme.utils.PathUtils.pathSpecifierForMapKey;
 
 /**
  * Implementation of {@link Mapper}.

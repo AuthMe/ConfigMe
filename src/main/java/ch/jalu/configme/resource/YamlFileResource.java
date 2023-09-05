@@ -2,13 +2,14 @@ package ch.jalu.configme.resource;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.internal.StreamUtils;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyPathTraverser.PathElement;
 import ch.jalu.configme.resource.yaml.SnakeYamlNodeBuilder;
 import ch.jalu.configme.resource.yaml.SnakeYamlNodeBuilderImpl;
 import ch.jalu.configme.resource.yaml.SnakeYamlNodeContainer;
 import ch.jalu.configme.resource.yaml.SnakeYamlNodeContainerImpl;
-import ch.jalu.configme.utils.StreamUtils;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;

@@ -1,7 +1,8 @@
 package ch.jalu.configme.resource;
 
 import ch.jalu.configme.exception.ConfigMeException;
-import ch.jalu.configme.utils.PathUtils;
+import ch.jalu.configme.internal.PathUtils;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;

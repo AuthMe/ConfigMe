@@ -1,4 +1,4 @@
-package ch.jalu.configme.utils;
+package ch.jalu.configme.internal;
 
 import org.jetbrains.annotations.NotNull;
 

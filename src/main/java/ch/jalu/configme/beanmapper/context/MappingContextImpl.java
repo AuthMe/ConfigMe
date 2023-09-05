@@ -1,7 +1,7 @@
 package ch.jalu.configme.beanmapper.context;
 
+import ch.jalu.configme.internal.PathUtils;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
-import ch.jalu.configme.utils.PathUtils;
 import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 
