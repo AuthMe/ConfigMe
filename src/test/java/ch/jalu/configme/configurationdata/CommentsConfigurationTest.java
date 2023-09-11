@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CommentsConfigurationTest {
 
     @Test
-    void shouldThrowForExistingPath() {
+    void shouldThrowForExistingComment() {
         // given
         final String path = "config.me"; 
         CommentsConfiguration conf = new CommentsConfiguration();
@@ -29,13 +29,13 @@ class CommentsConfigurationTest {
         IllegalStateException ex = assertThrows(IllegalStateException.class, () -> conf.setComment(path, "New Comment"));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Comment lines already exists for the path 'config.me'"));
+        assertThat(ex.getMessage(), equalTo("Comments for path 'config.me' have already been registered. Use @Comment on a property field, or one call to CommentsConfiguration#setComment per path"));
         assertThat(conf.getAllComments().keySet(), contains(path));
         assertThat(conf.getAllComments().get(path), contains("New Comment"));
     }
 
     @Test
-    void shouldOverrideExistingComment() {
+    void shouldReplaceCommentAndThrowException() {
         // given
         CommentsConfiguration conf = new CommentsConfiguration();
         conf.setComment("com.acme", "Acme comment test");
@@ -45,7 +45,7 @@ class CommentsConfigurationTest {
         IllegalStateException ex = assertThrows(IllegalStateException.class, ()-> conf.setComment("com.acme", "Acme new comment", "1, 2, 3"));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Comment lines already exists for the path 'com.acme'"));
+        assertThat(ex.getMessage(), equalTo("Comments for path 'com.acme' have already been registered. Use @Comment on a property field, or one call to CommentsConfiguration#setComment per path"));
 
         Map<String, List<String>> allComments = conf.getAllComments();
         assertThat(allComments.keySet(), containsInAnyOrder("com.acme", "other.path"));

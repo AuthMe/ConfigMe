@@ -1,5 +1,6 @@
 package ch.jalu.configme.configurationdata;
 
+import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -44,7 +45,9 @@ public class CommentsConfiguration {
         List<String> replaced = comments.put(path, Collections.unmodifiableList(Arrays.asList(commentLines)));
         
         if (replaced != null) {
-            throw new IllegalStateException("Comment lines already exists for the path '" + path + "'");
+            String commentAnnotation = "@" + Comment.class.getSimpleName();
+            throw new IllegalStateException("Comments for path '" + path + "' have already been registered. Use "
+                + commentAnnotation + " on a property field, or one call to CommentsConfiguration#setComment per path");
         }
     }
 
