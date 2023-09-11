@@ -18,10 +18,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Utility class responsible for retrieving all {@link Property} fields
- * from {@link SettingsHolder} implementations via reflection.
- * <p>
- * Properties must be declared as {@code public static} fields or they are ignored.
+ * Utility class responsible for creating {@link ConfigurationData} by retrieving {@link Property} fields
+ * from {@link SettingsHolder} implementations and gathering all comments.
  */
 public class ConfigurationDataBuilder {
 
