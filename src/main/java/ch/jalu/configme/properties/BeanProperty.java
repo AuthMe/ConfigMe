@@ -7,6 +7,11 @@ import ch.jalu.configme.properties.types.BeanPropertyType;
 import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Property whose value is a bean class.
+ *
+ * @param <T> the bean type
+ */
 public class BeanProperty<T> extends TypeBasedProperty<T> {
 
     public BeanProperty(@NotNull Class<T> beanType, @NotNull String path, @NotNull T defaultValue) {

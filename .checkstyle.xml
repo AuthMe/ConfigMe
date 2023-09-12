@@ -214,10 +214,6 @@
         <module name="TypeName" />
 
         <!-- Regexp -->
-        <module name="Regexp">
-            <property name="format" value="System\.out"/>
-            <property name="illegalPattern" value="true"/>
-        </module>
 
         <!-- Size violations -->
 
@@ -228,8 +224,14 @@
         <module name="GenericWhitespace" />
         <module name="MethodParamPad" />
         <module name="NoLineWrap" />
-        <module name="NoWhitespaceAfter" />
-        <module name="NoWhitespaceBefore" />
+        <module name="NoWhitespaceAfter">
+            <!-- Override to exclude ARRAY_INIT and to add LITERAL_SYNCHRONIZED, METHOD_REF -->
+            <property name="tokens" value="AT, INC, DEC, UNARY_MINUS, UNARY_PLUS, BNOT, LNOT, DOT, ARRAY_DECLARATOR, INDEX_OP, LITERAL_SYNCHRONIZED, METHOD_REF" />
+        </module>
+        <module name="NoWhitespaceBefore">
+            <!-- Override to exclude ELLIPSIS and to add METHOD_REF -->
+            <property name="tokens" value="COMMA, SEMI, POST_INC, POST_DEC, LABELED_STAT, METHOD_REF" />
+        </module>
         <!-- Checkstyle 8.45: <module name="NoWhitespaceBeforeCaseDefaultColon" /> -->
         <module name="OperatorWrap" />
         <module name="ParenPad" />

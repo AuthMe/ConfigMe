@@ -8,6 +8,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.function.ToIntFunction;
 
+/**
+ * Options for {@link YamlFileResource} to configure reading and writing YAML.
+ */
 public class YamlFileResourceOptions {
 
     private final @NotNull Charset charset;
@@ -49,11 +52,16 @@ public class YamlFileResourceOptions {
         return numberOfLinesBeforeFunction;
     }
 
+    /**
+     * Builder to create YAML file resource options.
+     */
     public static class Builder {
+
+        private static final int DEFAULT_INDENTATION_SIZE = 4;
 
         private Charset charset;
         private ToIntFunction<PathElement> numberOfLinesBeforeFunction;
-        private int indentationSize = 4;
+        private int indentationSize = DEFAULT_INDENTATION_SIZE;
 
         public @NotNull Builder charset(@Nullable Charset charset) {
             this.charset = charset;

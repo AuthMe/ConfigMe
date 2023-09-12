@@ -32,6 +32,8 @@ import java.util.stream.Stream;
  */
 public class SettingsHolderClassValidator {
 
+    private static final int DEFAULT_MAX_COMMENTS_LENGTH = 90;
+
     // ---- Main validation methods (with default settings)
 
     /**
@@ -62,7 +64,7 @@ public class SettingsHolderClassValidator {
         // no properties have overlapping paths
         ConfigurationData configurationData = createConfigurationData(settingHolders);
         validateHasCommentOnEveryProperty(configurationData, null);
-        validateCommentLengthsAreWithinBounds(configurationData, null, 90);
+        validateCommentLengthsAreWithinBounds(configurationData, null, DEFAULT_MAX_COMMENTS_LENGTH);
         validateHasAllEnumEntriesInComment(configurationData, null);
     }
 

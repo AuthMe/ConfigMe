@@ -7,6 +7,11 @@ import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Property type that maps values to a specific bean class.
+ *
+ * @param <B> the bean type
+ */
 public class BeanPropertyType<B> implements PropertyType<B> {
 
     private final TypeInfo beanType;

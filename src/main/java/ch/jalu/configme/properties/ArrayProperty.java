@@ -10,6 +10,11 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.IntFunction;
 
+/**
+ * Property whose value is an array of a given type.
+ *
+ * @param <T> the type of the elements in the array
+ */
 public class ArrayProperty<T> extends BaseProperty<T[]> {
 
     private final PropertyType<T> type;

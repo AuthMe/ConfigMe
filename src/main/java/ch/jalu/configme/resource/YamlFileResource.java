@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Property resource based on a YAML file.
+ */
 public class YamlFileResource implements PropertyResource {
 
     private final Path path;
