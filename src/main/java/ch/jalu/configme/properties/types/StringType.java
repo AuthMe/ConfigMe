@@ -48,4 +48,22 @@ public class StringType extends PropertyAndLeafType<String> {
     protected @NotNull String transformToString(@NotNull Object object) {
         return object.toString();
     }
+
+    /**
+     * @return array property type whose elements are managed by {@code this} String type
+     */
+    public @NotNull ArrayPropertyType<String> arrayType() {
+        return new ArrayPropertyType<>(this, String[]::new);
+    }
+
+    /**
+     * Creates an inline array property type with the given separator.
+     * See {@link InlineArrayPropertyType} for more details.
+     *
+     * @param separator the sequence that acts as separator for multiple entries
+     * @return inline array type with {@code this} type and the given separator
+     */
+    public @NotNull InlineArrayPropertyType<String> inlineArrayType(@NotNull String separator) {
+        return new InlineArrayPropertyType<>(this, separator, false, String[]::new);
+    }
 }

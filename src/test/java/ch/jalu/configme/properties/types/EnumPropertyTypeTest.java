@@ -1,13 +1,14 @@
-package ch.jalu.configme.properties.type;
+package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
-import ch.jalu.configme.properties.types.EnumPropertyType;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -94,6 +95,29 @@ class EnumPropertyTypeTest {
         EnumPropertyType<StandardOpenOption> propertyType = new EnumPropertyType<>(StandardOpenOption.class);
 
         // when / then
-        assertThat(propertyType.getType(), equalTo(StandardOpenOption.class));
+        assertThat(propertyType.getEnumClass(), equalTo(StandardOpenOption.class));
+    }
+
+    @Test
+    void shouldCreateArrayType() {
+        // given / when
+        ArrayPropertyType<StandardOpenOption> arrayType = EnumPropertyType.of(StandardOpenOption.class).arrayType();
+
+        // then
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        assertThat(arrayType.convert(Arrays.asList("READ", "CREATE"), errorRecorder),
+            arrayContaining(StandardOpenOption.READ, StandardOpenOption.CREATE));
+    }
+
+    @Test
+    void shouldCreateInlineArrayType() {
+        // given / when
+        InlineArrayPropertyType<StandardOpenOption> inlineArrayType =
+            EnumPropertyType.of(StandardOpenOption.class).inlineArrayType(";;");
+
+        // then
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        assertThat(inlineArrayType.convert("READ;;CREATE;;", errorRecorder),
+            arrayContaining(StandardOpenOption.READ, StandardOpenOption.CREATE));
     }
 }

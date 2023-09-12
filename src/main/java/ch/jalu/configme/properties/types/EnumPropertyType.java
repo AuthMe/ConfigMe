@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties.types;
 
+import ch.jalu.configme.internal.ArrayUtils;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.typeresolver.EnumUtils;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +44,26 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
         return value.name();
     }
 
-    public final @NotNull Class<E> getType() {
+    public final @NotNull Class<E> getEnumClass() {
         return enumType;
+    }
+
+    /**
+     * @return array property type whose elements are managed by {@code this} enum type
+     */
+    public @NotNull ArrayPropertyType<E> arrayType() {
+        return new ArrayPropertyType<>(this, size -> ArrayUtils.createArrayForReferenceType(enumType, size));
+    }
+
+    /**
+     * Creates an inline array property type with the given separator.
+     * See {@link InlineArrayPropertyType} for more details.
+     *
+     * @param separator the sequence that acts as separator for multiple entries
+     * @return inline array type with {@code this} type and the given separator
+     */
+    public @NotNull InlineArrayPropertyType<E> inlineArrayType(@NotNull String separator) {
+        return new InlineArrayPropertyType<>(this, separator, true,
+            size -> ArrayUtils.createArrayForReferenceType(enumType, size));
     }
 }

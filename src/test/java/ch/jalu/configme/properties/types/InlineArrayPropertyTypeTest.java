@@ -1,5 +1,7 @@
-package ch.jalu.configme.properties.inlinearray;
+package ch.jalu.configme.properties.types;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -12,28 +14,33 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyArray;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 /**
- * Test for {@link StandardInlineArrayConverters}.
+ * Test for {@link InlineArrayPropertyType}.
  */
-class StandardInlineArrayConvertersTest {
+class InlineArrayPropertyTypeTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    void shouldConvertValueFromString(String name, InlineArrayConverter converter, TestData testData) {
+    void shouldConvertValueFromString(String name, InlineArrayPropertyType<?> converter, TestData testData) {
         // given
         String input = testData.inputValue;
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        Object[] result = converter.fromString(input);
+        Object[] result = converter.convert(input, errorRecorder);
 
         // then
         assertThat(result, equalTo(testData.expectedValue));
+        assertThat(errorRecorder.isFullyValid(), equalTo(true));
     }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    void shouldExportValue(String name, InlineArrayConverter converter, TestData testData) {
+    void shouldExportValue(String name, InlineArrayPropertyType converter, TestData testData) {
         // given
         Object[] values = testData.expectedValue;
 
@@ -46,25 +53,29 @@ class StandardInlineArrayConvertersTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    void shouldNotThrowErrorForInvalidValues(String name, InlineArrayConverter converter, TestData testData) {
+    void shouldNotThrowErrorForInvalidValues(String name, InlineArrayPropertyType<?> converter, TestData testData) {
         // given
         String input = testData.inputWithErrors;
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        Object[] result = converter.fromString(input);
+        Object[] result = converter.convert(input, errorRecorder);
 
         // then
         assertThat(result, equalTo(testData.expectedValueWithErrors));
+        if (converter != InlineArrayPropertyType.STRING) {
+            assertThat(errorRecorder.isFullyValid(), equalTo(false));
+        }
     }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    void shouldConvertFromEmptyString(String name, InlineArrayConverter converter, TestData testData) {
+    void shouldConvertFromEmptyString(String name, InlineArrayPropertyType<?> converter, TestData testData) {
         // given / when
-        Object[] result = converter.fromString("");
+        Object[] result = converter.convert("", new ConvertErrorRecorder());
 
         // then
-        if (converter == StandardInlineArrayConverters.STRING) {
+        if (converter == InlineArrayPropertyType.STRING) {
             assertThat(result, equalTo(new String[]{""}));
         } else {
             assertThat(result, emptyArray());
@@ -73,9 +84,9 @@ class StandardInlineArrayConvertersTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    void shouldExportEmptyArray(String name, InlineArrayConverter converter, TestData testData) {
+    void shouldExportEmptyArray(String name, InlineArrayPropertyType converter, TestData testData) {
         // given
-        Object[] input = converter == StandardInlineArrayConverters.STRING ? new String[0] : new Object[0];
+        Object[] input = converter == InlineArrayPropertyType.STRING ? new String[0] : new Object[0];
 
         // when
         String result = converter.toExportValue(input);
@@ -84,41 +95,54 @@ class StandardInlineArrayConvertersTest {
         assertThat(result, equalTo(""));
     }
 
+    @Test
+    void shouldNotConvertIfValueIsNotString() {
+        // given
+        ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
+
+        // when
+        Integer[] result = InlineArrayPropertyType.INTEGER.convert(3, errorRecorder);
+
+        // then
+        assertThat(result, nullValue());
+        verifyNoInteractions(errorRecorder);
+    }
+
     private static List<Object[]> data() throws IllegalAccessException {
         List<Object[]> converters = new ArrayList<>();
-        for (Field field : StandardInlineArrayConverters.class.getDeclaredFields()) {
+        for (Field field : InlineArrayPropertyType.class.getDeclaredFields()) {
             if (Modifier.isPublic(field.getModifiers()) && Modifier.isStatic(field.getModifiers())) {
-                StandardInlineArrayConverters converter = (StandardInlineArrayConverters) field.get(null);
+                InlineArrayPropertyType<?> converter = (InlineArrayPropertyType<?>) field.get(null);
                 converters.add(new Object[]{field.getName(), converter, getTestData(converter)});
             }
         }
         return converters;
     }
 
-    private static TestData getTestData(StandardInlineArrayConverters converter) {
+    private static TestData getTestData(InlineArrayPropertyType<?> converter) {
         TestData testData = new TestData();
-        if (converter == StandardInlineArrayConverters.LONG) {
+        if (converter == InlineArrayPropertyType.LONG) {
             testData.setInputAndExpected("3, 4,  -44,", "3, 4, -44", 3L, 4L, -44L);
-            testData.setInputWithErrors("3, a, 4.5, 2, -b", 3L, 2L);
-        } else if (converter == StandardInlineArrayConverters.INTEGER) {
+            testData.setInputWithErrors("3, a, 4.5, 2, -b", 3L, 4L, 2L);
+        } else if (converter == InlineArrayPropertyType.INTEGER) {
             testData.setInputAndExpected("3, 4,  -44,", "3, 4, -44", 3, 4, -44);
-            testData.setInputWithErrors("3, a, 4.5, 2, -b", 3, 2);
-        } else if (converter == StandardInlineArrayConverters.FLOAT) {
+            testData.setInputWithErrors("3, a, 4.5, 2, -b", 3, 4, 2);
+        } else if (converter == InlineArrayPropertyType.FLOAT) {
             testData.setInputAndExpected("3, 4.5,  -445.68233,", "3.0, 4.5, -445.68234", 3f, 4.5f, -445.68234f);
             testData.setInputWithErrors("3, a, 4.5, -2, -b", 3f, 4.5f, -2f);
-        } else if (converter == StandardInlineArrayConverters.DOUBLE) {
+        } else if (converter == InlineArrayPropertyType.DOUBLE) {
             testData.setInputAndExpected("3, 4.5,  -445.68234,", "3.0, 4.5, -445.68234", 3.0, 4.5, -445.68234);
             testData.setInputWithErrors("3, a, 4.5, -2, -b", 3.0, 4.5, -2.0);
-        } else if (converter == StandardInlineArrayConverters.SHORT) {
+        } else if (converter == InlineArrayPropertyType.SHORT) {
             testData.setInputAndExpected("3, 4,  -44,", "3, 4, -44", (short) 3, (short) 4, (short) -44);
-            testData.setInputWithErrors("3, a, 4.5, 2, -b", (short) 3, (short) 2);
-        } else if (converter == StandardInlineArrayConverters.BYTE) {
-            testData.setInputAndExpected("3, 9999, 4,  -44,", "3, 4, -44", (byte) 3, (byte) 4, (byte) -44);
-            testData.setInputWithErrors("3, a, 4.5, 2, -b", (byte) 3, (byte) 2);
-        } else if (converter == StandardInlineArrayConverters.BOOLEAN) {
-            testData.setInputAndExpected("true, false, ,, true", "true, false, true", true, false, true);
-            testData.setInputWithErrors("TRUE, something, else, 43, true, -1", true, false, false, false, true, false);
-        } else if (converter == StandardInlineArrayConverters.STRING) {
+            testData.setInputWithErrors("3, a, 4.5, 2, -b", (short) 3, (short) 4, (short) 2);
+        } else if (converter == InlineArrayPropertyType.BYTE) {
+            testData.setInputAndExpected("3, 4,  -44,", "3, 4, -44", (byte) 3, (byte) 4, (byte) -44);
+            testData.setInputWithErrors("3, a, 4.5, -b, 9999", (byte) 3, (byte) 4, (byte) 127);
+        } else if (converter == InlineArrayPropertyType.BOOLEAN) {
+            testData.setInputAndExpected("true, false, true", "true, false, true", true, false, true);
+            testData.setInputWithErrors("TRUE, something, else, 43, true,, , False", true, true, false);
+        } else if (converter == InlineArrayPropertyType.STRING) {
             testData.setInputAndExpected("a\nb\nLong test string\nd", "a\nb\nLong test string\nd",
                 "a", "b", "Long test string", "d");
             String someString = "An even longer String\twith a tab";

@@ -1,13 +1,14 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
-import ch.jalu.configme.properties.inlinearray.StandardInlineArrayConverters;
+import ch.jalu.configme.properties.types.InlineArrayPropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -24,10 +25,10 @@ class InlineArrayPropertyTest {
         BaseProperty<String[]> property = new InlineArrayProperty<>(
             "inline_value",
             new String[] {"multiline", "message"},
-            StandardInlineArrayConverters.STRING
+            InlineArrayPropertyType.STRING
         );
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getString("inline_value")).willReturn("hello\nkek");
+        given(reader.getObject("inline_value")).willReturn("hello\nkek");
 
         // when
         String[] result = property.getFromReader(reader, new ConvertErrorRecorder());
@@ -42,11 +43,28 @@ class InlineArrayPropertyTest {
         Property<String[]> property = new InlineArrayProperty<>(
             "array",
             new String[] {},
-            StandardInlineArrayConverters.STRING
+            InlineArrayPropertyType.STRING
         );
         String[] given = new String[] {"hello, chert", "how in hell?"};
 
         // when / then
         assertThat(property.toExportValue(given), equalTo("hello, chert\nhow in hell?"));
+    }
+
+    @Test
+    void shouldLogErrorForFailedConversion() {
+        // given
+        String value = "3,four,5";
+        InlineArrayProperty<Integer> property = new InlineArrayProperty<>("path", new Integer[0], InlineArrayPropertyType.INTEGER);
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        PropertyReader reader = mock(PropertyReader.class);
+        given(reader.getObject("path")).willReturn(value);
+
+        // when
+        Integer[] result = property.getFromReader(reader, errorRecorder);
+
+        // then
+        assertThat(result, arrayContaining(3, 5));
+        assertThat(errorRecorder.isFullyValid(), equalTo(false));
     }
 }

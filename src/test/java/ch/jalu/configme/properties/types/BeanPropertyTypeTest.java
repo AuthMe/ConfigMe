@@ -1,4 +1,4 @@
-package ch.jalu.configme.properties.type;
+package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.beanmapper.DefaultMapper;
 import ch.jalu.configme.beanmapper.Mapper;
@@ -6,7 +6,6 @@ import ch.jalu.configme.beanmapper.command.Command;
 import ch.jalu.configme.demo.beans.CoordinateSystem;
 import ch.jalu.configme.demo.beans.Location;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
-import ch.jalu.configme.properties.types.BeanPropertyType;
 import ch.jalu.typeresolver.TypeInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

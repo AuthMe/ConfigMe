@@ -146,7 +146,7 @@ class BeanMapOnRootLevelTest {
 
         public static final MapProperty<Info> INFO = mapProperty(BeanPropertyType.of(Info.class))
             .path("")
-            .defaultEntry("basic", new Info("hello", Arrays.asList("world", "moon")))
+            .addToDefaultValue("basic", new Info("hello", Arrays.asList("world", "moon")))
             .build();
 
         private TestSettingsHolder() {

@@ -6,7 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 /**
- * String set property. The sets are immutable.
+ * String set property. The default value is immutable. The encounter order of the default value and
+ * the constructed values is preserved, unless you've provided a custom set property type.
  */
 public class StringSetProperty extends SetProperty<String> {
 
@@ -28,10 +29,5 @@ public class StringSetProperty extends SetProperty<String> {
      */
     public StringSetProperty(@NotNull String path, @NotNull Set<String> defaultValue) {
         super(path, StringType.STRING, defaultValue);
-    }
-
-    @Override
-    public @NotNull Object toExportValue(@NotNull Set<String> value) {
-        return value;
     }
 }

@@ -19,6 +19,7 @@ import java.util.List;
 
 import static ch.jalu.typeresolver.TypeInfo.of;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -283,6 +284,28 @@ class NumberTypeTest {
         assertThat(NumberType.BIG_DECIMAL.toExportValueIfApplicable(3L), nullValue());
         assertThat(NumberType.BIG_DECIMAL.toExportValueIfApplicable(3.0), nullValue());
         assertThat(NumberType.BIG_DECIMAL.toExportValueIfApplicable(new BigDecimal("3")), equalTo("3"));
+    }
+
+    @Test
+    void shouldCreateArrayType() {
+        // given / when
+        ArrayPropertyType<Double> arrayType = NumberType.DOUBLE.arrayType();
+
+        // then
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        assertThat(arrayType.convert(Arrays.asList("3.4", "22"), errorRecorder),
+            arrayContaining(3.4, 22.0));
+    }
+
+    @Test
+    void shouldCreateInlineArrayType() {
+        // given / when
+        InlineArrayPropertyType<Integer> inlineArrayType = NumberType.INTEGER.inlineArrayType("|");
+
+        // then
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        assertThat(inlineArrayType.convert("14 | 16 || 22", errorRecorder),
+            arrayContaining(14, 16, 22));
     }
 
     /**

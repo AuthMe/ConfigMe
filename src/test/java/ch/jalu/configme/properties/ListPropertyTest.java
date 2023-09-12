@@ -30,7 +30,7 @@ class ListPropertyTest {
     void shouldReturnValueFromResource() {
         // given
         Property<List<Integer>> property = new ListProperty<>("list", NumberType.INTEGER);
-        given(reader.getList("list")).willReturn((List) Arrays.asList(3, 5, 7.0));
+        given(reader.getObject("list")).willReturn(Arrays.asList(3, 5, 7.0));
 
         // when
         PropertyValue<List<Integer>> result = property.determineValue(reader);
@@ -43,7 +43,7 @@ class ListPropertyTest {
     void shouldReturnDefaultValue() {
         // given
         Property<List<Integer>> property = new ListProperty<>("list", NumberType.INTEGER, 8, 9, 10);
-        given(reader.getList("list")).willReturn(null);
+        given(reader.getObject("list")).willReturn(null);
 
         // when
         PropertyValue<List<Integer>> result = property.determineValue(reader);

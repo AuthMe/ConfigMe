@@ -10,11 +10,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static ch.jalu.configme.TestUtils.isErrorValueOf;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
 
@@ -104,7 +106,11 @@ class ArrayPropertyTest {
 
         String[] givenArray = new String[] {"hello, chert", "how in hell?"};
 
-        // when / then
-        assertThat(property.toExportValue(givenArray), equalTo(givenArray));
+        // when
+        Object exportValue = property.toExportValue(givenArray);
+
+        // then
+        assertThat(exportValue, instanceOf(List.class));
+        assertThat((List<?>) exportValue, contains(givenArray));
     }
 }

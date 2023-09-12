@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static ch.jalu.typeresolver.TypeInfo.of;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -97,5 +99,15 @@ class BooleanTypeTest {
         assertThat(BooleanType.BOOLEAN.toExportValueIfApplicable(null), nullValue());
         assertThat(BooleanType.BOOLEAN.toExportValueIfApplicable("false"), nullValue());
         assertThat(BooleanType.BOOLEAN.toExportValueIfApplicable(new ArrayList<>()), nullValue());
+    }
+
+    @Test
+    void shouldReturnArrayType() {
+        // given / when
+        ArrayPropertyType<Boolean> arrayType = BooleanType.BOOLEAN.arrayType();
+
+        // then
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        assertThat(arrayType.convert(Arrays.asList("true", "false"), errorRecorder), arrayContaining(true, false));
     }
 }
