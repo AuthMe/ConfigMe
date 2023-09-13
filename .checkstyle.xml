@@ -12,7 +12,7 @@
 <module name="Checker">
     <property name="charset" value="UTF-8" />
     <property name="severity" value="warning" />
-    <property name="fileExtensions" value="java, properties, xml" />
+    <property name="fileExtensions" value="java" />
 
     <module name="SuppressWarningsFilter" />
 
@@ -23,6 +23,10 @@
 
     <module name="TreeWalker">
         <module name="SuppressWarningsHolder" />
+        <module name="SuppressionCommentFilter">
+            <property name="offCommentFormat" value="CHECKSTYLE:OFF" />
+            <property name="onCommentFormat" value="CHECKSTYLE:ON" />
+        </module>
 
         <!-- The rules are kept by the groups defined in https://checkstyle.org/checks.html
              the checks are held alphabetically per group -->

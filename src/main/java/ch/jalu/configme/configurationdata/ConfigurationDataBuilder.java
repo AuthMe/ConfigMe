@@ -23,12 +23,28 @@ import java.util.stream.Stream;
  */
 public class ConfigurationDataBuilder {
 
-    @SuppressWarnings("checkstyle:VisibilityModifier")
-    protected @NotNull PropertyListBuilder propertyListBuilder = new PropertyListBuilder();
-    @SuppressWarnings("checkstyle:VisibilityModifier")
-    protected @NotNull CommentsConfiguration commentsConfiguration = new CommentsConfiguration();
+    private final @NotNull PropertyListBuilder propertyListBuilder;
+    private final @NotNull CommentsConfiguration commentsConfiguration;
 
+    /**
+     * Constructor. Use {@link #createConfiguration(Class[])} or a similar static method to create configuration data.
+     * Use the constructors of this class only if you are overriding specific behavior.
+     */
     protected ConfigurationDataBuilder() {
+        this(new PropertyListBuilder(), new CommentsConfiguration());
+    }
+
+    /**
+     * Constructor. Use {@link #createConfiguration(Class[])} or a similar static method to create configuration data.
+     * Use the constructors of this class only if you are overriding specific behavior.
+     *
+     * @param propertyListBuilder property list builder to order and validate property paths
+     * @param commentsConfiguration comments configuration to keep track of all comments
+     */
+    public ConfigurationDataBuilder(@NotNull PropertyListBuilder propertyListBuilder,
+                                    @NotNull CommentsConfiguration commentsConfiguration) {
+        this.propertyListBuilder = propertyListBuilder;
+        this.commentsConfiguration = commentsConfiguration;
     }
 
     /**
@@ -56,10 +72,27 @@ public class ConfigurationDataBuilder {
         return builder.collectData(classes);
     }
 
+    /**
+     * Manually creates configuration data with the given properties, without any comments. Note that the given
+     * properties must be in an order that is suitable for exporting. For instance, the default YAML file resource
+     * requires that all properties with the same parent be grouped together (see {@link PropertyListBuilder}).
+     *
+     * @param properties the properties that make up the configuration data
+     * @return configuration data with the given properties
+     */
     public static @NotNull ConfigurationData createConfiguration(@NotNull List<? extends Property<?>> properties) {
         return new ConfigurationDataImpl(properties, Collections.emptyMap());
     }
 
+    /**
+     * Manually creates configuration data with the given properties and comments. Note that the given
+     * properties must be in an order that is suitable for exporting. For instance, the default YAML file resource
+     * requires that all properties with the same parent be grouped together.
+     *
+     * @param properties the properties that make up the configuration data
+     * @param commentsConfiguration the comments to include in the export
+     * @return configuration data with the given properties
+     */
     public static @NotNull ConfigurationData createConfiguration(@NotNull List<? extends Property<?>> properties,
                                                                  @NotNull CommentsConfiguration commentsConfiguration) {
         return new ConfigurationDataImpl(properties, commentsConfiguration.getAllComments());
@@ -72,7 +105,7 @@ public class ConfigurationDataBuilder {
      * @param classes the classes to process
      * @return configuration data with the classes' data
      */
-    protected @NotNull ConfigurationData collectData(@NotNull Iterable<Class<? extends SettingsHolder>> classes) {
+    public @NotNull ConfigurationData collectData(@NotNull Iterable<Class<? extends SettingsHolder>> classes) {
         for (Class<? extends SettingsHolder> clazz : classes) {
             collectProperties(clazz);
             collectSectionComments(clazz);
@@ -93,6 +126,14 @@ public class ConfigurationDataBuilder {
                 setCommentForPropertyField(field, property.getPath());
             }
         });
+    }
+
+    protected final @NotNull PropertyListBuilder getPropertyListBuilder() {
+        return propertyListBuilder;
+    }
+
+    protected final @NotNull CommentsConfiguration getCommentsConfiguration() {
+        return commentsConfiguration;
     }
 
     protected void setCommentForPropertyField(@NotNull Field field, @NotNull String path) {
@@ -134,7 +175,9 @@ public class ConfigurationDataBuilder {
             if (!Modifier.isPublic(field.getModifiers())) {
                 field.setAccessible(true);
             }
+            // CHECKSTYLE:OFF
         } catch (Exception e) {
+            // CHECKSTYLE: ON
             throw new ConfigMeException("Failed to modify access for field '" + field.getName() + "' from class '"
                 + field.getDeclaringClass().getSimpleName() + "'", e);
         }
