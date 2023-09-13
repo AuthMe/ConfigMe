@@ -134,7 +134,9 @@ public class ConfigurationDataBuilder {
             if (!Modifier.isPublic(field.getModifiers())) {
                 field.setAccessible(true);
             }
+            // CHECKSTYLE:OFF
         } catch (Exception e) {
+            // CHECKSTYLE: ON
             throw new ConfigMeException("Failed to modify access for field '" + field.getName() + "' from class '"
                 + field.getDeclaringClass().getSimpleName() + "'", e);
         }
