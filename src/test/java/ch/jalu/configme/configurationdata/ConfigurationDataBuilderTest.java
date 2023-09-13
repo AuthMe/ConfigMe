@@ -10,6 +10,8 @@ import ch.jalu.configme.samples.TestConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -28,10 +30,12 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link ConfigurationDataBuilder}.
  */
+@ExtendWith(MockitoExtension.class)
 class ConfigurationDataBuilderTest {
 
     @Test
@@ -175,6 +179,22 @@ class ConfigurationDataBuilderTest {
         List<String> propertyPaths = transform(configurationData.getProperties(), Property::getPath);
         assertThat(propertyPaths, contains("top.string", "middle.version", "sample.name", "sample.subtitle", "child.double"));
         assertThat(configurationData.getCommentsForSection("middle"), contains("Comes from the holder in the middle"));
+    }
+
+    @Test
+    void shouldReturnFields() {
+        // given
+        PropertyListBuilder propertyListBuilder = mock(PropertyListBuilder.class);
+        CommentsConfiguration commentsConfiguration = mock(CommentsConfiguration.class);
+        ConfigurationDataBuilder confDataBuilder = new ConfigurationDataBuilder(propertyListBuilder, commentsConfiguration);
+
+        // when
+        PropertyListBuilder returnedListBuilder = confDataBuilder.getPropertyListBuilder();
+        CommentsConfiguration returnedCommentsConf = confDataBuilder.getCommentsConfiguration();
+
+        // then
+        assertThat(returnedListBuilder, sameInstance(propertyListBuilder));
+        assertThat(returnedCommentsConf, sameInstance(commentsConfiguration));
     }
 
     private static void assertHasPropertyWithComments(ConfigurationData configurationData, Property<?> property,
