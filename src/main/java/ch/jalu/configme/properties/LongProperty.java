@@ -4,7 +4,7 @@ import ch.jalu.configme.properties.types.NumberType;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Long property. This extension exists for convenience and backwards compatibility.
+ * Long property. This extension exists for convenience.
  */
 public class LongProperty extends TypeBasedProperty<Long> {
 

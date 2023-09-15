@@ -4,7 +4,7 @@ import ch.jalu.configme.properties.types.NumberType;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Double property. This extension exists for convenience and backwards compatibility.
+ * Double property. This extension exists for convenience.
  */
 public class DoubleProperty extends TypeBasedProperty<Double> {
 

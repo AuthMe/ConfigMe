@@ -4,7 +4,7 @@ import ch.jalu.configme.properties.types.NumberType;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Integer property. This extension exists for convenience and backwards compatibility.
+ * Integer property. This extension exists for convenience.
  */
 public class IntegerProperty extends TypeBasedProperty<Integer> {
 

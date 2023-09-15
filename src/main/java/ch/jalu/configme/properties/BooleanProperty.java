@@ -4,7 +4,7 @@ import ch.jalu.configme.properties.types.BooleanType;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Boolean property. This extension exists for convenience and backwards compatibility.
+ * Boolean property. This extension exists for convenience.
  */
 public class BooleanProperty extends TypeBasedProperty<Boolean> {
 

@@ -30,7 +30,7 @@ class ShortPropertyTest {
     }
 
     @Test
-    void shouldGetLongValue() {
+    void shouldGetValueFromReader() {
         // given
         Property<Short> property = new ShortProperty("short.path.test", (short) 10);
 
@@ -42,7 +42,7 @@ class ShortPropertyTest {
     }
 
     @Test
-    void shouldGetLongDefault() {
+    void shouldReturnDefaultValue() {
         // given
         Property<Short> property = new ShortProperty("short.path.wrong", (short) -5);
 
