@@ -6,6 +6,8 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.types.BooleanType;
 import ch.jalu.configme.properties.types.InlineArrayPropertyType;
 import ch.jalu.configme.properties.types.NumberType;
+import ch.jalu.configme.properties.types.StringType;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -16,6 +18,8 @@ import static org.hamcrest.Matchers.emptyArray;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static ch.jalu.configme.properties.builder.ArrayPropertyBuilder.arrayBuilder;
+import static ch.jalu.configme.properties.builder.ArrayPropertyBuilder.inlineArrayBuilder;
 
 /**
  * Test for {@link ArrayPropertyBuilder}.
@@ -90,6 +94,16 @@ class ArrayPropertyBuilderTest {
         assertThat(property.getDefaultValue(), emptyArray());
     }
 
+    @Test
+    void shouldThrowForMissingPath() {
+        // given / when
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+            () -> ArrayPropertyBuilder.inlineArrayBuilder(StringType.STRING.inlineArrayType(";")).build());
+
+        // then
+        assertThat(ex.getMessage(), equalTo("The path of the property must be defined"));
+    }
+
     /** Ensures that this builder has a method {@code addToDefaultValue}, which is referenced in an exception. */
     @Test
     void shouldHaveAddToDefaultValueMethod() {
@@ -99,5 +113,41 @@ class ArrayPropertyBuilderTest {
 
         // then
         assertThat(hasMethod, equalTo(true));
+    }
+
+    @Nested
+    class JavadocExamples {
+
+        public /*static*/ final Property<Integer[]> WEIGHTS = arrayBuilder(NumberType.INTEGER.arrayType())
+            .path("calculation.weights")
+            .defaultValue(3, 10, 2)
+            .build();
+
+        public /*static*/ final Property<String[]> WELCOME_TEXT =
+            inlineArrayBuilder(InlineArrayPropertyType.STRING)
+                .path("texts.welcome")
+                .addToDefaultValue("Welcome!")
+                .addToDefaultValue("Please read /rules")
+                .addToDefaultValue("For help, see /help")
+                .build();
+
+        @Test
+        void shouldHaveValidExampleForArrayProperty() {
+            // given / when -> field init
+
+            // then
+            assertThat(WEIGHTS.getPath(), equalTo("calculation.weights"));
+            assertThat(WEIGHTS.getDefaultValue(), arrayContaining(3, 10, 2));
+        }
+
+        @Test
+        void shouldHaveValidExampleForInlineArrayProperty() {
+            // given / when -> field init
+
+            // then
+            assertThat(WELCOME_TEXT.getPath(), equalTo("texts.welcome"));
+            assertThat(WELCOME_TEXT.getDefaultValue(),
+                arrayContaining("Welcome!", "Please read /rules", "For help, see /help"));
+        }
     }
 }

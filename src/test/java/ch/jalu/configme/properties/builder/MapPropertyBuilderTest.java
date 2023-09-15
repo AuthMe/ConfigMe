@@ -1,8 +1,13 @@
 package ch.jalu.configme.properties.builder;
 
+import ch.jalu.configme.properties.BaseProperty;
 import ch.jalu.configme.properties.MapProperty;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.properties.types.StringType;
+import ch.jalu.configme.resource.PropertyReader;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -128,5 +133,37 @@ class MapPropertyBuilderTest {
 
         // then
         assertThat(hasMethod, equalTo(true));
+    }
+
+    @Test
+    void shouldBuildWithCustomMapImpl() {
+        // given / when
+        TestMapPropertyImpl<Integer> property = new MapPropertyBuilder<>(TestMapPropertyImpl::new, new TreeMap<String, Integer>())
+            .path("factors")
+            .addToDefaultValue("t", 4)
+            .addToDefaultValue("foo", 5)
+            .build();
+
+        // then
+        assertThat(property.getPath(), equalTo("factors"));
+        assertThat(property.getDefaultValue().keySet(), contains("foo", "t"));
+    }
+
+    private static final class TestMapPropertyImpl<V> extends BaseProperty<TreeMap<String, V>> {
+
+        TestMapPropertyImpl(@NotNull String path, @NotNull TreeMap<String, V> defaultValue) {
+            super(path, defaultValue);
+        }
+
+        @Override
+        protected @Nullable TreeMap<String, V> getFromReader(@NotNull PropertyReader reader,
+                                                             @NotNull ConvertErrorRecorder errorRecorder) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public @Nullable Object toExportValue(@NotNull TreeMap<String, V> value) {
+            throw new UnsupportedOperationException();
+        }
     }
 }

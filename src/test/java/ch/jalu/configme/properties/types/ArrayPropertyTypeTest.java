@@ -2,6 +2,8 @@ package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 /**
  * Test for {@link ArrayPropertyType}.
  */
+@ExtendWith(MockitoExtension.class)
 class ArrayPropertyTypeTest {
 
     @Test

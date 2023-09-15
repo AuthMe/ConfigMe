@@ -57,6 +57,13 @@ public class ArrayPropertyBuilder<E, P extends Property<E[]>> {
 
     /**
      * Creates a new array property builder using the given array property type.
+     * <p>
+     * Example: <pre>{@code
+     *   public static final Property<Integer[]> WEIGHTS = arrayBuilder(NumberType.INTEGER.arrayType())
+     *     .path("calculation.weights")
+     *     .defaultValue(3, 10, 2)
+     *     .build();
+     * }</pre>
      *
      * @param arrayType property type handling the behavior of the array
      * @param <E> the type of the array's elements
@@ -72,6 +79,16 @@ public class ArrayPropertyBuilder<E, P extends Property<E[]>> {
     /**
      * Creates a builder for inline array properties: properties which ConfigMe holds as array, but whose elements are
      * read and written as a single string (using a specific separator to join elements).
+     * <p>
+     * Example: <pre>{@code
+     *   public static final Property<String[]> WELCOME_TEXT =
+     *     inlineArrayBuilder(InlineArrayPropertyType.STRING)
+     *       .path("texts.welcome")
+     *       .addToDefaultValue("Welcome!")
+     *       .addToDefaultValue("Please read /rules")
+     *       .addToDefaultValue("For help, see /help")
+     *       .build();
+     * }</pre>
      *
      * @param inlineArrayType inline array type the property will use
      * @param <E> the type of the elements in the property's array

@@ -3,6 +3,7 @@ package ch.jalu.configme.properties.builder;
 import ch.jalu.configme.properties.ListProperty;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.SetProperty;
+import ch.jalu.configme.properties.StringSetProperty;
 import ch.jalu.configme.properties.types.BooleanType;
 import ch.jalu.configme.properties.types.EnumPropertyType;
 import ch.jalu.configme.properties.types.NumberType;
@@ -11,8 +12,10 @@ import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -72,7 +75,22 @@ class CollectionPropertyBuilderTest {
             .addToDefaultValue("name");
 
         // when
-        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> builder.defaultValue("test"));
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+            () -> builder.defaultValue("test"));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Default values have already been defined! Use addToDefaultValue to add entries individually"));
+    }
+
+    @Test
+    void shouldThrowIfNonEmptyDefaultValueIsOverwritten2() {
+        // given
+        CollectionPropertyBuilder<String, ?, ListProperty<String>> builder = CollectionPropertyBuilder.listBuilder(StringType.STRING_LOWER_CASE)
+            .addToDefaultValue("name");
+
+        // when
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+            () -> builder.defaultValue(Collections.singleton("2")));
 
         // then
         assertThat(ex.getMessage(), equalTo("Default values have already been defined! Use addToDefaultValue to add entries individually"));
@@ -114,5 +132,18 @@ class CollectionPropertyBuilderTest {
 
         // then
         assertThat(hasMethod, equalTo(true));
+    }
+
+    @Test
+    void shouldCreatePropertyWithCustomCallbacks() {
+        // given / when
+        StringSetProperty property = new CollectionPropertyBuilder<>(StringSetProperty::new, new TreeSet<String>())
+            .path("test")
+            .defaultValue("zzz", "X", "www", "AA")
+            .build();
+
+        // then
+        assertThat(property.getPath(), equalTo("test"));
+        assertThat(property.getDefaultValue(), contains("AA", "X", "www", "zzz"));
     }
 }

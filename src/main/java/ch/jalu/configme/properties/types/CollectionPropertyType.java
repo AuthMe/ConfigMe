@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties.types;
 
+import ch.jalu.configme.internal.ConversionUtils;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,10 +12,16 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
- * Property type for properties that manage a collection.
+ * Property type for collections of elements. This class and its extensions delegate individual element operations to
+ * another property type, which defines the behavior of the elements.
+ * <p>
+ * This property type never produces collections that have any {@code null} elements. If an entry cannot be converted
+ * by the entry type (the property type that converts individual elements), it is skipped in the result.
  *
  * @param <E> the type of the elements in the collection
  * @param <C> the collection type
+ * @see ListPropertyType
+ * @see SetPropertyType
  */
 public abstract class CollectionPropertyType<E, C extends Collection<E>> implements PropertyType<C> {
 
@@ -33,7 +40,7 @@ public abstract class CollectionPropertyType<E, C extends Collection<E>> impleme
      * Creates a new collection type for the given entry type and collector. See also {@link ListPropertyType},
      * {@link SetPropertyType} and {@link EnumSetPropertyType}.
      *
-     * @param entryType the entry type
+     * @param entryType property type for the elements in the collection
      * @param collector collector to the desired collection type
      * @param <E> the type of the elements in the collection
      * @param <C> the collection type
@@ -55,27 +62,11 @@ public abstract class CollectionPropertyType<E, C extends Collection<E>> impleme
         if (object instanceof Collection<?>) {
             Collection<?> coll = (Collection<?>) object;
             return coll.stream()
-                .map(elem -> convertOrLogError(elem, errorRecorder))
+                .map(elem -> ConversionUtils.convertOrLogError(elem, entryType, errorRecorder))
                 .filter(Objects::nonNull)
                 .collect(resultCollector());
         }
         return null;
-    }
-
-    /**
-     * Converts the given element with the entry property type, logging an error with the error recorder if the element
-     * could not be converted.
-     *
-     * @param element the element to convert
-     * @param errorRecorder the error recorder
-     * @return the converted element, or null if not possible
-     */
-    protected @Nullable E convertOrLogError(@Nullable Object element, @NotNull ConvertErrorRecorder errorRecorder) {
-        E result = entryType.convert(element, errorRecorder);
-        if (result == null) {
-            errorRecorder.setHasError("Could not convert '" + element + "'");
-        }
-        return result;
     }
 
     @Override
@@ -92,6 +83,9 @@ public abstract class CollectionPropertyType<E, C extends Collection<E>> impleme
         return entryType;
     }
 
+    /**
+     * @return collector to collect the converted entries to the appropriate type of collection
+     */
     protected abstract @NotNull Collector<E, ?, C> resultCollector();
 
 }

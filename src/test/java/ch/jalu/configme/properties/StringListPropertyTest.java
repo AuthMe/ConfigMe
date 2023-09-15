@@ -4,6 +4,8 @@ import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +22,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link StringListProperty}.
  */
+@ExtendWith(MockitoExtension.class)
 class StringListPropertyTest {
 
     private static PropertyReader reader;

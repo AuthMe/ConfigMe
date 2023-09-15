@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * List property of a configurable type. The default value is immutable.
  *
- * @param <E> the entry type
+ * @param <E> the type of the elements in the list
  */
 public class ListProperty<E> extends TypeBasedProperty<List<E>> {
 

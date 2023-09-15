@@ -7,6 +7,7 @@ import ch.jalu.configme.properties.builder.MapPropertyBuilder;
 import ch.jalu.configme.properties.types.BooleanType;
 import ch.jalu.configme.properties.types.InlineArrayPropertyType;
 import ch.jalu.configme.properties.types.NumberType;
+import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 
@@ -83,6 +84,7 @@ class PropertyInitializerTest {
         assertThat(setProperty(NumberType.FLOAT), instanceOf(CollectionPropertyBuilder.class));
         assertThat(mapProperty(NumberType.DOUBLE), instanceOf(MapPropertyBuilder.class));
         assertThat(arrayProperty(BooleanType.BOOLEAN, Boolean[]::new), instanceOf(ArrayPropertyBuilder.class));
+        assertThat(arrayProperty(StringType.STRING.arrayType()), instanceOf(ArrayPropertyBuilder.class));
         assertThat(inlineArrayProperty(InlineArrayPropertyType.FLOAT), instanceOf(ArrayPropertyBuilder.class));
     }
 

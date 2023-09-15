@@ -7,7 +7,7 @@ import java.util.Set;
 
 /**
  * String set property. The default value is immutable. The encounter order of the default value and
- * the constructed values is preserved, unless you've provided a custom set property type.
+ * the constructed values is preserved.
  */
 public class StringSetProperty extends SetProperty<String> {
 

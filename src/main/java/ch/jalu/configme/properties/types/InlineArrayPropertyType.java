@@ -1,17 +1,28 @@
 package ch.jalu.configme.properties.types;
 
+import ch.jalu.configme.internal.ConversionUtils;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
  * Array property type that stores its values as a string with a separator in the property resource.
+ * <p>
+ * This type uses another property type to delegate individual element operations to it. The inline array property type
+ * never produces arrays with any {@code null} element; if a conversion is not possible by the entry type, it is
+ * skipped in the result.
+ * <p>
+ * There is no way to escape the separator in a value. Values are exported by converting every array element to its
+ * export value (with the entry type's {@link PropertyType#toExportValue}) and subsequently calling
+ * {@link Object#toString} on the result before the entries are joined with the separator. As such, the conversion
+ * <b>from</b> String to the specified type should support the export value's toString representation.
  *
  * @param <T> the array type
  */
@@ -55,6 +66,14 @@ public class InlineArrayPropertyType<T> implements PropertyType<T[]> {
     private final boolean useTrimAndSpaces;
     private final IntFunction<T[]> arrayProducer;
 
+    /**
+     * Constructor.
+     *
+     * @param entryType property type determining how the elements in the array behave
+     * @param separator string sequence to separate elements
+     * @param useTrimAndSpaces whether the read text should be trimmed prior to being converted with the entry type
+     * @param arrayProducer function which creates an array of the given capacity
+     */
     public InlineArrayPropertyType(@NotNull PropertyType<T> entryType, @NotNull String separator,
                                    boolean useTrimAndSpaces, @NotNull IntFunction<T[]> arrayProducer) {
         this.entryType = entryType;
@@ -67,30 +86,16 @@ public class InlineArrayPropertyType<T> implements PropertyType<T[]> {
     public T @Nullable [] convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
         if (object instanceof String) {
             String strValue = (String) object;
+            Function<String, T> convertFunction = useTrimAndSpaces
+                ? entry -> entryType.convert(entry.trim(), errorRecorder)
+                : entry -> entryType.convert(entry, errorRecorder);
 
-            return Arrays.stream(strValue.split(Pattern.quote(separator)))
-                .map(entry -> convertOrRegisterError(entry, errorRecorder))
+            return Arrays.stream(strValue.split(Pattern.quote(separator), -1))
+                .map(entry -> ConversionUtils.convertOrLogError(entry, convertFunction, errorRecorder))
                 .filter(Objects::nonNull)
                 .toArray(arrayProducer);
         }
         return null;
-    }
-
-    /**
-     * Converts the given element to the appropriate type, or registers an error and returns null if not possible.
-     *
-     * @param entry the entry to convert
-     * @param errorRecorder recorder to add errors to
-     * @return the converted entry if possible, otherwise null
-     */
-    protected @Nullable T convertOrRegisterError(@NotNull String entry, @NotNull ConvertErrorRecorder errorRecorder) {
-        T value = useTrimAndSpaces
-            ? entryType.convert(entry.trim(), errorRecorder)
-            : entryType.convert(entry, errorRecorder);
-        if (value == null) {
-            errorRecorder.setHasError("Could not convert '" + entry + "'");
-        }
-        return value;
     }
 
     @Override

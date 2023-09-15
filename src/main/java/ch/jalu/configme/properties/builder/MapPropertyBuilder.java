@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
- * Builder for map properties whose keys are string and whose value type is any arbitrary property type.
+ * Builder for map properties whose keys are strings and whose value type is any arbitrary property type.
  *
  * @param <V> the type of the values in the map
  * @param <M> the map type
@@ -36,14 +36,14 @@ public class MapPropertyBuilder<V, M extends Map<String, V>, P extends Property<
     /**
      * Creates a new map property builder to construct an object of ConfigMe's standard MapProperty implementation.
      *
-     * @param entryType the type the values in the map have
+     * @param valueType the type the values in the map have
      * @param <V> the type of the values in the map
      * @return this instance
      */
     public static <V> @NotNull MapPropertyBuilder<V, Map<String, V>, MapProperty<V>> mapBuilder(
-                                                                                   @NotNull PropertyType<V> entryType) {
+                                                                                   @NotNull PropertyType<V> valueType) {
         return new MapPropertyBuilder<>(
-            (path, defVal) -> new MapProperty<>(path, defVal, entryType),
+            (path, defVal) -> new MapProperty<>(path, defVal, valueType),
             new LinkedHashMap<>());
     }
 

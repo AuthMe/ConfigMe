@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties.types;
 
-import ch.jalu.configme.internal.ArrayUtils;
+import ch.jalu.configme.internal.ConversionUtils;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.typeresolver.EnumUtils;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,7 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
      * @return array property type whose elements are managed by {@code this} enum type
      */
     public @NotNull ArrayPropertyType<E> arrayType() {
-        return new ArrayPropertyType<>(this, size -> ArrayUtils.createArrayForReferenceType(enumType, size));
+        return new ArrayPropertyType<>(this, size -> ConversionUtils.createArrayForReferenceType(enumType, size));
     }
 
     /**
@@ -64,6 +64,6 @@ public class EnumPropertyType<E extends Enum<E>> implements PropertyType<E> {
      */
     public @NotNull InlineArrayPropertyType<E> inlineArrayType(@NotNull String separator) {
         return new InlineArrayPropertyType<>(this, separator, true,
-            size -> ArrayUtils.createArrayForReferenceType(enumType, size));
+            size -> ConversionUtils.createArrayForReferenceType(enumType, size));
     }
 }

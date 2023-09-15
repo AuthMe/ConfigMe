@@ -7,7 +7,10 @@ import org.jetbrains.annotations.Nullable;
  */
 final class PropertyBuilderUtils {
 
-    /** Method name to reference in an error message, for property builders that have collections or maps as value. */
+    /**
+     * Method name to reference in an error message, for property builders that have an
+     * array, collection or map as their value.
+     */
     static final String ADD_TO_DEFAULT_VALUE_METHOD = "addToDefaultValue";
 
     private PropertyBuilderUtils() {

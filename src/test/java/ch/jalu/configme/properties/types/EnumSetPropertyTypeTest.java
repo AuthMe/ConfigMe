@@ -88,4 +88,19 @@ class EnumSetPropertyTypeTest {
         assertThat(result, nullValue());
         verifyNoInteractions(errorRecorder);
     }
+
+    @Test
+    void shouldReturnEntryType() {
+        // given
+        EnumPropertyType<TestEnum> enumType = EnumPropertyType.of(TestEnum.class);
+        EnumSetPropertyType<TestEnum> type = new EnumSetPropertyType<>(enumType);
+
+        // when
+        EnumPropertyType<TestEnum> entryType = type.getEntryType();
+        Class<TestEnum> enumClass = type.getEnumClass();
+
+        // then
+        assertThat(entryType, equalTo(enumType));
+        assertThat(enumClass, equalTo(TestEnum.class));
+    }
 }

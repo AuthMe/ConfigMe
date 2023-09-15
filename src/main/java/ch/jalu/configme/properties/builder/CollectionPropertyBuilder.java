@@ -21,7 +21,7 @@ import java.util.function.BiFunction;
  * @param <C> the collection type
  * @param <P> type of property the builder creates
  */
-public class CollectionPropertyBuilder<E, C extends Collection<E>, P extends Property<C>> {
+public class CollectionPropertyBuilder<E, C extends Collection<E>, P extends Property<? super C>> {
 
     private String path;
     private final C defaultValue;
@@ -69,22 +69,6 @@ public class CollectionPropertyBuilder<E, C extends Collection<E>, P extends Pro
     }
 
     /**
-     * Creates a builder that produces a property with the given function.
-     *
-     * @param createFunction function taking a path and default value which returns a property
-     * @param defaultValue empty collection that can be modified, used as default value
-     * @param <E> the entry type
-     * @param <C> the collection type
-     * @param <P> type of property the builder creates
-     * @return new collection builder
-     */
-    public static <E, C extends Collection<E>, P extends Property<C>>
-         @NotNull CollectionPropertyBuilder<E, C, P> collectionBuilder(@NotNull BiFunction<String, C, P> createFunction,
-                                                                       @NotNull C defaultValue) {
-        return new CollectionPropertyBuilder<>(createFunction, defaultValue);
-    }
-
-    /**
      * Sets the path of the property to create.
      *
      * @param path the property path to set
@@ -97,6 +81,9 @@ public class CollectionPropertyBuilder<E, C extends Collection<E>, P extends Pro
 
     /**
      * Sets the given entries to this builder's collection that will be used as the default value of the property.
+     * This method throws an exception if entries have already been added to the default value; use either this method
+     * once to define all entries, or use {@link #addToDefaultValue} to add entries to the default value individually.
+     * It is not recommended to mix both methods.
      *
      * @param entries the entries to be part of the default value collection
      * @return this builder
@@ -108,6 +95,9 @@ public class CollectionPropertyBuilder<E, C extends Collection<E>, P extends Pro
 
     /**
      * Sets all entries of the given collection to this builder's default values.
+     * This method throws an exception if entries have already been added to the default value; use either this method
+     * once to define all entries, or use {@link #addToDefaultValue} to add entries to the default value individually.
+     * It is not recommended to mix both methods.
      *
      * @param entries the entries to be part of the default value collection
      * @return this builder

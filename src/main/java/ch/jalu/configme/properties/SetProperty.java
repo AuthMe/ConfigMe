@@ -12,9 +12,10 @@ import java.util.stream.Collectors;
 
 /**
  * Set property of configurable type. The default value is immutable. The encounter order of the default value and
- * the constructed values is preserved, unless you've provided a custom set property type.
+ * the constructed values is preserved, unless the property was created with a custom set property type that does not
+ * make these guarantees.
  *
- * @param <E> the set type
+ * @param <E> the type of the elements in the set
  */
 public class SetProperty<E> extends TypeBasedProperty<Set<E>> {
 

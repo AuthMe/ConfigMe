@@ -2,16 +2,20 @@ package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.properties.types.NumberType;
+import ch.jalu.configme.properties.types.SetPropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -69,5 +73,22 @@ class SetPropertyTest {
 
         // then
         assertThat(exportValue, equalTo(Arrays.asList(2.14, 3.28, 5.56)));
+    }
+
+    @Test
+    void shouldHaveUnmodifiableDefaultValue() {
+        // given
+        SetPropertyType<BigDecimal> setPropertyType = new SetPropertyType<>(NumberType.BIG_DECIMAL);
+
+        // when
+        SetProperty<BigDecimal> property1 = new SetProperty<>("path", NumberType.BIG_DECIMAL, BigDecimal.TEN);
+        SetProperty<BigDecimal> property2 = new SetProperty<>("path", NumberType.BIG_DECIMAL, singleton(BigDecimal.TEN));
+        SetProperty<BigDecimal> property3 = new SetProperty<>("path", setPropertyType, singleton(BigDecimal.TEN));
+
+        // then
+        Stream.of(property1, property2, property3).forEach(property -> {
+            assertThat(property.getDefaultValue(), contains(BigDecimal.TEN));
+            assertThat(property.getDefaultValue().getClass().getName(), equalTo("java.util.Collections$UnmodifiableSet"));
+        });
     }
 }

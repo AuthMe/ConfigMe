@@ -1,6 +1,6 @@
 package ch.jalu.configme.properties.types;
 
-import ch.jalu.configme.internal.ArrayUtils;
+import ch.jalu.configme.internal.ConversionUtils;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.typeresolver.TypeInfo;
 import ch.jalu.typeresolver.numbers.StandardNumberType;
@@ -130,7 +130,7 @@ public class NumberType<N extends Number> extends PropertyAndLeafType<N> {
      * @return array property type whose elements are managed by {@code this} number type
      */
     public @NotNull ArrayPropertyType<N> arrayType() {
-        return new ArrayPropertyType<>(this, size -> ArrayUtils.createArrayForReferenceType(getType(), size));
+        return new ArrayPropertyType<>(this, size -> ConversionUtils.createArrayForReferenceType(getType(), size));
     }
 
     /**
@@ -142,6 +142,6 @@ public class NumberType<N extends Number> extends PropertyAndLeafType<N> {
      */
     public @NotNull InlineArrayPropertyType<N> inlineArrayType(@NotNull String separator) {
         return new InlineArrayPropertyType<>(this, separator, true,
-            size -> ArrayUtils.createArrayForReferenceType(getType(), size));
+            size -> ConversionUtils.createArrayForReferenceType(getType(), size));
     }
 }
