@@ -113,7 +113,7 @@ public class PropertyInitializer {
     public static <E extends Enum<E>> @NotNull EnumProperty<E> newProperty(@NotNull Class<E> clazz,
                                                                            @NotNull String path,
                                                                            @NotNull E defaultValue) {
-        return new EnumProperty<>(clazz, path, defaultValue);
+        return new EnumProperty<>(path, clazz, defaultValue);
     }
 
     /**
@@ -215,8 +215,8 @@ public class PropertyInitializer {
     /**
      * Creates a new bean property.
      *
-     * @param beanClass the JavaBean class
      * @param path the property's path
+     * @param beanClass the JavaBean class
      * @param defaultValue default value
      * @param <B> the bean type
      * @return the created bean property
@@ -296,7 +296,7 @@ public class PropertyInitializer {
     public static <E extends Enum<E>> @NotNull OptionalProperty<E> optionalEnumProperty(@NotNull Class<E> clazz,
                                                                                         @NotNull String path) {
         // default value may never be null, so get the first entry in the enum class
-        return new OptionalProperty<>(new EnumProperty<>(clazz, path, clazz.getEnumConstants()[0]));
+        return new OptionalProperty<>(new EnumProperty<>(path, clazz, clazz.getEnumConstants()[0]));
     }
 
     public static @NotNull OptionalProperty<Pattern> optionalRegexProperty(@NotNull String path) {

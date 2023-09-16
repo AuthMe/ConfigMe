@@ -9,6 +9,6 @@ import org.jetbrains.annotations.NotNull;
 public class StringProperty extends TypeBasedProperty<String> {
 
     public StringProperty(@NotNull String path, @NotNull String defaultValue) {
-        super(path, defaultValue, StringType.STRING);
+        super(path, StringType.STRING, defaultValue);
     }
 }

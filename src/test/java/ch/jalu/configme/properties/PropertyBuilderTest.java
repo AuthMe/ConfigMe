@@ -45,7 +45,7 @@ class PropertyBuilderTest {
         Property<String> result = new PropertyBuilder.TypeBasedPropertyBuilder<>(StringType.STRING)
             .path("my.path")
             .defaultValue("seven")
-            .createFunction((path, val, type) -> new StringProperty(path, val))
+            .createFunction((path, type, val) -> new StringProperty(path, val))
             .build();
 
         // then
@@ -72,7 +72,7 @@ class PropertyBuilderTest {
         Exception e = assertThrows(getExceptionTypeForNullArg(),
             () -> new PropertyBuilder.TypeBasedPropertyBuilder<>(StringType.STRING)
                 .path("a.path")
-                .createFunction((path, val, type) -> new StringProperty(path, val))
+                .createFunction((path, type, val) -> new StringProperty(path, val))
                 .build());
 
         // then

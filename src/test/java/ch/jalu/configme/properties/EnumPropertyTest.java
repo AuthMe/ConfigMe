@@ -22,7 +22,7 @@ class EnumPropertyTest {
     @Test
     void shouldReturnCorrectEnumValue() {
         // given
-        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
+        Property<TestEnum> property = new EnumProperty<>("enum.path", TestEnum.class, TestEnum.ENTRY_C);
         PropertyReader reader = mock(PropertyReader.class);
         given(reader.getObject(property.getPath())).willReturn("Entry_B");
 
@@ -36,7 +36,7 @@ class EnumPropertyTest {
     @Test
     void shouldFallBackToDefaultForInvalidValue() {
         // given
-        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
+        Property<TestEnum> property = new EnumProperty<>("enum.path", TestEnum.class, TestEnum.ENTRY_C);
         PropertyReader reader = mock(PropertyReader.class);
         given(reader.getObject(property.getPath())).willReturn("Bogus");
 
@@ -50,7 +50,7 @@ class EnumPropertyTest {
     @Test
     void shouldFallBackToDefaultForNonExistentValue() {
         // given
-        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "enum.path", TestEnum.ENTRY_C);
+        Property<TestEnum> property = new EnumProperty<>("enum.path", TestEnum.class, TestEnum.ENTRY_C);
         PropertyReader reader = mock(PropertyReader.class);
         given(reader.getObject(property.getPath())).willReturn(null);
 
@@ -64,7 +64,7 @@ class EnumPropertyTest {
     @Test
     void shouldExportAsEnumName() {
         // given
-        Property<TestEnum> property = new EnumProperty<>(TestEnum.class, "my.test.path", TestEnum.ENTRY_A);
+        Property<TestEnum> property = new EnumProperty<>("my.test.path", TestEnum.class, TestEnum.ENTRY_A);
 
         // when
         Object exportObject = property.toExportValue(TestEnum.ENTRY_C);

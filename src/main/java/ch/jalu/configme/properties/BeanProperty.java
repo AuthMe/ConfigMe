@@ -20,11 +20,11 @@ public class BeanProperty<T> extends TypeBasedProperty<T> {
 
     public BeanProperty(@NotNull String path, @NotNull Class<T> beanType, @NotNull T defaultValue,
                         @NotNull Mapper mapper) {
-        super(path, defaultValue, BeanPropertyType.of(beanType, mapper));
+        super(path, BeanPropertyType.of(beanType, mapper), defaultValue);
     }
 
     public BeanProperty(@NotNull String path, @NotNull BeanPropertyType<T> type, @NotNull T defaultValue) {
-        super(path, defaultValue, type);
+        super(path, type, defaultValue);
     }
 
     /**
@@ -38,7 +38,7 @@ public class BeanProperty<T> extends TypeBasedProperty<T> {
      */
     protected BeanProperty(@NotNull String path, @NotNull TypeInfo beanType, @NotNull T defaultValue,
                            @NotNull Mapper mapper) {
-        super(path, defaultValue, new BeanPropertyType<>(beanType, mapper));
+        super(path, new BeanPropertyType<>(beanType, mapper), defaultValue);
 
 
         Class<?> beanClass = beanType.toClass();

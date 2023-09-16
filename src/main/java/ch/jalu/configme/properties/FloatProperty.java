@@ -9,6 +9,6 @@ import org.jetbrains.annotations.NotNull;
 public class FloatProperty extends TypeBasedProperty<Float> {
 
     public FloatProperty(@NotNull String path, float defaultValue) {
-        super(path, defaultValue, NumberType.FLOAT);
+        super(path, NumberType.FLOAT, defaultValue);
     }
 }

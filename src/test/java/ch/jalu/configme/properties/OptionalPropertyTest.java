@@ -35,7 +35,7 @@ class OptionalPropertyTest {
         // given
         OptionalProperty<Boolean> booleanProp = new OptionalProperty<>(new BooleanProperty("bool.path.test", false));
         OptionalProperty<Integer> intProp = new OptionalProperty<>(new IntegerProperty("int.path.test", 0));
-        OptionalProperty<TestEnum> enumProp = new OptionalProperty<>(new EnumProperty<>(TestEnum.class, "enum.path.test", TestEnum.SECOND));
+        OptionalProperty<TestEnum> enumProp = new OptionalProperty<>(new EnumProperty<>("enum.path.test", TestEnum.class, TestEnum.SECOND));
 
         given(reader.getObject("bool.path.test")).willReturn(true);
         given(reader.getObject("int.path.test")).willReturn(27);
@@ -57,7 +57,7 @@ class OptionalPropertyTest {
         // given
         OptionalProperty<Boolean> booleanProp = new OptionalProperty<>(new BooleanProperty("bool.path.wrong", false));
         OptionalProperty<Integer> intProp = new OptionalProperty<>(new IntegerProperty("int.path.wrong", 0));
-        OptionalProperty<TestEnum> enumProp = new OptionalProperty<>(new EnumProperty<>(TestEnum.class, "enum.path.wrong", TestEnum.SECOND));
+        OptionalProperty<TestEnum> enumProp = new OptionalProperty<>(new EnumProperty<>("enum.path.wrong", TestEnum.class, TestEnum.SECOND));
 
         // when
         PropertyValue<Optional<Boolean>> boolResult = booleanProp.determineValue(reader);

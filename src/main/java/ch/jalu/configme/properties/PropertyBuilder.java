@@ -125,7 +125,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
 
         @Override
         public @NotNull Property<T> build() {
-            return createFunction.apply(getPath(), getDefaultValue(), getType());
+            return createFunction.apply(getPath(), getType(), getDefaultValue());
         }
     }
 
@@ -232,7 +232,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
     @FunctionalInterface
     public interface CreateFunction<K, T> {
 
-        @NotNull Property<T> apply(@NotNull String path, @NotNull T defaultValue, @NotNull PropertyType<K> type);
+        @NotNull Property<T> apply(@NotNull String path, @NotNull PropertyType<K> type, @NotNull T defaultValue);
 
     }
 

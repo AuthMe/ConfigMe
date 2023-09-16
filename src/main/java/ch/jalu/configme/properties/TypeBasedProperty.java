@@ -21,10 +21,10 @@ public class TypeBasedProperty<T> extends BaseProperty<T> {
      * Constructor.
      *
      * @param path the path of the property
-     * @param defaultValue the default value of the property
      * @param type the property type
+     * @param defaultValue the default value of the property
      */
-    public TypeBasedProperty(@NotNull String path, @NotNull T defaultValue, @NotNull PropertyType<T> type) {
+    public TypeBasedProperty(@NotNull String path, @NotNull PropertyType<T> type, @NotNull T defaultValue) {
         super(path, defaultValue);
         Objects.requireNonNull(type, "type");
         this.type = type;
