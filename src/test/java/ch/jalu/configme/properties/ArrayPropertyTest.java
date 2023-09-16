@@ -32,8 +32,8 @@ class ArrayPropertyTest {
         // given
         ArrayProperty<String> property = new ArrayProperty<>(
             "singleton",
-            new String[] {"multiline", "message"},
-            StringType.STRING, String[]::new);
+            StringType.STRING,
+            new String[] {"multiline", "message"}, String[]::new);
 
         given(reader.getObject("singleton")).willReturn("hello");
 
@@ -49,8 +49,8 @@ class ArrayPropertyTest {
         // given
         ArrayProperty<String> property = new ArrayProperty<>(
             "singleton",
-            new String[] {"multiline", "message"},
-            StringType.STRING, String[]::new);
+            StringType.STRING,
+            new String[] {"multiline", "message"}, String[]::new);
 
         given(reader.getObject("singleton")).willReturn(null);
 
@@ -66,8 +66,8 @@ class ArrayPropertyTest {
         // given
         Property<String[]> property = new ArrayProperty<>(
             "array",
-            new String[] {"multiline", "message"},
-            StringType.STRING, String[]::new);
+            StringType.STRING,
+            new String[] {"multiline", "message"}, String[]::new);
         given(reader.getObject("array")).willReturn(Arrays.asList("qwerty", "123"));
 
         // when
@@ -82,8 +82,8 @@ class ArrayPropertyTest {
         // given
         Property<String[]> property = new ArrayProperty<>(
             "array",
-            new String[] {"multiline", "message c:"},
-            StringType.STRING, String[]::new);
+            StringType.STRING,
+            new String[] {"multiline", "message c:"}, String[]::new);
 
         given(reader.getObject("array")).willReturn(null);
 
@@ -99,8 +99,8 @@ class ArrayPropertyTest {
         // given
         Property<String[]> property = new ArrayProperty<>(
             "array",
-            new String[] {},
-            StringType.STRING, String[]::new);
+            StringType.STRING,
+            new String[] {}, String[]::new);
 
         String[] givenArray = new String[] {"hello, chert", "how in hell?"};
 

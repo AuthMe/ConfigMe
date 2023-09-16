@@ -150,7 +150,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
 
         @Override
         public @NotNull Property<T[]> build() {
-            return new ArrayProperty<>(getPath(), getDefaultValue(), getType(), arrayProducer);
+            return new ArrayProperty<>(getPath(), getType(), getDefaultValue(), arrayProducer);
         }
     }
 

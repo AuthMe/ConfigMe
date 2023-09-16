@@ -223,7 +223,7 @@ public class PropertyInitializer {
      */
     public static <B> @NotNull BeanProperty<B> newBeanProperty(@NotNull Class<B> beanClass, @NotNull String path,
                                                                @NotNull B defaultValue) {
-        return new BeanProperty<>(beanClass, path, defaultValue);
+        return new BeanProperty<>(path, beanClass, defaultValue);
     }
 
     // --------------

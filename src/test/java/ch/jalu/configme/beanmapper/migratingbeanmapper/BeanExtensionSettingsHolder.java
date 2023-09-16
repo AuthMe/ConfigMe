@@ -10,7 +10,7 @@ import java.util.List;
 public class BeanExtensionSettingsHolder implements SettingsHolder {
 
     public static final Property<CollectionChatComponent> CHAT_COMPONENT = new BeanProperty<>(
-        CollectionChatComponent.class, "message-key", new CollectionChatComponent(), new SingleValueToCollectionMapper());
+        "message-key", CollectionChatComponent.class, new CollectionChatComponent(), new SingleValueToCollectionMapper());
 
 
     public static class CollectionChatComponent {

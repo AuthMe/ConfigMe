@@ -72,7 +72,7 @@ class BeanWithCustomLeafTypeTest {
     public static final class MyTestSettings implements SettingsHolder {
 
         public static final Property<RangeCollection> RANGES =
-            new BeanProperty<>(RangeCollection.class, "", new RangeCollection(), new MapperWithCustomIntSupport());
+            new BeanProperty<>("", RangeCollection.class, new RangeCollection(), new MapperWithCustomIntSupport());
 
         private MyTestSettings() {
         }

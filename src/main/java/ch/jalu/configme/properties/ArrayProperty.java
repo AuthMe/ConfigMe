@@ -24,11 +24,11 @@ public class ArrayProperty<T> extends BaseProperty<T[]> {
      * Constructor.
      *
      * @param path the path of the property
-     * @param defaultValue the default value of the property
      * @param type the property type
+     * @param defaultValue the default value of the property
      * @param arrayProducer array constructor (desired array size as argument)
      */
-    public ArrayProperty(@NotNull String path, T @NotNull [] defaultValue, @NotNull PropertyType<T> type,
+    public ArrayProperty(@NotNull String path, @NotNull PropertyType<T> type, T @NotNull [] defaultValue,
                          @NotNull IntFunction<T[]> arrayProducer) {
         super(path, defaultValue);
         Objects.requireNonNull(type, "type");

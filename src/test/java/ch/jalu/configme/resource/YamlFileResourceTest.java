@@ -247,7 +247,7 @@ class YamlFileResourceTest {
         YamlFileResource resource = new YamlFileResource(file);
 
         Property<CommandConfig> commandConfigProperty =
-            new BeanProperty<>(CommandConfig.class, "config", new CommandConfig());
+            new BeanProperty<>("config", CommandConfig.class, new CommandConfig());
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(singletonList(commandConfigProperty));
         configurationData.setValue(commandConfigProperty, config);
 

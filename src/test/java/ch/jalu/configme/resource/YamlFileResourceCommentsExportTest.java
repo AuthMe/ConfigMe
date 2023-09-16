@@ -166,7 +166,7 @@ class YamlFileResourceCommentsExportTest {
 
         public BeanWithExportCommentProperty(@NotNull Class<T> beanType, @NotNull String path, @NotNull T defaultValue,
                                              @NotNull String comment) {
-            super(beanType, path, defaultValue);
+            super(path, beanType, defaultValue);
             this.comment = comment;
         }
 

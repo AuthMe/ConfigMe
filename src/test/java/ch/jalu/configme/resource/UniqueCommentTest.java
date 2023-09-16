@@ -141,7 +141,7 @@ class UniqueCommentTest {
                 new ServerCollection(true, "reception"), new ServerCollection(false, "lobby"));
 
         public static final Property<Optional<ServerCollection>> ALT =
-            new OptionalProperty<>(new BeanProperty<>(ServerCollection.class, "alternative", new ServerCollection()));
+            new OptionalProperty<>(new BeanProperty<>("alternative", ServerCollection.class, new ServerCollection()));
 
         private ServerSettingHolder() {
         }
