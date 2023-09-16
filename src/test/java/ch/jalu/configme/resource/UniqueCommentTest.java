@@ -132,8 +132,8 @@ class UniqueCommentTest {
 
         public static final Property<Map<String, ServerCollection>> WORLDS =
             new MapProperty<>("worlds",
-                createDefaultWorldsMap(),
-                BeanPropertyType.of(ServerCollection.class));
+                BeanPropertyType.of(ServerCollection.class),
+                createDefaultWorldsMap());
 
         public static final Property<List<ServerCollection>> AUTH_GROUPS =
             new ListProperty<>("auth",

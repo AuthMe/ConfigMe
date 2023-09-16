@@ -44,7 +44,7 @@ class MapPropertyTest {
     @Test
     void shouldReturnValueFromResource() {
         // given
-        MapProperty<String> property = new MapProperty<>("map", new HashMap<>(), StringType.STRING);
+        MapProperty<String> property = new MapProperty<>("map", StringType.STRING, new HashMap<>());
         Map<String, String> mapFromReader = createSampleMap();
         given(reader.getObject("map")).willReturn(mapFromReader);
 
@@ -55,7 +55,7 @@ class MapPropertyTest {
     @Test
     void shouldReturnDefaultValue() {
         // given
-        MapProperty<String> property = new MapProperty<>("map", createSampleMap(), StringType.STRING);
+        MapProperty<String> property = new MapProperty<>("map", StringType.STRING, createSampleMap());
         given(reader.getObject("map")).willReturn(null);
 
         // when / then
@@ -65,7 +65,7 @@ class MapPropertyTest {
     @Test
     void shouldReturnValueAsExportValue() {
         // given
-        MapProperty<String> property = new MapProperty<>("map", new HashMap<>(), StringType.STRING);
+        MapProperty<String> property = new MapProperty<>("map", StringType.STRING, new HashMap<>());
         Map<String, String> givenMap = createSampleMap();
 
         // when
@@ -81,7 +81,7 @@ class MapPropertyTest {
     @Test
     void shouldRetainOrderAsInFile() {
         // given
-        MapProperty<Integer> property = new MapProperty<>("", Collections.emptyMap(), new AlwaysFourPropertyType());
+        MapProperty<Integer> property = new MapProperty<>("", new AlwaysFourPropertyType(), Collections.emptyMap());
         Path file = TestUtils.copyFileFromResources("/config-sample.yml", temporaryFolder);
         YamlFileResource resource = new YamlFileResource(file);
 
@@ -101,7 +101,7 @@ class MapPropertyTest {
         value.put("second", 2);
         value.put("third", 3);
         value.put("fourth", 4);
-        MapProperty<Integer> property = new MapProperty<>("", Collections.emptyMap(), new AlwaysFourPropertyType());
+        MapProperty<Integer> property = new MapProperty<>("", new AlwaysFourPropertyType(), Collections.emptyMap());
 
         // when
         Object exportValue = property.toExportValue(value);

@@ -101,7 +101,7 @@ public abstract class PropertyBuilder<K, T, B extends PropertyBuilder<K, T, B>> 
 
         @Override
         public @NotNull MapProperty<T> build() {
-            return new MapProperty<>(getPath(), getDefaultValue(), getType());
+            return new MapProperty<>(getPath(), getType(), getDefaultValue());
         }
     }
 
