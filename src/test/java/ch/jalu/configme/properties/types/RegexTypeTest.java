@@ -45,7 +45,9 @@ public class RegexTypeTest {
 
         // then / when
         assertInstanceOf(Pattern.class, RegexType.REGEX.convert("s_.*?", errorRecorder));
+        assertInstanceOf(Pattern.class, RegexType.REGEX_CASE_INSENSITIVE.convert("a_.*?", errorRecorder));
         assertInstanceOf(Pattern.class, RegexType.REGEX.convert("\\s*", errorRecorder));
+        assertInstanceOf(Pattern.class, RegexType.REGEX_CASE_INSENSITIVE.convert("\\w+", errorRecorder));
         assertInstanceOf(Pattern.class, RegexType.REGEX.convert("Hello", errorRecorder));
         assertInstanceOf(Pattern.class, RegexType.REGEX.convert("$", errorRecorder));
     }
@@ -61,6 +63,8 @@ public class RegexTypeTest {
         assertThat(RegexType.REGEX.convert("[a-z", errorRecorder), nullValue());
         assertThat(RegexType.REGEX.convert("a{,3}", errorRecorder), nullValue());
         assertThat(RegexType.REGEX.convert("{2,1}", errorRecorder), nullValue());
+        assertThat(RegexType.REGEX_CASE_INSENSITIVE.convert("a{1", errorRecorder), nullValue());
+        assertThat(RegexType.REGEX_CASE_INSENSITIVE.convert("(abc(def)ghi)jkl)", errorRecorder), nullValue());
     }
 
     @Test
@@ -70,6 +74,7 @@ public class RegexTypeTest {
 
         // when / then
         assertThat(RegexType.REGEX.convert(null, errorRecorder), nullValue());
+        assertThat(RegexType.REGEX_CASE_INSENSITIVE.convert(null, errorRecorder), nullValue());
     }
 
     @Test
@@ -79,9 +84,11 @@ public class RegexTypeTest {
 
         // when / then
         assertThat(RegexType.REGEX.convert(3, of(Pattern.class), errorRecorder), nullValue());
-        assertThat(RegexType.REGEX.convert(1, of(Pattern.class), errorRecorder), nullValue());
+        assertThat(RegexType.REGEX_CASE_INSENSITIVE.convert(1, of(Pattern.class), errorRecorder), nullValue());
         assertThat(RegexType.REGEX.convert('c', of(Pattern.class), errorRecorder), nullValue());
+        assertThat(RegexType.REGEX_CASE_INSENSITIVE.convert('x', of(Pattern.class), errorRecorder), nullValue());
         assertThat(RegexType.REGEX.convert(false, of(Pattern.class), errorRecorder), nullValue());
+        assertThat(RegexType.REGEX_CASE_INSENSITIVE.convert(true, of(Pattern.class), errorRecorder), nullValue());
         assertThat(RegexType.REGEX.convert(TimeUnit.SECONDS, of(Pattern.class), errorRecorder), nullValue());
     }
 
@@ -93,6 +100,8 @@ public class RegexTypeTest {
     
         // when / then
         assertThat(RegexType.REGEX.toExportValue(pattern1), equalTo("#\\w+"));
+        assertThat(RegexType.REGEX_CASE_INSENSITIVE.toExportValue(pattern1), equalTo("#\\w+"));
         assertThat(RegexType.REGEX.toExportValue(pattern2), equalTo("^[A-Za-z]+$"));
+        assertThat(RegexType.REGEX_CASE_INSENSITIVE.toExportValue(pattern2), equalTo("^[A-Za-z]+$"));
     }
 }
