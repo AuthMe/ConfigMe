@@ -64,7 +64,7 @@ public class TitleConfig implements SettingsHolder {
 public class WelcomeWriter {
     public String generateWelcomeMessage() {
         SettingsManager settings = SettingsManagerBuilder
-            .withYamlFile("config.yml")
+            .withYamlFile(Path.of("config.yml"))
             .configurationData(TitleConfig.class)
             .useDefaultMigrationService()
             .create();
