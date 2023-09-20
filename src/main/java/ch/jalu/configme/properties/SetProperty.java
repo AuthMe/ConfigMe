@@ -43,14 +43,45 @@ public class SetProperty<E> extends TypeBasedProperty<Set<E>> {
     }
 
     /**
-     * Constructor.
+     * Constructor. Use {@link #withSetType}.
      *
      * @param path the path of the property
      * @param type the type of the set
      * @param defaultValue the default value of the property
      */
-    public SetProperty(@NotNull String path, @NotNull SetPropertyType<E> type, @NotNull Set<E> defaultValue) {
+    // Constructor arguments are usually (path, type, defaultValue), but this is not possible here because there
+    // are other constructors with the same argument order.
+    protected SetProperty(@NotNull PropertyType<Set<E>> type, @NotNull String path, @NotNull Set<E> defaultValue) {
         super(path, Collections.unmodifiableSet(defaultValue), type);
+    }
+
+    /**
+     * Creates a new set property with the given path, type and default value.
+     *
+     * @param path the path of the property
+     * @param setType the set type
+     * @param defaultValue the values that make up the entries of the default set
+     * @param <E> the type of the elements in the set
+     * @return a new set property
+     */
+    @SafeVarargs
+    public static <E> SetProperty<E> withSetType(@NotNull String path, @NotNull PropertyType<Set<E>> setType,
+                                                 @NotNull E @NotNull ... defaultValue) {
+        return new SetProperty<>(setType, path, newSet(defaultValue));
+    }
+
+    /**
+     * Creates a new set property with the given path, type and default value.
+     *
+     * @param path the path of the property
+     * @param setType the set type
+     * @param defaultValue the default value of the property
+     * @param <E> the type of the elements in the set
+     * @return a new set property
+     */
+    public static <E> SetProperty<E> withSetType(@NotNull String path, @NotNull PropertyType<Set<E>> setType,
+                                                 @NotNull Set<E> defaultValue) {
+        return new SetProperty<>(setType, path, defaultValue);
     }
 
     private static <E> @NotNull Set<E> newSet(E @NotNull [] array) {

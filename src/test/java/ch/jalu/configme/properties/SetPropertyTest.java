@@ -1,7 +1,9 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.properties.types.NumberType;
+import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.properties.types.SetPropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
@@ -78,17 +80,41 @@ class SetPropertyTest {
     @Test
     void shouldHaveUnmodifiableDefaultValue() {
         // given
-        SetPropertyType<BigDecimal> setPropertyType = new SetPropertyType<>(NumberType.BIG_DECIMAL);
+        PropertyType<Set<BigDecimal>> setPropertyType = new SetPropertyType<>(NumberType.BIG_DECIMAL);
 
         // when
         SetProperty<BigDecimal> property1 = new SetProperty<>("path", NumberType.BIG_DECIMAL, BigDecimal.TEN);
         SetProperty<BigDecimal> property2 = new SetProperty<>("path", NumberType.BIG_DECIMAL, singleton(BigDecimal.TEN));
-        SetProperty<BigDecimal> property3 = new SetProperty<>("path", setPropertyType, singleton(BigDecimal.TEN));
+        SetProperty<BigDecimal> property3 = SetProperty.withSetType("path", setPropertyType, singleton(BigDecimal.TEN));
+        SetProperty<BigDecimal> property4 = SetProperty.withSetType("path", setPropertyType, BigDecimal.TEN);
 
         // then
-        Stream.of(property1, property2, property3).forEach(property -> {
+        Stream.of(property1, property2, property3, property4).forEach(property -> {
             assertThat(property.getDefaultValue(), contains(BigDecimal.TEN));
             assertThat(property.getDefaultValue().getClass().getName(), equalTo("java.util.Collections$UnmodifiableSet"));
         });
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldCreatePropertyWithCustomSetType() {
+        // given
+        String path = "duration.units";
+        PropertyType<Set<String>> greekStringSetType = mock(PropertyType.class);
+
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        String value = "a,m";
+        LinkedHashSet<String> convertedValue = new LinkedHashSet<>(Arrays.asList("α", "μ"));
+        given(greekStringSetType.convert(value, errorRecorder)).willReturn(convertedValue);
+        PropertyReader reader = mock(PropertyReader.class);
+        given(reader.getObject(path)).willReturn(value);
+
+        // when
+        SetProperty<String> property = SetProperty.withSetType(path, greekStringSetType, singleton("θ"));
+
+        // then
+        assertThat(property.getPath(), equalTo(path));
+        assertThat(property.getDefaultValue(), contains("θ"));
+        assertThat(property.getFromReader(reader, errorRecorder), contains("α", "μ"));
     }
 }

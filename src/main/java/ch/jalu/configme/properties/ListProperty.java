@@ -40,13 +40,46 @@ public class ListProperty<E> extends TypeBasedProperty<List<E>> {
     }
 
     /**
-     * Constructor.
+     * Constructor. Use {@link #withListType}.
      *
      * @param path the path of the property
      * @param type the list type
      * @param defaultValue the default value of the property
      */
-    public ListProperty(@NotNull String path, @NotNull ListPropertyType<E> type, @NotNull List<E> defaultValue) {
+    // Constructor arguments are usually (path, type, defaultValue), but this is not possible here because there
+    // are other constructors with the same argument order.
+    protected ListProperty(@NotNull PropertyType<List<E>> type, @NotNull String path, @NotNull List<E> defaultValue) {
         super(path, Collections.unmodifiableList(defaultValue), type);
+    }
+
+    /**
+     * Creates a new list property with the given path, type and default value.
+     *
+     * @param path the path of the property
+     * @param listType the list type
+     * @param defaultValue the entries in the list of the default value
+     * @param <E> the type of the elements in the list
+     * @return a new list property
+     */
+    @SafeVarargs
+    public static <E> @NotNull ListProperty<E> withListType(@NotNull String path,
+                                                            @NotNull PropertyType<List<E>> listType,
+                                                            @NotNull E @NotNull ... defaultValue) {
+        return new ListProperty<>(listType, path, Arrays.asList(defaultValue));
+    }
+
+    /**
+     * Creates a new list property with the given path, type and default value.
+     *
+     * @param path the path of the property
+     * @param listType the list type
+     * @param defaultValue the default value of the property
+     * @param <E> the type of the elements in the list
+     * @return a new list property
+     */
+    public static <E> @NotNull ListProperty<E> withListType(@NotNull String path,
+                                                            @NotNull PropertyType<List<E>> listType,
+                                                            @NotNull List<E> defaultValue) {
+        return new ListProperty<>(listType, path, defaultValue);
     }
 }
