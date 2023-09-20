@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BooleanProperty extends TypeBasedProperty<Boolean> {
 
-    public BooleanProperty(@NotNull String path, @NotNull Boolean defaultValue) {
+    public BooleanProperty(@NotNull String path, boolean defaultValue) {
         super(path, BooleanType.BOOLEAN, defaultValue);
     }
 }

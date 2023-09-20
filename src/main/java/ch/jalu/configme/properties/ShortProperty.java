@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ShortProperty extends TypeBasedProperty<Short> {
 
-    public ShortProperty(@NotNull String path, @NotNull Short defaultValue) {
+    public ShortProperty(@NotNull String path, short defaultValue) {
         super(path, NumberType.SHORT, defaultValue);
     }
 }
