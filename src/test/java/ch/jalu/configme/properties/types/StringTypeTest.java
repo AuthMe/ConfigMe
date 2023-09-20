@@ -6,10 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static ch.jalu.typeresolver.TypeInfo.of;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -88,5 +90,28 @@ class StringTypeTest {
         assertThat(StringType.STRING_LOWER_CASE.toExportValueIfApplicable(null), nullValue());
         assertThat(StringType.STRING.toExportValueIfApplicable('t'), nullValue());
         assertThat(StringType.STRING_LOWER_CASE.toExportValueIfApplicable('t'), nullValue());
+    }
+
+    @Test
+    void shouldCreateArrayType() {
+        // given / when
+        ArrayPropertyType<String> arrayType = StringType.STRING.arrayType();
+
+        // then
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        assertThat(arrayType.convert(Arrays.asList(false, "test"), errorRecorder),
+            arrayContaining("false", "test"));
+    }
+
+    @Test
+    void shouldCreateInlineArrayType() {
+        // given / when
+        InlineArrayPropertyType<String> inlineArrayType =
+            StringType.STRING_LOWER_CASE.inlineArrayType("~~");
+
+        // then
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        assertThat(inlineArrayType.convert("LIVE~~Laugh~~ lovE", errorRecorder),
+            arrayContaining("live", "laugh", " love"));
     }
 }

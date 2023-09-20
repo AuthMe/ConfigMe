@@ -1,5 +1,6 @@
 package ch.jalu.configme.properties.types;
 
+import ch.jalu.configme.internal.ConversionUtils;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.typeresolver.TypeInfo;
 import ch.jalu.typeresolver.numbers.StandardNumberType;
@@ -43,7 +44,7 @@ public class NumberType<N extends Number> extends PropertyAndLeafType<N> {
     /**
      * Constructor.
      *
-     * @param type jalu typresolver NumberType implementation to base the object's behavior on
+     * @param type NumberType implementation of ch.jalu.typeresolver to base the object's behavior on
      */
     protected NumberType(@NotNull ch.jalu.typeresolver.numbers.NumberType<N> type) {
         super(type.getType());
@@ -123,5 +124,24 @@ public class NumberType<N extends Number> extends PropertyAndLeafType<N> {
     @Override
     public @NotNull String toString() {
         return "NumberTypeHandler[" + getType().getSimpleName() + "]";
+    }
+
+    /**
+     * @return array property type whose elements are managed by {@code this} number type
+     */
+    public @NotNull ArrayPropertyType<N> arrayType() {
+        return new ArrayPropertyType<>(this, size -> ConversionUtils.createArrayForReferenceType(getType(), size));
+    }
+
+    /**
+     * Creates an inline array property type with the given separator.
+     * See {@link InlineArrayPropertyType} for more details.
+     *
+     * @param separator the sequence that acts as separator for multiple entries
+     * @return inline array type with {@code this} type and the given separator
+     */
+    public @NotNull InlineArrayPropertyType<N> inlineArrayType(@NotNull String separator) {
+        return new InlineArrayPropertyType<>(this, separator, true,
+            size -> ConversionUtils.createArrayForReferenceType(getType(), size));
     }
 }

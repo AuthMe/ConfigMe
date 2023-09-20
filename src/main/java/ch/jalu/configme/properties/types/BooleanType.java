@@ -58,4 +58,11 @@ public class BooleanType extends PropertyAndLeafType<Boolean> {
         }
         return null;
     }
+
+    /**
+     * @return array property type whose elements are managed by {@code this} boolean type
+     */
+    public @NotNull ArrayPropertyType<Boolean> arrayType() {
+        return new ArrayPropertyType<>(this, Boolean[]::new);
+    }
 }

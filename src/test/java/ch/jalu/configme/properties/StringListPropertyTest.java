@@ -4,6 +4,8 @@ import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,26 +16,25 @@ import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link StringListProperty}.
  */
+@ExtendWith(MockitoExtension.class)
 class StringListPropertyTest {
 
     private static PropertyReader reader;
 
     @BeforeAll
-    @SuppressWarnings("unchecked")
     static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
-        // need to have the List objects unchecked so we satisfy the List<?> signature
-        List stringList = Arrays.asList("test1", "Test2", "3rd test");
-        when(reader.getList("list.path.test")).thenReturn(stringList);
-        when(reader.getList("list.path.wrong")).thenReturn(null);
-        List mixedList = Arrays.asList("test1", false, "toast", 1);
-        when(reader.getList("list.path.mixed")).thenReturn(mixedList);
+        List<String> stringList = Arrays.asList("test1", "Test2", "3rd test");
+        given(reader.getObject("list.path.test")).willReturn(stringList);
+        given(reader.getObject("list.path.wrong")).willReturn(null);
+        List<Object> mixedList = Arrays.asList("test1", false, "toast", 1);
+        given(reader.getObject("list.path.mixed")).willReturn(mixedList);
     }
 
     @Test
