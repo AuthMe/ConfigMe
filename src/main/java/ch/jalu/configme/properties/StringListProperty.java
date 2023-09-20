@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class StringListProperty extends ListProperty<String> {
 
-    public StringListProperty(@NotNull String path, @NotNull String... defaultValue) {
+    public StringListProperty(@NotNull String path, String @NotNull ... defaultValue) {
         super(path, StringType.STRING, defaultValue);
     }
 
