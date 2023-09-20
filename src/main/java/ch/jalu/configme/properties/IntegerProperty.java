@@ -9,6 +9,6 @@ import org.jetbrains.annotations.NotNull;
 public class IntegerProperty extends TypeBasedProperty<Integer> {
 
     public IntegerProperty(@NotNull String path, @NotNull Integer defaultValue) {
-        super(path, defaultValue, NumberType.INTEGER);
+        super(path, NumberType.INTEGER, defaultValue);
     }
 }

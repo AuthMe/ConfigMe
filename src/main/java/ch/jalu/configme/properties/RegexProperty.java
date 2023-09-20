@@ -19,7 +19,7 @@ public class RegexProperty extends TypeBasedProperty<Pattern> {
      * @param defaultValue the default value of the property
      */
     public RegexProperty(@NotNull String path, @NotNull Pattern defaultValue) {
-        super(path, defaultValue, RegexType.REGEX);
+        super(path, RegexType.REGEX, defaultValue);
     }
 
     /**

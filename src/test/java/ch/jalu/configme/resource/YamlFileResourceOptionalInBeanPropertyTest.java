@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.equalTo;
 class YamlFileResourceOptionalInBeanPropertyTest {
 
     private static BeanProperty<ComplexCommandConfig> commandConfigProperty = new BeanProperty<>(
-        ComplexCommandConfig.class, "commandconfig", new ComplexCommandConfig());
+        "commandconfig", ComplexCommandConfig.class, new ComplexCommandConfig());
 
     @TempDir
     public Path temporaryFolder;

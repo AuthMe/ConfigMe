@@ -161,7 +161,7 @@ class SettingsManagerImplTest {
     @Test
     void shouldAllowToSetBeanPropertyValue() {
         // given
-        BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>(WorldGroupConfig.class, "worlds", new WorldGroupConfig());
+        BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>("worlds", WorldGroupConfig.class, new WorldGroupConfig());
         PropertyResource resource = new YamlFileResource(copyFileFromResources("/beanmapper/worlds.yml", temporaryFolder));
         ConfigurationData configurationData = createConfiguration(Collections.singletonList(worldGroups));
         SettingsManager manager = new SettingsManagerImpl(resource, configurationData, null);
@@ -177,7 +177,7 @@ class SettingsManagerImplTest {
     @Test
     void shouldProperlySaveBeanPropertyValueSetAfterwards() {
         // given
-        BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>(WorldGroupConfig.class, "groups", new WorldGroupConfig());
+        BeanProperty<WorldGroupConfig> worldGroups = new BeanProperty<>("groups", WorldGroupConfig.class, new WorldGroupConfig());
         Path file = copyFileFromResources("/beanmapper/worlds.yml", temporaryFolder);
         ConfigurationData configurationData = createConfiguration(Collections.singletonList(worldGroups));
         SettingsManager manager = new SettingsManagerImpl(

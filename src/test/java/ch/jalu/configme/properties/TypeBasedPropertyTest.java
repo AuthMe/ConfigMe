@@ -28,7 +28,7 @@ class TypeBasedPropertyTest {
     @Test
     void shouldReturnValueFromResource() {
         // given
-        Property<String> property = new TypeBasedProperty<>("common.path", "default", StringType.STRING);
+        Property<String> property = new TypeBasedProperty<>("common.path", StringType.STRING, "default");
         given(reader.getObject("common.path")).willReturn("some string");
 
         // when / then
@@ -38,7 +38,7 @@ class TypeBasedPropertyTest {
     @Test
     void shouldReturnDefaultValue() {
         // given
-        Property<String> property = new TypeBasedProperty<>("common.path", "default", StringType.STRING);
+        Property<String> property = new TypeBasedProperty<>("common.path", StringType.STRING, "default");
 
         // when / then
         assertThat(property.determineValue(reader), isErrorValueOf("default"));
@@ -47,7 +47,7 @@ class TypeBasedPropertyTest {
     @Test
     void shouldReturnValueAsExportValue() {
         // given
-        Property<String> property = new TypeBasedProperty<>("common.path", "default", StringType.STRING);
+        Property<String> property = new TypeBasedProperty<>("common.path", StringType.STRING, "default");
         String given = "given string";
 
         // when / then
@@ -57,7 +57,7 @@ class TypeBasedPropertyTest {
     @Test
     void shouldReturnPropertyType() {
         // given
-        TypeBasedProperty<Integer> property = new TypeBasedProperty<>("common.size", 5, NumberType.INTEGER);
+        TypeBasedProperty<Integer> property = new TypeBasedProperty<>("common.size", NumberType.INTEGER, 5);
 
         // when
         PropertyType<Integer> type = property.getType();

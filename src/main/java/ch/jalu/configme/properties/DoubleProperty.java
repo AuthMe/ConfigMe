@@ -9,6 +9,6 @@ import org.jetbrains.annotations.NotNull;
 public class DoubleProperty extends TypeBasedProperty<Double> {
 
     public DoubleProperty(@NotNull String path, double defaultValue) {
-        super(path, defaultValue, NumberType.DOUBLE);
+        super(path, NumberType.DOUBLE, defaultValue);
     }
 }

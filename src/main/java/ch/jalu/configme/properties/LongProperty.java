@@ -9,6 +9,6 @@ import org.jetbrains.annotations.NotNull;
 public class LongProperty extends TypeBasedProperty<Long> {
 
     public LongProperty(@NotNull String path, @NotNull Long defaultValue) {
-        super(path, defaultValue, NumberType.LONG);
+        super(path, NumberType.LONG, defaultValue);
     }
 }

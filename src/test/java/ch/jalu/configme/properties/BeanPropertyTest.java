@@ -49,7 +49,7 @@ class BeanPropertyTest {
     void shouldExportPropertyAndReimport() {
         // given
         BeanProperty<CommandConfig> property =
-            new BeanProperty<>(CommandConfig.class, "commandconfig", new CommandConfig());
+            new BeanProperty<>("commandconfig", CommandConfig.class, new CommandConfig());
         Path configFile = copyFileFromResources("/beanmapper/commands.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(configFile);
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(singletonList(property));
@@ -78,7 +78,7 @@ class BeanPropertyTest {
     void shouldExportBeanPropertyAtRootProperly() {
         // given
         BeanProperty<CommandConfig> property =
-            new BeanProperty<>(CommandConfig.class, "", new CommandConfig());
+            new BeanProperty<>("", CommandConfig.class, new CommandConfig());
         Path configFile = copyFileFromResources("/beanmapper/commands_root_path.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(configFile);
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(singletonList(property));
@@ -104,7 +104,7 @@ class BeanPropertyTest {
         Mapper mapper = mock(Mapper.class);
         String path = "cnf";
         BeanProperty<WorldGroupConfig> property = new BeanProperty<>(
-            WorldGroupConfig.class, path, new WorldGroupConfig(), mapper);
+            path, WorldGroupConfig.class, new WorldGroupConfig(), mapper);
         PropertyReader reader = mock(PropertyReader.class);
         Object value = new Object();
         given(reader.getObject(path)).willReturn(value);
@@ -125,8 +125,8 @@ class BeanPropertyTest {
         TypeInfo comparableType = new TypeReference<Comparable<String>>() { };
 
         // when
-        BeanProperty<Comparable<String>> property = new BeanProperty<>(comparableType,
-            "path.test", "defaultValue", DefaultMapper.getInstance());
+        BeanProperty<Comparable<String>> property = new BeanProperty<>("path.test",
+            comparableType, "defaultValue", DefaultMapper.getInstance());
 
         // then
         assertThat(property.getDefaultValue(), equalTo("defaultValue"));
@@ -139,8 +139,8 @@ class BeanPropertyTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> new BeanProperty<>(comparableType,
-                "path.test", new HashMap<>(), DefaultMapper.getInstance()));
+            () -> new BeanProperty<>("path.test",
+                comparableType, new HashMap<>(), DefaultMapper.getInstance()));
 
         // then
         assertThat(ex.getMessage(),
@@ -154,8 +154,8 @@ class BeanPropertyTest {
 
         // when
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> new BeanProperty<>(wildcardType,
-                "path.test", new HashMap<>(), DefaultMapper.getInstance()));
+            () -> new BeanProperty<>("path.test",
+                wildcardType, new HashMap<>(), DefaultMapper.getInstance()));
 
         // then
         assertThat(ex.getMessage(),

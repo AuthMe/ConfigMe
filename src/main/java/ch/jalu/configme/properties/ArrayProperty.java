@@ -17,12 +17,12 @@ public class ArrayProperty<T> extends TypeBasedProperty<T[]> {
      * Constructor.
      *
      * @param path the path of the property
-     * @param defaultValue the default value of the property
      * @param entryType the property type the elements of the arrays have
      * @param arrayProducer array constructor (desired array size as argument)
+     * @param defaultValue the default value of the property
      */
-    public ArrayProperty(@NotNull String path, T @NotNull [] defaultValue, @NotNull PropertyType<T> entryType,
-                         @NotNull IntFunction<T[]> arrayProducer) {
+    public ArrayProperty(@NotNull String path, @NotNull PropertyType<T> entryType,
+                         @NotNull IntFunction<T[]> arrayProducer, T @NotNull [] defaultValue) {
         this(path, new ArrayPropertyType<>(entryType, arrayProducer), defaultValue);
     }
 

@@ -12,7 +12,7 @@ import java.util.Collections;
 public final class GroupPropertyHolder implements SettingsHolder {
 
     @Comment("Group configuration number")
-    public static final Property<Group> GROUP = new BeanProperty<>(Group.class, "", buildDefaultGroup());
+    public static final Property<Group> GROUP = new BeanProperty<>("", Group.class, buildDefaultGroup());
 
     private GroupPropertyHolder() {
     }
