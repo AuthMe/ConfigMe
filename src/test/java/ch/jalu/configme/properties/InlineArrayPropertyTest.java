@@ -24,8 +24,8 @@ class InlineArrayPropertyTest {
         // given
         BaseProperty<String[]> property = new InlineArrayProperty<>(
             "inline_value",
-            new String[] {"multiline", "message"},
-            InlineArrayPropertyType.STRING
+            InlineArrayPropertyType.STRING,
+            new String[] {"multiline", "message"}
         );
         PropertyReader reader = mock(PropertyReader.class);
         given(reader.getObject("inline_value")).willReturn("hello\nkek");
@@ -42,8 +42,8 @@ class InlineArrayPropertyTest {
         // given
         Property<String[]> property = new InlineArrayProperty<>(
             "array",
-            new String[] {},
-            InlineArrayPropertyType.STRING
+            InlineArrayPropertyType.STRING,
+            new String[] {}
         );
         String[] given = new String[] {"hello, chert", "how in hell?"};
 
@@ -55,7 +55,7 @@ class InlineArrayPropertyTest {
     void shouldLogErrorForFailedConversion() {
         // given
         String value = "3,four,5";
-        InlineArrayProperty<Integer> property = new InlineArrayProperty<>("path", new Integer[0], InlineArrayPropertyType.INTEGER);
+        InlineArrayProperty<Integer> property = new InlineArrayProperty<>("path", InlineArrayPropertyType.INTEGER,  new Integer[0]);
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
         PropertyReader reader = mock(PropertyReader.class);
         given(reader.getObject("path")).willReturn(value);

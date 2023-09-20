@@ -51,7 +51,7 @@ public class ArrayPropertyBuilder<E, P extends Property<E[]>> {
                                                                               @NotNull PropertyType<E> entryType,
                                                                               @NotNull IntFunction<E[]> arrayProducer) {
         return new ArrayPropertyBuilder<>(
-            (path, defVal) -> new ArrayProperty<>(path, defVal, entryType, arrayProducer),
+            (path, defVal) -> new ArrayProperty<>(path, entryType, arrayProducer, defVal),
             arrayProducer);
     }
 
@@ -97,7 +97,7 @@ public class ArrayPropertyBuilder<E, P extends Property<E[]>> {
     public static <E> @NotNull ArrayPropertyBuilder<E, InlineArrayProperty<E>> inlineArrayBuilder(
                                                                   @NotNull InlineArrayPropertyType<E> inlineArrayType) {
         return new ArrayPropertyBuilder<>(
-            (String path, E[] defVal) -> new InlineArrayProperty<>(path, defVal, inlineArrayType),
+            (String path, E[] defVal) -> new InlineArrayProperty<>(path, inlineArrayType, defVal),
             inlineArrayType.getArrayProducer());
     }
 

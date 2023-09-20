@@ -36,7 +36,7 @@ public class ListProperty<E> extends TypeBasedProperty<List<E>> {
      * @param defaultValue the default value of the property
      */
     public ListProperty(@NotNull String path, @NotNull PropertyType<E> entryType, @NotNull List<E> defaultValue) {
-        super(path, Collections.unmodifiableList(defaultValue), new ListPropertyType<>(entryType));
+        super(path, new ListPropertyType<>(entryType), Collections.unmodifiableList(defaultValue));
     }
 
     /**
@@ -49,7 +49,7 @@ public class ListProperty<E> extends TypeBasedProperty<List<E>> {
     // Constructor arguments are usually (path, type, defaultValue), but this is not possible here because there
     // are other constructors with the same argument order.
     protected ListProperty(@NotNull PropertyType<List<E>> type, @NotNull String path, @NotNull List<E> defaultValue) {
-        super(path, Collections.unmodifiableList(defaultValue), type);
+        super(path, type, Collections.unmodifiableList(defaultValue));
     }
 
     /**

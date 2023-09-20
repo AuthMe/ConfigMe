@@ -37,9 +37,8 @@ class ArrayPropertyTest {
     void shouldReturnNullForNonCollectionTypes() {
         // given
         ArrayProperty<String> property = new ArrayProperty<>(
-            "singleton",
-            StringType.STRING,
-            new String[] {"multiline", "message"}, String[]::new);
+            "singleton", StringType.STRING.arrayType(),
+            "multiline", "message");
 
         given(reader.getObject("singleton")).willReturn("hello");
 
@@ -54,9 +53,8 @@ class ArrayPropertyTest {
     void shouldHandleNull() {
         // given
         ArrayProperty<String> property = new ArrayProperty<>(
-            "singleton",
-            StringType.STRING,
-            new String[] {"multiline", "message"}, String[]::new);
+            "singleton", StringType.STRING, String[]::new,
+            new String[] {"multiline", "message"});
 
         given(reader.getObject("singleton")).willReturn(null);
 
@@ -71,9 +69,8 @@ class ArrayPropertyTest {
     void shouldReturnArrayFromResource() {
         // given
         Property<String[]> property = new ArrayProperty<>(
-            "array",
-            StringType.STRING,
-            new String[] {"multiline", "message"}, String[]::new);
+            "array", StringType.STRING, String[]::new,
+            new String[] {"multiline", "message"});
         given(reader.getObject("array")).willReturn(Arrays.asList("qwerty", "123"));
 
         // when
@@ -87,9 +84,8 @@ class ArrayPropertyTest {
     void shouldReturnDefaultValue() {
         // given
         Property<String[]> property = new ArrayProperty<>(
-            "array",
-            StringType.STRING,
-            new String[] {"multiline", "message c:"}, String[]::new);
+            "array", StringType.STRING, String[]::new,
+            new String[] {"multiline", "message c:"});
 
         given(reader.getObject("array")).willReturn(null);
 
@@ -104,9 +100,8 @@ class ArrayPropertyTest {
     void shouldReturnValueAsExportValue() {
         // given
         Property<String[]> property = new ArrayProperty<>(
-            "array",
-            StringType.STRING,
-            new String[] {}, String[]::new);
+            "array", StringType.STRING, String[]::new,
+            new String[] {});
 
         String[] givenArray = new String[] {"hello, chert", "how in hell?"};
 

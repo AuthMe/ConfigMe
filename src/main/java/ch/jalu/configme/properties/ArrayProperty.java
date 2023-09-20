@@ -35,6 +35,6 @@ public class ArrayProperty<T> extends TypeBasedProperty<T[]> {
      */
     @SafeVarargs
     public ArrayProperty(@NotNull String path, @NotNull PropertyType<T[]> type, T @NotNull ... defaultValue) {
-        super(path, defaultValue, type);
+        super(path, type, defaultValue);
     }
 }

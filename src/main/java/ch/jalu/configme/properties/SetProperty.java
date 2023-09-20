@@ -39,7 +39,7 @@ public class SetProperty<E> extends TypeBasedProperty<Set<E>> {
      * @param defaultValue the default value of the property
      */
     public SetProperty(@NotNull String path, @NotNull PropertyType<E> entryType, @NotNull Set<E> defaultValue) {
-        super(path, Collections.unmodifiableSet(defaultValue), new SetPropertyType<>(entryType));
+        super(path, new SetPropertyType<>(entryType), Collections.unmodifiableSet(defaultValue));
     }
 
     /**
@@ -52,7 +52,7 @@ public class SetProperty<E> extends TypeBasedProperty<Set<E>> {
     // Constructor arguments are usually (path, type, defaultValue), but this is not possible here because there
     // are other constructors with the same argument order.
     protected SetProperty(@NotNull PropertyType<Set<E>> type, @NotNull String path, @NotNull Set<E> defaultValue) {
-        super(path, Collections.unmodifiableSet(defaultValue), type);
+        super(path, type, Collections.unmodifiableSet(defaultValue));
     }
 
     /**

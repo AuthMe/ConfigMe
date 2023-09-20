@@ -43,7 +43,7 @@ public class MapPropertyBuilder<V, M extends Map<String, V>, P extends Property<
     public static <V> @NotNull MapPropertyBuilder<V, Map<String, V>, MapProperty<V>> mapBuilder(
                                                                                    @NotNull PropertyType<V> valueType) {
         return new MapPropertyBuilder<>(
-            (path, defVal) -> new MapProperty<>(path, defVal, valueType),
+            (path, defVal) -> new MapProperty<>(path, valueType, defVal),
             new LinkedHashMap<>());
     }
 
