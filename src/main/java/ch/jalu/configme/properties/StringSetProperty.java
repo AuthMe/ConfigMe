@@ -1,12 +1,13 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.StringType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 /**
- * String set property. The sets are immutable.
+ * String set property. The default value is immutable. The encounter order of the default value and
+ * the constructed values is preserved.
  */
 public class StringSetProperty extends SetProperty<String> {
 
@@ -17,7 +18,7 @@ public class StringSetProperty extends SetProperty<String> {
      * @param defaultValue the values that make up the entries of the default set
      */
     public StringSetProperty(@NotNull String path, @NotNull String @NotNull... defaultValue) {
-        super(path, PrimitivePropertyType.STRING, defaultValue);
+        super(path, StringType.STRING, defaultValue);
     }
 
     /**
@@ -27,11 +28,6 @@ public class StringSetProperty extends SetProperty<String> {
      * @param defaultValue the values that make up the entries of the default set
      */
     public StringSetProperty(@NotNull String path, @NotNull Set<String> defaultValue) {
-        super(path, PrimitivePropertyType.STRING, defaultValue);
-    }
-
-    @Override
-    public @NotNull Object toExportValue(@NotNull Set<String> value) {
-        return value;
+        super(path, StringType.STRING, defaultValue);
     }
 }

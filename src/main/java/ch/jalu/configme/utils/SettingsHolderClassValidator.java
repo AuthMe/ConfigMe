@@ -7,9 +7,10 @@ import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.typeresolver.EnumUtils;
 import org.jetbrains.annotations.NotNull;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -31,6 +32,8 @@ import java.util.stream.Stream;
  * individual validation methods separately.
  */
 public class SettingsHolderClassValidator {
+
+    private static final int DEFAULT_MAX_COMMENTS_LENGTH = 90;
 
     // ---- Main validation methods (with default settings)
 
@@ -62,7 +65,7 @@ public class SettingsHolderClassValidator {
         // no properties have overlapping paths
         ConfigurationData configurationData = createConfigurationData(settingHolders);
         validateHasCommentOnEveryProperty(configurationData, null);
-        validateCommentLengthsAreWithinBounds(configurationData, null, 90);
+        validateCommentLengthsAreWithinBounds(configurationData, null, DEFAULT_MAX_COMMENTS_LENGTH);
         validateHasAllEnumEntriesInComment(configurationData, null);
     }
 
@@ -294,14 +297,9 @@ public class SettingsHolderClassValidator {
      * @param property the property to process
      * @return the enum type it wraps, or null if not applicable
      */
-    @SuppressWarnings("unchecked")
     protected @Nullable Class<? extends Enum<?>> getEnumTypeOfProperty(@NotNull Property<?> property) {
         Class<?> defaultValueType = property.getDefaultValue().getClass();
-        if (defaultValueType.isAnonymousClass()) {
-            // If an enum entry implements methods, it is an anonymous class -> we're interested in the enclosing class
-            defaultValueType = defaultValueType.getEnclosingClass();
-        }
-        return defaultValueType.isEnum() ? (Class<? extends Enum<?>>) defaultValueType : null;
+        return EnumUtils.getAssociatedEnumType(defaultValueType).orElse(null);
     }
 
     protected @NotNull List<String> gatherExpectedEnumNames(@NotNull Class<? extends Enum<?>> enumClass) {

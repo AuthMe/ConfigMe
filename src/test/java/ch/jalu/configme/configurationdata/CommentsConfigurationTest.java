@@ -11,6 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for {@link CommentsConfiguration}.
@@ -18,16 +19,34 @@ import static org.hamcrest.Matchers.equalTo;
 class CommentsConfigurationTest {
 
     @Test
-    void shouldOverrideExistingComment() {
+    void shouldThrowForExistingComment() {
+        // given
+        final String path = "config.me"; 
+        CommentsConfiguration conf = new CommentsConfiguration();
+        conf.setComment(path, "Old", "Comments", "1", "2", "3");
+        
+        // when
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> conf.setComment(path, "New Comment"));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Comments for path 'config.me' have already been registered. Use @Comment on a property field, or one call to CommentsConfiguration#setComment per path"));
+        assertThat(conf.getAllComments().keySet(), contains(path));
+        assertThat(conf.getAllComments().get(path), contains("New Comment"));
+    }
+
+    @Test
+    void shouldReplaceCommentAndThrowException() {
         // given
         CommentsConfiguration conf = new CommentsConfiguration();
         conf.setComment("com.acme", "Acme comment test");
         conf.setComment("other.path", "Some other", "path I am", "adding");
 
         // when
-        conf.setComment("com.acme", "Acme new comment", "1, 2, 3");
+        IllegalStateException ex = assertThrows(IllegalStateException.class, ()-> conf.setComment("com.acme", "Acme new comment", "1, 2, 3"));
 
         // then
+        assertThat(ex.getMessage(), equalTo("Comments for path 'com.acme' have already been registered. Use @Comment on a property field, or one call to CommentsConfiguration#setComment per path"));
+
         Map<String, List<String>> allComments = conf.getAllComments();
         assertThat(allComments.keySet(), containsInAnyOrder("com.acme", "other.path"));
         assertThat(allComments.get("com.acme"), contains("Acme new comment", "1, 2, 3"));

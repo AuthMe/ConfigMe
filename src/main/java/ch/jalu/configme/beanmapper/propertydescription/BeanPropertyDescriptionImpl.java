@@ -1,7 +1,7 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
 
     private final String name;
-    private final TypeInformation typeInformation;
+    private final TypeInfo typeInformation;
     private final Method getter;
     private final Method setter;
     private final BeanPropertyComments comments;
@@ -26,23 +26,9 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
      * @param typeInformation type of the property
      * @param getter getter for the property
      * @param setter setter for the property
-     */
-    @Deprecated // Will be removed in ConfigMe 2.0. Use the constructor with the 'comments' argument.
-    public BeanPropertyDescriptionImpl(@NotNull String name, @NotNull TypeInformation typeInformation,
-                                       @NotNull Method getter, @NotNull Method setter) {
-        this(name, typeInformation, getter, setter, BeanPropertyComments.EMPTY);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param name name of the property in the export
-     * @param typeInformation type of the property
-     * @param getter getter for the property
-     * @param setter setter for the property
      * @param comments the comments of the property
      */
-    public BeanPropertyDescriptionImpl(@NotNull String name, @NotNull TypeInformation typeInformation,
+    public BeanPropertyDescriptionImpl(@NotNull String name, @NotNull TypeInfo typeInformation,
                                        @NotNull Method getter, @NotNull Method setter,
                                        @NotNull BeanPropertyComments comments) {
         this.name = name;
@@ -58,7 +44,7 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
     }
 
     @Override
-    public @NotNull TypeInformation getTypeInformation() {
+    public @NotNull TypeInfo getTypeInformation() {
         return typeInformation;
     }
 

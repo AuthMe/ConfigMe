@@ -4,6 +4,8 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.regex.Pattern;
 
@@ -16,6 +18,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link RegexProperty}.
  */
+@ExtendWith(MockitoExtension.class)
 class RegexPropertyTest {
 
     @Test
@@ -35,7 +38,7 @@ class RegexPropertyTest {
         // given
         RegexProperty property = new RegexProperty("names.whitelist", "s_.*?");
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getString("names.whitelist")).willReturn("m[0-9]+");
+        given(reader.getObject("names.whitelist")).willReturn("m[0-9]+");
         ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -50,7 +53,7 @@ class RegexPropertyTest {
         // given
         RegexProperty property = new RegexProperty("names.whitelist", "s_.*?");
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getString("names.whitelist")).willReturn(null);
+        given(reader.getObject("names.whitelist")).willReturn(null);
         ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -65,7 +68,7 @@ class RegexPropertyTest {
         // given
         RegexProperty property = new RegexProperty("names.whitelist", "s_.*?");
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getString("names.whitelist")).willReturn("m[0-9+");
+        given(reader.getObject("names.whitelist")).willReturn("m[0-9+");
         ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorder();
 
         // when

@@ -132,8 +132,8 @@ class UniqueCommentTest {
 
         public static final Property<Map<String, ServerCollection>> WORLDS =
             new MapProperty<>("worlds",
-                createDefaultWorldsMap(),
-                BeanPropertyType.of(ServerCollection.class));
+                BeanPropertyType.of(ServerCollection.class),
+                createDefaultWorldsMap());
 
         public static final Property<List<ServerCollection>> AUTH_GROUPS =
             new ListProperty<>("auth",
@@ -141,7 +141,7 @@ class UniqueCommentTest {
                 new ServerCollection(true, "reception"), new ServerCollection(false, "lobby"));
 
         public static final Property<Optional<ServerCollection>> ALT =
-            new OptionalProperty<>(new BeanProperty<>(ServerCollection.class, "alternative", new ServerCollection()));
+            new OptionalProperty<>(new BeanProperty<>("alternative", ServerCollection.class, new ServerCollection()));
 
         private ServerSettingHolder() {
         }

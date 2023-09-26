@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class EnumProperty<E extends Enum<E>> extends TypeBasedProperty<E> {
 
-    public EnumProperty(@NotNull Class<E> clazz, @NotNull String path, @NotNull E defaultValue) {
-        super(path, defaultValue, EnumPropertyType.of(clazz));
+    public EnumProperty(@NotNull String path, @NotNull Class<E> clazz, @NotNull E defaultValue) {
+        super(path, EnumPropertyType.of(clazz), defaultValue);
     }
 }

@@ -138,7 +138,7 @@ class YamlFileResourceCommentsExportTest {
     public static final class RootPropertyHolder implements SettingsHolder {
 
         public static final Property<Command> COMMAND = new BeanWithExportCommentProperty<>(
-            Command.class, "", new Command(), "By default, help is run");
+            "", Command.class, new Command(), "By default, help is run");
 
         private RootPropertyHolder() {
         }
@@ -153,7 +153,7 @@ class YamlFileResourceCommentsExportTest {
 
         @Comment({"Command to run", "\n", "Don't forget to save!"})
         public static final Property<Command> COMMAND2 = new BeanWithExportCommentProperty<>(
-            Command.class, "", new Command(), "This command is run on startup");
+            "", Command.class, new Command(), "This command is run on startup");
 
         private RootPropertyHolder2() {
         }
@@ -164,9 +164,9 @@ class YamlFileResourceCommentsExportTest {
 
         private final String comment;
 
-        public BeanWithExportCommentProperty(@NotNull Class<T> beanType, @NotNull String path, @NotNull T defaultValue,
+        public BeanWithExportCommentProperty(@NotNull String path, @NotNull Class<T> beanType, @NotNull T defaultValue,
                                              @NotNull String comment) {
-            super(beanType, path, defaultValue);
+            super(path, beanType, defaultValue);
             this.comment = comment;
         }
 

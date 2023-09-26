@@ -12,6 +12,8 @@ import java.util.Optional;
  * <p>
  * Wraps another property with an {@link Optional}: if a property is not present in the property resource,
  * {@link Optional#empty} is returned.
+ *
+ * @param <T> the type of value
  */
 public class OptionalProperty<T> implements Property<Optional<T>> {
 

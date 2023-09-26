@@ -145,8 +145,8 @@ public class VersionMigrationService implements MigrationService {
      * @param migrations the migrations to validate and group
      * @return map with all migrations by the migration's start version
      */
-    protected Map<Integer, VersionMigration> validateAndGroupMigrationsByFromVersion(
-                                                                                Iterable<VersionMigration> migrations) {
+    protected @NotNull Map<Integer, VersionMigration> validateAndGroupMigrationsByFromVersion(
+                                                                       @NotNull Iterable<VersionMigration> migrations) {
         Map<Integer, VersionMigration> migrationsByStartVersion = new HashMap<>();
         for (VersionMigration migration : migrations) {
             validateVersions(migration);
@@ -165,7 +165,7 @@ public class VersionMigrationService implements MigrationService {
      *
      * @param migration the migration to validate
      */
-    protected void validateVersions(VersionMigration migration) {
+    protected void validateVersions(@NotNull VersionMigration migration) {
         if (migration.targetVersion() > versionProperty.getDefaultValue()) {
             throw new IllegalArgumentException("The migration from version " + migration.fromVersion() + " to version "
                 + migration.targetVersion() + " has an invalid target version. Current configuration version is: "

@@ -35,7 +35,7 @@ class YamlFileResourceTopCommentTest {
     @Test
     void shouldIncludeCommentFromAnnotation() throws IOException {
         // given
-        PropertyResource resource = new YamlFileResource(file.toFile());
+        PropertyResource resource = new YamlFileResource(file);
 
         // when
         SettingsManagerBuilder.withResource(resource)
@@ -55,7 +55,7 @@ class YamlFileResourceTopCommentTest {
     @Test
     void shouldIncludeRootCommentFromSectionCommentsMethod() throws IOException {
         // given
-        PropertyResource resource = new YamlFileResource(file.toFile());
+        PropertyResource resource = new YamlFileResource(file);
 
         // when
         SettingsManagerBuilder.withResource(resource)

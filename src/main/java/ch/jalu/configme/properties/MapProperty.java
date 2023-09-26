@@ -19,19 +19,19 @@ import java.util.Objects;
  */
 public class MapProperty<V> extends BaseProperty<Map<String, V>> {
 
-    private final PropertyType<V> type;
+    private final PropertyType<V> valueType;
 
     /**
      * Constructor.
      *
      * @param path the path of the property
+     * @param valueType the property type of the values
      * @param defaultValue the default value of the property
-     * @param type the property type of the values
      */
-    public MapProperty(@NotNull String path, @NotNull Map<String, V> defaultValue, @NotNull PropertyType<V> type) {
+    public MapProperty(@NotNull String path, @NotNull PropertyType<V> valueType, @NotNull Map<String, V> defaultValue) {
         super(path, Collections.unmodifiableMap(defaultValue));
-        Objects.requireNonNull(type, "type");
-        this.type = type;
+        Objects.requireNonNull(valueType, "valueType");
+        this.valueType = valueType;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
 
         for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
             String path = entry.getKey().toString();
-            V value = type.convert(entry.getValue(), errorRecorder);
+            V value = valueType.convert(entry.getValue(), errorRecorder);
 
             if (value != null) {
                 map.put(path, value);
@@ -63,7 +63,7 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
         Map<String, Object> exportMap = new LinkedHashMap<>();
 
         for (Map.Entry<String, V> entry : value.entrySet()) {
-            exportMap.put(entry.getKey(), type.toExportValue(entry.getValue()));
+            exportMap.put(entry.getKey(), valueType.toExportValue(entry.getValue()));
         }
 
         return exportMap;

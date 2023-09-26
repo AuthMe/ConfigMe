@@ -1,6 +1,14 @@
 # ConfigMe Changelog
 
 ## ConfigMe 1.x
+#### 1.4.1 (2023-08-28)
+- `@ExportName` can be added on bean fields (previously, it was only possible on accessor methods) ([#366](https://github.com/AuthMe/ConfigMe/issues/366))
+- Bug fix: unique comment is repeated if it's in a MapProperty, ListProperty or similar ([#362](https://github.com/AuthMe/ConfigMe/issues/362))
+- Bug fix: Property at root path `""` could be defined with other properties ([#363](https://github.com/AuthMe/ConfigMe/issues/363))
+- Add getter for property type in TypeBasedProperty ([#333](https://github.com/AuthMe/ConfigMe/issues/333))
+
+:blue_book: [All changes in 1.4.1](https://github.com/AuthMe/ConfigMe/milestone/16?closed=1)
+
 #### 1.4.0 (2023-08-12)
 - Annotated all methods with `@NotNull` and `@Nullable` for better type inference in Kotlin ([#235](https://github.com/AuthMe/ConfigMe/pull/235), [#318](https://github.com/AuthMe/ConfigMe/issues/318))
 - Support `@Comment` on fields of bean properties ([#18](https://github.com/AuthMe/ConfigMe/issues/18))

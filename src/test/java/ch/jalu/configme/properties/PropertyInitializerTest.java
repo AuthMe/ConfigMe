@@ -1,8 +1,13 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
-import ch.jalu.configme.properties.inlinearray.StandardInlineArrayConverters;
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.builder.ArrayPropertyBuilder;
+import ch.jalu.configme.properties.builder.CollectionPropertyBuilder;
+import ch.jalu.configme.properties.builder.MapPropertyBuilder;
+import ch.jalu.configme.properties.types.BooleanType;
+import ch.jalu.configme.properties.types.InlineArrayPropertyType;
+import ch.jalu.configme.properties.types.NumberType;
+import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +37,6 @@ import static ch.jalu.configme.properties.PropertyInitializer.optionalSetPropert
 import static ch.jalu.configme.properties.PropertyInitializer.optionalShortProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalStringProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.setProperty;
-import static ch.jalu.configme.properties.PropertyInitializer.typeBasedProperty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 
@@ -76,12 +80,12 @@ class PropertyInitializerTest {
 
     @Test
     void shouldInstantiateBuilders() {
-        assertThat(typeBasedProperty(PrimitivePropertyType.STRING), instanceOf(PropertyBuilder.TypeBasedPropertyBuilder.class));
-        assertThat(listProperty(PrimitivePropertyType.INTEGER), instanceOf(PropertyBuilder.ListPropertyBuilder.class));
-        assertThat(setProperty(PrimitivePropertyType.FLOAT), instanceOf(PropertyBuilder.SetPropertyBuilder.class));
-        assertThat(mapProperty(PrimitivePropertyType.DOUBLE), instanceOf(PropertyBuilder.MapPropertyBuilder.class));
-        assertThat(arrayProperty(PrimitivePropertyType.BOOLEAN, Boolean[]::new), instanceOf(PropertyBuilder.ArrayPropertyBuilder.class));
-        assertThat(inlineArrayProperty(StandardInlineArrayConverters.FLOAT), instanceOf(PropertyBuilder.InlineArrayPropertyBuilder.class));
+        assertThat(listProperty(NumberType.INTEGER), instanceOf(CollectionPropertyBuilder.class));
+        assertThat(setProperty(NumberType.FLOAT), instanceOf(CollectionPropertyBuilder.class));
+        assertThat(mapProperty(NumberType.DOUBLE), instanceOf(MapPropertyBuilder.class));
+        assertThat(arrayProperty(BooleanType.BOOLEAN, Boolean[]::new), instanceOf(ArrayPropertyBuilder.class));
+        assertThat(arrayProperty(StringType.STRING.arrayType()), instanceOf(ArrayPropertyBuilder.class));
+        assertThat(inlineArrayProperty(InlineArrayPropertyType.FLOAT), instanceOf(ArrayPropertyBuilder.class));
     }
 
     @Test

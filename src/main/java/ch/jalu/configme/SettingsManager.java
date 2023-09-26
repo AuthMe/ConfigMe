@@ -38,7 +38,7 @@ public interface SettingsManager {
     <T> void setProperty(@NotNull Property<T> property, @NotNull T value);
 
     /**
-     * Reloads the configuration.
+     * Reloads the configuration from the property resource.
      */
     void reload();
 

@@ -2,7 +2,8 @@ package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
-import ch.jalu.configme.properties.types.PrimitivePropertyType;
+import ch.jalu.configme.properties.types.PropertyType;
+import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,13 +11,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static ch.jalu.configme.TestUtils.isErrorValueOf;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContaining;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link ArrayProperty}.
@@ -28,12 +34,11 @@ class ArrayPropertyTest {
     private PropertyReader reader;
 
     @Test
-    void shouldReturnNullFornonCollectionTypes() {
+    void shouldReturnNullForNonCollectionTypes() {
         // given
         ArrayProperty<String> property = new ArrayProperty<>(
-            "singleton",
-            new String[] {"multiline", "message"},
-            PrimitivePropertyType.STRING, String[]::new);
+            "singleton", StringType.STRING.arrayType(),
+            "multiline", "message");
 
         given(reader.getObject("singleton")).willReturn("hello");
 
@@ -47,11 +52,9 @@ class ArrayPropertyTest {
     @Test
     void shouldHandleNull() {
         // given
-        // given
         ArrayProperty<String> property = new ArrayProperty<>(
-            "singleton",
-            new String[] {"multiline", "message"},
-            PrimitivePropertyType.STRING, String[]::new);
+            "singleton", StringType.STRING, String[]::new,
+            new String[] {"multiline", "message"});
 
         given(reader.getObject("singleton")).willReturn(null);
 
@@ -66,9 +69,8 @@ class ArrayPropertyTest {
     void shouldReturnArrayFromResource() {
         // given
         Property<String[]> property = new ArrayProperty<>(
-            "array",
-            new String[] {"multiline", "message"},
-            PrimitivePropertyType.STRING, String[]::new);
+            "array", StringType.STRING, String[]::new,
+            new String[] {"multiline", "message"});
         given(reader.getObject("array")).willReturn(Arrays.asList("qwerty", "123"));
 
         // when
@@ -82,9 +84,8 @@ class ArrayPropertyTest {
     void shouldReturnDefaultValue() {
         // given
         Property<String[]> property = new ArrayProperty<>(
-            "array",
-            new String[] {"multiline", "message c:"},
-            PrimitivePropertyType.STRING, String[]::new);
+            "array", StringType.STRING, String[]::new,
+            new String[] {"multiline", "message c:"});
 
         given(reader.getObject("array")).willReturn(null);
 
@@ -99,13 +100,37 @@ class ArrayPropertyTest {
     void shouldReturnValueAsExportValue() {
         // given
         Property<String[]> property = new ArrayProperty<>(
-            "array",
-            new String[] {},
-            PrimitivePropertyType.STRING, String[]::new);
+            "array", StringType.STRING, String[]::new,
+            new String[] {});
 
         String[] givenArray = new String[] {"hello, chert", "how in hell?"};
 
-        // when / then
-        assertThat(property.toExportValue(givenArray), equalTo(givenArray));
+        // when
+        Object exportValue = property.toExportValue(givenArray);
+
+        // then
+        assertThat(exportValue, instanceOf(List.class));
+        assertThat((List<?>) exportValue, contains(givenArray));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldCreatePropertyWithCustomArrayType() {
+        // given
+        String path = "engine.probabilities";
+        PropertyType<Integer[]> intArrayType = mock(PropertyType.class);
+
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        String value = "test";
+        given(intArrayType.convert(value, errorRecorder)).willReturn(new Integer[]{3, 4});
+        given(reader.getObject(path)).willReturn(value);
+
+        // when
+        ArrayProperty<Integer> property = new ArrayProperty<>(path, intArrayType, 3, 8);
+
+        // then
+        assertThat(property.getPath(), equalTo(path));
+        assertThat(property.getDefaultValue(), arrayContaining(3, 8));
+        assertThat(property.getFromReader(reader, errorRecorder), arrayContaining(3, 4));
     }
 }

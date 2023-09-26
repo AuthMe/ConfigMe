@@ -11,9 +11,10 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.TestConfiguration;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -40,12 +41,12 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link YamlFileResource}.
  */
+@ExtendWith(MockitoExtension.class)
 class YamlFileResourceTest {
 
     private static final String COMPLETE_FILE = "/config-sample.yml";
@@ -137,7 +138,7 @@ class YamlFileResourceTest {
         // given
         Path file = temporaryFolder.resolve("file");
         Files.createFile(file);
-        YamlFileResource resource = new YamlFileResource(file.toFile());
+        YamlFileResource resource = new YamlFileResource(file);
 
         // when
         PropertyReader readerBeforeCopy = resource.createReader();
@@ -246,7 +247,7 @@ class YamlFileResourceTest {
         YamlFileResource resource = new YamlFileResource(file);
 
         Property<CommandConfig> commandConfigProperty =
-            new BeanProperty<>(CommandConfig.class, "config", new CommandConfig());
+            new BeanProperty<>("config", CommandConfig.class, new CommandConfig());
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(singletonList(commandConfigProperty));
         configurationData.setValue(commandConfigProperty, config);
 
@@ -319,19 +320,15 @@ class YamlFileResourceTest {
     void shouldReturnFieldsOfResource() {
         // given
         Path configFile = mock(Path.class);
-        File givenFile = mock(File.class);
-        given(configFile.toFile()).willReturn(givenFile);
         YamlFileResourceOptions options = mock(YamlFileResourceOptions.class);
         YamlFileResource resource = new YamlFileResource(configFile, options);
 
         // when
         Path returnedPath = resource.getPath();
-        File returnedFile = resource.getFile();
         YamlFileResourceOptions returnedOptions = resource.getOptions();
 
         // then
         assertThat(returnedPath, sameInstance(configFile));
-        assertThat(returnedFile, sameInstance(givenFile));
         assertThat(returnedOptions, sameInstance(options));
     }
 

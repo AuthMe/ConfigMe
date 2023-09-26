@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ch.jalu.configme.TestUtils.transform;
 import static java.util.Collections.singletonList;
@@ -85,8 +86,10 @@ class YamlSetPropertyExportTest {
         }
 
         @Override
-        public List<String> toExportValue(@NotNull Set<TestEnum> value) {
-            return transform(value, Enum::name);
+        public Set<String> toExportValue(@NotNull Set<TestEnum> value) {
+            return value.stream()
+                .map(Enum::name)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         }
     }
 }

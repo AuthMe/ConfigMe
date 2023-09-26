@@ -25,9 +25,11 @@ checks:
     enabled: false
   return-statements:
     enabled: false
-  # Let's give those last two a try since there's no Checkstyle equivalent
+
+  # No Checkstyle equivalent, but it keeps reporting false positives because of similar constructors and imports
   similar-code:
-    enabled: true
+    enabled: false
+  # No Checkstyle equivalent, so enabled as long as it's not full of false positives
   identical-code:
     enabled: true
 

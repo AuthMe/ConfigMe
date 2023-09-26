@@ -18,6 +18,8 @@ hs_err_pid*
 
 # Ignore IDEA directory
 .idea/*
+!.idea/vcs.xml
+!.idea/checkstyle-idea.xml
 
 # File-based project format:
 *.ipr

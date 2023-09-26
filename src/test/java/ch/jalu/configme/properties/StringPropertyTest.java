@@ -3,6 +3,8 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,6 +15,7 @@ import static org.mockito.Mockito.when;
 /**
  * Test for {@link StringProperty}.
  */
+@ExtendWith(MockitoExtension.class)
 class StringPropertyTest {
 
     private static PropertyReader reader;

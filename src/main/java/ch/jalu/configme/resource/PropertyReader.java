@@ -5,6 +5,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * A property reader provides values from a resource (e.g. a YAML file) based on whose data the values of properties
+ * are determined. Property readers typically provide a snapshot of the file's contents, i.e. their values are not
+ * updated if the underlying file changes.
+ */
 public interface PropertyReader {
 
     /**

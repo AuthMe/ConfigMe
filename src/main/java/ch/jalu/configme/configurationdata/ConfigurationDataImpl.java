@@ -43,7 +43,7 @@ public class ConfigurationDataImpl implements ConfigurationData {
     }
 
     @Override
-    public @NotNull List<String> getCommentsForSection(String path) {
+    public @NotNull List<String> getCommentsForSection(@NotNull String path) {
         return allComments.getOrDefault(path, Collections.emptyList());
     }
 

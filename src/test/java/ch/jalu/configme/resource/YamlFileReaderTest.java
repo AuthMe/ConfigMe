@@ -6,10 +6,11 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.TestConfiguration;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -37,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Test for {@link YamlFileReader}.
  */
+@ExtendWith(MockitoExtension.class)
 class YamlFileReaderTest {
 
     private static final String COMPLETE_FILE = "/config-sample.yml";
@@ -181,7 +183,7 @@ class YamlFileReaderTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> new YamlFileReader(file.toFile()));
+            () -> new YamlFileReader(file));
 
         // then
         assertThat(ex.getMessage(), equalTo("YAML error while trying to load file '" + file + "'"));
@@ -196,11 +198,9 @@ class YamlFileReaderTest {
 
         // when
         Path result = reader.getPath();
-        File resultFile = reader.getFile();
 
         // then
         assertThat(result, sameInstance(configFile));
-        assertThat(resultFile, equalTo(configFile.toFile()));
         assertThat(reader.getRoot(), nullValue());
         assertThat(reader.getKeys(true), empty());
         assertThat(reader.getChildKeys(""), empty());

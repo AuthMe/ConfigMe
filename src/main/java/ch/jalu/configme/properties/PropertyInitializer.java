@@ -1,11 +1,16 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.inlinearray.InlineArrayConverter;
+import ch.jalu.configme.properties.builder.ArrayPropertyBuilder;
+import ch.jalu.configme.properties.builder.CollectionPropertyBuilder;
+import ch.jalu.configme.properties.builder.MapPropertyBuilder;
+import ch.jalu.configme.properties.types.ArrayPropertyType;
+import ch.jalu.configme.properties.types.InlineArrayPropertyType;
 import ch.jalu.configme.properties.types.PropertyType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.regex.Pattern;
@@ -113,7 +118,7 @@ public class PropertyInitializer {
     public static <E extends Enum<E>> @NotNull EnumProperty<E> newProperty(@NotNull Class<E> clazz,
                                                                            @NotNull String path,
                                                                            @NotNull E defaultValue) {
-        return new EnumProperty<>(clazz, path, defaultValue);
+        return new EnumProperty<>(path, clazz, defaultValue);
     }
 
     /**
@@ -215,15 +220,15 @@ public class PropertyInitializer {
     /**
      * Creates a new bean property.
      *
-     * @param beanClass the JavaBean class
      * @param path the property's path
+     * @param beanClass the JavaBean class
      * @param defaultValue default value
      * @param <B> the bean type
      * @return the created bean property
      */
     public static <B> @NotNull BeanProperty<B> newBeanProperty(@NotNull Class<B> beanClass, @NotNull String path,
                                                                @NotNull B defaultValue) {
-        return new BeanProperty<>(beanClass, path, defaultValue);
+        return new BeanProperty<>(path, beanClass, defaultValue);
     }
 
     // --------------
@@ -231,35 +236,36 @@ public class PropertyInitializer {
     // --------------
 
     @NotNull
-    public static <T> PropertyBuilder.TypeBasedPropertyBuilder<T> typeBasedProperty(@NotNull PropertyType<T> type) {
-        return new PropertyBuilder.TypeBasedPropertyBuilder<>(type);
+    public static <T> CollectionPropertyBuilder<T, List<T>, ListProperty<T>> listProperty(
+                                                                                        @NotNull PropertyType<T> type) {
+        return CollectionPropertyBuilder.listBuilder(type);
     }
 
     @NotNull
-    public static <T> PropertyBuilder.ListPropertyBuilder<T> listProperty(@NotNull PropertyType<T> type) {
-        return new PropertyBuilder.ListPropertyBuilder<>(type);
+    public static <T> CollectionPropertyBuilder<T, Set<T>, SetProperty<T>> setProperty(@NotNull PropertyType<T> type) {
+        return CollectionPropertyBuilder.setBuilder(type);
     }
 
     @NotNull
-    public static <T> PropertyBuilder.SetPropertyBuilder<T> setProperty(@NotNull PropertyType<T> type) {
-        return new PropertyBuilder.SetPropertyBuilder<>(type);
+    public static <V> MapPropertyBuilder<V, Map<String, V>, MapProperty<V>> mapProperty(@NotNull PropertyType<V> type) {
+        return MapPropertyBuilder.mapBuilder(type);
     }
 
     @NotNull
-    public static <T> PropertyBuilder.MapPropertyBuilder<T> mapProperty(@NotNull PropertyType<T> type) {
-        return new PropertyBuilder.MapPropertyBuilder<>(type);
+    public static <T> ArrayPropertyBuilder<T, ArrayProperty<T>> arrayProperty(@NotNull PropertyType<T> type,
+                                                                              @NotNull IntFunction<T[]> arrayProducer) {
+        return ArrayPropertyBuilder.arrayBuilder(type, arrayProducer);
     }
 
     @NotNull
-    public static <T> PropertyBuilder.ArrayPropertyBuilder<T> arrayProperty(@NotNull PropertyType<T> type,
-                                                                            @NotNull IntFunction<T[]> arrayProducer) {
-        return new PropertyBuilder.ArrayPropertyBuilder<>(type, arrayProducer);
+    public static <T> ArrayPropertyBuilder<T, ArrayProperty<T>> arrayProperty(@NotNull ArrayPropertyType<T> arrayType) {
+        return ArrayPropertyBuilder.arrayBuilder(arrayType);
     }
 
     @NotNull
-    public static <T> PropertyBuilder.InlineArrayPropertyBuilder<T> inlineArrayProperty(
-                                                                     @NotNull InlineArrayConverter<T> inlineConverter) {
-        return new PropertyBuilder.InlineArrayPropertyBuilder<>(inlineConverter);
+    public static <E> ArrayPropertyBuilder<E, InlineArrayProperty<E>> inlineArrayProperty(
+                                                                  @NotNull InlineArrayPropertyType<E> inlineArrayType) {
+        return ArrayPropertyBuilder.inlineArrayBuilder(inlineArrayType);
     }
 
     // --------------
@@ -296,7 +302,7 @@ public class PropertyInitializer {
     public static <E extends Enum<E>> @NotNull OptionalProperty<E> optionalEnumProperty(@NotNull Class<E> clazz,
                                                                                         @NotNull String path) {
         // default value may never be null, so get the first entry in the enum class
-        return new OptionalProperty<>(new EnumProperty<>(clazz, path, clazz.getEnumConstants()[0]));
+        return new OptionalProperty<>(new EnumProperty<>(path, clazz, clazz.getEnumConstants()[0]));
     }
 
     public static @NotNull OptionalProperty<Pattern> optionalRegexProperty(@NotNull String path) {

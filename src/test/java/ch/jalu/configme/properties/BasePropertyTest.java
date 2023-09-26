@@ -4,6 +4,8 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static ch.jalu.configme.TestUtils.getExceptionTypeForNullArg;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,6 +17,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for the {@link BaseProperty} abstract type.
  */
+@ExtendWith(MockitoExtension.class)
 class BasePropertyTest {
 
     @Test

@@ -4,9 +4,10 @@ import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,25 +20,23 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test for {@link LowercaseStringSetProperty}.
  */
+@ExtendWith(MockitoExtension.class)
 class LowercaseStringSetPropertyTest {
 
     private static PropertyReader reader;
 
     @BeforeAll
-    @SuppressWarnings("unchecked")
     static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
-        // need to have the List objects unchecked so we satisfy the List<?> signature
-        List stringList = Arrays.asList("test1", "Test2", "3rd TEST");
-        when(reader.getList("lowercaselist.path.test")).thenReturn(stringList);
-        when(reader.getList("lowercaselist.path.wrong")).thenReturn(null);
-        List mixedList = Arrays.asList('b', "test", 1);
-        when(reader.getList("lowercaselist.path.mixed")).thenReturn(mixedList);
+        List<String> stringList = Arrays.asList("test1", "Test2", "3rd TEST");
+        given(reader.getObject("lowercaselist.path.test")).willReturn(stringList);
+        given(reader.getObject("lowercaselist.path.wrong")).willReturn(null);
+        List<Object> mixedList = Arrays.asList('b', "test", 1);
+        given(reader.getObject("lowercaselist.path.mixed")).willReturn(mixedList);
     }
 
     @Test
@@ -82,14 +81,14 @@ class LowercaseStringSetPropertyTest {
     void shouldHandleNull() {
         // given
         Property<Set<String>> property = new LowercaseStringSetProperty("path");
-        List list = Arrays.asList(null, "test", null, "test");
-        given(reader.getList(property.getPath())).willReturn(list);
+        List<?> list = Arrays.asList(null, "test", null, "test");
+        given(reader.getObject(property.getPath())).willReturn(list);
 
         // when
         PropertyValue<Set<String>> result = property.determineValue(reader);
 
         // then
-        assertThat(result, isValidValueOf(newLinkedHashSet("test")));
+        assertThat(result, isErrorValueOf(newLinkedHashSet("test")));
     }
 
     @Test
@@ -101,8 +100,8 @@ class LowercaseStringSetPropertyTest {
         Object exportValue = property.toExportValue(newLinkedHashSet("first", "second", "third", "fourth"));
 
         // then
-        assertThat(exportValue, instanceOf(Collection.class));
-        assertThat((Collection<?>) exportValue, contains("first", "second", "third", "fourth"));
+        assertThat(exportValue, instanceOf(List.class));
+        assertThat((List<?>) exportValue, contains("first", "second", "third", "fourth"));
     }
 
     @Test

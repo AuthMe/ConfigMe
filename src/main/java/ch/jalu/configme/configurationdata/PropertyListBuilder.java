@@ -38,7 +38,7 @@ public class PropertyListBuilder {
         final String lastElement = pathElements[pathElements.length - 1];
         if (mapForProperty.containsKey(lastElement)) {
             throw new ConfigMeException("Path at '" + property.getPath() + "' already exists");
-        } else if (pathElements.length > 1 && lastElement.equals("")) {
+        } else if (pathElements.length > 1 && "".equals(lastElement)) {
             throwExceptionForMalformedPath(property.getPath());
         }
         mapForProperty.put(lastElement, property);

@@ -3,7 +3,7 @@ package ch.jalu.configme.beanmapper.propertydescription;
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.beanmapper.ExportName;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,9 +78,10 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
             return null;
         }
 
-        BeanPropertyComments comments = getComments(descriptor);
+        Field field = tryGetField(descriptor.getWriteMethod().getDeclaringClass(), descriptor.getName());
+        BeanPropertyComments comments = getComments(field);
         return new BeanPropertyDescriptionImpl(
-            getPropertyName(descriptor),
+            getPropertyName(descriptor, field),
             createTypeInfo(descriptor),
             descriptor.getReadMethod(),
             descriptor.getWriteMethod(),
@@ -91,21 +92,31 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * Returns the comments that are defined on the property. Comments are found by looking for an &#64;{@link Comment}
      * annotation on a field with the same name as the property.
      *
-     * @param descriptor the property descriptor
+     * @param field the field associated with the property (may be null)
      * @return comments for the property (never null)
      */
-    protected @NotNull BeanPropertyComments getComments(@NotNull PropertyDescriptor descriptor) {
+    protected @NotNull BeanPropertyComments getComments(@Nullable Field field) {
+        Comment comment = field == null ? null : field.getAnnotation(Comment.class);
+        if (comment != null) {
+            UUID uniqueId = comment.repeat() ? null : UUID.randomUUID();
+            return new BeanPropertyComments(Arrays.asList(comment.value()), uniqueId);
+        }
+        return BeanPropertyComments.EMPTY;
+    }
+
+    /**
+     * Returns the field with the given name on the provided class, or null if it doesn't exist.
+     *
+     * @param clazz the class to search in
+     * @param name the field name to look for
+     * @return the field if matched, otherwise null
+     */
+    protected @Nullable Field tryGetField(@NotNull Class<?> clazz, @NotNull String name) {
         try {
-            Field field = descriptor.getWriteMethod().getDeclaringClass().getDeclaredField(descriptor.getName());
-            Comment comment = field.getAnnotation(Comment.class);
-            if (comment != null) {
-                UUID uniqueId = comment.repeat() ? null : UUID.randomUUID();
-                return new BeanPropertyComments(Arrays.asList(comment.value()), uniqueId);
-            }
+            return clazz.getDeclaredField(name);
         } catch (NoSuchFieldException ignore) {
         }
-
-        return BeanPropertyComments.EMPTY;
+        return null;
     }
 
     /**
@@ -132,10 +143,13 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * Returns the name which is used in the export files for the given property descriptor.
      *
      * @param descriptor the descriptor to get the name for
+     * @param field the field associated with the property (may be null)
      * @return the property name
      */
-    protected @NotNull String getPropertyName(@NotNull PropertyDescriptor descriptor) {
-        if (descriptor.getReadMethod().isAnnotationPresent(ExportName.class)) {
+    protected @NotNull String getPropertyName(@NotNull PropertyDescriptor descriptor, @Nullable Field field) {
+        if (field != null && field.isAnnotationPresent(ExportName.class)) {
+            return field.getAnnotation(ExportName.class).value();
+        } else if (descriptor.getReadMethod().isAnnotationPresent(ExportName.class)) {
             return descriptor.getReadMethod().getAnnotation(ExportName.class).value();
         } else if (descriptor.getWriteMethod().isAnnotationPresent(ExportName.class)) {
             return descriptor.getWriteMethod().getAnnotation(ExportName.class).value();
@@ -143,8 +157,8 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
         return descriptor.getName();
     }
 
-    protected @NotNull TypeInformation createTypeInfo(@NotNull PropertyDescriptor descriptor) {
-        return new TypeInformation(descriptor.getWriteMethod().getGenericParameterTypes()[0]);
+    protected @NotNull TypeInfo createTypeInfo(@NotNull PropertyDescriptor descriptor) {
+        return new TypeInfo(descriptor.getWriteMethod().getGenericParameterTypes()[0]);
     }
 
     /**

@@ -3,22 +3,27 @@ package ch.jalu.configme.properties.types;
 import ch.jalu.configme.beanmapper.DefaultMapper;
 import ch.jalu.configme.beanmapper.Mapper;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Property type that maps values to a specific bean class.
+ *
+ * @param <B> the bean type
+ */
 public class BeanPropertyType<B> implements PropertyType<B> {
 
-    private final TypeInformation beanType;
+    private final TypeInfo beanType;
     private final Mapper mapper;
 
-    public BeanPropertyType(@NotNull TypeInformation beanType, @NotNull Mapper mapper) {
+    public BeanPropertyType(@NotNull TypeInfo beanType, @NotNull Mapper mapper) {
         this.beanType = beanType;
         this.mapper = mapper;
     }
 
     public static <B> @NotNull BeanPropertyType<B> of(@NotNull Class<B> type, @NotNull Mapper mapper) {
-        return new BeanPropertyType<>(new TypeInformation(type), mapper);
+        return new BeanPropertyType<>(new TypeInfo(type), mapper);
     }
 
     public static <B> @NotNull BeanPropertyType<B> of(@NotNull Class<B> type) {
@@ -32,7 +37,7 @@ public class BeanPropertyType<B> implements PropertyType<B> {
     }
 
     @Override
-    public @Nullable Object toExportValue(@Nullable B value) {
+    public @Nullable Object toExportValue(@NotNull B value) {
         return mapper.toExportValue(value);
     }
 }

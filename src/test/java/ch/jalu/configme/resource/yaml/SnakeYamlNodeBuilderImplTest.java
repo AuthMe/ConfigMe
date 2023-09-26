@@ -7,6 +7,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.comments.CommentLine;
 import org.yaml.snakeyaml.comments.CommentType;
@@ -47,6 +49,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 /**
  * Test for {@link SnakeYamlNodeBuilderImpl}.
  */
+@ExtendWith(MockitoExtension.class)
 class SnakeYamlNodeBuilderImplTest {
 
     private final SnakeYamlNodeBuilderImpl nodeBuilder = new SnakeYamlNodeBuilderImpl();
@@ -198,16 +201,13 @@ class SnakeYamlNodeBuilderImplTest {
         ConfigurationData configurationData = mock(ConfigurationData.class);
         String path = "calc.coefficients";
         given(configurationData.getCommentsForSection(path)).willReturn(Collections.singletonList("Coefficients"));
-        given(configurationData.getCommentsForSection(path + ".0")).willReturn(Collections.emptyList());
-        given(configurationData.getCommentsForSection(path + ".1")).willReturn(Collections.singletonList("\n"));
+        given(configurationData.getCommentsForSection(path + "[0]")).willReturn(Collections.emptyList());
+        given(configurationData.getCommentsForSection(path + "[1]")).willReturn(Collections.singletonList("\n"));
 
         // when
         Node node = nodeBuilder.createYamlNode(value, path, configurationData, 1);
 
         // then
-        verify(configurationData).getCommentsForSection(path);
-        verify(configurationData).getCommentsForSection(path + ".0");
-        verify(configurationData).getCommentsForSection(path + ".1");
         verifyNoMoreInteractions(configurationData);
 
         assertThat(node, instanceOf(SequenceNode.class));
@@ -247,9 +247,9 @@ class SnakeYamlNodeBuilderImplTest {
 
         // then
         verify(configurationData).getCommentsForSection(path);
-        verify(configurationData).getCommentsForSection(path + ".0");
-        verify(configurationData).getCommentsForSection(path + ".1");
-        verify(configurationData).getCommentsForSection(path + ".2");
+        verify(configurationData).getCommentsForSection(path + "[0]");
+        verify(configurationData).getCommentsForSection(path + "[1]");
+        verify(configurationData).getCommentsForSection(path + "[2]");
         verifyNoMoreInteractions(configurationData);
 
         assertThat(result, instanceOf(SequenceNode.class));
@@ -282,16 +282,14 @@ class SnakeYamlNodeBuilderImplTest {
         String path = "calc.factors";
 
         given(configurationData.getCommentsForSection(path)).willReturn(Collections.singletonList("\n"));
-        given(configurationData.getCommentsForSection(path + ".A")).willReturn(Collections.singletonList("Alpha comp."));
+        given(configurationData.getCommentsForSection(path + "[k=S]")).willReturn(Collections.emptyList());
+        given(configurationData.getCommentsForSection(path + "[k=A]")).willReturn(Collections.singletonList("Alpha comp."));
+        given(configurationData.getCommentsForSection(path + "[k=C]")).willReturn(Collections.emptyList());
 
         // when
         Node result = nodeBuilder.createYamlNode(factors, path, configurationData, 0);
 
         // then
-        verify(configurationData).getCommentsForSection(path);
-        verify(configurationData).getCommentsForSection(path + ".S");
-        verify(configurationData).getCommentsForSection(path + ".A");
-        verify(configurationData).getCommentsForSection(path + ".C");
         verifyNoMoreInteractions(configurationData);
 
         assertThat(result, instanceOf(MappingNode.class));

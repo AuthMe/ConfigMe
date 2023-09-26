@@ -1,60 +1,40 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.types.ArrayPropertyType;
 import ch.jalu.configme.properties.types.PropertyType;
-import ch.jalu.configme.resource.PropertyReader;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Objects;
 import java.util.function.IntFunction;
 
-public class ArrayProperty<T> extends BaseProperty<T[]> {
-
-    private final PropertyType<T> type;
-    private final IntFunction<T[]> arrayProducer;
+/**
+ * Property whose value is an array of a given type.
+ *
+ * @param <T> the type of the elements in the array
+ */
+public class ArrayProperty<T> extends TypeBasedProperty<T[]> {
 
     /**
      * Constructor.
      *
      * @param path the path of the property
-     * @param defaultValue the default value of the property
-     * @param type the property type
+     * @param entryType the property type the elements of the arrays have
      * @param arrayProducer array constructor (desired array size as argument)
+     * @param defaultValue the default value of the property
      */
-    public ArrayProperty(@NotNull String path, T @NotNull [] defaultValue, @NotNull PropertyType<T> type,
-                         @NotNull IntFunction<T[]> arrayProducer) {
-        super(path, defaultValue);
-        Objects.requireNonNull(type, "type");
-        Objects.requireNonNull(arrayProducer, "arrayProducer");
-        this.type = type;
-        this.arrayProducer = arrayProducer;
+    public ArrayProperty(@NotNull String path, @NotNull PropertyType<T> entryType,
+                         @NotNull IntFunction<T[]> arrayProducer, T @NotNull [] defaultValue) {
+        this(path, new ArrayPropertyType<>(entryType, arrayProducer), defaultValue);
     }
 
-    @Override
-    protected T @Nullable [] getFromReader(@NotNull PropertyReader reader,
-                                           @NotNull ConvertErrorRecorder errorRecorder) {
-        Object object = reader.getObject(this.getPath());
-        if (object instanceof Collection<?>) {
-            Collection<?> collection = (Collection<?>) object;
-            return collection.stream()
-                .map(elem -> type.convert(elem, errorRecorder))
-                .filter(Objects::nonNull)
-                .toArray(arrayProducer);
-        }
-        return null;
+    /**
+     * Constructor.
+     *
+     * @param path the path of the property
+     * @param type the type of this property (e.g. {@link ArrayPropertyType})
+     * @param defaultValue the default value of the property
+     */
+    @SafeVarargs
+    public ArrayProperty(@NotNull String path, @NotNull PropertyType<T[]> type, T @NotNull ... defaultValue) {
+        super(path, type, defaultValue);
     }
-
-    @Override
-    public @NotNull Object toExportValue(T @NotNull [] value) {
-        Object[] array = new Object[value.length];
-
-        for (int i = 0; i < array.length; i++) {
-            array[i] = this.type.toExportValue(value[i]);
-        }
-
-        return array;
-    }
-
 }

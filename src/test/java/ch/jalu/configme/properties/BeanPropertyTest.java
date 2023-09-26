@@ -10,14 +10,18 @@ import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.types.BeanPropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
-import ch.jalu.configme.utils.TypeInformation;
+import ch.jalu.typeresolver.TypeInfo;
+import ch.jalu.typeresolver.reference.TypeReference;
+import ch.jalu.typeresolver.typeimpl.WildcardTypeImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.util.HashMap;
 
@@ -35,6 +39,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Test for {@link BeanProperty} and its integration with {@link YamlFileResource}.
  */
+@ExtendWith(MockitoExtension.class)
 class BeanPropertyTest {
 
     @TempDir
@@ -44,7 +49,7 @@ class BeanPropertyTest {
     void shouldExportPropertyAndReimport() {
         // given
         BeanProperty<CommandConfig> property =
-            new BeanProperty<>(CommandConfig.class, "commandconfig", new CommandConfig());
+            new BeanProperty<>("commandconfig", CommandConfig.class, new CommandConfig());
         Path configFile = copyFileFromResources("/beanmapper/commands.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(configFile);
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(singletonList(property));
@@ -73,7 +78,7 @@ class BeanPropertyTest {
     void shouldExportBeanPropertyAtRootProperly() {
         // given
         BeanProperty<CommandConfig> property =
-            new BeanProperty<>(CommandConfig.class, "", new CommandConfig());
+            new BeanProperty<>("", CommandConfig.class, new CommandConfig());
         Path configFile = copyFileFromResources("/beanmapper/commands_root_path.yml", temporaryFolder);
         PropertyResource resource = new YamlFileResource(configFile);
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(singletonList(property));
@@ -99,12 +104,12 @@ class BeanPropertyTest {
         Mapper mapper = mock(Mapper.class);
         String path = "cnf";
         BeanProperty<WorldGroupConfig> property = new BeanProperty<>(
-            WorldGroupConfig.class, path, new WorldGroupConfig(), mapper);
+            path, WorldGroupConfig.class, new WorldGroupConfig(), mapper);
         PropertyReader reader = mock(PropertyReader.class);
         Object value = new Object();
         given(reader.getObject(path)).willReturn(value);
         WorldGroupConfig groupConfig = new WorldGroupConfig();
-        given(mapper.convertToBean(eq(value), eq(new TypeInformation(WorldGroupConfig.class)), any(ConvertErrorRecorder.class)))
+        given(mapper.convertToBean(eq(value), eq(new TypeInfo(WorldGroupConfig.class)), any(ConvertErrorRecorder.class)))
             .willReturn(groupConfig);
 
         // when
@@ -115,35 +120,63 @@ class BeanPropertyTest {
     }
 
     @Test
-    void shouldAllowInstantiationWithGenerics() throws NoSuchFieldException {
+    void shouldAllowInstantiationWithGenerics() {
         // given
-        Type stringComparable = TestFields.class.getDeclaredField("comparable").getGenericType();
-
+        TypeInfo comparableType = new TypeReference<Comparable<String>>() { };
 
         // when
-        BeanProperty<Comparable<String>> property = new BeanProperty<>(new TypeInformation(stringComparable),
-            "path.test", "defaultValue", DefaultMapper.getInstance());
+        BeanProperty<Comparable<String>> property = new BeanProperty<>("path.test",
+            comparableType, "defaultValue", DefaultMapper.getInstance());
 
         // then
         assertThat(property.getDefaultValue(), equalTo("defaultValue"));
     }
 
     @Test
-    void shouldThrowForObviouslyWrongDefaultValue() throws NoSuchFieldException {
+    void shouldThrowForObviouslyWrongDefaultValue() {
         // given
-        Type stringComparable = TestFields.class.getDeclaredField("comparable").getGenericType();
+        TypeInfo comparableType = new TypeReference<Comparable<String>>() { };
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> new BeanProperty<>(new TypeInformation(stringComparable),
-                "path.test", new HashMap<>(), DefaultMapper.getInstance()));
+            () -> new BeanProperty<>("path.test",
+                comparableType, new HashMap<>(), DefaultMapper.getInstance()));
 
         // then
         assertThat(ex.getMessage(),
-            equalTo("Default value for path 'path.test' does not match bean type 'TypeInformation[type=java.lang.Comparable<java.lang.String>]'"));
+            equalTo("Default value for path 'path.test' does not match bean type 'TypeInfo[type=java.lang.Comparable<java.lang.String>]'"));
     }
 
-    private static final class TestFields {
-        private Comparable<String> comparable;
+    @Test
+    void shouldThrowForTypeInfoThatCannotBeConvertedToClass() {
+        // given
+        TypeInfo wildcardType = new TypeInfo(WildcardTypeImpl.newUnboundedWildcard());
+
+        // when
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            () -> new BeanProperty<>("path.test",
+                wildcardType, new HashMap<>(), DefaultMapper.getInstance()));
+
+        // then
+        assertThat(ex.getMessage(),
+            equalTo("The bean type 'TypeInfo[type=?]' cannot be converted to Class. Use a constructor with a custom BeanPropertyType."));
+    }
+
+    @Test
+    void shouldCreateBeanPropertyWithCustomType() {
+        // given
+        String path = "";
+        Mapper mapper = DefaultMapper.getInstance();
+        BeanPropertyType<Executor> executorType = new BeanPropertyType<Executor>(new TypeInfo(Executor.class), mapper) {
+
+        };
+
+        Executor defaultValue = Executor.CONSOLE;
+
+        // when
+        BeanProperty<Executor> property = new BeanProperty<>(path, executorType, defaultValue);
+
+        // then
+        assertThat(property.getType(), equalTo(executorType));
     }
 }

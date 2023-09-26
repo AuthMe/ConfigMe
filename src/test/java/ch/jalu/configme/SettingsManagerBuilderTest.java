@@ -17,7 +17,9 @@ import ch.jalu.configme.samples.TestVersionConfiguration;
 import ch.jalu.configme.utils.MigrationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +44,7 @@ import static org.mockito.Mockito.verify;
 /**
  * Test for {@link SettingsManagerBuilder}.
  */
+@ExtendWith(MockitoExtension.class)
 class SettingsManagerBuilderTest {
 
     @TempDir

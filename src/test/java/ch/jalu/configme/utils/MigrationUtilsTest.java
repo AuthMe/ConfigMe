@@ -5,6 +5,8 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.samples.TestConfiguration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -17,6 +19,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 /**
  * Test for {@link MigrationUtils}.
  */
+@ExtendWith(MockitoExtension.class)
 class MigrationUtilsTest {
 
     @Test

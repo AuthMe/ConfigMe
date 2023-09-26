@@ -15,7 +15,9 @@ import ch.jalu.configme.samples.settingsholders.SettingsHolderWithInvalidConstan
 import ch.jalu.configme.samples.settingsholders.SettingsHolderWithVariousCommentLengths;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,9 +38,10 @@ import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 /**
  * Test for {@link SettingsHolderClassValidator}.
  */
+@ExtendWith(MockitoExtension.class)
 class SettingsHolderClassValidatorTest {
 
-    private SettingsHolderClassValidator validator = new SettingsHolderClassValidator();
+    private final SettingsHolderClassValidator validator = new SettingsHolderClassValidator();
 
     @Test
     void shouldValidateSuccessfully() {
