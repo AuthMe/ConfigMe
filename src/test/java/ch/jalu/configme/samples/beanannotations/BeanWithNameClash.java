@@ -8,6 +8,7 @@ import ch.jalu.configme.beanmapper.ExportName;
 public class BeanWithNameClash {
 
     private String location;
+    @ExportName("threshold")
     private String otherProperty;
     private int threshold;
 
@@ -19,7 +20,6 @@ public class BeanWithNameClash {
         this.location = location;
     }
 
-    @ExportName("threshold")
     public String getOtherProperty() {
         return otherProperty;
     }

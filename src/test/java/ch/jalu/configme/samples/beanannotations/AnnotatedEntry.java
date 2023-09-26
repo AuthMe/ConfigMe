@@ -8,6 +8,7 @@ import ch.jalu.configme.beanmapper.ExportName;
 public class AnnotatedEntry {
 
     private long id;
+    @ExportName("has-id")
     private boolean hasId;
 
     public long getId() {
@@ -22,7 +23,6 @@ public class AnnotatedEntry {
         return hasId;
     }
 
-    @ExportName("has-id")
     public void setHasId(boolean hasId) {
         this.hasId = hasId;
     }
