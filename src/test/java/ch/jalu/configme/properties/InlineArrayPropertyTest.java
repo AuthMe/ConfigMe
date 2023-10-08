@@ -67,4 +67,13 @@ class InlineArrayPropertyTest {
         assertThat(result, arrayContaining(3, 5));
         assertThat(errorRecorder.isFullyValid(), equalTo(false));
     }
+    @Test
+    public void testBigDecimalSupport() {
+        InlineArrayPropertyType<BigDecimal> type = new InlineArrayPropertyType<>(BigDecimal.class, ',');
+        BigDecimal[] array = new BigDecimal[]{BigDecimal.valueOf(1.23), BigDecimal.valueOf(4.56)};
+        String serialized = type.toPrimitive(array);
+        BigDecimal[] deserialized = type.fromPrimitive(serialized);
+        assertArrayEquals(array, deserialized);
+    }
+
 }
