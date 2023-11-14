@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Test for {@link BeanPropertyDescriptionImpl}.
  */
-public class BeanPropertyDescriptionImplTest {
+class BeanPropertyDescriptionImplTest {
 
     @Test
-    void shouldGetAndSetProperties() {
+    void shouldGetProperties() {
         // given
         BeanPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
         SampleBean bean = new SampleBean();
@@ -24,24 +24,9 @@ public class BeanPropertyDescriptionImplTest {
 
         // when
         Object result1 = sizeProperty.getValue(bean);
-        sizeProperty.setValue(bean, -120);
-        Object result2 = sizeProperty.getValue(bean);
 
         // then
-        assertThat(bean.getSize(), equalTo(-120));
-        assertThat(77, equalTo(result1));
-        assertThat(-120, equalTo(result2));
-    }
-
-    @Test
-    void shouldHandlePropertySetError() {
-        // given
-        BeanPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
-        SampleBean bean = new ThrowingBean();
-
-        // when / then
-        assertThrows(ConfigMeMapperException.class,
-            () -> sizeProperty.setValue(bean, -120));
+        assertThat(result1, equalTo(77));
     }
 
     @Test

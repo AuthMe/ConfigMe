@@ -11,6 +11,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,8 +46,14 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @return the bean class's properties to handle
      */
     @Override
-    public @NotNull Collection<BeanPropertyDescription> getAllProperties(@NotNull Class<?> clazz) {
+    public @NotNull List<BeanPropertyDescription> getAllProperties(@NotNull Class<?> clazz) {
         return classProperties.computeIfAbsent(clazz, this::collectAllProperties);
+    }
+
+    @Override
+    public @NotNull List<FieldProperty> getAllProperties2(@NotNull Class<?> clazz) {
+        // TODO: Caching. Here, or elsewhere?
+        return collectAllProperties2(clazz);
     }
 
     /**
@@ -60,6 +67,27 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
 
         List<BeanPropertyDescription> properties = descriptors.stream()
             .map(this::convert)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        validateProperties(clazz, properties);
+        return properties;
+    }
+
+    /**
+     * Collects all properties available on the given class.
+     *
+     * @param clazz the class to process
+     * @return properties of the class
+     */
+    protected @NotNull List<FieldProperty> collectAllProperties2(@NotNull Class<?> clazz) {
+        List<Class<?>> parentsAndClass = collectClassAndAllParents(clazz);
+
+        // TODO: Use field utils
+        List<FieldProperty> properties = parentsAndClass.stream()
+            .flatMap(clz -> Arrays.stream(clz.getDeclaredFields()))
+            .filter(field -> !Modifier.isStatic(field.getModifiers()) && !field.isSynthetic())
+            .map(this::convert2)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
@@ -86,6 +114,14 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
             descriptor.getReadMethod(),
             descriptor.getWriteMethod(),
             comments);
+    }
+
+    protected @Nullable FieldProperty convert2(@NotNull Field field) {
+        // TODO: Annotation to ignore field
+
+        return new FieldProperty(field,
+            getCustomExportName(field),
+            getComments(field));
     }
 
     /**
@@ -126,7 +162,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param properties the properties that will be used on the class
      */
     protected void validateProperties(@NotNull Class<?> clazz,
-                                      @NotNull Collection<BeanPropertyDescription> properties) {
+                                      @NotNull Collection<? extends BeanPropertyDescription> properties) {
         Set<String> names = new HashSet<>(properties.size());
         properties.forEach(property -> {
             if (property.getName().isEmpty()) {
@@ -151,6 +187,12 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
             return field.getAnnotation(ExportName.class).value();
         }
         return descriptor.getName();
+    }
+
+    protected @Nullable String getCustomExportName(@NotNull Field field) {
+        return field.isAnnotationPresent(ExportName.class)
+            ? field.getAnnotation(ExportName.class).value()
+            : null;
     }
 
     protected @NotNull TypeInfo createTypeInfo(@NotNull PropertyDescriptor descriptor) {

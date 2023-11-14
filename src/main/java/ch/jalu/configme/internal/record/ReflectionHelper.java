@@ -45,9 +45,10 @@ public class ReflectionHelper {
      * @param method the method to invoke
      * @param instance the object to invoke it on
      * @param <T> the return type (type is not statically checked)
-     * @return the
+     * @return the return value of the method
      */
     @SuppressWarnings("unchecked")
+    // TODO: @NotNull on return value not generically valid - revise?
     public <T> @NotNull T invokeZeroArgMethod(@NotNull Method method, @Nullable Object instance) {
         try {
             return (T) method.invoke(instance);

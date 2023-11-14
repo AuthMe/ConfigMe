@@ -23,15 +23,6 @@ public interface BeanPropertyDescription {
     @NotNull TypeInfo getTypeInformation();
 
     /**
-     * Sets the given value on the provided bean for this property. The value should correspond
-     * to the {@link #getTypeInformation() property type}.
-     *
-     * @param bean the bean to set the property on
-     * @param value the value to set
-     */
-    void setValue(@NotNull Object bean, @NotNull Object value);
-
-    /**
      * Returns the value of the property for the given bean.
      *
      * @param bean the bean to read the property from

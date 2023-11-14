@@ -4,6 +4,8 @@ import ch.jalu.configme.beanmapper.context.ExportContext;
 import ch.jalu.configme.beanmapper.context.ExportContextImpl;
 import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.beanmapper.context.MappingContextImpl;
+import ch.jalu.configme.beanmapper.instantiation.BeanInspector;
+import ch.jalu.configme.beanmapper.instantiation.BeanInstantiation;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.beanmapper.leafvaluehandler.MapperLeafType;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static ch.jalu.configme.internal.PathUtils.OPTIONAL_SPECIFIER;
 import static ch.jalu.configme.internal.PathUtils.pathSpecifierForIndex;
@@ -70,6 +73,7 @@ public class MapperImpl implements Mapper {
 
     private final BeanDescriptionFactory beanDescriptionFactory;
     private final LeafValueHandler leafValueHandler;
+    private final BeanInspector beanInspector = new BeanInspector(); // TODO: Make configurable, add interface...
 
     public MapperImpl() {
         this(new BeanDescriptionFactoryImpl(),
@@ -131,6 +135,7 @@ public class MapperImpl implements Mapper {
 
         // Step 3: treat as bean
         Map<String, Object> mappedBean = new LinkedHashMap<>();
+        // TODO: Adapt me
         for (BeanPropertyDescription property : beanDescriptionFactory.getAllProperties(value.getClass())) {
             Object exportValueOfProperty = toExportValue(property.getValue(value), exportContext);
             if (exportValueOfProperty != null) {
@@ -369,30 +374,21 @@ public class MapperImpl implements Mapper {
         if (!(value instanceof Map<?, ?>)) {
             return null;
         }
-
-        Collection<BeanPropertyDescription> properties =
-            beanDescriptionFactory.getAllProperties(context.getTargetTypeAsClassOrThrow());
-        // Check that we have properties (or else we don't have a bean)
-        if (properties.isEmpty()) {
-            return null;
-        }
-
         Map<?, ?> entries = (Map<?, ?>) value;
-        Object bean = createBeanMatchingType(context);
-        for (BeanPropertyDescription property : properties) {
-            Object result = convertValueForType(
-                context.createChild(property.getName(), property.getTypeInformation()),
-                entries.get(property.getName()));
-            if (result == null) {
-                if (property.getValue(bean) == null) {
-                    return null; // We do not support beans with a null value
-                }
-                context.registerError("No value found, fallback to field default value");
-            } else {
-                property.setValue(bean, result);
-            }
+
+        Optional<BeanInstantiation> instantiation =
+            beanInspector.findInstantiation(context.getTargetTypeAsClassOrThrow());
+        if (instantiation.isPresent()) {
+            List<Object> propertyValues = instantiation.get().getProperties().stream()
+                .map(prop -> {
+                    MappingContext childContext = context.createChild(prop.getName(), prop.getTypeInformation());
+                    return convertValueForType(childContext, entries.get(prop.getName()));
+                })
+                .collect(Collectors.toList());
+
+            return instantiation.get().create(propertyValues, context.getErrorRecorder());
         }
-        return bean;
+        return null;
     }
 
     /**

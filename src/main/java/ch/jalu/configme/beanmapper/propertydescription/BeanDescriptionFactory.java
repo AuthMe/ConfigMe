@@ -2,7 +2,7 @@ package ch.jalu.configme.beanmapper.propertydescription;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Factory which analyzes a class and returns all writable properties.
@@ -18,6 +18,8 @@ public interface BeanDescriptionFactory {
      * @param clazz the class whose properties should be returned
      * @return the relevant properties on the class
      */
-    @NotNull Collection<BeanPropertyDescription> getAllProperties(@NotNull Class<?> clazz);
+    @NotNull List<BeanPropertyDescription> getAllProperties(@NotNull Class<?> clazz);
+
+    @NotNull List<FieldProperty> getAllProperties2(@NotNull Class<?> clazz);
 
 }
