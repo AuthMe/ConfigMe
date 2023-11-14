@@ -43,7 +43,7 @@ class BeanPropertyDescriptionImplTest {
     @Test
     void shouldHaveAppropriateStringRepresentation() {
         // given
-        Collection<BeanPropertyDescription> properties = new BeanDescriptionFactoryImpl()
+        Collection<FieldProperty> properties = new BeanDescriptionFactoryImpl()
             .collectAllProperties(AnnotatedEntry.class);
         BeanPropertyDescription hasIdProperty = properties.stream()
             .filter(prop -> "has-id".equals(prop.getName())).findFirst().get();

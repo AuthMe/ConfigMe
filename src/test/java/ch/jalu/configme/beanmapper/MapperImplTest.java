@@ -10,9 +10,9 @@ import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommandConf
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexOptionalTypeConfig;
 import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.beanmapper.context.MappingContextImpl;
+import ch.jalu.configme.beanmapper.instantiation.BeanInspector;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
-import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.typeissues.GenericCollection;
 import ch.jalu.configme.beanmapper.typeissues.MapWithNonStringKeys;
 import ch.jalu.configme.beanmapper.typeissues.UnsupportedCollection;
@@ -453,16 +453,16 @@ class MapperImplTest {
     @Test
     void shouldReturnFields() {
         // given
-        BeanDescriptionFactory descriptionFactory = mock(BeanDescriptionFactory.class);
+        BeanInspector beanInspector = mock(BeanInspector.class);
         LeafValueHandlerImpl leafValueHandler = mock(LeafValueHandlerImpl.class);
-        MapperImpl mapper = new MapperImpl(descriptionFactory, leafValueHandler);
+        MapperImpl mapper = new MapperImpl(beanInspector, leafValueHandler);
 
         // when
-        BeanDescriptionFactory returnedDescriptionFactory = mapper.getBeanDescriptionFactory();
+        BeanInspector returnedBeanInspector = mapper.getBeanInspector();
         LeafValueHandler returnedLeafValueHandler = mapper.getLeafValueHandler();
 
         // then
-        assertThat(returnedDescriptionFactory, sameInstance(descriptionFactory));
+        assertThat(returnedBeanInspector, sameInstance(beanInspector));
         assertThat(returnedLeafValueHandler, sameInstance(leafValueHandler));
     }
 

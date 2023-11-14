@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 /**
  * Default implementation of {@link BeanPropertyDescription}.
  */
-public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
+public class BeanPropertyDescriptionImpl implements BeanPropertyDescription { // TODO: Remove me
 
     private final String name;
     private final TypeInfo typeInformation;

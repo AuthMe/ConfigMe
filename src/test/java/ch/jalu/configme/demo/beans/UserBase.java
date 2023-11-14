@@ -1,6 +1,6 @@
 package ch.jalu.configme.demo.beans;
 
-import java.beans.Transient;
+import ch.jalu.configme.beanmapper.Ignore;
 
 /**
  * User base bean.
@@ -11,6 +11,7 @@ public class UserBase {
     private User richie;
     private User lionel;
     private double version;
+    @Ignore
     private transient int build;
 
     public User getBobby() {
@@ -45,10 +46,6 @@ public class UserBase {
         this.version = version;
     }
 
-    @Transient
-    public int getBuild() {
-        return build;
-    }
 
     public void setBuild(int build) {
         this.build = build;

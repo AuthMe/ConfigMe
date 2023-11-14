@@ -2,6 +2,7 @@ package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.typeresolver.FieldUtils;
 import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +35,10 @@ public class FieldProperty implements BeanPropertyDescription {
         return TypeInfo.of(field);
     }
 
+    public @NotNull Class<?> getType() {
+        return field.getType();
+    }
+
     public void setValue(@NotNull Object bean, @NotNull Object value) {
         if (!field.isAccessible()) {
             field.setAccessible(true); // todo: exception handling
@@ -41,8 +46,8 @@ public class FieldProperty implements BeanPropertyDescription {
         try {
             field.set(bean, value);
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            // todo: Use field utils for field name
-            throw new ConfigMeMapperException("Failed to set value to field " + field + ". Value: " + value, e);
+            String fieldName = FieldUtils.formatField(field);
+            throw new ConfigMeMapperException("Failed to set value to field " + fieldName + ". Value: " + value, e);
         }
     }
 
@@ -54,8 +59,7 @@ public class FieldProperty implements BeanPropertyDescription {
         try {
             return field.get(bean);
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            // TODO: use field utils for field name
-            throw new ConfigMeException("Failed to get value for field " + field, e);
+            throw new ConfigMeException("Failed to get value for field " + FieldUtils.formatField(field), e);
         }
     }
 

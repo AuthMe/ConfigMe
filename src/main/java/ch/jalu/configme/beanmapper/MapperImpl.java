@@ -9,8 +9,6 @@ import ch.jalu.configme.beanmapper.instantiation.BeanInstantiation;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.beanmapper.leafvaluehandler.MapperLeafType;
-import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
-import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
@@ -21,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -71,23 +70,22 @@ public class MapperImpl implements Mapper {
     // Fields and general configurable methods
     // ---------
 
-    private final BeanDescriptionFactory beanDescriptionFactory;
     private final LeafValueHandler leafValueHandler;
-    private final BeanInspector beanInspector = new BeanInspector(); // TODO: Make configurable, add interface...
+    private final BeanInspector beanInspector;
 
     public MapperImpl() {
-        this(new BeanDescriptionFactoryImpl(),
+        this(new BeanInspector(),
              new LeafValueHandlerImpl(LeafValueHandlerImpl.createDefaultLeafTypes()));
     }
 
-    public MapperImpl(@NotNull BeanDescriptionFactory beanDescriptionFactory,
+    public MapperImpl(@NotNull BeanInspector beanInspector,
                       @NotNull LeafValueHandler leafValueHandler) {
-        this.beanDescriptionFactory = beanDescriptionFactory;
+        this.beanInspector = beanInspector;
         this.leafValueHandler = leafValueHandler;
     }
 
-    protected final @NotNull BeanDescriptionFactory getBeanDescriptionFactory() {
-        return beanDescriptionFactory;
+    protected final @NotNull BeanInspector getBeanInspector() {
+        return beanInspector;
     }
 
     protected final @NotNull LeafValueHandler getLeafValueHandler() {
@@ -135,8 +133,7 @@ public class MapperImpl implements Mapper {
 
         // Step 3: treat as bean
         Map<String, Object> mappedBean = new LinkedHashMap<>();
-        // TODO: Adapt me
-        for (BeanPropertyDescription property : beanDescriptionFactory.getAllProperties(value.getClass())) {
+        for (BeanPropertyDescription property : getBeanProperties(value)) {
             Object exportValueOfProperty = toExportValue(property.getValue(value), exportContext);
             if (exportValueOfProperty != null) {
                 BeanPropertyComments propComments = property.getComments();
@@ -149,6 +146,13 @@ public class MapperImpl implements Mapper {
             }
         }
         return mappedBean;
+    }
+
+    @NotNull
+    private List<BeanPropertyDescription> getBeanProperties(@NotNull Object value) {
+        return beanInspector.findInstantiation(value.getClass())
+            .map(BeanInstantiation::getProperties)
+            .orElse(Collections.emptyList());
     }
 
     /**

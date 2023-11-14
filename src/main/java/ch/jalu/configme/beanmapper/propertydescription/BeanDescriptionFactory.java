@@ -1,5 +1,6 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
+import ch.jalu.configme.internal.record.RecordComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -11,15 +12,9 @@ import java.util.List;
  */
 public interface BeanDescriptionFactory {
 
-    /**
-     * Returns all properties on the given class which should be considered while creating a bean of the
-     * given type. This is usually all properties which can be read from and written to.
-     *
-     * @param clazz the class whose properties should be returned
-     * @return the relevant properties on the class
-     */
-    @NotNull List<BeanPropertyDescription> getAllProperties(@NotNull Class<?> clazz);
+    @NotNull List<FieldProperty> getAllProperties(@NotNull Class<?> clazz);
 
-    @NotNull List<FieldProperty> getAllProperties2(@NotNull Class<?> clazz);
+    @NotNull List<FieldProperty> createRecordProperties(@NotNull Class<?> clazz,
+                                                        RecordComponent @NotNull [] components);
 
 }

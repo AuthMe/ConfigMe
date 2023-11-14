@@ -14,7 +14,6 @@ import ch.jalu.configme.samples.inheritance.Middle;
 import ch.jalu.typeresolver.TypeInfo;
 import org.junit.jupiter.api.Test;
 
-import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,7 +22,6 @@ import java.util.UUID;
 import static ch.jalu.configme.TestUtils.transform;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -42,10 +40,10 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldReturnWritableProperties() {
         // given / when
-        Collection<BeanPropertyDescription> descriptions = factory.getAllProperties(SampleBean.class);
+        Collection<FieldProperty> descriptions = factory.getAllProperties(SampleBean.class);
 
         // then
-        assertThat(descriptions, hasSize(2));
+        assertThat(descriptions, hasSize(4));
 
         BeanPropertyDescription sizeProperty = getDescription("size", descriptions);
         assertThat(sizeProperty.getTypeInformation(), equalTo(new TypeInfo(int.class)));
@@ -54,6 +52,14 @@ class BeanDescriptionFactoryImplTest {
         BeanPropertyDescription nameProperty = getDescription("name", descriptions);
         assertThat(nameProperty.getTypeInformation(), equalTo(new TypeInfo(String.class)));
         assertThat(nameProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
+
+        BeanPropertyDescription longFieldProperty = getDescription("longField", descriptions);
+        assertThat(longFieldProperty.getTypeInformation(), equalTo(new TypeInfo(long.class)));
+        assertThat(longFieldProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
+
+        BeanPropertyDescription uuidProperty = getDescription("uuid", descriptions);
+        assertThat(uuidProperty.getTypeInformation(), equalTo(new TypeInfo(UUID.class)));
+        assertThat(uuidProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
     }
 
     @Test
@@ -63,34 +69,19 @@ class BeanDescriptionFactoryImplTest {
     }
 
     @Test
-    void shouldHandleBooleanMethodsAndMatchWithFields() {
-        // given / when
-        List<BeanPropertyDescription> properties = new ArrayList<>(factory.getAllProperties(BooleanTestBean.class));
-
-        // then
-        assertThat(properties, hasSize(4));
-        assertThat(transform(properties, BeanPropertyDescription::getName),
-            containsInAnyOrder("active", "isField", "empty", "isNotMatched"));
-
-        // First two elements can be mapped to fields, so check their order. For the two unknown ones, we don't make any guarantees
-        assertThat(properties.get(0).getName(), equalTo("active"));
-        assertThat(properties.get(1).getName(), equalTo("isField"));
-    }
-
-    @Test
     void shouldNotConsiderTransientFields() {
         // given / when
-        Collection<BeanPropertyDescription> properties = factory.getAllProperties(BeanWithTransientFields.class);
+        Collection<FieldProperty> properties = factory.getAllProperties(BeanWithTransientFields.class);
 
         // then
         assertThat(properties, hasSize(2));
-        assertThat(transform(properties, BeanPropertyDescription::getName), contains("name", "mandatory"));
+        assertThat(transform(properties, BeanPropertyDescription::getName), contains("name", "isMandatory"));
     }
 
     @Test
     void shouldBeAwareOfInheritanceAndRespectOrder() {
         // given / when
-        Collection<BeanPropertyDescription> properties = factory.getAllProperties(Middle.class);
+        Collection<FieldProperty> properties = factory.getAllProperties(Middle.class);
 
         // then
         assertThat(properties, hasSize(3));
@@ -100,7 +91,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldLetChildFieldsOverrideParentFields() {
         // given / when
-        Collection<BeanPropertyDescription> properties = factory.getAllProperties(Child.class);
+        Collection<FieldProperty> properties = factory.getAllProperties(Child.class);
 
         // then
         assertThat(properties, hasSize(5));
@@ -111,7 +102,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldUseExportName() {
         // given / when
-        Collection<BeanPropertyDescription> properties = factory.getAllProperties(AnnotatedEntry.class);
+        Collection<FieldProperty> properties = factory.getAllProperties(AnnotatedEntry.class);
 
         // then
         assertThat(properties, hasSize(2));
@@ -144,8 +135,8 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldReturnCommentsWithUuidIfNotRepeatable() {
         // given / when
-        Collection<BeanPropertyDescription> sampleBeanProperties = factory.getAllProperties(SampleBean.class);
-        Collection<BeanPropertyDescription> sampleBeanProperties2 = factory.getAllProperties(SampleBean.class);
+        Collection<FieldProperty> sampleBeanProperties = factory.getAllProperties(SampleBean.class);
+        Collection<FieldProperty> sampleBeanProperties2 = factory.getAllProperties(SampleBean.class);
 
         // then
         BeanPropertyComments sizeComments = getDescription("size", sampleBeanProperties).getComments();
@@ -161,7 +152,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldReturnCommentsWithoutUuid() {
         // given / when
-        Collection<BeanPropertyDescription> execDetailsProperties = factory.getAllProperties(ExecutionDetails.class);
+        Collection<FieldProperty> execDetailsProperties = factory.getAllProperties(ExecutionDetails.class);
 
         // then
         BeanPropertyComments executorComments = getDescription("executor", execDetailsProperties).getComments();
@@ -175,7 +166,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldPickUpCustomNameFromField() {
         // given / when
-        List<BeanPropertyDescription> properties = new ArrayList<>(factory.getAllProperties(BeanWithExportName.class));
+        List<FieldProperty> properties = new ArrayList<>(factory.getAllProperties(BeanWithExportName.class));
 
         // then
         assertThat(properties, hasSize(3));
@@ -190,7 +181,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldPickUpCustomNameFromFieldsIncludingInheritance() {
         // given / when
-        List<BeanPropertyDescription> properties = new ArrayList<>(factory.getAllProperties(BeanWithExportNameExtension.class));
+        List<FieldProperty> properties = new ArrayList<>(factory.getAllProperties(BeanWithExportNameExtension.class));
 
         // then
         assertThat(properties, hasSize(4));
@@ -205,7 +196,7 @@ class BeanDescriptionFactoryImplTest {
     }
 
     private static BeanPropertyDescription getDescription(String name,
-                                                          Collection<BeanPropertyDescription> descriptions) {
+                                                          Collection<? extends BeanPropertyDescription> descriptions) {
         for (BeanPropertyDescription description : descriptions) {
             if (name.equals(description.getName())) {
                 return description;
@@ -219,138 +210,17 @@ class BeanDescriptionFactoryImplTest {
         private String name;
         @Comment("Size of this entry (cm)")
         private int size;
-        private long longField; // static "getter" method
-        private UUID uuid = UUID.randomUUID(); // no setter
+        private long longField;
+        private UUID uuid = UUID.randomUUID();
 
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public int getSize() {
-            return size;
-        }
-
-        public void setSize(int size) {
-            this.size = size;
-        }
-
-        public UUID getUuid() {
-            return uuid;
-        }
-
-        public static long getLongField() {
-            // Method with normal getter name is static!
-            return 0;
-        }
-
-        public void setLongField(long longField) {
-            this.longField = longField;
-        }
-    }
-
-    private static final class BooleanTestBean {
-        private boolean isEmpty;
-        private Boolean isReference;
-        private boolean active;
-        private String isString;
-        private boolean isField;
-        private boolean notMatched;
-
-        public boolean isEmpty() {
-            return isEmpty;
-        }
-
-        public void setEmpty(boolean empty) {
-            isEmpty = empty;
-        }
-
-        public Boolean isReference() { // "is" getter only supported for primitive boolean
-            return isReference;
-        }
-
-        public void setReference(Boolean isReference) {
-            this.isReference = isReference;
-        }
-
-        public boolean isActive() {
-            return active;
-        }
-
-        public void setActive(boolean active) {
-            this.active = active;
-        }
-
-        public String isString() { // "is" only supported for boolean
-            return isString;
-        }
-
-        public void setString(String isString) {
-            this.isString = isString;
-        }
-
-        public boolean getIsField() {
-            return isField;
-        }
-
-        public void setIsField(boolean field) {
-            this.isField = field;
-        }
-
-        // -----------------
-        // notMatched: creates a valid property "isNotMatched" picked up by the introspector,
-        // but we should not match this to the field `notMatched`.
-        // -----------------
-        public boolean getIsNotMatched() {
-            return notMatched;
-        }
-
-        public void setIsNotMatched(boolean notMatched) {
-            this.notMatched = notMatched;
-        }
     }
 
     private static final class BeanWithTransientFields {
+
         private String name;
         private transient long tempId;
         private transient boolean isSaved;
         private boolean isMandatory;
 
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public long getTempId() {
-            return tempId;
-        }
-
-        @Transient
-        public void setTempId(long tempId) {
-            this.tempId = tempId;
-        }
-
-        @Transient
-        public boolean isSaved() {
-            return isSaved;
-        }
-
-        public void setSaved(boolean saved) {
-            isSaved = saved;
-        }
-
-        public boolean isMandatory() {
-            return isMandatory;
-        }
-
-        public void setMandatory(boolean mandatory) {
-            isMandatory = mandatory;
-        }
     }
 }
