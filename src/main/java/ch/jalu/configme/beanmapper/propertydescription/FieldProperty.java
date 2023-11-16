@@ -2,6 +2,7 @@ package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.internal.record.ReflectionHelper;
 import ch.jalu.typeresolver.FieldUtils;
 import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
@@ -40,9 +41,8 @@ public class FieldProperty implements BeanPropertyDescription {
     }
 
     public void setValue(@NotNull Object bean, @NotNull Object value) {
-        if (!field.isAccessible()) {
-            field.setAccessible(true); // todo: exception handling
-        }
+        ReflectionHelper.setAccessibleIfNeeded(field);
+
         try {
             field.set(bean, value);
         } catch (IllegalArgumentException | IllegalAccessException e) {
@@ -53,9 +53,8 @@ public class FieldProperty implements BeanPropertyDescription {
 
     @Override
     public @Nullable Object getValue(@NotNull Object bean) {
-        if (!field.isAccessible()) {
-            field.setAccessible(true); // todo: exception handling
-        }
+        ReflectionHelper.setAccessibleIfNeeded(field);
+
         try {
             return field.get(bean);
         } catch (IllegalArgumentException | IllegalAccessException e) {
@@ -66,5 +65,10 @@ public class FieldProperty implements BeanPropertyDescription {
     @Override
     public @NotNull BeanPropertyComments getComments() {
         return comments;
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "FieldProperty '" + getName() + "' for field '" + FieldUtils.formatField(field) + "'";
     }
 }

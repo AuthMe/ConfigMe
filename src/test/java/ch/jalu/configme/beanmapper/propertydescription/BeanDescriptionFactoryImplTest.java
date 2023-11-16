@@ -129,7 +129,7 @@ class BeanDescriptionFactoryImplTest {
 
         // then
         assertThat(ex.getMessage(),
-            equalTo("Custom name of Bean property '' with getter 'public java.lang.String ch.jalu.configme.samples.beanannotations.BeanWithEmptyName.getAuthor()' may not be empty"));
+            equalTo("Custom name of FieldProperty '' for field 'BeanWithEmptyName#author' may not be empty"));
     }
 
     @Test

@@ -5,6 +5,7 @@ import ch.jalu.typeresolver.classutil.ClassUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 
 /**
@@ -54,6 +55,22 @@ public class ReflectionHelper {
             return (T) method.invoke(instance);
         } catch (ReflectiveOperationException e) {
             throw new ConfigMeException("Failed to call " + method + " for " + instance, e);
+        }
+    }
+
+    /**
+     * Makes the given accessible object (e.g. a field) accessible if it isn't yet.
+     *
+     * @param accessibleObject the reflected object to make accessible (if needed)
+     */
+    public static void setAccessibleIfNeeded(AccessibleObject accessibleObject) {
+        // #347: Catch InaccessibleObjectException, use #trySetAccessible?
+        if (!accessibleObject.isAccessible()) {
+            try {
+                accessibleObject.setAccessible(true);
+            } catch (SecurityException e) {
+                throw new ConfigMeException("Failed to make " + accessibleObject + " accessible", e);
+            }
         }
     }
 }

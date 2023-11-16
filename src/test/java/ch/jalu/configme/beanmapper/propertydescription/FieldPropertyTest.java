@@ -1,6 +1,5 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
-import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
 import org.junit.jupiter.api.Test;
 
@@ -8,12 +7,11 @@ import java.util.Collection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Test for {@link BeanPropertyDescriptionImpl}.
+ * Test for {@link FieldProperty}.
  */
-class BeanPropertyDescriptionImplTest {
+class FieldPropertyTest {
 
     @Test
     void shouldGetProperties() {
@@ -30,17 +28,6 @@ class BeanPropertyDescriptionImplTest {
     }
 
     @Test
-    void shouldHandlePropertyGetError() {
-        // given
-        BeanPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
-        SampleBean bean = new ThrowingBean();
-
-        // when / then
-        assertThrows(ConfigMeMapperException.class,
-            () -> sizeProperty.getValue(bean));
-    }
-
-    @Test
     void shouldHaveAppropriateStringRepresentation() {
         // given
         Collection<FieldProperty> properties = new BeanDescriptionFactoryImpl()
@@ -52,8 +39,7 @@ class BeanPropertyDescriptionImplTest {
         String output = "Found " + hasIdProperty;
 
         // then
-        assertThat(output, equalTo("Found Bean property 'has-id' with getter "
-            + "'public boolean ch.jalu.configme.samples.beanannotations.AnnotatedEntry.getHasId()'"));
+        assertThat(output, equalTo("Found FieldProperty 'has-id' for field 'AnnotatedEntry#hasId'"));
     }
 
     private static BeanPropertyDescription getDescriptor(String name, Class<?> clazz) {

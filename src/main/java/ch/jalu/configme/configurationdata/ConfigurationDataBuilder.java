@@ -3,6 +3,7 @@ package ch.jalu.configme.configurationdata;
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.internal.record.ReflectionHelper;
 import ch.jalu.configme.properties.Property;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -152,7 +153,7 @@ public class ConfigurationDataBuilder {
     protected @Nullable Property<?> getPropertyField(@NotNull Field field) {
         if (Property.class.isAssignableFrom(field.getType()) && Modifier.isStatic(field.getModifiers())) {
             try {
-                setFieldAccessibleIfNeeded(field);
+                ReflectionHelper.setAccessibleIfNeeded(field);
                 return (Property<?>) field.get(null);
             } catch (IllegalAccessException e) {
                 throw new ConfigMeException("Could not fetch field '" + field.getName() + "' from class '"
@@ -160,27 +161,6 @@ public class ConfigurationDataBuilder {
             }
         }
         return null;
-    }
-
-    /**
-     * Sets the Field object to be accessible if needed; this makes the code support constants in Kotlin without the
-     * {@code @JvmField} annotation. This method only calls {@link Field#setAccessible} if it is needed to avoid
-     * potential issues with a security manager. Within Java itself, only {@code public static final} property fields
-     * are expected.
-     *
-     * @param field the field to process
-     */
-    protected void setFieldAccessibleIfNeeded(@NotNull Field field) {
-        try {
-            if (!Modifier.isPublic(field.getModifiers())) {
-                field.setAccessible(true);
-            }
-            // CHECKSTYLE:OFF
-        } catch (Exception e) {
-            // CHECKSTYLE: ON
-            throw new ConfigMeException("Failed to modify access for field '" + field.getName() + "' from class '"
-                + field.getDeclaringClass().getSimpleName() + "'", e);
-        }
     }
 
     protected void collectSectionComments(@NotNull Class<? extends SettingsHolder> clazz) {
@@ -198,7 +178,7 @@ public class ConfigurationDataBuilder {
     protected <T extends SettingsHolder> @NotNull T createSettingsHolderInstance(@NotNull Class<T> clazz) {
         try {
             Constructor<T> constructor = clazz.getDeclaredConstructor();
-            constructor.setAccessible(true);
+            ReflectionHelper.setAccessibleIfNeeded(constructor);
             return constructor.newInstance();
         } catch (NoSuchMethodException e) {
             throw new ConfigMeException("Expected no-args constructor to be available for " + clazz, e);
