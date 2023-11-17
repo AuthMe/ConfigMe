@@ -12,7 +12,6 @@ import ch.jalu.configme.samples.beanannotations.BeanWithNameClash;
 import ch.jalu.configme.samples.inheritance.Child;
 import ch.jalu.configme.samples.inheritance.Middle;
 import ch.jalu.typeresolver.TypeInfo;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -49,6 +48,7 @@ class BeanDescriptionFactoryImplTest {
         BeanPropertyDescription sizeProperty = getDescription("size", descriptions);
         assertThat(sizeProperty.getTypeInformation(), equalTo(new TypeInfo(int.class)));
         assertThat(sizeProperty.getComments().getComments(), contains("Size of this entry (cm)"));
+        assertThat(sizeProperty.getComments().getUuid(), notNullValue());
 
         BeanPropertyDescription nameProperty = getDescription("name", descriptions);
         assertThat(nameProperty.getTypeInformation(), equalTo(new TypeInfo(String.class)));
@@ -131,24 +131,6 @@ class BeanDescriptionFactoryImplTest {
         // then
         assertThat(ex.getMessage(),
             equalTo("Custom name of FieldProperty '' for field 'BeanWithEmptyName#author' may not be empty"));
-    }
-
-    @Test
-    @Disabled
-    void shouldReturnCommentsWithUuidIfNotRepeatable() { // TODO: Move me.
-        // given / when
-        Collection<BeanFieldPropertyDescription> sampleBeanProperties = factory.getAllProperties(SampleBean.class);
-        Collection<BeanFieldPropertyDescription> sampleBeanProperties2 = factory.getAllProperties(SampleBean.class);
-
-        // then
-        BeanPropertyComments sizeComments = getDescription("size", sampleBeanProperties).getComments();
-        assertThat(sizeComments.getComments(), contains("Size of this entry (cm)"));
-        assertThat(sizeComments.getUuid(), notNullValue());
-
-        // Actually ensure that we have the same UUID if we fetch properties for the same class again
-        // -> there's no point in the UUID otherwise!
-        BeanPropertyComments sizeComments2 = getDescription("size", sampleBeanProperties2).getComments();
-        assertThat(sizeComments2.getUuid(), equalTo(sizeComments.getUuid()));
     }
 
     @Test

@@ -12,13 +12,17 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class BeanZeroArgConstrInstantiation implements BeanInstantiation {
+/**
+ * Instantiates bean types with a zero-arg constructor. This instantiation considers all instance fields that
+ * are not final.
+ */
+public class BeanZeroArgConstructorInstantiation implements BeanInstantiation {
 
     private final Constructor<?> zeroArgsConstructor;
     private final List<BeanFieldPropertyDescription> properties;
 
-    public BeanZeroArgConstrInstantiation(@NotNull Constructor<?> zeroArgsConstructor,
-                                          @NotNull List<BeanFieldPropertyDescription> properties) {
+    public BeanZeroArgConstructorInstantiation(@NotNull Constructor<?> zeroArgsConstructor,
+                                               @NotNull List<BeanFieldPropertyDescription> properties) {
         this.zeroArgsConstructor = zeroArgsConstructor;
         this.properties = properties;
     }
@@ -36,7 +40,7 @@ public class BeanZeroArgConstrInstantiation implements BeanInstantiation {
             bean = zeroArgsConstructor.newInstance();
         } catch (ReflectiveOperationException e) {
             throw new ConfigMeException("Failed to call constructor for "
-                + zeroArgsConstructor.getDeclaringClass());
+                + zeroArgsConstructor.getDeclaringClass(), e);
         }
 
         if (propertyValues.size() != properties.size()) {
@@ -53,7 +57,7 @@ public class BeanZeroArgConstrInstantiation implements BeanInstantiation {
                 if (property.getValue(bean) == null) {
                     return null; // No default value on field, return null -> no bean with a null value
                 }
-                errorRecorder.setHasError("Fallback to default value");
+                errorRecorder.setHasError("Fallback to default value for " + property);
             } else {
                 property.setValue(bean, value);
             }

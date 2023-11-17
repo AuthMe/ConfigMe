@@ -16,9 +16,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class BeanInstantiationServiceImpl implements BeanInstantiationService {
 
-    private final RecordInspector recordInspector = new RecordInspector(new ReflectionHelper());
-    private final BeanDescriptionFactory beanDescriptionFactory = new BeanDescriptionFactoryImpl();
+    private final RecordInspector recordInspector;
+    private final BeanDescriptionFactory beanDescriptionFactory;
     private final Map<Class<?>, BeanInstantiation> cachedInstantiationByType = new ConcurrentHashMap<>();
+
+    public BeanInstantiationServiceImpl() {
+        this.recordInspector = new RecordInspector(new ReflectionHelper());
+        this.beanDescriptionFactory = new BeanDescriptionFactoryImpl();
+    }
+
+    public BeanInstantiationServiceImpl(@NotNull RecordInspector recordInspector,
+                                        @NotNull BeanDescriptionFactory beanDescriptionFactory) {
+        this.recordInspector = recordInspector;
+        this.beanDescriptionFactory = beanDescriptionFactory;
+    }
 
     @Override
     public @NotNull Optional<BeanInstantiation> findInstantiation(@NotNull Class<?> clazz) {
@@ -40,10 +51,12 @@ public class BeanInstantiationServiceImpl implements BeanInstantiationService {
         Optional<Constructor<?>> zeroArgConstructor = tryFindConstructor(clazz);
         if (zeroArgConstructor.isPresent()) {
             List<BeanFieldPropertyDescription> properties = beanDescriptionFactory.getAllProperties(clazz);
-            BeanZeroArgConstrInstantiation zeroArgConstrInstantiation =
-                new BeanZeroArgConstrInstantiation(zeroArgConstructor.get(), properties);
-            cachedInstantiationByType.put(clazz, zeroArgConstrInstantiation);
-            return Optional.of(zeroArgConstrInstantiation);
+            if (!properties.isEmpty()) {
+                BeanZeroArgConstructorInstantiation zeroArgConstrInstantiation =
+                    new BeanZeroArgConstructorInstantiation(zeroArgConstructor.get(), properties);
+                cachedInstantiationByType.put(clazz, zeroArgConstrInstantiation);
+                return Optional.of(zeroArgConstrInstantiation);
+            }
         }
 
         return Optional.empty();
