@@ -4,8 +4,9 @@ import ch.jalu.configme.beanmapper.context.ExportContext;
 import ch.jalu.configme.beanmapper.context.ExportContextImpl;
 import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.beanmapper.context.MappingContextImpl;
-import ch.jalu.configme.beanmapper.instantiation.BeanInspector;
+import ch.jalu.configme.beanmapper.instantiation.BeanInstantiationServiceImpl;
 import ch.jalu.configme.beanmapper.instantiation.BeanInstantiation;
+import ch.jalu.configme.beanmapper.instantiation.BeanInstantiationService;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.beanmapper.leafvaluehandler.MapperLeafType;
@@ -71,20 +72,20 @@ public class MapperImpl implements Mapper {
     // ---------
 
     private final LeafValueHandler leafValueHandler;
-    private final BeanInspector beanInspector;
+    private final BeanInstantiationService beanInspector;
 
     public MapperImpl() {
-        this(new BeanInspector(),
+        this(new BeanInstantiationServiceImpl(),
              new LeafValueHandlerImpl(LeafValueHandlerImpl.createDefaultLeafTypes()));
     }
 
-    public MapperImpl(@NotNull BeanInspector beanInspector,
+    public MapperImpl(@NotNull BeanInstantiationService beanInspector,
                       @NotNull LeafValueHandler leafValueHandler) {
         this.beanInspector = beanInspector;
         this.leafValueHandler = leafValueHandler;
     }
 
-    protected final @NotNull BeanInspector getBeanInspector() {
+    protected final @NotNull BeanInstantiationService getBeanInstantiationService() {
         return beanInspector;
     }
 

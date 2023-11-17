@@ -2,7 +2,7 @@ package ch.jalu.configme.beanmapper;
 
 import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.beanmapper.context.MappingContextImpl;
-import ch.jalu.configme.beanmapper.instantiation.BeanInspector;
+import ch.jalu.configme.beanmapper.instantiation.BeanInstantiationServiceImpl;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.beanmapper.leafvaluehandler.MapperLeafType;
 import ch.jalu.configme.exception.ConfigMeException;
@@ -43,7 +43,7 @@ class MapperTypeInfoWithNoClassEquivTest {
             .addDefaults()
             .addType(extNumberLeafType)
             .build();
-        MapperImpl mapper = new MapperImpl(new BeanInspector(), leafValueHandler);
+        MapperImpl mapper = new MapperImpl(new BeanInstantiationServiceImpl(), leafValueHandler);
 
         // when
         Object result = mapper.convertToBean(3.2, targetType, errorRecorder);

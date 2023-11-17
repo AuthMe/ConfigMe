@@ -15,7 +15,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,28 +35,21 @@ import java.util.stream.Collectors;
  */
 public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
 
-    private final Map<Class<?>, List<FieldProperty>> classProperties = new HashMap<>();
-
     @Override
-    public @NotNull List<FieldProperty> getAllProperties(@NotNull Class<?> clazz) {
-        return classProperties.computeIfAbsent(clazz, this::collectAllProperties);
-    }
-
-    public @NotNull List<FieldProperty> createRecordProperties(@NotNull Class<?> clazz,
-                                                               RecordComponent @NotNull [] components) {
-        // TODO: Caching here.
-        LinkedHashMap<String, Field> instanceFieldsByName = FieldUtils.getAllFields(clazz)
+    public @NotNull List<BeanFieldPropertyDescription> createRecordProperties(@NotNull Class<?> clazz,
+                                                                              RecordComponent @NotNull [] components) {
+        Map<String, Field> instanceFieldsByName = FieldUtils.getAllFields(clazz)
             .filter(FieldUtils::isRegularInstanceField)
             .collect(FieldUtils.collectByName(false));
 
-        List<FieldProperty> relevantFields = new ArrayList<>();
+        List<BeanFieldPropertyDescription> relevantFields = new ArrayList<>();
         for (RecordComponent component : components) {
             Field field = instanceFieldsByName.get(component.getName());
             if (field == null) {
                 throw new ConfigMeException("Record component '" + component.getName() + "' for " + clazz.getName()
                     + " does not have a field with the same name");
             }
-            FieldProperty property = convert(field);
+            BeanFieldPropertyDescription property = convert(field);
             if (property == null) {
                 throw new ConfigMeException("Record component '" + component.getName() + "' for " + clazz.getName()
                    + " has a field defined to be ignored: this is not supported for records");
@@ -73,12 +65,12 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param clazz the class to process
      * @return properties of the class
      */
-    protected @NotNull List<FieldProperty> collectAllProperties(@NotNull Class<?> clazz) {
+    public @NotNull List<BeanFieldPropertyDescription> getAllProperties(@NotNull Class<?> clazz) {
         LinkedHashMap<String, Field> instanceFieldsByName = FieldUtils.getAllFields(clazz)
             .filter(FieldUtils::isRegularInstanceField)
             .collect(FieldUtils.collectByName(false));
 
-        List<FieldProperty> properties = instanceFieldsByName.values().stream()
+        List<BeanFieldPropertyDescription> properties = instanceFieldsByName.values().stream()
             .map(this::convert)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -87,12 +79,12 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
         return properties;
     }
 
-    protected @Nullable FieldProperty convert(@NotNull Field field) {
+    protected @Nullable BeanFieldPropertyDescription convert(@NotNull Field field) {
         if (Modifier.isTransient(field.getModifiers()) || field.isAnnotationPresent(Ignore.class)) {
             return null;
         }
 
-        return new FieldProperty(field,
+        return new BeanFieldPropertyDescription(field,
             getCustomExportName(field),
             getComments(field));
     }

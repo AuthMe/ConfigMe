@@ -1,7 +1,7 @@
 package ch.jalu.configme.beanmapper.instantiation;
 
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
-import ch.jalu.configme.beanmapper.propertydescription.FieldProperty;
+import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescription;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import org.jetbrains.annotations.NotNull;
@@ -12,15 +12,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-final class RecordInstantiation implements BeanInstantiation {
+/**
+ * Instantiates bean types that are records.
+ */
+public class BeanRecordInstantiation implements BeanInstantiation {
 
     private final Constructor<?> canonicalConstructor;
-    private final List<FieldProperty> properties;
+    private final List<BeanFieldPropertyDescription> properties;
 
-    public RecordInstantiation(@NotNull Class<?> clazz, @NotNull List<FieldProperty> properties) {
+    /**
+     * Constructor.
+     *
+     * @param clazz the record type
+     * @param properties the properties of the record
+     */
+    public BeanRecordInstantiation(@NotNull Class<?> clazz, @NotNull List<BeanFieldPropertyDescription> properties) {
         this.properties = properties;
-        Class<?>[] recordTypes = properties.stream().map(FieldProperty::getType).toArray(Class[]::new);
-        this.canonicalConstructor = BeanInspector.getConstructor(clazz, recordTypes)
+        Class<?>[] recordTypes = properties.stream().map(BeanFieldPropertyDescription::getType).toArray(Class[]::new);
+        this.canonicalConstructor = BeanInstantiationServiceImpl.tryFindConstructor(clazz, recordTypes)
             .orElseThrow(() -> new ConfigMeException("Could not get canonical constructor of " + clazz));
     }
 
@@ -40,7 +49,6 @@ final class RecordInstantiation implements BeanInstantiation {
         try {
             return canonicalConstructor.newInstance(properties);
         } catch (IllegalArgumentException | ReflectiveOperationException e) {
-            // TODO: Separate clause for InvocationTargetException?
             throw new ConfigMeException("Error calling record constructor for "
                 + canonicalConstructor.getDeclaringClass(), e);
         }

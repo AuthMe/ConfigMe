@@ -1,6 +1,5 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
-import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.internal.record.ReflectionHelper;
 import ch.jalu.typeresolver.FieldUtils;
@@ -10,15 +9,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 
-public class FieldProperty implements BeanPropertyDescription {
+/**
+ * Bean property description based on a {@link Field}.
+ */
+public class BeanFieldPropertyDescription implements BeanPropertyDescription {
 
     private final Field field;
     private final String exportName;
     private final BeanPropertyComments comments;
 
-    public FieldProperty(@NotNull Field field,
-                         @Nullable String exportName,
-                         @NotNull BeanPropertyComments comments) {
+    public BeanFieldPropertyDescription(@NotNull Field field,
+                                        @Nullable String exportName,
+                                        @NotNull BeanPropertyComments comments) {
         this.field = field;
         this.exportName = exportName;
         this.comments = comments;
@@ -40,6 +42,14 @@ public class FieldProperty implements BeanPropertyDescription {
         return field.getType();
     }
 
+    /**
+     * Sets the provided value to the field wrapped by this instance on the given bean. This method does not
+     * check whether the field is final; in some contexts (e.g. instantiation a record type), this method cannot
+     * be called.
+     *
+     * @param bean the bean to set the value to
+     * @param value the value to set
+     */
     public void setValue(@NotNull Object bean, @NotNull Object value) {
         ReflectionHelper.setAccessibleIfNeeded(field);
 
@@ -47,7 +57,7 @@ public class FieldProperty implements BeanPropertyDescription {
             field.set(bean, value);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             String fieldName = FieldUtils.formatField(field);
-            throw new ConfigMeMapperException("Failed to set value to field " + fieldName + ". Value: " + value, e);
+            throw new ConfigMeException("Failed to set value to field " + fieldName + ". Value: " + value, e);
         }
     }
 

@@ -1,7 +1,7 @@
 package ch.jalu.configme.beanmapper.instantiation;
 
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
-import ch.jalu.configme.beanmapper.propertydescription.FieldProperty;
+import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescription;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import org.jetbrains.annotations.NotNull;
@@ -12,13 +12,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-final class BeanZeroArgConstrInstantiation implements BeanInstantiation {
+public class BeanZeroArgConstrInstantiation implements BeanInstantiation {
 
     private final Constructor<?> zeroArgsConstructor;
-    private final List<FieldProperty> properties;
+    private final List<BeanFieldPropertyDescription> properties;
 
     public BeanZeroArgConstrInstantiation(@NotNull Constructor<?> zeroArgsConstructor,
-                                          @NotNull List<FieldProperty> properties) {
+                                          @NotNull List<BeanFieldPropertyDescription> properties) {
         this.zeroArgsConstructor = zeroArgsConstructor;
         this.properties = properties;
     }
@@ -44,10 +44,10 @@ final class BeanZeroArgConstrInstantiation implements BeanInstantiation {
                 + zeroArgsConstructor.getDeclaringClass() + " has " + properties.size() + " properties");
         }
 
-        Iterator<FieldProperty> propIt = properties.iterator();
+        Iterator<BeanFieldPropertyDescription> propIt = properties.iterator();
         Iterator<Object> valuesIt = propertyValues.iterator();
         while (propIt.hasNext() && valuesIt.hasNext()) {
-            FieldProperty property = propIt.next();
+            BeanFieldPropertyDescription property = propIt.next();
             Object value = valuesIt.next();
             if (value == null) {
                 if (property.getValue(bean) == null) {

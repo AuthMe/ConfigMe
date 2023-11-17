@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface BeanDescriptionFactory {
 
-    @NotNull List<FieldProperty> getAllProperties(@NotNull Class<?> clazz);
+    @NotNull List<BeanFieldPropertyDescription> getAllProperties(@NotNull Class<?> clazz);
 
-    @NotNull List<FieldProperty> createRecordProperties(@NotNull Class<?> clazz,
-                                                        RecordComponent @NotNull [] components);
+    @NotNull List<BeanFieldPropertyDescription> createRecordProperties(@NotNull Class<?> clazz,
+                                                                       RecordComponent @NotNull [] components);
 
 }
