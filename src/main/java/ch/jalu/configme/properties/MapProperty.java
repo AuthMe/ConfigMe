@@ -22,7 +22,7 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
     private final PropertyType<V> valueType;
 
     /**
-     * Constructor. Build a {@link MapProperty} with empty default values.
+     * Constructor. Builds a {@link MapProperty} with an empty map as default value.
      *
      * @param path the path of the property
      * @param valueType the property type of the values
