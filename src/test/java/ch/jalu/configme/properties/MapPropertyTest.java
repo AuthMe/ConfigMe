@@ -3,6 +3,7 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
+import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.configme.resource.PropertyReader;
@@ -27,6 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.collection.IsMapWithSize.anEmptyMap;
 import static org.mockito.BDDMockito.given;
 
 /**
@@ -109,6 +111,20 @@ class MapPropertyTest {
         // then
         assertThat(exportValue, instanceOf(Map.class));
         assertThat(((Map<Integer, String>) exportValue).keySet(), contains("first", "second", "third", "fourth"));
+    }
+
+    @Test
+    void shouldUseEmptyMapAsDefaultValue() {
+        // given
+        MapProperty<Integer> property = new MapProperty<>("test", NumberType.INTEGER);
+
+        //when
+        Map<String, Integer> actualDefaultValue = property.getDefaultValue();
+        String actualPath = property.getPath();
+
+        // then
+        assertThat(actualDefaultValue, anEmptyMap());
+        assertThat(actualPath, equalTo("test"));
     }
 
     private static Map<String, String> createSampleMap() {

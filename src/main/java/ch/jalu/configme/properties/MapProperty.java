@@ -22,6 +22,18 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
     private final PropertyType<V> valueType;
 
     /**
+     * Constructor. Builds a {@link MapProperty} with an empty map as default value.
+     *
+     * @param path the path of the property
+     * @param valueType the property type of the values
+     */
+    public MapProperty(@NotNull String path, @NotNull PropertyType<V> valueType) {
+        super(path, Collections.emptyMap());
+        Objects.requireNonNull(valueType, "valueType");
+        this.valueType = valueType;
+    }
+
+    /**
      * Constructor.
      *
      * @param path the path of the property
