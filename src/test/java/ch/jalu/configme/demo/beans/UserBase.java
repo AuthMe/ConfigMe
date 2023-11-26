@@ -46,6 +46,9 @@ public class UserBase {
         this.version = version;
     }
 
+    public int getBuild() {
+        return build;
+    }
 
     public void setBuild(int build) {
         this.build = build;

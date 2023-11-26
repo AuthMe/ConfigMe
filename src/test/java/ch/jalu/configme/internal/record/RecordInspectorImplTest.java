@@ -1,5 +1,6 @@
 package ch.jalu.configme.internal.record;
 
+import ch.jalu.configme.internal.ReflectionHelper;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +12,7 @@ import java.lang.reflect.Type;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -20,21 +21,21 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 /**
- * Test for {@link RecordInspector}.
+ * Test for {@link RecordInspectorImpl}.
  */
 @ExtendWith(MockitoExtension.class)
-class RecordInspectorTest {
+class RecordInspectorImplTest {
 
     @Test
-    void shouldCheckIfClassExtendsRecord() {
+    void shouldNotPerformReflectiveOperationIfClassDoesNotExtendRecord() {
         // given
         ReflectionHelper reflectionHelper = mock(ReflectionHelper.class);
-        RecordInspector recordInspector = new RecordInspector(reflectionHelper);
+        RecordInspectorImpl recordInspector = new RecordInspectorImpl(reflectionHelper);
 
         // when / then
-        assertFalse(recordInspector.isRecord(Object.class));
-        assertFalse(recordInspector.isRecord(Integer.class));
-        assertFalse(recordInspector.isRecord(int.class));
+        assertNull(recordInspector.getRecordComponents(Object.class));
+        assertNull(recordInspector.getRecordComponents(Integer.class));
+        assertNull(recordInspector.getRecordComponents(int.class));
         verifyNoInteractions(reflectionHelper);
     }
 
@@ -46,7 +47,7 @@ class RecordInspectorTest {
         given(reflectionHelper.getZeroArgMethod(Class.class, "isRecord")).willReturn(isPrimitiveMethod);
         given(reflectionHelper.invokeZeroArgMethod(any(Method.class), any(Class.class))).willCallRealMethod();
 
-        RecordInspector recordInspector = new RecordInspector(reflectionHelper) {
+        RecordInspectorImpl recordInspector = new RecordInspectorImpl(reflectionHelper) {
             @Override
             public boolean hasRecordAsSuperclass(@NotNull Class<?> clazz) {
                 return true;
@@ -63,6 +64,10 @@ class RecordInspectorTest {
         // given
         ReflectionHelper reflectionHelper = mock(ReflectionHelper.class);
 
+        // Use Class#isMemberClass instead of Class#isRecord -> will be true for FakeRecordComponent.class
+        Method isMemberClassMethod = Class.class.getDeclaredMethod("isMemberClass");
+        given(reflectionHelper.getZeroArgMethod(Class.class, "isRecord")).willReturn(isMemberClassMethod);
+
         // Instead of Class#getRecordComponents, return method for FakeRecord#getComponents
         Method fakeGetComponentsMethod = FakeRecordType.class.getDeclaredMethod("getComponents");
         given(reflectionHelper.getZeroArgMethod(Class.class, "getRecordComponents"))
@@ -78,7 +83,7 @@ class RecordInspectorTest {
             .willCallRealMethod();
         given(reflectionHelper.invokeZeroArgMethod(any(Method.class), any(Object.class))).willCallRealMethod();
 
-        RecordInspector recordInspector = new RecordInspector(reflectionHelper) {
+        RecordInspectorImpl recordInspector = new RecordInspectorImpl(reflectionHelper) {
             @Override
             public boolean hasRecordAsSuperclass(@NotNull Class<?> clazz) {
                 return true;
@@ -98,7 +103,7 @@ class RecordInspectorTest {
         assertThat(components[1].getGenericType(), equalTo(Object.class));
     }
 
-    private static final class FakeRecordType {
+    public static final class FakeRecordType {
 
         public static FakeRecordComponent[] getComponents() {
             FakeRecordComponent component1 = new FakeRecordComponent("age", int.class, int.class);
@@ -107,7 +112,7 @@ class RecordInspectorTest {
         }
     }
 
-    private static final class FakeRecordComponent {
+    public static final class FakeRecordComponent {
 
         private final String name;
         private final Class<?> type;

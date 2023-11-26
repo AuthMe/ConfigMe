@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -76,10 +77,10 @@ class BeanZeroArgConstructorInstantiationTest {
     }
 
     @Test
-    void shouldThrowForPrivateConstructor() throws NoSuchMethodException {
+    void shouldPropagateExceptionInConstructor() throws NoSuchMethodException {
         // given
         BeanZeroArgConstructorInstantiation instantiation = new BeanZeroArgConstructorInstantiation(
-            BeanWithPrivateConstructor.class.getDeclaredConstructor(),
+            BeanWithThrowingConstructor.class.getDeclaredConstructor(),
             Collections.emptyList());
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
@@ -88,8 +89,8 @@ class BeanZeroArgConstructorInstantiationTest {
             () -> instantiation.create(Collections.emptyList(), errorRecorder));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Failed to call constructor for class ch.jalu.configme.beanmapper.instantiation.BeanZeroArgConstructorInstantiationTest$BeanWithPrivateConstructor"));
-        assertThat(ex.getCause(), instanceOf(IllegalAccessException.class));
+        assertThat(ex.getMessage(), equalTo("Failed to call constructor for class ch.jalu.configme.beanmapper.instantiation.BeanZeroArgConstructorInstantiationTest$BeanWithThrowingConstructor"));
+        assertThat(ex.getCause(), instanceOf(InvocationTargetException.class));
     }
 
     @Test
@@ -168,9 +169,10 @@ class BeanZeroArgConstructorInstantiationTest {
         }
     }
 
-    private static final class BeanWithPrivateConstructor {
+    private static final class BeanWithThrowingConstructor {
 
-        private BeanWithPrivateConstructor() {
+        private BeanWithThrowingConstructor() {
+            throw new IllegalStateException("Yikers");
         }
     }
 

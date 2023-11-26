@@ -1,7 +1,7 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.exception.ConfigMeException;
-import ch.jalu.configme.internal.record.ReflectionHelper;
+import ch.jalu.configme.internal.ReflectionHelper;
 import ch.jalu.typeresolver.FieldUtils;
 import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +18,13 @@ public class BeanFieldPropertyDescription implements BeanPropertyDescription {
     private final String exportName;
     private final BeanPropertyComments comments;
 
+    /**
+     * Constructor.
+     *
+     * @param field the field this description is for
+     * @param exportName the custom name of this property in the property resource, null for default
+     * @param comments the comments associated with this property
+     */
     public BeanFieldPropertyDescription(@NotNull Field field,
                                         @Nullable String exportName,
                                         @NotNull BeanPropertyComments comments) {
@@ -28,9 +35,7 @@ public class BeanFieldPropertyDescription implements BeanPropertyDescription {
 
     @Override
     public @NotNull String getName() {
-        return exportName == null
-            ? field.getName()
-            : exportName;
+        return exportName == null ? field.getName() : exportName;
     }
 
     @Override
@@ -44,7 +49,7 @@ public class BeanFieldPropertyDescription implements BeanPropertyDescription {
 
     /**
      * Sets the provided value to the field wrapped by this instance on the given bean. This method does not
-     * check whether the field is final; in some contexts (e.g. instantiation a record type), this method cannot
+     * check whether the field is final; in some contexts (e.g. instantiating a record type), this method should not
      * be called.
      *
      * @param bean the bean to set the value to

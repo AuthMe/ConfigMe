@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,66 +26,74 @@ import java.util.stream.Collectors;
 /**
  * Creates all {@link BeanPropertyDescription} objects for a given class.
  * <p>
- * This description factory returns property descriptions for all properties on a class
- * for which a getter and setter is associated. Inherited properties are considered.
+ * This description factory returns property descriptions for all instance fields on a class,
+ * including fields on its parent. If a class has a field of the same name as the parent, the parent's
+ * field is ignored.
  * <p>
- * This implementation supports {@link ExportName} and transient properties, declared
- * with the {@code transient} keyword or by adding the {@link Ignore} annotation.
+ * This implementation supports &#64;{@link ExportName} and transient properties, declared
+ * with the {@code transient} keyword or by adding the &#64;{@link Ignore} annotation.
  */
 public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
 
     @Override
-    public @NotNull List<BeanFieldPropertyDescription> createRecordProperties(@NotNull Class<?> clazz,
-                                                                              RecordComponent @NotNull [] components) {
+    public @NotNull List<BeanFieldPropertyDescription> collectPropertiesForRecord(@NotNull Class<?> clazz,
+                                                                               RecordComponent @NotNull [] components) {
         Map<String, Field> instanceFieldsByName = FieldUtils.getAllFields(clazz)
             .filter(FieldUtils::isRegularInstanceField)
             .collect(FieldUtils.collectByName(false));
 
-        List<BeanFieldPropertyDescription> relevantFields = new ArrayList<>();
+        List<BeanFieldPropertyDescription> properties = new ArrayList<>();
         for (RecordComponent component : components) {
             Field field = instanceFieldsByName.get(component.getName());
-            if (field == null) {
-                throw new ConfigMeException("Record component '" + component.getName() + "' for " + clazz.getName()
-                    + " does not have a field with the same name");
-            }
+            validateFieldForRecord(clazz, component, field);
             BeanFieldPropertyDescription property = convert(field);
-            if (property == null) {
-                throw new ConfigMeException("Record component '" + component.getName() + "' for " + clazz.getName()
-                   + " has a field defined to be ignored: this is not supported for records");
-            }
-            relevantFields.add(property);
+            properties.add(property);
         }
-        return relevantFields;
+
+        validateProperties(clazz, properties);
+        return properties;
     }
 
     /**
-     * Collects all properties available on the given class.
+     * Validates the component and its associated field for a class that is a record.
      *
-     * @param clazz the class to process
-     * @return properties of the class
+     * @param clazz the record type the component belongs to
+     * @param component the record component to validate
+     * @param field the field associated with the record (nullable)
      */
-    public @NotNull List<BeanFieldPropertyDescription> getAllProperties(@NotNull Class<?> clazz) {
+    protected void validateFieldForRecord(@NotNull Class<?> clazz, @NotNull RecordComponent component,
+                                          @Nullable Field field) {
+        if (field == null) {
+            throw new ConfigMeException("Record component '" + component.getName() + "' for " + clazz.getName()
+                + " does not have a field with the same name");
+        } else if (isFieldIgnored(field)) {
+            throw new ConfigMeException("Record component '" + component.getName() + "' for " + clazz.getName()
+                + " has a field defined to be ignored: this is not supported for records");
+        }
+    }
+
+    @Override
+    public @NotNull List<BeanFieldPropertyDescription> collectProperties(@NotNull Class<?> clazz) {
+        @SuppressWarnings("checkstyle:IllegalType") // LinkedHashMap indicates the values are ordered (important here)
         LinkedHashMap<String, Field> instanceFieldsByName = FieldUtils.getAllFields(clazz)
             .filter(FieldUtils::isRegularInstanceField)
             .collect(FieldUtils.collectByName(false));
 
         List<BeanFieldPropertyDescription> properties = instanceFieldsByName.values().stream()
+            .filter(field -> !isFieldIgnored(field))
             .map(this::convert)
-            .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
         validateProperties(clazz, properties);
         return properties;
     }
 
-    protected @Nullable BeanFieldPropertyDescription convert(@NotNull Field field) {
-        if (Modifier.isTransient(field.getModifiers()) || field.isAnnotationPresent(Ignore.class)) {
-            return null;
-        }
+    protected @NotNull BeanFieldPropertyDescription convert(@NotNull Field field) {
+        return new BeanFieldPropertyDescription(field, getCustomExportName(field), getComments(field));
+    }
 
-        return new BeanFieldPropertyDescription(field,
-            getCustomExportName(field),
-            getComments(field));
+    protected boolean isFieldIgnored(@NotNull Field field) {
+        return Modifier.isTransient(field.getModifiers()) || field.isAnnotationPresent(Ignore.class);
     }
 
     /**
@@ -125,6 +132,13 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
         });
     }
 
+    /**
+     * Returns a custom name that the property should have in property resources for reading and writing. This method
+     * returns null if the field name should be used.
+     *
+     * @param field the field to process
+     * @return the custom name the property has in resources, null otherwise
+     */
     protected @Nullable String getCustomExportName(@NotNull Field field) {
         return field.isAnnotationPresent(ExportName.class)
             ? field.getAnnotation(ExportName.class).value()

@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a property within a bean class, as used in
- * {@link ch.jalu.configme.beanmapper.instantiation.BeanInstantiationService}.
- * There, for instance, there is a {@link BeanDescriptionFactory} field responsible for creating bean descriptions.
+ * Represents a property within a bean class, as used by
+ * {@link ch.jalu.configme.beanmapper.instantiation.BeanInstantiation BeanInstantiation}. Bean property descriptions
+ * are provided by {@link BeanDescriptionFactory}.
  * <p>
- * Default implementation is {@link BeanFieldPropertyDescription}.
+ * Default implementation of this interface is {@link BeanFieldPropertyDescription}.
  */
 public interface BeanPropertyDescription {
 

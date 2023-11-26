@@ -67,7 +67,7 @@ class BeanFieldPropertyDescriptionTest {
     void shouldHaveAppropriateStringRepresentation() {
         // given
         Collection<BeanFieldPropertyDescription> properties = new BeanDescriptionFactoryImpl()
-            .getAllProperties(AnnotatedEntry.class);
+            .collectProperties(AnnotatedEntry.class);
         BeanPropertyDescription hasIdProperty = properties.stream()
             .filter(prop -> "has-id".equals(prop.getName())).findFirst().get();
 
@@ -79,7 +79,7 @@ class BeanFieldPropertyDescriptionTest {
     }
 
     private static BeanFieldPropertyDescription getDescriptor(String name, Class<?> clazz) {
-        return new BeanDescriptionFactoryImpl().getAllProperties(clazz)
+        return new BeanDescriptionFactoryImpl().collectProperties(clazz)
             .stream()
             .filter(prop -> name.equals(prop.getName()))
             .findFirst()

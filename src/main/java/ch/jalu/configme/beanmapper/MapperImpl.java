@@ -72,21 +72,21 @@ public class MapperImpl implements Mapper {
     // ---------
 
     private final LeafValueHandler leafValueHandler;
-    private final BeanInstantiationService beanInspector;
+    private final BeanInstantiationService beanInstantiationService;
 
     public MapperImpl() {
         this(new BeanInstantiationServiceImpl(),
              new LeafValueHandlerImpl(LeafValueHandlerImpl.createDefaultLeafTypes()));
     }
 
-    public MapperImpl(@NotNull BeanInstantiationService beanInspector,
+    public MapperImpl(@NotNull BeanInstantiationService beanInstantiationService,
                       @NotNull LeafValueHandler leafValueHandler) {
-        this.beanInspector = beanInspector;
+        this.beanInstantiationService = beanInstantiationService;
         this.leafValueHandler = leafValueHandler;
     }
 
     protected final @NotNull BeanInstantiationService getBeanInstantiationService() {
-        return beanInspector;
+        return beanInstantiationService;
     }
 
     protected final @NotNull LeafValueHandler getLeafValueHandler() {
@@ -149,9 +149,8 @@ public class MapperImpl implements Mapper {
         return mappedBean;
     }
 
-    @NotNull
-    private List<BeanPropertyDescription> getBeanProperties(@NotNull Object value) {
-        return beanInspector.findInstantiation(value.getClass())
+    protected @NotNull List<BeanPropertyDescription> getBeanProperties(@NotNull Object value) {
+        return beanInstantiationService.findInstantiation(value.getClass())
             .map(BeanInstantiation::getProperties)
             .orElse(Collections.emptyList());
     }
@@ -382,7 +381,7 @@ public class MapperImpl implements Mapper {
         Map<?, ?> entries = (Map<?, ?>) value;
 
         Optional<BeanInstantiation> instantiation =
-            beanInspector.findInstantiation(context.getTargetTypeAsClassOrThrow());
+            beanInstantiationService.findInstantiation(context.getTargetTypeAsClassOrThrow());
         if (instantiation.isPresent()) {
             List<Object> propertyValues = instantiation.get().getProperties().stream()
                 .map(prop -> {

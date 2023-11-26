@@ -1,4 +1,4 @@
-package ch.jalu.configme.internal.record;
+package ch.jalu.configme.internal;
 
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
@@ -10,6 +10,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -84,15 +85,29 @@ class ReflectionHelperTest {
     @Test
     void shouldWrapExceptionIfCallingMethodFails() throws NoSuchMethodException {
         // given
-        Method toStringMethod = HashMap.class.getDeclaredMethod("resize");
+        Method privateResizeMethod = HashMap.class.getDeclaredMethod("resize");
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> reflectionHelper.invokeZeroArgMethod(toStringMethod, new HashMap<>()));
+            () -> reflectionHelper.invokeZeroArgMethod(privateResizeMethod, new HashMap<>()));
 
         // then
         assertThat(ex.getMessage(), equalTo("Failed to call final java.util.HashMap$Node[] java.util.HashMap.resize() for {}"));
         assertThat(ex.getCause(), instanceOf(IllegalAccessException.class));
+    }
+
+    @Test
+    void shouldThrowForNullReturnValue() throws NoSuchMethodException {
+        // given
+        Supplier<String> supplier = () -> null;
+        Method supplierGetMethod = Supplier.class.getDeclaredMethod("get");
+
+        // when
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+            () -> reflectionHelper.invokeZeroArgMethod(supplierGetMethod, supplier));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Method 'public abstract java.lang.Object java.util.function.Supplier.get()' unexpectedly returned null"));
     }
 
     @Test

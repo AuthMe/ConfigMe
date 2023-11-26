@@ -1,4 +1,4 @@
-package ch.jalu.configme.internal.record;
+package ch.jalu.configme.internal;
 
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.typeresolver.classutil.ClassUtils;
@@ -41,7 +41,7 @@ public class ReflectionHelper {
 
     /**
      * Invokes the given method (with zero arguments) on the given {@code instance} object. A runtime exception is
-     * thrown if the method invocation failed.
+     * thrown if the method invocation failed. An exception is thrown if the return value is null.
      *
      * @param method the method to invoke
      * @param instance the object to invoke it on
@@ -49,10 +49,13 @@ public class ReflectionHelper {
      * @return the return value of the method
      */
     @SuppressWarnings("unchecked")
-    // TODO: @NotNull on return value not generically valid - revise?
     public <T> @NotNull T invokeZeroArgMethod(@NotNull Method method, @Nullable Object instance) {
         try {
-            return (T) method.invoke(instance);
+            T result = (T) method.invoke(instance);
+            if (result == null) { // Should never happen; used to guarantee @NotNull, as per the method declaration
+                throw new IllegalStateException("Method '" + method + "' unexpectedly returned null");
+            }
+            return result;
         } catch (ReflectiveOperationException e) {
             throw new ConfigMeException("Failed to call " + method + " for " + instance, e);
         }

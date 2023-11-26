@@ -40,7 +40,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldReturnWritableProperties() {
         // given / when
-        Collection<BeanFieldPropertyDescription> descriptions = factory.getAllProperties(SampleBean.class);
+        Collection<BeanFieldPropertyDescription> descriptions = factory.collectProperties(SampleBean.class);
 
         // then
         assertThat(descriptions, hasSize(4));
@@ -66,13 +66,13 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldReturnEmptyListForNonBeanClass() {
         // given / when / then
-        assertThat(factory.getAllProperties(List.class), empty());
+        assertThat(factory.collectProperties(List.class), empty());
     }
 
     @Test
     void shouldNotConsiderTransientFields() {
         // given / when
-        Collection<BeanFieldPropertyDescription> properties = factory.getAllProperties(BeanWithTransientFields.class);
+        Collection<BeanFieldPropertyDescription> properties = factory.collectProperties(BeanWithTransientFields.class);
 
         // then
         assertThat(properties, hasSize(2));
@@ -82,7 +82,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldBeAwareOfInheritanceAndRespectOrder() {
         // given / when
-        Collection<BeanFieldPropertyDescription> properties = factory.getAllProperties(Middle.class);
+        Collection<BeanFieldPropertyDescription> properties = factory.collectProperties(Middle.class);
 
         // then
         assertThat(properties, hasSize(3));
@@ -92,7 +92,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldLetChildFieldsOverrideParentFields() {
         // given / when
-        Collection<BeanFieldPropertyDescription> properties = factory.getAllProperties(Child.class);
+        Collection<BeanFieldPropertyDescription> properties = factory.collectProperties(Child.class);
 
         // then
         assertThat(properties, hasSize(5));
@@ -103,7 +103,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldUseExportName() {
         // given / when
-        Collection<BeanFieldPropertyDescription> properties = factory.getAllProperties(AnnotatedEntry.class);
+        Collection<BeanFieldPropertyDescription> properties = factory.collectProperties(AnnotatedEntry.class);
 
         // then
         assertThat(properties, hasSize(2));
@@ -115,7 +115,7 @@ class BeanDescriptionFactoryImplTest {
     void shouldThrowForMultiplePropertiesWithSameName() {
         // given / when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> factory.getAllProperties(BeanWithNameClash.class));
+            () -> factory.collectProperties(BeanWithNameClash.class));
 
         // then
         assertThat(ex.getMessage(),
@@ -126,7 +126,7 @@ class BeanDescriptionFactoryImplTest {
     void shouldThrowForWhenExportNameIsNullForProperty() {
         // given / when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> factory.getAllProperties(BeanWithEmptyName.class));
+            () -> factory.collectProperties(BeanWithEmptyName.class));
 
         // then
         assertThat(ex.getMessage(),
@@ -136,7 +136,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldReturnCommentsWithoutUuid() {
         // given / when
-        Collection<BeanFieldPropertyDescription> execDetailsProperties = factory.getAllProperties(ExecutionDetails.class);
+        Collection<BeanFieldPropertyDescription> execDetailsProperties = factory.collectProperties(ExecutionDetails.class);
 
         // then
         BeanPropertyComments executorComments = getDescription("executor", execDetailsProperties).getComments();
@@ -150,7 +150,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldPickUpCustomNameFromField() {
         // given / when
-        List<BeanFieldPropertyDescription> properties = new ArrayList<>(factory.getAllProperties(BeanWithExportName.class));
+        List<BeanFieldPropertyDescription> properties = new ArrayList<>(factory.collectProperties(BeanWithExportName.class));
 
         // then
         assertThat(properties, hasSize(3));
@@ -165,7 +165,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldPickUpCustomNameFromFieldsIncludingInheritance() {
         // given / when
-        List<BeanFieldPropertyDescription> properties = new ArrayList<>(factory.getAllProperties(BeanWithExportNameExtension.class));
+        List<BeanFieldPropertyDescription> properties = new ArrayList<>(factory.collectProperties(BeanWithExportNameExtension.class));
 
         // then
         assertThat(properties, hasSize(4));

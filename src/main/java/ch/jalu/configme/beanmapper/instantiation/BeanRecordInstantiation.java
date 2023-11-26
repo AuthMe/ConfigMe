@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Instantiates bean types that are records.
+ * Instantiates a bean type that is a Java record.
  */
 public class BeanRecordInstantiation implements BeanInstantiation {
 

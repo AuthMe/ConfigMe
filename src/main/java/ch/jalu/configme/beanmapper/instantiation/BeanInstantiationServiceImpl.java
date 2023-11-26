@@ -3,10 +3,12 @@ package ch.jalu.configme.beanmapper.instantiation;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
 import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescription;
+import ch.jalu.configme.internal.ReflectionHelper;
 import ch.jalu.configme.internal.record.RecordComponent;
 import ch.jalu.configme.internal.record.RecordInspector;
-import ch.jalu.configme.internal.record.ReflectionHelper;
+import ch.jalu.configme.internal.record.RecordInspectorImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -14,14 +16,25 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Default implementation of {@link BeanInstantiationService}: defines how bean classes can be created.
+ * <p>
+ * This service can handle two different types of classes as beans:<ul>
+ *  <li>Regular Java classes with a <b>public no-args constructor</b>: all non-static, non-transient fields
+ *      will be considered as bean properties.</li>
+ *  <li>Java records</li>
+ * </ul>
+ *
+ * See {@link BeanDescriptionFactory} for details on how properties of a bean class are determined.
+ */
 public class BeanInstantiationServiceImpl implements BeanInstantiationService {
 
     private final RecordInspector recordInspector;
     private final BeanDescriptionFactory beanDescriptionFactory;
-    private final Map<Class<?>, BeanInstantiation> cachedInstantiationByType = new ConcurrentHashMap<>();
+    private final Map<Class<?>, BeanInstantiation> cachedInstantiationsByType = new ConcurrentHashMap<>();
 
     public BeanInstantiationServiceImpl() {
-        this.recordInspector = new RecordInspector(new ReflectionHelper());
+        this.recordInspector = new RecordInspectorImpl(new ReflectionHelper());
         this.beanDescriptionFactory = new BeanDescriptionFactoryImpl();
     }
 
@@ -33,33 +46,44 @@ public class BeanInstantiationServiceImpl implements BeanInstantiationService {
 
     @Override
     public @NotNull Optional<BeanInstantiation> findInstantiation(@NotNull Class<?> clazz) {
-        BeanInstantiation cachedInstantiation = cachedInstantiationByType.get(clazz);
+        BeanInstantiation cachedInstantiation = cachedInstantiationsByType.get(clazz);
         if (cachedInstantiation != null) {
             return Optional.of(cachedInstantiation);
         }
 
-        if (recordInspector.isRecord(clazz)) {
-            RecordComponent[] recordComponents = recordInspector.getRecordComponents(clazz);
-            List<BeanFieldPropertyDescription> properties =
-                beanDescriptionFactory.createRecordProperties(clazz, recordComponents);
+        BeanInstantiation instantiation = createInstantiation(clazz);
+        if (instantiation != null) {
+            cachedInstantiationsByType.put(clazz, instantiation);
+            return Optional.of(instantiation);
+        }
+        return Optional.empty();
+    }
 
-            BeanRecordInstantiation recordInstantiation = new BeanRecordInstantiation(clazz, properties);
-            cachedInstantiationByType.put(clazz, recordInstantiation);
-            return Optional.of(recordInstantiation);
+    /**
+     * Inspects the class and returns an appropriate instantiation for it, if available. Null is returned if the
+     * class cannot be treated as a bean.
+     *
+     * @param clazz the class to process
+     * @return bean instantiation for the class, or null if not applicable
+     */
+    protected @Nullable BeanInstantiation createInstantiation(@NotNull Class<?> clazz) {
+        RecordComponent[] recordComponents = recordInspector.getRecordComponents(clazz);
+        if (recordComponents != null) {
+            List<BeanFieldPropertyDescription> properties =
+                beanDescriptionFactory.collectPropertiesForRecord(clazz, recordComponents);
+
+            return new BeanRecordInstantiation(clazz, properties);
         }
 
         Optional<Constructor<?>> zeroArgConstructor = tryFindConstructor(clazz);
         if (zeroArgConstructor.isPresent()) {
-            List<BeanFieldPropertyDescription> properties = beanDescriptionFactory.getAllProperties(clazz);
+            List<BeanFieldPropertyDescription> properties = beanDescriptionFactory.collectProperties(clazz);
             if (!properties.isEmpty()) {
-                BeanZeroArgConstructorInstantiation zeroArgConstrInstantiation =
-                    new BeanZeroArgConstructorInstantiation(zeroArgConstructor.get(), properties);
-                cachedInstantiationByType.put(clazz, zeroArgConstrInstantiation);
-                return Optional.of(zeroArgConstrInstantiation);
+                return new BeanZeroArgConstructorInstantiation(zeroArgConstructor.get(), properties);
             }
         }
 
-        return Optional.empty();
+        return null;
     }
 
     /**
@@ -77,5 +101,17 @@ public class BeanInstantiationServiceImpl implements BeanInstantiationService {
         } catch (NoSuchMethodException ignore) {
             return Optional.empty();
         }
+    }
+
+    protected final @NotNull RecordInspector getRecordInspector() {
+        return recordInspector;
+    }
+
+    protected final @NotNull BeanDescriptionFactory getBeanDescriptionFactory() {
+        return beanDescriptionFactory;
+    }
+
+    protected final @NotNull Map<Class<?>, BeanInstantiation> getCachedInstantiationsByType() {
+        return cachedInstantiationsByType;
     }
 }
