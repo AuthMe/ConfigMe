@@ -135,4 +135,36 @@ class StringPropertyTest {
                     "    Second row\n" +
                     "    Third row\n"));
     }
+
+    @Test
+    void shouldWriteMultipleLines() throws IOException {
+        // given
+        Path configFile = TestUtils.copyFileFromResources("/empty_file.yml", temporaryFolder);
+        PropertyResource resource = new YamlFileResource(configFile);
+
+        Property<String> linesProperty = PropertyInitializer.newProperty("lines", "");
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(Collections.singletonList(linesProperty));
+        configurationData.initializeValues(resource.createReader());
+
+        // set a multiple-line string
+        configurationData.setValue(linesProperty, "First row\n\nSecond row\nThird row\n");
+
+        // when
+        resource.exportProperties(configurationData);
+
+        // then
+        String lines = linesProperty.determineValue(resource.createReader()).getValue();
+        assertThat(lines, equalTo("First row\n\nSecond row\nThird row\n"));
+
+        byte[] fileBytes = Files.readAllBytes(configFile);
+        String fileContent = new String(fileBytes);
+
+        assertThat(
+            fileContent,
+            equalTo(
+                "lines: |\n" +
+                    "    First row\n\n" +
+                    "    Second row\n" +
+                    "    Third row\n"));
+    }
 }
