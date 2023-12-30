@@ -1,10 +1,21 @@
 package ch.jalu.configme.properties;
 
+import ch.jalu.configme.TestUtils;
+import ch.jalu.configme.configurationdata.ConfigurationData;
+import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.resource.PropertyReader;
+import ch.jalu.configme.resource.PropertyResource;
+import ch.jalu.configme.resource.YamlFileResource;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -17,6 +28,9 @@ import static org.mockito.Mockito.when;
  */
 @ExtendWith(MockitoExtension.class)
 class StringPropertyTest {
+
+    @TempDir
+    private Path temporaryFolder;
 
     private static PropertyReader reader;
 
@@ -91,5 +105,34 @@ class StringPropertyTest {
 
         // then
         assertThat(value, equalTo("false"));
+    }
+
+    @Test
+    void shouldReadMultipleLines() throws IOException {
+        // given
+        Path configFile = TestUtils.copyFileFromResources("/multiple_lines.yml", temporaryFolder);
+        PropertyResource resource = new YamlFileResource(configFile);
+
+        Property<String> linesProperty = PropertyInitializer.newProperty("lines", "");
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(Collections.singletonList(linesProperty));
+        configurationData.initializeValues(resource.createReader());
+
+        // when
+        resource.exportProperties(configurationData);
+
+        // then
+        String lines = linesProperty.determineValue(resource.createReader()).getValue();
+        assertThat(lines, equalTo("First row\n\nSecond row\nThird row\n"));
+
+        byte[] fileBytes = Files.readAllBytes(configFile);
+        String fileContent = new String(fileBytes);
+
+        assertThat(
+            fileContent,
+            equalTo(
+                "lines: |\n" +
+                    "    First row\n\n" +
+                    "    Second row\n" +
+                    "    Third row\n"));
     }
 }
