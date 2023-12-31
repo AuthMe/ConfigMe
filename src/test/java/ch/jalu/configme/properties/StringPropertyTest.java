@@ -158,7 +158,7 @@ class StringPropertyTest {
         // set a multiple-line strings
         configurationData.setValue(l1Property, "First row\nSecond row");
         configurationData.setValue(l2Property, "First row\r\b\f\nSecond row ");
-        configurationData.setValue(l3Property, "First text\tSecond text");
+        configurationData.setValue(l3Property, "First text Second text");
         configurationData.setValue(l4Property, "[{\r\nenabled : true \r\n}]");
 
         // when
@@ -173,7 +173,7 @@ class StringPropertyTest {
         assertThat(l2, equalTo("First row\nSecond row"));
 
         String l3 = l3Property.determineValue(propertyReader).getValue();
-        assertThat(l3, equalTo("First text    Second text"));
+        assertThat(l3, equalTo("First text Second text"));
 
         String l4 = l4Property.determineValue(propertyReader).getValue();
         assertThat(l4, equalTo("[{\nenabled : true\n}]"));
@@ -190,7 +190,7 @@ class StringPropertyTest {
                     "l2: |-\n" +
                     "    First row\n" +
                     "    Second row\n" +
-                    "l3: First text    Second text\n" +
+                    "l3: First text Second text\n" +
                     "l4: |-\n" +
                     "    [{\n" +
                     "    enabled : true\n" +

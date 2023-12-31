@@ -107,15 +107,12 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
             value =
                 value
                     .replace("\r", "") // removes carriage return
-                    .replaceAll("\\s+\\n", "\n") // removes excess spaces before the \n
-                    .trim(); // trims leading and trailing spaces
-        }
+                    .replaceAll(" +\\n", "\n"); // removes excess spaces before the \n
 
-        value =
-            value
-                .replace("\b", "") // removes backspace
-                .replace("\f", "") // removes page feed
-                .replace("\t", "    "); // replaces tab with 4 spaces
+            if (value.endsWith(" ")) {
+                value = value.trim(); // trims leading and trailing spaces
+            }
+        }
 
         return new ScalarNode(Tag.STR, value, null, null, scalarStyle);
     }
