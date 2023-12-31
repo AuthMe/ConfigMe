@@ -102,6 +102,21 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
             value.contains("\n")
                 ? DumperOptions.ScalarStyle.LITERAL // Used for strings that span multiple lines
                 : DumperOptions.ScalarStyle.PLAIN; // Used for single line string
+
+        if (scalarStyle == DumperOptions.ScalarStyle.LITERAL) {
+            value =
+                value
+                    .replace("\r", "") // removes carriage return
+                    .replaceAll("\\s+\\n", "\n") // removes excess spaces before the \n
+                    .trim(); // trims leading and trailing spaces
+        }
+
+        value =
+            value
+                .replace("\b", "") // removes backspace
+                .replace("\f", "") // removes page feed
+                .replace("\t", "    "); // replaces tab with 4 spaces
+
         return new ScalarNode(Tag.STR, value, null, null, scalarStyle);
     }
 
