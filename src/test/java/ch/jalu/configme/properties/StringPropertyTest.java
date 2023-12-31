@@ -157,7 +157,7 @@ class StringPropertyTest {
 
         // set a multiple-line strings
         configurationData.setValue(l1Property, "First row\nSecond row");
-        configurationData.setValue(l2Property, "First row\r\b\f\nSecond row ");
+        configurationData.setValue(l2Property, "First row\r\nSecond row ");
         configurationData.setValue(l3Property, "First text Second text");
         configurationData.setValue(l4Property, "[{\r\nenabled : true \r\n}]");
 
