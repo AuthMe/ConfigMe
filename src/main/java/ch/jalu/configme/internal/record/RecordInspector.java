@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Utilities for Java records. They are abstracted by this type because ConfigMe is compiled with Java 8.
+ * This class will be removed once ConfigMe upgrades to Java {@code >= 14}.
  */
 public interface RecordInspector {
 

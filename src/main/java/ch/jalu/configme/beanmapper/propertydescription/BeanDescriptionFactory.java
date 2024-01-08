@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Factory which analyzes a class and returns all writable properties.
+ * Factory which analyzes a class and returns all properties which ConfigMe should consider.
  * <p>
  * Default implementation: {@link BeanDescriptionFactoryImpl}.
  */

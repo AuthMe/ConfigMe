@@ -20,12 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * Default implementation of {@link BeanInstantiationService}: defines how bean classes can be created.
  * <p>
  * This service can handle two different types of classes as beans:<ul>
- *  <li>Regular Java classes with a <b>public no-args constructor</b>: all non-static, non-transient fields
+ *  <li>Regular Java classes with a <b>no-args constructor</b>: all fields that aren't static or transient
  *      will be considered as bean properties.</li>
  *  <li>Java records</li>
  * </ul>
  *
- * See {@link BeanDescriptionFactory} for details on how properties of a bean class are determined.
+ * See {@link BeanDescriptionFactory} for details on how the properties are determined for a bean class.
  */
 public class BeanInstantiationServiceImpl implements BeanInstantiationService {
 
