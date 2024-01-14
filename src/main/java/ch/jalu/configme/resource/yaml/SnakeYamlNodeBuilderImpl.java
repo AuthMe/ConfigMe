@@ -98,22 +98,9 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
     }
 
     protected @NotNull Node createStringNode(@NotNull String value) {
-        DumperOptions.ScalarStyle scalarStyle =
-            value.contains("\n")
-                ? DumperOptions.ScalarStyle.LITERAL // Used for strings that span multiple lines
-                : DumperOptions.ScalarStyle.PLAIN; // Used for single line string
-
-        if (scalarStyle == DumperOptions.ScalarStyle.LITERAL) {
-            value =
-                value
-                    .replace("\r", "") // removes carriage return
-                    .replaceAll(" +\\n", "\n"); // removes excess spaces before the \n
-
-            if (value.endsWith(" ")) {
-                value = value.trim(); // trims leading and trailing spaces
-            }
-        }
-
+        DumperOptions.ScalarStyle scalarStyle = value.contains("\n")
+            ? DumperOptions.ScalarStyle.LITERAL // Used for strings that span multiple lines
+            : DumperOptions.ScalarStyle.PLAIN; // Used for single line string
         return new ScalarNode(Tag.STR, value, null, null, scalarStyle);
     }
 
