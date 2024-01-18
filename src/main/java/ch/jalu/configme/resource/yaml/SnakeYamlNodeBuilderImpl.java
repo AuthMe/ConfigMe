@@ -98,7 +98,10 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
     }
 
     protected @NotNull Node createStringNode(@NotNull String value) {
-        return new ScalarNode(Tag.STR, value, null, null, DumperOptions.ScalarStyle.PLAIN);
+        DumperOptions.ScalarStyle scalarStyle = value.contains("\n")
+            ? DumperOptions.ScalarStyle.LITERAL // Used for strings that span multiple lines
+            : DumperOptions.ScalarStyle.PLAIN; // Used for single line string
+        return new ScalarNode(Tag.STR, value, null, null, scalarStyle);
     }
 
     protected @NotNull Node createNumberNode(@NotNull Number value) {
