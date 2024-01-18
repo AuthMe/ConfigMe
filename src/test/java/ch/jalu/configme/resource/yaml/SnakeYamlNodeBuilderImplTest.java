@@ -70,6 +70,7 @@ class SnakeYamlNodeBuilderImplTest {
         ScalarNode scalarNode = (ScalarNode) node;
         assertThat(scalarNode.getTag(), equalTo(Tag.STR));
         assertThat(scalarNode.getValue(), equalTo(value));
+        assertThat(scalarNode.getScalarStyle(), equalTo(DumperOptions.ScalarStyle.PLAIN));
 
         assertThat(scalarNode.getInLineComments(), nullValue());
         assertThat(scalarNode.getEndComments(), nullValue());
@@ -77,6 +78,29 @@ class SnakeYamlNodeBuilderImplTest {
         assertThat(scalarNode.getBlockComments().get(0), isBlankComment());
         assertThat(scalarNode.getBlockComments().get(1), isBlankComment());
         assertThat(scalarNode.getBlockComments().get(2), isBlockComment(" Title text"));
+    }
+
+    @Test
+    void shouldCreateStringNodeWithLiteralStyle() {
+        // given
+        String value = "Multi-line text\nMulti-line text\nMulti-line text";
+        ConfigurationData configurationData = mock(ConfigurationData.class);
+        String path = "disclaimer.text";
+        given(configurationData.getCommentsForSection(path)).willReturn(Collections.emptyList());
+
+        // when
+        Node node = nodeBuilder.createYamlNode(value, path, configurationData, 0);
+
+        // then
+        assertThat(node, instanceOf(ScalarNode.class));
+        ScalarNode scalarNode = (ScalarNode) node;
+        assertThat(scalarNode.getTag(), equalTo(Tag.STR));
+        assertThat(scalarNode.getValue(), equalTo(value));
+        assertThat(scalarNode.getScalarStyle(), equalTo(DumperOptions.ScalarStyle.LITERAL));
+
+        assertThat(scalarNode.getInLineComments(), nullValue());
+        assertThat(scalarNode.getEndComments(), nullValue());
+        assertThat(scalarNode.getBlockComments(), empty());
     }
 
     @Test
@@ -95,6 +119,7 @@ class SnakeYamlNodeBuilderImplTest {
         ScalarNode scalarNode = (ScalarNode) node;
         assertThat(scalarNode.getTag(), equalTo(Tag.STR));
         assertThat(scalarNode.getValue(), equalTo("DAYS"));
+        assertThat(scalarNode.getScalarStyle(), equalTo(DumperOptions.ScalarStyle.PLAIN));
 
         assertThat(scalarNode.getInLineComments(), nullValue());
         assertThat(scalarNode.getEndComments(), nullValue());

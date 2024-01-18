@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,6 +171,9 @@ class InlineArrayPropertyTypeTest {
             String someString = "An even longer String\twith a tab";
             testData.setInputWithErrors(someString + "\n\n",
                 someString, "", "");
+        } else if (converter == InlineArrayPropertyType.BIG_DECIMAL) {
+            testData.setInputAndExpected("3, 4.5,  -445.68234", "3, 4.5, -445.68234", BigDecimal.valueOf(3), BigDecimal.valueOf(4.5), BigDecimal.valueOf(-445.68234));
+            testData.setInputWithErrors("3, a, 4.5, -2, -b", BigDecimal.valueOf(3), BigDecimal.valueOf(4.5), BigDecimal.valueOf(-2));
         } else {
             throw new IllegalStateException("Unhandled converter '" + converter + "'");
         }
