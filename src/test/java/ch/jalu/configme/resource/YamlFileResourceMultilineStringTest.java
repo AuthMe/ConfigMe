@@ -6,6 +6,7 @@ import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.PropertyInitializer;
 import ch.jalu.configme.properties.StringProperty;
+import ch.jalu.configme.properties.convertresult.PropertyValue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -138,6 +139,31 @@ class YamlFileResourceMultilineStringTest {
 
         // then
         assertThat(configurationData.getValue(property), equalTo(value));
+    }
+
+    /**
+     * Multi-line string properties with CRLF are parsed as LF.
+     */
+    @Test
+    void shouldReadStringWithCarriageReturnsAndDiscardThem() throws IOException {
+        // given
+        String contents = "shopping:"
+            + "\r\n  items: |"
+            + "\r\n    Potatoes"
+            + "\r\n    Sausages"
+            + "\r\n    Onions";
+        Path file = temporaryFolder.resolve("test.yml");
+        Files.write(file, contents.getBytes());
+        YamlFileReader reader = new YamlFileReader(file);
+
+        Property<String> property = new StringProperty("shopping.items", "undefined");
+
+        // when
+        PropertyValue<String> result = property.determineValue(reader);
+
+        // then
+        assertThat(result.getValue(), equalTo("Potatoes\nSausages\nOnions"));
+        assertThat(result.isValidInResource(), equalTo(true));
     }
 
     /*
