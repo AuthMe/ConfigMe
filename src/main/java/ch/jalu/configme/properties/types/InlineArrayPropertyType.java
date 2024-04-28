@@ -5,6 +5,7 @@ import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
@@ -59,6 +60,10 @@ public class InlineArrayPropertyType<T> implements PropertyType<T[]> {
     /** String values, separated by new lines ({@code \n}). */
     public static final InlineArrayPropertyType<String> STRING =
         new InlineArrayPropertyType<>(StringType.STRING, "\n", false, String[]::new);
+
+    /** Big Decimal values, comma-separated. */
+    public static final InlineArrayPropertyType<BigDecimal> BIG_DECIMAL =
+        new InlineArrayPropertyType<>(NumberType.BIG_DECIMAL, ",", true, BigDecimal[]::new);
 
 
     private final PropertyType<T> entryType;

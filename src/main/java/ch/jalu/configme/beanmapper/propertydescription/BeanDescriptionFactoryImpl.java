@@ -149,10 +149,6 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
     protected @NotNull String getPropertyName(@NotNull PropertyDescriptor descriptor, @Nullable Field field) {
         if (field != null && field.isAnnotationPresent(ExportName.class)) {
             return field.getAnnotation(ExportName.class).value();
-        } else if (descriptor.getReadMethod().isAnnotationPresent(ExportName.class)) {
-            return descriptor.getReadMethod().getAnnotation(ExportName.class).value();
-        } else if (descriptor.getWriteMethod().isAnnotationPresent(ExportName.class)) {
-            return descriptor.getWriteMethod().getAnnotation(ExportName.class).value();
         }
         return descriptor.getName();
     }

@@ -32,7 +32,6 @@ public class YamlFileResource implements PropertyResource {
 
     private final Path path;
     private final @NotNull YamlFileResourceOptions options;
-    private @Nullable Yaml yamlObject;
 
     public YamlFileResource(@NotNull Path path) {
         this(path, YamlFileResourceOptions.builder().build());
@@ -73,11 +72,9 @@ public class YamlFileResource implements PropertyResource {
 
         try (OutputStream os = Files.newOutputStream(path);
              OutputStreamWriter writer = new OutputStreamWriter(os, options.getCharset())) {
-            getYamlObject().serialize(rootNode, writer);
+            createSnakeYamlInstance().serialize(rootNode, writer);
         } catch (IOException e) {
             throw new ConfigMeException("Could not save config to '" + path + "'", e);
-        } finally {
-            onWriteComplete();
         }
     }
 
@@ -124,30 +121,11 @@ public class YamlFileResource implements PropertyResource {
     }
 
     /**
-     * Called at the end of {@link #exportProperties}, regardless whether the execution was successful or not.
-     */
-    protected void onWriteComplete() {
-        yamlObject = null;
-    }
-
-    /**
-     * Returns the YAML instance with which values are converted to YAML.
-     *
-     * @return the YAML instance to use
-     */
-    protected @NotNull Yaml getYamlObject() {
-        if (yamlObject == null) {
-            yamlObject = createNewYaml();
-        }
-        return yamlObject;
-    }
-
-    /**
      * Creates a new SnakeYAML object with the appropriate options.
      *
      * @return the YAML instance for exporting values
      */
-    protected @NotNull Yaml createNewYaml() {
+    protected @NotNull Yaml createSnakeYamlInstance() {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setAllowUnicode(true);

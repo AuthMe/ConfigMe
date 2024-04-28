@@ -10,6 +10,7 @@ import java.util.List;
 public class Group {
 
     private List<String> worlds;
+    @ExportName("default-gamemode")
     private GameMode defaultGamemode;
 
     public void setWorlds(List<String> worlds) {
@@ -24,7 +25,6 @@ public class Group {
         this.defaultGamemode = defaultGamemode;
     }
 
-    @ExportName("default-gamemode")
     public GameMode getDefaultGamemode() {
         return defaultGamemode;
     }

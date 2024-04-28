@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Normalizes the keys of maps, splitting compound keys and ensuring that all keys are Strings.
+ * Normalizes the keys of maps, ensuring that all keys are Strings.
  */
 public class MapNormalizer {
 
@@ -67,8 +67,7 @@ public class MapNormalizer {
     }
 
     /**
-     * Adds the provided value into the given map, splitting the path into periods appropriately and keeping
-     * any intermediate nested maps which may already exist.
+     * Adds the provided value into the given map, keeping any intermediate nested maps which may already exist.
      *
      * @param map the map to add the value to
      * @param path the path to store the value under

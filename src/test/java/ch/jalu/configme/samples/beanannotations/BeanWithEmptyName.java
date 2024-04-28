@@ -7,6 +7,7 @@ import ch.jalu.configme.beanmapper.ExportName;
  */
 public class BeanWithEmptyName {
 
+    @ExportName(value = "")
     private String author;
     private String title;
     private int edition;
@@ -15,7 +16,6 @@ public class BeanWithEmptyName {
         return author;
     }
 
-    @ExportName(value = "")
     public void setAuthor(String author) {
         this.author = author;
     }
