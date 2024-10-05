@@ -5,6 +5,7 @@ plugins:
     enabled: true
     config:
       file: '.checkstyle.xml'
+      channel: 'checkstyle-10-7-0'
 
 checks:
   # We disable all the following CodeClimate checks: Checkstyle already checks for these things and has the advantage

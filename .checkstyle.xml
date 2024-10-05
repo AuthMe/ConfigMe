@@ -4,7 +4,9 @@
         "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 <!--
  In order to be compatible with CodeClimate, we have to stay in sync with the version of Checkstyle that they are using.
- This is currently: 8.39. Check the links below to get up-to-date version information.
+ It doesn't seem to be updated much by default, but we can specify a channel, which is currently using 10.7.0.
+ Check the links below to get up-to-date version information.
+ https://github.com/codeclimate/codeclimate-checkstyle/branches/all (channel/ branches)
  https://docs.codeclimate.com/docs/checkstyle
  https://github.com/codeclimate/codeclimate-checkstyle/blob/master/bin/install-checkstyle.sh
 -->
@@ -117,7 +119,7 @@
         <module name="UnnecessarySemicolonAfterTypeMemberDeclaration" />
         <module name="UnnecessarySemicolonInEnumeration" />
         <module name="UnnecessarySemicolonInTryWithResources" />
-        <!-- Checkstyle 9.3: <module name="UnusedLocalVariable" /> -->
+        <module name="UnusedLocalVariable" />
         <module name="VariableDeclarationUsageDistance" />
 
         <!-- Headers -->
@@ -136,7 +138,7 @@
         <module name="JavadocBlockTagLocation" />
         <module name="JavadocContentLocation" />
         <module name="JavadocMethod">
-            <property name="scope" value="package" />
+            <property name="accessModifiers" value="package" />
             <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF" />
         </module>
         <module name="JavadocMissingLeadingAsterisk" />
@@ -236,7 +238,7 @@
             <!-- Override to exclude ELLIPSIS and to add METHOD_REF -->
             <property name="tokens" value="COMMA, SEMI, POST_INC, POST_DEC, LABELED_STAT, METHOD_REF" />
         </module>
-        <!-- Checkstyle 8.45: <module name="NoWhitespaceBeforeCaseDefaultColon" /> -->
+        <module name="NoWhitespaceBeforeCaseDefaultColon" />
         <module name="OperatorWrap" />
         <module name="ParenPad" />
         <module name="SeparatorWrap">
