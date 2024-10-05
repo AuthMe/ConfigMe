@@ -7,6 +7,7 @@ import ch.jalu.configme.internal.ReflectionHelper;
 import ch.jalu.configme.internal.record.RecordComponent;
 import ch.jalu.configme.internal.record.RecordInspector;
 import ch.jalu.configme.internal.record.RecordInspectorImpl;
+import ch.jalu.typeresolver.reflect.ConstructorUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,32 +76,15 @@ public class BeanInstantiationServiceImpl implements BeanInstantiationService {
             return new BeanRecordInstantiation(clazz, properties);
         }
 
-        Optional<Constructor<?>> zeroArgConstructor = tryFindConstructor(clazz);
-        if (zeroArgConstructor.isPresent()) {
+        Constructor<?> zeroArgConstructor = ConstructorUtils.getConstructorOrNull(clazz);
+        if (zeroArgConstructor != null) {
             List<BeanFieldPropertyDescription> properties = beanDescriptionFactory.collectProperties(clazz);
             if (!properties.isEmpty()) {
-                return new BeanZeroArgConstructorInstantiation(zeroArgConstructor.get(), properties);
+                return new BeanZeroArgConstructorInstantiation(zeroArgConstructor, properties);
             }
         }
 
         return null;
-    }
-
-    /**
-     * Returns an optional with the constructor on the given {@code declarer} matching the parameter types,
-     * otherwise an empty optional.
-     *
-     * @param declarer the class to search for constructors
-     * @param parameterTypes the parameter types of the desired constructor
-     * @return optional with the constructor if found, empty optional otherwise
-     */
-    protected static @NotNull Optional<Constructor<?>> tryFindConstructor(@NotNull Class<?> declarer,
-                                                                          Class<?> @NotNull ... parameterTypes) {
-        try {
-            return Optional.of(declarer.getDeclaredConstructor(parameterTypes));
-        } catch (NoSuchMethodException ignore) {
-            return Optional.empty();
-        }
     }
 
     protected final @NotNull RecordInspector getRecordInspector() {

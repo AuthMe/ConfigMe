@@ -2,8 +2,8 @@ package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.internal.ReflectionHelper;
-import ch.jalu.typeresolver.FieldUtils;
 import ch.jalu.typeresolver.TypeInfo;
+import ch.jalu.typeresolver.reflect.FieldUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

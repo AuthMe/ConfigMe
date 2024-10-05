@@ -6,7 +6,7 @@ import ch.jalu.configme.beanmapper.ExportName;
 import ch.jalu.configme.beanmapper.Ignore;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.internal.record.RecordComponent;
-import ch.jalu.typeresolver.FieldUtils;
+import ch.jalu.typeresolver.reflect.FieldUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
