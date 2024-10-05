@@ -7,12 +7,13 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Introduce an EnumSetProperty that goes along with EnumSetPropertyType
- * @param <E>
+ * Introduce an EnumSetProperty that goes along with EnumSetPropertyType.
+ *
+ * @param <E> enum
  */
 public class EnumSetProperty<E extends Enum<E>> extends SetProperty<Set<E>> {
 
-    public EnumSetProperty(String path, Class<E> enumClass, EnumSet<E> defaultValue){
+    public EnumSetProperty(String path, Class<E> enumClass, EnumSet<E> defaultValue) {
         super(path, new EnumSetPropertyType(enumClass), defaultValue);
     }
 
