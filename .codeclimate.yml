@@ -3,9 +3,9 @@ version: '2' # required to adjust maintainability checks
 plugins:
   checkstyle:
     enabled: true
+    channel: 'checkstyle-10-7-0'
     config:
       file: '.checkstyle.xml'
-      channel: 'checkstyle-10-7-0'
 
 checks:
   # We disable all the following CodeClimate checks: Checkstyle already checks for these things and has the advantage
