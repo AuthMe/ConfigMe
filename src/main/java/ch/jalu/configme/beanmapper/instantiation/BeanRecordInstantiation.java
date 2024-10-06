@@ -4,6 +4,7 @@ import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
 import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescription;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.typeresolver.reflect.ConstructorUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,8 +30,10 @@ public class BeanRecordInstantiation implements BeanInstantiation {
     public BeanRecordInstantiation(@NotNull Class<?> clazz, @NotNull List<BeanFieldPropertyDescription> properties) {
         this.properties = properties;
         Class<?>[] recordTypes = properties.stream().map(BeanFieldPropertyDescription::getType).toArray(Class[]::new);
-        this.canonicalConstructor = BeanInstantiationServiceImpl.tryFindConstructor(clazz, recordTypes)
-            .orElseThrow(() -> new ConfigMeException("Could not get canonical constructor of " + clazz));
+        this.canonicalConstructor = ConstructorUtils.getConstructorOrNull(clazz, recordTypes);
+        if (this.canonicalConstructor == null) {
+            throw new ConfigMeException("Could not get canonical constructor of " + clazz);
+        }
     }
 
     @Override

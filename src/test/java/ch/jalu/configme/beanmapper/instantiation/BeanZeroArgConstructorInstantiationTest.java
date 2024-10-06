@@ -4,7 +4,7 @@ import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescript
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
-import ch.jalu.typeresolver.FieldUtils;
+import ch.jalu.typeresolver.reflect.FieldUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
