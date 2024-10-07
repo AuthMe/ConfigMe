@@ -7,12 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Set;
 
-import static ch.jalu.configme.TestUtils.isValidValueOf;
+import static ch.jalu.configme.TestUtils.isErrorValueOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 
@@ -26,36 +24,34 @@ class EnumSetPropertyTest {
     private PropertyReader reader;
 
     @Test
-    void shouldReturnEnumSetValue() {
+    void shouldReturnEnumSetDefaultValue() {
         // given
         EnumSet<TestEnum> set = EnumSet.of(TestEnum.ENTRY_A);
         EnumSetProperty<TestEnum> property =
             new EnumSetProperty<>("enum.path", TestEnum.class, set);
         given(reader.getObject(property.getPath()))
-            .willReturn(new HashSet<>(Collections.singletonList(EnumSet.of(TestEnum.ENTRY_A))));
+            .willReturn(null);
 
         // when
-        PropertyValue<Set<Set<TestEnum>>> result = property.determineValue(reader);
+        PropertyValue<Set<TestEnum>> result = property.determineValue(reader);
 
         // then
-        assertThat(result, isValidValueOf(new HashSet<>(Collections.singletonList(
-            EnumSet.of(TestEnum.ENTRY_A)))));
+        assertThat(result, isErrorValueOf(EnumSet.of(TestEnum.ENTRY_A)));
     }
 
     @Test
-    void shouldReturnEnumSetValueFromArray() {
+    void shouldReturnEnumSetDefaultValueFromArray() {
         // given
         EnumSetProperty<TestEnum> property =
-            new EnumSetProperty<>("enum.path", TestEnum.class, new TestEnum[]{TestEnum.ENTRY_A, TestEnum.ENTRY_B});
+            new EnumSetProperty<>("enum.path", TestEnum.class, new TestEnum[]{TestEnum.ENTRY_B, TestEnum.ENTRY_C});
         given(reader.getObject(property.getPath()))
-            .willReturn(new HashSet<>(Collections.singletonList(EnumSet.of(TestEnum.ENTRY_A, TestEnum.ENTRY_B))));
+            .willReturn(null);
 
         // when
-        PropertyValue<Set<Set<TestEnum>>> result = property.determineValue(reader);
+        PropertyValue<Set<TestEnum>> result = property.determineValue(reader);
 
         // then
-        assertThat(result, isValidValueOf(new HashSet<>(Collections.singletonList(
-            EnumSet.of(TestEnum.ENTRY_A, TestEnum.ENTRY_B)))));
+        assertThat(result, isErrorValueOf(EnumSet.of(TestEnum.ENTRY_B, TestEnum.ENTRY_C)));
     }
 
     private enum TestEnum {

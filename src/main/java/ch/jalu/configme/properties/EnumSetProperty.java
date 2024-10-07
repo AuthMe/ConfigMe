@@ -1,31 +1,22 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.types.EnumSetPropertyType;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.Set;
 
 /**
- * Introduce an EnumSetProperty that goes along with EnumSetPropertyType.
+ * EnumSet property.
  *
- * @param <E> enum
+ * @param <E> the enum type
  */
-public class EnumSetProperty<E extends Enum<E>> extends SetProperty<Set<E>> {
+public class EnumSetProperty<E extends Enum<E>> extends SetProperty<E> {
 
-    public EnumSetProperty(String path, Class<E> enumClass, EnumSet<E> defaultValue) {
+    public EnumSetProperty(@NotNull String path, @NotNull Class<E> enumClass, @NotNull EnumSet<E> defaultValue) {
         super(path, new EnumSetPropertyType(enumClass), defaultValue);
     }
 
-    public EnumSetProperty(String path, Class<E> enumClass, E... defaultValue) {
-        super(path, new EnumSetPropertyType(enumClass), castToEnumSet(enumClass, defaultValue));
-    }
-
-    private static <E extends Enum<E>> Set<E> castToEnumSet(Class<E> enumClass, E[] defaultValue) {
-        EnumSet<E> enumSet = EnumSet.noneOf(enumClass);
-        if (defaultValue != null) {
-            enumSet.addAll(Arrays.asList(defaultValue));
-        }
-        return enumSet;
+    public EnumSetProperty(@NotNull String path, @NotNull Class<E> enumClass, @NotNull E @NotNull... defaultValue) {
+        super(path, new EnumSetPropertyType(enumClass), defaultValue);
     }
 }
