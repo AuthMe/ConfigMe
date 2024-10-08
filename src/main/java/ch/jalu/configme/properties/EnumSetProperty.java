@@ -15,7 +15,7 @@ import java.util.Set;
 public class EnumSetProperty<E extends Enum<E>> extends SetProperty<E> {
 
     public EnumSetProperty(@NotNull String path, @NotNull Class<E> enumClass, @NotNull EnumSet<E> defaultValue) {
-        super(path, new EnumSetPropertyType(enumClass), defaultValue);
+        super(new EnumSetPropertyType(enumClass), path, defaultValue);
     }
 
     public EnumSetProperty(@NotNull String path, @NotNull Class<E> enumClass, @NotNull E @NotNull... defaultValue) {
