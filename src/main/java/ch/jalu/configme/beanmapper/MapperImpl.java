@@ -394,21 +394,4 @@ public class MapperImpl implements Mapper {
         }
         return null;
     }
-
-    /**
-     * Creates an object matching the given type information.
-     *
-     * @param mappingContext current mapping context
-     * @return new instance of the given type
-     */
-    protected @NotNull Object createBeanMatchingType(@NotNull MappingContext mappingContext) {
-        // clazz is never null given the only path that leads to this method already performs that check
-        final Class<?> clazz = mappingContext.getTargetTypeAsClassOrThrow();
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new ConfigMeMapperException(mappingContext, "Could not create object of type '"
-                + clazz.getName() + "'. It is required to have a default constructor", e);
-        }
-    }
 }

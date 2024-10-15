@@ -55,6 +55,9 @@ public class BeanFieldPropertyDescription implements BeanPropertyDescription {
      * @param bean the bean to set the value to
      * @param value the value to set
      */
+    // Surprisingly, setting a value to a final field is allowed in some circumstances, but the value doesn't seem to
+    // actually be changed outside of the current context. For now, we keep this method free of any validation but
+    // note that a final field here might NOT cause any exception.
     public void setValue(@NotNull Object bean, @NotNull Object value) {
         ReflectionHelper.setAccessibleIfNeeded(field);
 

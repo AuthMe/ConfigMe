@@ -21,7 +21,6 @@ import ch.jalu.configme.beanmapper.typeissues.UntypedMap;
 import ch.jalu.configme.beanmapper.worldgroup.GameMode;
 import ch.jalu.configme.beanmapper.worldgroup.Group;
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
-import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.YamlFileReader;
@@ -50,7 +49,6 @@ import static ch.jalu.configme.TestUtils.getJarPath;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -422,32 +420,6 @@ class MapperImplTest {
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
         assertThat(result, notNullValue());
         assertThat(result.getCommandconfig(), equalTo(Optional.empty()));
-    }
-
-    @Test
-    void shouldInvokeDefaultConstructor() {
-        // given
-        MapperImpl mapper = new MapperImpl();
-
-        // when
-        Object command = mapper.createBeanMatchingType(createContextWithTargetType(Command.class));
-
-        // then
-        assertThat(command, instanceOf(Command.class));
-    }
-
-    @Test
-    void shouldForwardException() {
-        // given
-        MapperImpl mapper = new MapperImpl();
-
-        // when
-        ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> mapper.createBeanMatchingType(createContextWithTargetType(Iterable.class)));
-
-        // then
-        assertThat(ex.getMessage(), containsString("It is required to have a default constructor"));
-        assertThat(ex.getCause(), instanceOf(NoSuchMethodException.class));
     }
 
     @Test

@@ -6,9 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * Factory which analyzes a class and returns all properties which ConfigMe should consider.
+ * Factory which analyzes a bean class and returns all properties which ConfigMe should consider.
  * <p>
- * Default implementation: {@link BeanDescriptionFactoryImpl}.
+ * Default implementation: {@link BeanDescriptionFactoryImpl}. This interface is used by
+ * {@link ch.jalu.configme.beanmapper.instantiation.BeanInstantiationServiceImpl BeanInstantiationServiceImpl}.
  */
 public interface BeanDescriptionFactory {
 

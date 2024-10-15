@@ -1,7 +1,5 @@
 package ch.jalu.configme.demo.beans;
 
-import ch.jalu.configme.beanmapper.Ignore;
-
 /**
  * User base bean.
  */
@@ -11,7 +9,6 @@ public class UserBase {
     private User richie;
     private User lionel;
     private double version;
-    @Ignore
     private transient int build;
 
     public User getBobby() {

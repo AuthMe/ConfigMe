@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Creates all {@link BeanPropertyDescription} objects for a given class.
@@ -42,12 +41,32 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
             .filter(FieldUtils::isRegularInstanceField)
             .collect(FieldUtils.collectByName(false));
 
-        List<BeanFieldPropertyDescription> properties = new ArrayList<>();
+        List<BeanFieldPropertyDescription> properties = new ArrayList<>(components.length);
         for (RecordComponent component : components) {
             Field field = instanceFieldsByName.get(component.getName());
             validateFieldForRecord(clazz, component, field);
             BeanFieldPropertyDescription property = convert(field);
             properties.add(property);
+        }
+
+        validateProperties(clazz, properties);
+        return properties;
+    }
+
+    @Override
+    public @NotNull List<BeanFieldPropertyDescription> collectProperties(@NotNull Class<?> clazz) {
+        @SuppressWarnings("checkstyle:IllegalType") // LinkedHashMap indicates the values are ordered (important here)
+        LinkedHashMap<String, Field> instanceFieldsByName = FieldUtils.getAllFields(clazz)
+            .filter(FieldUtils::isRegularInstanceField)
+            .collect(FieldUtils.collectByName(false));
+
+        List<BeanFieldPropertyDescription> properties = new ArrayList<>();
+        for (Field field : instanceFieldsByName.values()) {
+            if (!isFieldIgnored(field)) {
+                validateFieldForBean(clazz, field);
+                BeanFieldPropertyDescription property = convert(field);
+                properties.add(property);
+            }
         }
 
         validateProperties(clazz, properties);
@@ -72,20 +91,17 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
         }
     }
 
-    @Override
-    public @NotNull List<BeanFieldPropertyDescription> collectProperties(@NotNull Class<?> clazz) {
-        @SuppressWarnings("checkstyle:IllegalType") // LinkedHashMap indicates the values are ordered (important here)
-        LinkedHashMap<String, Field> instanceFieldsByName = FieldUtils.getAllFields(clazz)
-            .filter(FieldUtils::isRegularInstanceField)
-            .collect(FieldUtils.collectByName(false));
-
-        List<BeanFieldPropertyDescription> properties = instanceFieldsByName.values().stream()
-            .filter(field -> !isFieldIgnored(field))
-            .map(this::convert)
-            .collect(Collectors.toList());
-
-        validateProperties(clazz, properties);
-        return properties;
+    /**
+     * Validates the given field as valid for bean mapping.
+     *
+     * @param clazz the class the field belongs to (the bean type)
+     * @param field the field to validate
+     */
+    protected void validateFieldForBean(@NotNull Class<?> clazz, @NotNull Field field) {
+        if (Modifier.isFinal(field.getModifiers())) {
+            throw new ConfigMeException("Field '" + FieldUtils.formatField(field)
+                + "' is marked as final but not to be ignored. Final fields cannot be set by the mapper.");
+        }
     }
 
     protected @NotNull BeanFieldPropertyDescription convert(@NotNull Field field) {

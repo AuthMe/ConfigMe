@@ -4,17 +4,18 @@ package ch.jalu.configme.beanmapper.propertydescription;
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.beanmapper.command.ExecutionDetails;
+import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
 import ch.jalu.configme.samples.beanannotations.BeanWithEmptyName;
 import ch.jalu.configme.samples.beanannotations.BeanWithExportName;
 import ch.jalu.configme.samples.beanannotations.BeanWithExportNameExtension;
 import ch.jalu.configme.samples.beanannotations.BeanWithNameClash;
 import ch.jalu.configme.samples.inheritance.Child;
+import ch.jalu.configme.samples.inheritance.ChildWithFieldOverrides;
 import ch.jalu.configme.samples.inheritance.Middle;
 import ch.jalu.typeresolver.TypeInfo;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -40,25 +41,29 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldReturnWritableProperties() {
         // given / when
-        Collection<BeanFieldPropertyDescription> descriptions = factory.collectProperties(SampleBean.class);
+        List<BeanFieldPropertyDescription> descriptions = factory.collectProperties(SampleBean.class);
 
         // then
         assertThat(descriptions, hasSize(4));
 
-        BeanPropertyDescription sizeProperty = getDescription("size", descriptions);
+        BeanPropertyDescription nameProperty = descriptions.get(0);
+        assertThat(nameProperty.getName(), equalTo("name"));
+        assertThat(nameProperty.getTypeInformation(), equalTo(new TypeInfo(String.class)));
+        assertThat(nameProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
+
+        BeanPropertyDescription sizeProperty = descriptions.get(1);
+        assertThat(sizeProperty.getName(), equalTo("size"));
         assertThat(sizeProperty.getTypeInformation(), equalTo(new TypeInfo(int.class)));
         assertThat(sizeProperty.getComments().getComments(), contains("Size of this entry (cm)"));
         assertThat(sizeProperty.getComments().getUuid(), notNullValue());
 
-        BeanPropertyDescription nameProperty = getDescription("name", descriptions);
-        assertThat(nameProperty.getTypeInformation(), equalTo(new TypeInfo(String.class)));
-        assertThat(nameProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
-
-        BeanPropertyDescription longFieldProperty = getDescription("longField", descriptions);
+        BeanPropertyDescription longFieldProperty = descriptions.get(2);
+        assertThat(longFieldProperty.getName(), equalTo("longField"));
         assertThat(longFieldProperty.getTypeInformation(), equalTo(new TypeInfo(long.class)));
         assertThat(longFieldProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
 
-        BeanPropertyDescription uuidProperty = getDescription("uuid", descriptions);
+        BeanPropertyDescription uuidProperty = descriptions.get(3);
+        assertThat(uuidProperty.getName(), equalTo("uuid"));
         assertThat(uuidProperty.getTypeInformation(), equalTo(new TypeInfo(UUID.class)));
         assertThat(uuidProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
     }
@@ -136,7 +141,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldReturnCommentsWithoutUuid() {
         // given / when
-        Collection<BeanFieldPropertyDescription> execDetailsProperties = factory.collectProperties(ExecutionDetails.class);
+        List<BeanFieldPropertyDescription> execDetailsProperties = factory.collectProperties(ExecutionDetails.class);
 
         // then
         BeanPropertyComments executorComments = getDescription("executor", execDetailsProperties).getComments();
@@ -150,7 +155,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldPickUpCustomNameFromField() {
         // given / when
-        List<BeanFieldPropertyDescription> properties = new ArrayList<>(factory.collectProperties(BeanWithExportName.class));
+        List<BeanFieldPropertyDescription> properties = factory.collectProperties(BeanWithExportName.class);
 
         // then
         assertThat(properties, hasSize(3));
@@ -165,7 +170,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldPickUpCustomNameFromFieldsIncludingInheritance() {
         // given / when
-        List<BeanFieldPropertyDescription> properties = new ArrayList<>(factory.collectProperties(BeanWithExportNameExtension.class));
+        List<BeanFieldPropertyDescription> properties = factory.collectProperties(BeanWithExportNameExtension.class);
 
         // then
         assertThat(properties, hasSize(4));
@@ -177,6 +182,27 @@ class BeanDescriptionFactoryImplTest {
         assertThat(properties.get(2).getComments().getComments(), contains("size_com"));
         assertThat(properties.get(3).getName(), equalTo("d_weight"));
         assertThat(properties.get(3).getComments().getComments(), contains("weight_com"));
+    }
+
+    @Test
+    void shouldTakeOverFieldConfigsFromOverridingClass() {
+        // given / when
+        List<BeanFieldPropertyDescription> properties = factory.collectProperties(ChildWithFieldOverrides.class);
+
+        // then
+        assertThat(transform(properties, BeanPropertyDescription::getName),
+            contains("id", "o_ratio"));
+    }
+
+    @Test
+    void shouldThrowForFinalField() {
+        // given / when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> factory.collectProperties(BeanWithFinalField.class));
+
+        // then
+        assertThat(ex.getMessage(), equalTo(
+            "Field 'BeanDescriptionFactoryImplTest$BeanWithFinalField#version' is marked as final but not to be ignored. Final fields cannot be set by the mapper."));
     }
 
     private static BeanPropertyDescription getDescription(String name,
@@ -201,10 +227,21 @@ class BeanDescriptionFactoryImplTest {
 
     private static final class BeanWithTransientFields {
 
+        private static final String CONSTANT = "This will be ignored";
+        private static int counter = 3; // This will be ignored
+
         private String name;
         private transient long tempId;
         private transient boolean isSaved;
         private boolean isMandatory;
+
+    }
+
+    private static final class BeanWithFinalField {
+
+        private String name;
+        private final int version = 3;
+        private boolean isNew;
 
     }
 }
