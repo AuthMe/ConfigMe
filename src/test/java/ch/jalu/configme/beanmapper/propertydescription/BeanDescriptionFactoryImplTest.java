@@ -3,8 +3,11 @@ package ch.jalu.configme.beanmapper.propertydescription;
 
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
+import ch.jalu.configme.beanmapper.ExportName;
+import ch.jalu.configme.beanmapper.IgnoreInMapping;
 import ch.jalu.configme.beanmapper.command.ExecutionDetails;
 import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.internal.record.RecordComponent;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
 import ch.jalu.configme.samples.beanannotations.BeanWithEmptyName;
 import ch.jalu.configme.samples.beanannotations.BeanWithExportName;
@@ -205,6 +208,82 @@ class BeanDescriptionFactoryImplTest {
             "Field 'BeanDescriptionFactoryImplTest$BeanWithFinalField#version' is marked as final but not to be ignored. Final fields cannot be set by the mapper."));
     }
 
+    @Test
+    void shouldGetPropertiesForRecord() {
+        // given
+        RecordComponent component1 = new RecordComponent("name", String.class, String.class);
+        RecordComponent component2 = new RecordComponent("size", int.class, int.class);
+
+        // when
+        List<BeanFieldPropertyDescription> properties =
+            factory.collectPropertiesForRecord(SampleRecord.class, new RecordComponent[]{component1, component2});
+
+        // then
+        SampleRecord sampleRecord = new SampleRecord();
+        assertThat(properties, hasSize(2));
+        assertThat(properties.get(0).getName(), equalTo("name"));
+        assertThat(properties.get(0).getType(), equalTo(String.class));
+        assertThat(properties.get(0).getValue(sampleRecord), equalTo("cur_name"));
+        assertThat(properties.get(1).getName(), equalTo("size"));
+        assertThat(properties.get(1).getType(), equalTo(int.class));
+        assertThat(properties.get(1).getValue(sampleRecord), equalTo(20));
+    }
+
+    @Test
+    void shouldThrowForRecordWithDuplicatePropertyName() {
+        // given
+        RecordComponent component1 = new RecordComponent("name", String.class, String.class);
+        RecordComponent component2 = new RecordComponent("description", String.class, String.class);
+
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> factory.collectPropertiesForRecord(SampleRecordWithDuplicateName.class, new RecordComponent[]{component1, component2}));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("class ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImplTest$SampleRecordWithDuplicateName has multiple properties with name 'name'"));
+    }
+
+    @Test
+    void shouldThrowForRecordWithEmptyCustomName() {
+        // given
+        RecordComponent component1 = new RecordComponent("location", String.class, String.class);
+
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> factory.collectPropertiesForRecord(SampleRecordWithEmptyName.class, new RecordComponent[]{component1}));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Custom name of FieldProperty '' for field 'BeanDescriptionFactoryImplTest$SampleRecordWithEmptyName#location' may not be empty"));
+    }
+
+    @Test
+    void shouldThrowForRecordComponentWithNoEquivalentField() { // This scenario should never happen, can probably be removed after using real records (#347)
+        // given
+        RecordComponent component1 = new RecordComponent("name", String.class, String.class);
+        RecordComponent component2 = new RecordComponent("bogus", String.class, String.class);
+
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> factory.collectPropertiesForRecord(SampleRecord.class, new RecordComponent[]{component1, component2}));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Record component 'bogus' for ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImplTest$SampleRecord does not have a field with the same name"));
+    }
+
+    @Test
+    void shouldThrowForRecordWithFieldToIgnore() {
+        // given
+        RecordComponent component1 = new RecordComponent("name", String.class, String.class);
+        RecordComponent component2 = new RecordComponent("desc", String.class, String.class);
+
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> factory.collectPropertiesForRecord(SampleRecordWithIgnoredField.class, new RecordComponent[]{component1, component2}));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Record component 'desc' for ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImplTest$SampleRecordWithIgnoredField has a field defined to be ignored: this is not supported for records"));
+    }
+
     private static BeanPropertyDescription getDescription(String name,
                                                           Collection<? extends BeanPropertyDescription> descriptions) {
         for (BeanPropertyDescription description : descriptions) {
@@ -242,6 +321,36 @@ class BeanDescriptionFactoryImplTest {
         private String name;
         private final int version = 3;
         private boolean isNew;
+
+    }
+
+    private static final class SampleRecord { // #347: Change to an actual record
+
+        private final String name = "cur_name";
+        private final int size = 20;
+
+    }
+
+    private static final class SampleRecordWithDuplicateName { // #347: Change to an actual record
+
+        private final String name = "cur_name";
+        @ExportName("name")
+        private final String description = "";
+
+    }
+
+    private static final class SampleRecordWithEmptyName { // #347: Change to an actual record
+
+        @ExportName("")
+        private final String location = "W";
+
+    }
+
+    private static final class SampleRecordWithIgnoredField { // #347: Change to an actual record
+
+        private final String name = "n";
+        @IgnoreInMapping
+        private final String desc = "d";
 
     }
 }
