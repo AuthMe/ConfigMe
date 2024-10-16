@@ -3,7 +3,7 @@ package ch.jalu.configme.beanmapper.propertydescription;
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.beanmapper.ExportName;
-import ch.jalu.configme.beanmapper.Ignore;
+import ch.jalu.configme.beanmapper.IgnoreInMapping;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.internal.record.RecordComponent;
 import ch.jalu.typeresolver.reflect.FieldUtils;
@@ -30,7 +30,7 @@ import java.util.UUID;
  * field is ignored.
  * <p>
  * This implementation supports &#64;{@link ExportName} and transient properties, declared
- * with the {@code transient} keyword or by adding the &#64;{@link Ignore} annotation.
+ * with the {@code transient} keyword or by adding the &#64;{@link IgnoreInMapping} annotation.
  */
 public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
 
@@ -109,7 +109,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
     }
 
     protected boolean isFieldIgnored(@NotNull Field field) {
-        return Modifier.isTransient(field.getModifiers()) || field.isAnnotationPresent(Ignore.class);
+        return Modifier.isTransient(field.getModifiers()) || field.isAnnotationPresent(IgnoreInMapping.class);
     }
 
     /**

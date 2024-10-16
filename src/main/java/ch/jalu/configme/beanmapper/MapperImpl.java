@@ -44,7 +44,7 @@ import static ch.jalu.configme.internal.PathUtils.pathSpecifierForMapKey;
  * default implementation} supports Java classes with a zero-args constructor, as well as Java records. The service can
  * be extended to support more types of classes.
  * <br>For Java classes with a zero-args constructor, the class's private fields are taken as properties. The perceived
- * properties can be modified with {@link ExportName} and {@link Ignore}.
+ * properties can be modified with {@link ExportName} and {@link IgnoreInMapping}.
  * <p>
  * <b>Recursion:</b> the mapping of values to a bean is performed recursively, i.e. a bean may have other beans
  * as fields and generic types at any arbitrary "depth".

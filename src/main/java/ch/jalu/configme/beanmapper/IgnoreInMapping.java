@@ -10,9 +10,9 @@ import java.lang.annotation.Target;
  * property, i.e. when a bean is created, the annotated field will not be set, and when a bean is exported, fields
  * with this annotation will also be ignored.
  * <p>
- * Alternatively, you can define fields as {@code transient} for them to be ignored by ConfigMe.
+ * Instead of this annotation, you can also declare fields as {@code transient} to have them skipped.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Ignore {
+public @interface IgnoreInMapping {
 }

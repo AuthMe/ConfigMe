@@ -103,7 +103,7 @@ class BeanWithFinalFieldsTest {
     public static class BeanWithFinalIgnoredField {
 
         String name;
-        @Ignore
+        @IgnoreInMapping
         final int version = 3;
 
     }

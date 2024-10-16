@@ -1,11 +1,11 @@
 package ch.jalu.configme.samples.inheritance;
 
 import ch.jalu.configme.beanmapper.ExportName;
-import ch.jalu.configme.beanmapper.Ignore;
+import ch.jalu.configme.beanmapper.IgnoreInMapping;
 
 public class ChildWithFieldOverrides extends Middle {
 
-    @Ignore
+    @IgnoreInMapping
     private String name; // Ignore name of parent
 
     @ExportName("o_ratio")
