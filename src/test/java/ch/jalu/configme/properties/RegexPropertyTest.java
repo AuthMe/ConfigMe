@@ -100,4 +100,32 @@ class RegexPropertyTest {
         assertThat(property.matches("2021", settingsManager), equalTo(true));
         assertThat(property.matches("1883", settingsManager), equalTo(false));
     }
+
+    @Test
+    void shouldCreateCaseInsensitivePatternProperty() {
+        // given
+        RegexProperty property = RegexProperty.caseInsensitive("validName", "\\d+");
+        PropertyReader reader = mock(PropertyReader.class);
+        given(reader.getObject("validName")).willReturn("[a-z_]+");
+
+
+        // when
+        Pattern pattern = property.determineValue(reader).getValue();
+
+        // then
+        assertThat(pattern.matcher("Test").matches(), equalTo(true));
+        assertThat(pattern.matcher("oTh_eR").matches(), equalTo(true));
+        assertThat(pattern.matcher("Abc1").matches(), equalTo(false));
+    }
+
+    @Test
+    void shouldConvertToCaseInsensitiveDefaultValue() {
+        // given / when
+        RegexProperty property = RegexProperty.caseInsensitive("validName", "[a-z]+");
+
+        // then
+        Pattern defaultValue = property.getDefaultValue();
+        assertThat(defaultValue.matcher("TeSt").matches(), equalTo(true));
+        assertThat(defaultValue.matcher("test1").matches(), equalTo(false));
+    }
 }
