@@ -221,7 +221,7 @@ public class PropertyInitializer {
      * Creates a new bean property.
      *
      * @param path the property's path
-     * @param beanClass the JavaBean class
+     * @param beanClass the bean class
      * @param defaultValue default value
      * @param <B> the bean type
      * @return the created bean property
