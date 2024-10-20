@@ -36,6 +36,14 @@ public class BeanRecordInstantiation implements BeanInstantiation {
         }
     }
 
+    protected final @NotNull Constructor<?> getCanonicalConstructor() {
+        return canonicalConstructor;
+    }
+
+    protected final @NotNull List<BeanFieldPropertyDescription> getFieldProperties() {
+        return properties;
+    }
+
     @Override
     public @NotNull List<BeanPropertyDescription> getProperties() {
         return Collections.unmodifiableList(properties);

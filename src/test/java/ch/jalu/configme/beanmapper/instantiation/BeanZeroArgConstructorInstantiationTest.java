@@ -4,11 +4,13 @@ import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescript
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.typeresolver.reflect.ConstructorUtils;
 import ch.jalu.typeresolver.reflect.FieldUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -137,6 +139,20 @@ class BeanZeroArgConstructorInstantiationTest {
         // then
         assertThat(ex.getMessage(), equalTo("Invalid property values, 3 were given, but class "
             + "ch.jalu.configme.beanmapper.instantiation.BeanZeroArgConstructorInstantiationTest$SampleBean has 2 properties"));
+    }
+
+    @Test
+    void shouldReturnFieldsInGetters() {
+        // given
+        BeanZeroArgConstructorInstantiation instantiation = SampleBean.createInstantiation();
+
+        // when
+        Constructor<?> zeroArgsConstructor = instantiation.getZeroArgsConstructor();
+        List<BeanFieldPropertyDescription> fieldProperties = instantiation.getFieldProperties();
+
+        // then
+        assertThat(zeroArgsConstructor, equalTo(ConstructorUtils.getConstructorOrThrow(SampleBean.class)));
+        assertThat(fieldProperties, equalTo(instantiation.getProperties()));
     }
 
     private static final class SampleBean {

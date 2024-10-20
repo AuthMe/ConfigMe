@@ -27,6 +27,14 @@ public class BeanZeroArgConstructorInstantiation implements BeanInstantiation {
         this.properties = properties;
     }
 
+    protected final @NotNull Constructor<?> getZeroArgsConstructor() {
+        return zeroArgsConstructor;
+    }
+
+    protected final @NotNull List<BeanFieldPropertyDescription> getFieldProperties() {
+        return properties;
+    }
+
     @Override
     public @NotNull List<BeanPropertyDescription> getProperties() {
         return Collections.unmodifiableList(properties);

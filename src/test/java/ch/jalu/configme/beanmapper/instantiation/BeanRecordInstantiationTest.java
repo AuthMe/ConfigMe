@@ -4,12 +4,16 @@ import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescript
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.typeresolver.reflect.ConstructorUtils;
+import ch.jalu.typeresolver.reflect.FieldUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -43,13 +47,9 @@ class BeanRecordInstantiationTest {
     }
 
     @Test
-    void shouldInstantiateRecord() throws NoSuchFieldException {
+    void shouldInstantiateRecord() {
         // given
-        List<BeanFieldPropertyDescription> properties = Arrays.asList(
-            new BeanFieldPropertyDescription(ExampleRecord.class.getDeclaredField("name"), null, BeanPropertyComments.EMPTY),
-            new BeanFieldPropertyDescription(ExampleRecord.class.getDeclaredField("size"), null, BeanPropertyComments.EMPTY));
-
-        BeanRecordInstantiation instantiation = new BeanRecordInstantiation(ExampleRecord.class, properties);
+        BeanRecordInstantiation instantiation = ExampleRecord.createInstantiation();
         ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
 
         // when
@@ -62,13 +62,9 @@ class BeanRecordInstantiationTest {
     }
 
     @Test
-    void shouldReturnNullIfAnyPropertyIsNull() throws NoSuchFieldException {
+    void shouldReturnNullIfAnyPropertyIsNull() {
         // given
-        List<BeanFieldPropertyDescription> properties = Arrays.asList(
-            new BeanFieldPropertyDescription(ExampleRecord.class.getDeclaredField("name"), null, BeanPropertyComments.EMPTY),
-            new BeanFieldPropertyDescription(ExampleRecord.class.getDeclaredField("size"), null, BeanPropertyComments.EMPTY));
-
-        BeanRecordInstantiation instantiation = new BeanRecordInstantiation(ExampleRecord.class, properties);
+        BeanRecordInstantiation instantiation = ExampleRecord.createInstantiation();
         ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
 
         // when / then
@@ -79,13 +75,9 @@ class BeanRecordInstantiationTest {
     }
 
     @Test
-    void shouldHandleWrongPropertyValuesGracefully() throws NoSuchFieldException {
+    void shouldHandleWrongPropertyValuesGracefully() {
         // given
-        List<BeanFieldPropertyDescription> properties = Arrays.asList(
-            new BeanFieldPropertyDescription(ExampleRecord.class.getDeclaredField("name"), null, BeanPropertyComments.EMPTY),
-            new BeanFieldPropertyDescription(ExampleRecord.class.getDeclaredField("size"), null, BeanPropertyComments.EMPTY));
-
-        BeanRecordInstantiation instantiation = new BeanRecordInstantiation(ExampleRecord.class, properties);
+        BeanRecordInstantiation instantiation = ExampleRecord.createInstantiation();
         ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
 
         // when
@@ -98,6 +90,20 @@ class BeanRecordInstantiationTest {
         assertThat(ex.getCause().getMessage(), equalTo("argument type mismatch"));
     }
 
+    @Test
+    void shouldReturnFieldsInGetters() {
+        // given
+        BeanRecordInstantiation instantiation = ExampleRecord.createInstantiation();
+
+        // when
+        Constructor<?> zeroArgsConstructor = instantiation.getCanonicalConstructor();
+        List<BeanFieldPropertyDescription> fieldProperties = instantiation.getFieldProperties();
+
+        // then
+        assertThat(zeroArgsConstructor, equalTo(ConstructorUtils.getConstructorOrThrow(ExampleRecord.class, String.class, int.class)));
+        assertThat(fieldProperties, equalTo(instantiation.getProperties()));
+    }
+
     private static class ExampleRecord { // #347: Change to an actual record :)
 
         private final String name;
@@ -106,6 +112,15 @@ class BeanRecordInstantiationTest {
         ExampleRecord(String name, int size) {
             this.name = name;
             this.size = size;
+        }
+
+        static BeanRecordInstantiation createInstantiation() {
+            List<BeanFieldPropertyDescription> properties = Arrays.stream(ExampleRecord.class.getDeclaredFields())
+                .filter(FieldUtils::isRegularInstanceField)
+                .map(field -> new BeanFieldPropertyDescription(field, null, BeanPropertyComments.EMPTY))
+                .collect(Collectors.toList());
+
+            return new BeanRecordInstantiation(ExampleRecord.class, properties);
         }
 
         String name() {
