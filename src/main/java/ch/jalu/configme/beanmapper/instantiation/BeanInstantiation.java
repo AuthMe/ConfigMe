@@ -14,7 +14,7 @@ import java.util.List;
 public interface BeanInstantiation {
 
     /**
-     * Returns the properties which the bean has.
+     * Returns the properties of the bean.
      *
      * @return the bean's properties
      */
@@ -22,7 +22,7 @@ public interface BeanInstantiation {
 
     /**
      * Creates a new bean with the given property values. The provided property values must be in the same order as
-     * returned by this instantiation in {@link #getProperties()}.
+     * returned by this instantiation's {@link #getProperties()}.
      * Null is returned if the bean cannot be created, e.g. because a property value was null and it is not supported
      * by this instantiation.
      *

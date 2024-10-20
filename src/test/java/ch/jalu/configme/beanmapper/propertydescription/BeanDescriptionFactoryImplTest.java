@@ -205,7 +205,7 @@ class BeanDescriptionFactoryImplTest {
 
         // then
         assertThat(ex.getMessage(), equalTo(
-            "Field 'BeanDescriptionFactoryImplTest$BeanWithFinalField#version' is marked as final but not to be ignored. Final fields cannot be set by the mapper."));
+            "Field 'BeanDescriptionFactoryImplTest$BeanWithFinalField#version' is final. Final fields cannot be set by the mapper. Remove final or mark it to be ignored."));
     }
 
     @Test

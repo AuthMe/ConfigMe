@@ -26,11 +26,11 @@ import java.util.UUID;
  * Creates all {@link BeanPropertyDescription} objects for a given class.
  * <p>
  * This description factory returns property descriptions for all instance fields on a class,
- * including fields on its parent. If a class has a field of the same name as the parent, the parent's
- * field is ignored.
+ * including the fields of its parents. If a field in a bean class has the same name as a field of a parent type,
+ * the parent field is ignored.
  * <p>
- * This implementation supports &#64;{@link ExportName} and transient properties, declared
- * with the {@code transient} keyword or by adding the &#64;{@link IgnoreInMapping} annotation.
+ * This implementation supports &#64;{@link ExportName} and ignores fields that are {@code transient} or annotated
+ * with &#64;{@link IgnoreInMapping}.
  */
 public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
 
@@ -92,7 +92,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
     }
 
     /**
-     * Validates the given field as valid for bean mapping.
+     * Validates the given field that belongs to a bean class.
      *
      * @param clazz the class the field belongs to (the bean type)
      * @param field the field to validate
@@ -100,7 +100,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
     protected void validateFieldForBean(@NotNull Class<?> clazz, @NotNull Field field) {
         if (Modifier.isFinal(field.getModifiers())) {
             throw new ConfigMeException("Field '" + FieldUtils.formatField(field)
-                + "' is marked as final but not to be ignored. Final fields cannot be set by the mapper.");
+                + "' is final. Final fields cannot be set by the mapper. Remove final or mark it to be ignored.");
         }
     }
 

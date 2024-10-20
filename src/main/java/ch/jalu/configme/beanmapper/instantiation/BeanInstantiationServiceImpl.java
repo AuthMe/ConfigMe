@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * This service can handle two different types of classes as beans:<ul>
  *  <li>Regular Java classes with a <b>no-args constructor</b>: all fields that aren't static or transient
- *      will be considered as bean properties.</li>
+ *      will be considered as bean properties. Must have at least one property.</li>
  *  <li>Java records</li>
  * </ul>
  *
@@ -61,8 +61,8 @@ public class BeanInstantiationServiceImpl implements BeanInstantiationService {
     }
 
     /**
-     * Inspects the class and returns an appropriate instantiation for it, if available. Null is returned if the
-     * class cannot be treated as a bean.
+     * Inspects the class and returns an appropriate instantiation for it, if available. Null is returned if no
+     * instantiation could be found for the class.
      *
      * @param clazz the class to process
      * @return bean instantiation for the class, or null if not applicable

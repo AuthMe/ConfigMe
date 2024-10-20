@@ -67,7 +67,7 @@ public class ReflectionHelper {
      * @param accessibleObject the reflected object to make accessible (if needed)
      */
     public static void setAccessibleIfNeeded(AccessibleObject accessibleObject) {
-        // #347: Catch InaccessibleObjectException, use #trySetAccessible?
+        // #347: Handle InaccessibleObjectException, consider using #trySetAccessible
         if (!accessibleObject.isAccessible()) {
             try {
                 accessibleObject.setAccessible(true);

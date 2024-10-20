@@ -14,8 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Instantiates bean types with a zero-arg constructor. This instantiation considers all instance fields that
- * are not final.
+ * Instantiates bean types via zero-arg constructor.
  */
 public class BeanZeroArgConstructorInstantiation implements BeanInstantiation {
 

@@ -36,15 +36,16 @@ import static ch.jalu.configme.internal.PathUtils.pathSpecifierForMapKey;
  * Default implementation of {@link Mapper}.
  * <p>
  * Maps a section of a property resource to the provided Java class (called a "bean" type). The mapping is based on the
- * bean's properties, whose names must correspond with the names in the property resource. For example, if a bean class
- * has a property {@code length} and should be mapped from the property resource's value at path {@code definition},
- * the mapper will look up {@code definition.length} to get the value of the bean property.
+ * bean's properties, whose names must correspond to the names in the property resource. For example, if a bean
+ * has a property {@code length} and it should be mapped from the property resource's value at path {@code definition},
+ * the mapper will look up {@code definition.length} in the resource to determine the value.
  * <p>
  * Classes are created by the {@link BeanInstantiationService}. The {@link BeanInstantiationServiceImpl
  * default implementation} supports Java classes with a zero-args constructor, as well as Java records. The service can
  * be extended to support more types of classes.
- * <br>For Java classes with a zero-args constructor, the class's private fields are taken as properties. The perceived
- * properties can be modified with {@link ExportName} and {@link IgnoreInMapping}.
+ * <br>For Java classes with a zero-args constructor, the class's instance fields are taken as properties. You can
+ * change the behavior of the fields with &#64;{@link ExportName} and &#64;{@link IgnoreInMapping}. There must be at
+ * least one property for the class to be treated as a bean.
  * <p>
  * <b>Recursion:</b> the mapping of values to a bean is performed recursively, i.e. a bean may have other beans
  * as fields and generic types at any arbitrary "depth".

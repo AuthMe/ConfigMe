@@ -4,8 +4,6 @@ import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -19,7 +17,7 @@ class BeanFieldPropertyDescriptionTest {
     @Test
     void shouldGetProperties() {
         // given
-        BeanFieldPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
+        BeanFieldPropertyDescription sizeProperty = getDescription("size", SampleBean.class);
         SampleBean bean = new SampleBean();
         bean.size = 77;
 
@@ -36,7 +34,7 @@ class BeanFieldPropertyDescriptionTest {
     @Test
     void shouldHandlePropertySetError() {
         // given
-        BeanFieldPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
+        BeanFieldPropertyDescription sizeProperty = getDescription("size", SampleBean.class);
         String wrongObject = "test";
 
         // when
@@ -51,7 +49,7 @@ class BeanFieldPropertyDescriptionTest {
     @Test
     void shouldHandlePropertyGetError() {
         // given
-        BeanPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
+        BeanPropertyDescription sizeProperty = getDescription("size", SampleBean.class);
         String wrongObject = "test";
 
         // when
@@ -66,10 +64,7 @@ class BeanFieldPropertyDescriptionTest {
     @Test
     void shouldHaveAppropriateStringRepresentation() {
         // given
-        Collection<BeanFieldPropertyDescription> properties = new BeanDescriptionFactoryImpl()
-            .collectProperties(AnnotatedEntry.class);
-        BeanPropertyDescription hasIdProperty = properties.stream()
-            .filter(prop -> "has-id".equals(prop.getName())).findFirst().get();
+        BeanFieldPropertyDescription hasIdProperty = getDescription("has-id", AnnotatedEntry.class);
 
         // when
         String output = "Found " + hasIdProperty;
@@ -78,7 +73,7 @@ class BeanFieldPropertyDescriptionTest {
         assertThat(output, equalTo("Found FieldProperty 'has-id' for field 'AnnotatedEntry#hasId'"));
     }
 
-    private static BeanFieldPropertyDescription getDescriptor(String name, Class<?> clazz) {
+    private static BeanFieldPropertyDescription getDescription(String name, Class<?> clazz) {
         return new BeanDescriptionFactoryImpl().collectProperties(clazz)
             .stream()
             .filter(prop -> name.equals(prop.getName()))
