@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  *
  * @param <E> the type of the elements in the set
  */
-public class SetProperty<E> extends TypeBasedProperty<Set<E>> {
+public class SetProperty<E> extends CollectionProperty<E, Set<E>> {
 
     /**
      * Constructor.

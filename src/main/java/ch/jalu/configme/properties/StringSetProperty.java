@@ -17,7 +17,7 @@ public class StringSetProperty extends SetProperty<String> {
      * @param path the path of the property
      * @param defaultValue the values that make up the entries of the default set
      */
-    public StringSetProperty(@NotNull String path, @NotNull String @NotNull... defaultValue) {
+    public StringSetProperty(@NotNull String path, @NotNull String @NotNull ... defaultValue) {
         super(path, StringType.STRING, defaultValue);
     }
 
