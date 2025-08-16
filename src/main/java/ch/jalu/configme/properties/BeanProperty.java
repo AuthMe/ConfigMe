@@ -8,7 +8,8 @@ import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Property whose value is a bean class.
+ * Property whose value is a bean class: maps between a Java class and a section in a property resource
+ * using a {@link Mapper}.
  *
  * @param <T> the bean type
  */

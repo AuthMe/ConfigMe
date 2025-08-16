@@ -8,19 +8,21 @@ public class Middle extends Parent {
     private String name;
     private float ratio;
 
-    public String getName() {
+
+    public String readName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void writeName(String name) {
         this.name = name;
     }
 
-    public float getRatio() {
+    public float readRatio() {
         return ratio;
     }
 
-    public void setRatio(float ratio) {
+    public void writeRatio(float ratio) {
         this.ratio = ratio;
     }
+
 }

@@ -14,12 +14,12 @@ import static org.hamcrest.Matchers.hasSize;
 /**
  * Test for {@link SingleValueToCollectionMapper}.
  */
-public class BeanExtensionTest {
+class BeanExtensionTest {
 
     private static final String CONFIG_FILE = "/beanmapper/nested_chat_component.yml";
 
     @Test
-    public void shouldLoadFileAndConvertSingleValuesToCollection() {
+    void shouldLoadFileAndConvertSingleValuesToCollection() {
         // given
         SettingsManager settingsManager = SettingsManagerBuilder
             .withYamlFile(TestUtils.getJarPath(CONFIG_FILE))
