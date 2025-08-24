@@ -1,7 +1,5 @@
 package ch.jalu.configme.demo.beans;
 
-import java.beans.Transient;
-
 /**
  * User base bean.
  */
@@ -45,7 +43,6 @@ public class UserBase {
         this.version = version;
     }
 
-    @Transient
     public int getBuild() {
         return build;
     }

@@ -7,8 +7,6 @@ import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.samples.ClassWithPrivatePropertyField;
 import ch.jalu.configme.samples.TestConfiguration;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,8 +22,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -97,42 +93,6 @@ class ConfigurationDataBuilderTest {
 
         // then
         assertThat(result, sameInstance(ClassWithPrivatePropertyField.getPrivatePropertyValue()));
-    }
-
-    @Test
-    void shouldThrowWrappedExceptionIfFieldCannotBeAccessed() throws NoSuchFieldException {
-        // given
-        ConfigurationDataBuilder configurationDataBuilder = new ConfigurationDataBuilder() {
-            @Override
-            protected void setFieldAccessibleIfNeeded(@NotNull Field field) {
-                // do nothing
-            }
-        };
-
-        Field privateProperty = ClassWithPrivatePropertyField.class.getDeclaredField("PRIVATE_INT_PROPERTY");
-
-        // when
-        ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> configurationDataBuilder.getPropertyField(privateProperty));
-
-        // then
-        assertThat(ex.getMessage(), equalTo("Could not fetch field 'PRIVATE_INT_PROPERTY' from class 'ClassWithPrivatePropertyField'. Is it maybe not public?"));
-        assertThat(ex.getCause(), instanceOf(IllegalAccessException.class));
-    }
-
-    @Test
-    @Disabled // #347: Enable once we move away from Java 8
-    void shouldThrowIfFieldCannotBeMadeAccessible() {
-        // given
-        ConfigurationDataBuilder configDataBuilder = new ConfigurationDataBuilder();
-
-        // when
-        ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> configDataBuilder.setFieldAccessibleIfNeeded(Integer.class.getDeclaredField("digits")));
-
-        // then
-        assertThat(ex.getMessage(), equalTo("Failed to modify access for field 'digits' from class 'Integer'"));
-        assertThat(ex.getCause(), notNullValue()); // instanceOf(InaccessibleObjectException.class)
     }
 
     @Test

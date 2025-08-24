@@ -1,26 +1,26 @@
 package ch.jalu.configme.beanmapper.definition.properties;
 
-import ch.jalu.configme.beanmapper.ConfigMeMapperException;
+import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for {@link BeanFieldPropertyDefinition}.
  */
-public class BeanFieldPropertyDefinitionTest {
+class BeanFieldPropertyDefinitionTest {
 
     @Test
-    void shouldGetAndSetProperties() {
+    void shouldGetProperties() {
         // given
-        BeanPropertyDefinition sizeProperty = getDescriptor("size", SampleBean.class);
+        BeanFieldPropertyDefinition sizeProperty = getDescription("size", SampleBean.class);
         SampleBean bean = new SampleBean();
-        bean.setSize(77);
+        bean.size = 77;
 
         // when
         Object result1 = sizeProperty.getValue(bean);
@@ -28,83 +28,78 @@ public class BeanFieldPropertyDefinitionTest {
         Object result2 = sizeProperty.getValue(bean);
 
         // then
-        assertThat(bean.getSize(), equalTo(-120));
-        assertThat(77, equalTo(result1));
-        assertThat(-120, equalTo(result2));
+        assertThat(result1, equalTo(77));
+        assertThat(result2, equalTo(-120));
     }
 
     @Test
     void shouldHandlePropertySetError() {
         // given
-        BeanPropertyDefinition sizeProperty = getDescriptor("size", SampleBean.class);
-        SampleBean bean = new ThrowingBean();
+        BeanFieldPropertyDefinition sizeProperty = getDescription("size", SampleBean.class);
+        String wrongObject = "test";
 
-        // when / then
-        assertThrows(ConfigMeMapperException.class,
-            () -> sizeProperty.setValue(bean, -120));
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> sizeProperty.setValue(wrongObject, -120));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Failed to set value to field BeanFieldPropertyDefinitionTest$SampleBean#size. Value: -120"));
+        assertThat(ex.getCause(), instanceOf(IllegalArgumentException.class));
     }
 
     @Test
     void shouldHandlePropertyGetError() {
         // given
-        BeanPropertyDefinition sizeProperty = getDescriptor("size", SampleBean.class);
-        SampleBean bean = new ThrowingBean();
+        BeanPropertyDefinition sizeProperty = getDescription("size", SampleBean.class);
+        String wrongObject = "test";
 
-        // when / then
-        assertThrows(ConfigMeMapperException.class,
-            () -> sizeProperty.getValue(bean));
+        // when
+        ConfigMeException ex = assertThrows(ConfigMeException.class,
+            () -> sizeProperty.getValue(wrongObject));
+
+        // then
+        assertThat(ex.getMessage(), equalTo("Failed to get value for field BeanFieldPropertyDefinitionTest$SampleBean#size"));
+        assertThat(ex.getCause(), instanceOf(IllegalArgumentException.class));
     }
 
     @Test
     void shouldHaveAppropriateStringRepresentation() {
         // given
-        Collection<BeanPropertyDefinition> properties = new BeanPropertyExtractorImpl()
-            .collectAllProperties(AnnotatedEntry.class);
-        BeanPropertyDefinition hasIdProperty = properties.stream()
-            .filter(prop -> "has-id".equals(prop.getName())).findFirst().get();
+        BeanFieldPropertyDefinition hasIdProperty = getDescription("has-id", AnnotatedEntry.class);
 
         // when
         String output = "Found " + hasIdProperty;
 
         // then
-        assertThat(output, equalTo("Found Bean property 'has-id' with getter "
-            + "'public boolean ch.jalu.configme.samples.beanannotations.AnnotatedEntry.getHasId()'"));
+        assertThat(output, equalTo("Found FieldProperty 'has-id' for field 'AnnotatedEntry#hasId'"));
     }
 
-    private static BeanPropertyDefinition getDescriptor(String name, Class<?> clazz) {
-        return new BeanPropertyExtractorImpl().collectAllProperties(clazz)
+    @Test
+    void shouldReturnExportName() {
+        // given
+        BeanFieldPropertyDefinition hasIdProperty = getDescription("has-id", AnnotatedEntry.class);
+        BeanFieldPropertyDefinition sizeProperty = getDescription("size", SampleBean.class);
+
+        // when
+        String hasIdExportName = hasIdProperty.getExportName();
+        String sizeExportName = sizeProperty.getExportName();
+
+        // then
+        assertThat(hasIdExportName, equalTo("has-id"));
+        assertThat(sizeExportName, nullValue());
+    }
+
+    private static BeanFieldPropertyDefinition getDescription(String name, Class<?> clazz) {
+        return new BeanPropertyExtractorImpl().collectProperties(clazz)
             .stream()
             .filter(prop -> name.equals(prop.getName()))
             .findFirst()
             .orElseThrow(IllegalArgumentException::new);
     }
-    
+
     private static class SampleBean {
+
         private int size;
 
-        // Need explicit default constructor so Java sees that it's visible
-        public SampleBean() {
-        }
-
-        public int getSize() {
-            return size;
-        }
-
-        public void setSize(int size) {
-            this.size = size;
-        }
     }
-
-    private static final class ThrowingBean extends SampleBean {
-        @Override
-        public void setSize(int size) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int getSize() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
 }

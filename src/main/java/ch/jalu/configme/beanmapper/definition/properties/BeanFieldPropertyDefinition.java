@@ -1,80 +1,85 @@
 package ch.jalu.configme.beanmapper.definition.properties;
 
-import ch.jalu.configme.beanmapper.ConfigMeMapperException;
+import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.internal.ReflectionHelper;
 import ch.jalu.typeresolver.TypeInfo;
+import ch.jalu.typeresolver.reflect.FieldUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 
 /**
- * Default implementation of {@link BeanPropertyDefinition}.
+ * A bean property defined by a {@link Field}.
  */
 public class BeanFieldPropertyDefinition implements BeanPropertyDefinition {
 
-    private final String name;
-    private final TypeInfo typeInformation;
-    private final Method getter;
-    private final Method setter;
+    private final Field field;
+    private final @Nullable String exportName;
     private final BeanPropertyComments comments;
 
     /**
      * Constructor.
      *
-     * @param name name of the property in the export
-     * @param typeInformation type of the property
-     * @param getter getter for the property
-     * @param setter setter for the property
-     * @param comments the comments of the property
+     * @param field the field this definition is for
+     * @param exportName the custom name of this property in the property resource, null for default
+     * @param comments the comments associated with this property
      */
-    public BeanFieldPropertyDefinition(@NotNull String name, @NotNull TypeInfo typeInformation,
-                                       @NotNull Method getter, @NotNull Method setter,
+    public BeanFieldPropertyDefinition(@NotNull Field field,
+                                       @Nullable String exportName,
                                        @NotNull BeanPropertyComments comments) {
-        this.name = name;
-        this.typeInformation = typeInformation;
-        this.getter = getter;
-        this.setter = setter;
+        this.field = field;
+        this.exportName = exportName;
         this.comments = comments;
+    }
+
+    /**
+     * @return custom export name, or null if none present
+     */
+    protected final @Nullable String getExportName() {
+        return exportName;
     }
 
     @Override
     public @NotNull String getName() {
-        return name;
+        return exportName == null ? field.getName() : exportName;
     }
 
     @Override
     public @NotNull TypeInfo getTypeInformation() {
-        return typeInformation;
+        return TypeInfo.of(field);
     }
 
     /**
-     * Returns the value of the property for the given bean.
+     * Sets the provided value to the field wrapped by this instance on the given bean. This method does not
+     * check whether the field is final; in some contexts (e.g. instantiating a record type), this method should not
+     * be called.
      *
-     * @param bean the bean to read the property from
-     * @return bean value
+     * @param bean the bean to set the value to
+     * @param value the value to set
      */
-    public @Nullable Object getValue(@NotNull Object bean) {
+    // Surprisingly, setting a value to a final field is allowed in some circumstances, but the value doesn't seem to
+    // actually be changed outside of the current context. For now, we keep this method free of any validation but
+    // note that a final field here might NOT cause an exception.
+    public void setValue(@NotNull Object bean, @NotNull Object value) {
+        ReflectionHelper.setAccessibleIfNeeded(field);
+
         try {
-            return getter.invoke(bean);
-        } catch (@NotNull IllegalAccessException | InvocationTargetException e) {
-            throw new ConfigMeMapperException(
-                "Could not get property '" + name + "' from instance '" + bean + "'", e);
+            field.set(bean, value);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            String fieldName = FieldUtils.formatField(field);
+            throw new ConfigMeException("Failed to set value to field " + fieldName + ". Value: " + value, e);
         }
     }
 
-    /**
-     * Sets the given property to the given value on the provided bean.
-     *
-     * @param bean the bean to modify
-     * @param value the value to set the property to
-     */
-    public void setValue(@NotNull Object bean, @NotNull Object value) {
+    @Override
+    public @Nullable Object getValue(@NotNull Object bean) {
+        ReflectionHelper.setAccessibleIfNeeded(field);
+
         try {
-            setter.invoke(bean, value);
-        } catch (@NotNull IllegalAccessException | InvocationTargetException e) {
-            throw new ConfigMeMapperException(
-                "Could not set property '" + name + "' to value '" + value + "' on instance '" + bean + "'", e);
+            return field.get(bean);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new ConfigMeException("Failed to get value for field " + FieldUtils.formatField(field), e);
         }
     }
 
@@ -85,6 +90,6 @@ public class BeanFieldPropertyDefinition implements BeanPropertyDefinition {
 
     @Override
     public @NotNull String toString() {
-        return "Bean property '" + name + "' with getter '" + getter + "'";
+        return "FieldProperty '" + getName() + "' for field '" + FieldUtils.formatField(field) + "'";
     }
 }

@@ -3,89 +3,114 @@ package ch.jalu.configme.beanmapper.definition.properties;
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.beanmapper.ExportName;
-import ch.jalu.typeresolver.TypeInfo;
+import ch.jalu.configme.beanmapper.IgnoreInMapping;
+import ch.jalu.configme.exception.ConfigMeException;
+import ch.jalu.configme.internal.record.RecordComponent;
+import ch.jalu.typeresolver.reflect.FieldUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Creates all {@link BeanPropertyDefinition} objects for a given class.
  * <p>
- * This description factory returns property descriptions for all properties on a class
- * for which a getter and setter is associated. Inherited properties are considered.
+ * This extractor returns property definitions for all instance fields on a class, including the fields of its parents.
+ * If a non-static field in a bean class has the same name as a field of a parent type, the parent field is ignored.
+ * See <a href="https://github.com/AuthMe/ConfigMe/wiki/Bean-properties">Bean properties</a> on the ConfigMe wiki
+ * for more details.
  * <p>
- * This implementation supports {@link ExportName} and transient properties, declared either
- * with the {@code transient} keyword or by adding the {@link java.beans.Transient} annotation.
+ * This implementation supports &#64;{@link ExportName} and ignores fields that are {@code transient} or annotated
+ * with &#64;{@link IgnoreInMapping}.
  */
 public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
 
-    private final Map<Class<?>, List<BeanPropertyDefinition>> classProperties = new HashMap<>();
-
-    /**
-     * Returns all properties of the given bean class for which there exists a getter and setter.
-     *
-     * @param clazz the bean property to process
-     * @return the bean class's properties to handle
-     */
     @Override
-    public @NotNull Collection<BeanPropertyDefinition> getAllProperties(@NotNull Class<?> clazz) {
-        return classProperties.computeIfAbsent(clazz, this::collectAllProperties);
+    public @NotNull List<BeanPropertyDefinition> collectPropertiesForRecord(@NotNull Class<?> clazz,
+                                                                            RecordComponent @NotNull [] components) {
+        Map<String, Field> instanceFieldsByName = FieldUtils.getAllFields(clazz)
+            .filter(FieldUtils::isRegularInstanceField)
+            .collect(FieldUtils.collectByName(false));
+
+        List<BeanPropertyDefinition> properties = new ArrayList<>(components.length);
+        for (RecordComponent component : components) {
+            Field field = instanceFieldsByName.get(component.getName());
+            validateFieldForRecord(clazz, component, field);
+            BeanFieldPropertyDefinition property = convert(field);
+            properties.add(property);
+        }
+
+        validateProperties(clazz, properties);
+        return properties;
     }
 
-    /**
-     * Collects all properties available on the given class.
-     *
-     * @param clazz the class to process
-     * @return properties of the class
-     */
-    protected @NotNull List<BeanPropertyDefinition> collectAllProperties(@NotNull Class<?> clazz) {
-        List<PropertyDescriptor> descriptors = getWritableProperties(clazz);
+    @Override
+    public @NotNull List<BeanFieldPropertyDefinition> collectProperties(@NotNull Class<?> clazz) {
+        @SuppressWarnings("checkstyle:IllegalType") // LinkedHashMap indicates the values are ordered (important here)
+        LinkedHashMap<String, Field> instanceFieldsByName = FieldUtils.getAllFields(clazz)
+            .filter(FieldUtils::isRegularInstanceField)
+            .collect(FieldUtils.collectByName(false));
 
-        List<BeanPropertyDefinition> properties = descriptors.stream()
-            .map(this::convert)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+        List<BeanFieldPropertyDefinition> properties = new ArrayList<>();
+        for (Field field : instanceFieldsByName.values()) {
+            if (!isFieldIgnored(field)) {
+                validateFieldForBean(clazz, field);
+                BeanFieldPropertyDefinition property = convert(field);
+                properties.add(property);
+            }
+        }
 
         validateProperties(clazz, properties);
         return properties;
     }
 
     /**
-     * Converts a {@link PropertyDescriptor} to a {@link BeanPropertyDefinition} object.
+     * Validates the component and its associated field for a class that is a record.
      *
-     * @param descriptor the descriptor to convert
-     * @return the converted object, or null if the property should be skipped
+     * @param clazz the record type the component belongs to
+     * @param component the record component to validate
+     * @param field the field associated with the record (nullable)
      */
-    protected @Nullable BeanPropertyDefinition convert(@NotNull PropertyDescriptor descriptor) {
-        if (Boolean.TRUE.equals(descriptor.getValue("transient"))) {
-            return null;
+    protected void validateFieldForRecord(@NotNull Class<?> clazz, @NotNull RecordComponent component,
+                                          @Nullable Field field) {
+        if (field == null) {
+            throw new ConfigMeException("Record component '" + component.getName() + "' for " + clazz.getName()
+                + " does not have a field with the same name");
+        } else if (isFieldIgnored(field)) {
+            throw new ConfigMeException("Record component '" + component.getName() + "' for " + clazz.getName()
+                + " has a field defined to be ignored: this is not supported for records");
         }
+    }
 
-        Field field = tryGetField(descriptor.getWriteMethod().getDeclaringClass(), descriptor.getName());
-        BeanPropertyComments comments = getComments(field);
-        return new BeanFieldPropertyDefinition(
-            getPropertyName(descriptor, field),
-            createTypeInfo(descriptor),
-            descriptor.getReadMethod(),
-            descriptor.getWriteMethod(),
-            comments);
+    /**
+     * Validates the given field that belongs to a bean class.
+     *
+     * @param clazz the class the field belongs to (the bean type)
+     * @param field the field to validate
+     */
+    protected void validateFieldForBean(@NotNull Class<?> clazz, @NotNull Field field) {
+        if (Modifier.isFinal(field.getModifiers())) {
+            throw new ConfigMeException("Field '" + FieldUtils.formatField(field)
+                + "' is final. Final fields cannot be set by the mapper. Remove final or mark it to be ignored.");
+        }
+    }
+
+    protected @NotNull BeanFieldPropertyDefinition convert(@NotNull Field field) {
+        return new BeanFieldPropertyDefinition(field, getCustomExportName(field), getComments(field));
+    }
+
+    protected boolean isFieldIgnored(@NotNull Field field) {
+        return Modifier.isTransient(field.getModifiers()) || field.isAnnotationPresent(IgnoreInMapping.class);
     }
 
     /**
@@ -105,28 +130,13 @@ public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
     }
 
     /**
-     * Returns the field with the given name on the provided class, or null if it doesn't exist.
-     *
-     * @param clazz the class to search in
-     * @param name the field name to look for
-     * @return the field if matched, otherwise null
-     */
-    protected @Nullable Field tryGetField(@NotNull Class<?> clazz, @NotNull String name) {
-        try {
-            return clazz.getDeclaredField(name);
-        } catch (NoSuchFieldException ignore) {
-        }
-        return null;
-    }
-
-    /**
      * Validates the class's properties.
      *
      * @param clazz the class to which the properties belong
      * @param properties the properties that will be used on the class
      */
     protected void validateProperties(@NotNull Class<?> clazz,
-                                      @NotNull Collection<BeanPropertyDefinition> properties) {
+                                      @NotNull Collection<? extends BeanPropertyDefinition> properties) {
         Set<String> names = new HashSet<>(properties.size());
         properties.forEach(property -> {
             if (property.getName().isEmpty()) {
@@ -140,101 +150,15 @@ public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
     }
 
     /**
-     * Returns the name which is used in the export files for the given property descriptor.
+     * Returns a custom name that the property should have in property resources for reading and writing. This method
+     * returns null if the field name should be used.
      *
-     * @param descriptor the descriptor to get the name for
-     * @param field the field associated with the property (may be null)
-     * @return the property name
+     * @param field the field to process
+     * @return the custom name the property has in resources, null otherwise
      */
-    protected @NotNull String getPropertyName(@NotNull PropertyDescriptor descriptor, @Nullable Field field) {
-        if (field != null && field.isAnnotationPresent(ExportName.class)) {
-            return field.getAnnotation(ExportName.class).value();
-        }
-        return descriptor.getName();
-    }
-
-    protected @NotNull TypeInfo createTypeInfo(@NotNull PropertyDescriptor descriptor) {
-        return new TypeInfo(descriptor.getWriteMethod().getGenericParameterTypes()[0]);
-    }
-
-    /**
-     * Returns all properties of the given class that are writable
-     * (all bean properties with an associated read and write method).
-     *
-     * @param clazz the class to process
-     * @return all writable properties of the bean class
-     */
-    protected @NotNull List<PropertyDescriptor> getWritableProperties(@NotNull Class<?> clazz) {
-        PropertyDescriptor[] descriptors;
-        try {
-            descriptors = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
-        } catch (IntrospectionException e) {
-            throw new IllegalStateException(e);
-        }
-        List<PropertyDescriptor> writableProperties = new ArrayList<>(descriptors.length);
-        for (PropertyDescriptor descriptor : descriptors) {
-            if (descriptor.getWriteMethod() != null && descriptor.getReadMethod() != null) {
-                writableProperties.add(descriptor);
-            }
-        }
-        return sortPropertiesList(clazz, writableProperties);
-    }
-
-    /**
-     * Returns a sorted list of the given properties which will be used for further processing and whose
-     * order will be maintained. May return the same list.
-     *
-     * @param clazz the class from which the properties come from
-     * @param properties the properties to sort
-     * @return sorted properties
-     */
-    protected @NotNull List<PropertyDescriptor> sortPropertiesList(@NotNull Class<?> clazz,
-                                                                   @NotNull List<PropertyDescriptor> properties) {
-        Map<String, Integer> fieldNameByIndex = createFieldNameOrderMap(clazz);
-        int maxIndex = fieldNameByIndex.size();
-
-        properties.sort(Comparator.comparing(property -> {
-            Integer index = fieldNameByIndex.get(property.getName());
-            return index == null ? maxIndex : index;
-        }));
-        return properties;
-    }
-
-    /**
-     * Creates a map of index (encounter number) by field name for all fields of the given class,
-     * including its superclasses. Fields are sorted by declaration order in the classes; sorted
-     * by top-most class in the inheritance hierarchy to the lowest (the class provided as parameter).
-     *
-     * @param clazz the class to create the field index map for
-     * @return map with all field names as keys and its index as value
-     */
-    protected @NotNull Map<String, Integer> createFieldNameOrderMap(@NotNull Class<?> clazz) {
-        Map<String, Integer> nameByIndex = new HashMap<>();
-        int i = 0;
-        for (Class currentClass : collectClassAndAllParents(clazz)) {
-            for (Field field : currentClass.getDeclaredFields()) {
-                nameByIndex.put(field.getName(), i);
-                ++i;
-            }
-        }
-        return nameByIndex;
-    }
-
-    /**
-     * Returns a list of the class's parents, including the given class itself, with the top-most parent
-     * coming first. Does not include the Object class.
-     *
-     * @param clazz the class whose parents should be collected
-     * @return list with all of the class's parents, sorted by highest class in the hierarchy to lowest
-     */
-    protected @NotNull List<Class<?>> collectClassAndAllParents(@NotNull Class<?> clazz) {
-        List<Class<?>> parents = new ArrayList<>();
-        Class<?> curClass = clazz;
-        while (curClass != null && curClass != Object.class) {
-            parents.add(curClass);
-            curClass = curClass.getSuperclass();
-        }
-        Collections.reverse(parents);
-        return parents;
+    protected @Nullable String getCustomExportName(@NotNull Field field) {
+        return field.isAnnotationPresent(ExportName.class)
+            ? field.getAnnotation(ExportName.class).value()
+            : null;
     }
 }
