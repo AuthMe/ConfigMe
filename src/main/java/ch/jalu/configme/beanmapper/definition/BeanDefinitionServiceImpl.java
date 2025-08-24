@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.instantiation;
+package ch.jalu.configme.beanmapper.definition;
 
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Default implementation of {@link BeanInstantiationService}: defines how bean classes can be created.
+ * Default implementation of {@link BeanDefinitionService}: defines how bean classes can be created.
  * <p>
  * This service can handle two different types of classes as beans:<ul>
  *  <li>Regular Java classes with a <b>no-args constructor</b>: all fields that aren't static or transient
@@ -28,19 +28,19 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * See {@link BeanDescriptionFactory} for details on how the properties are determined for a bean class.
  */
-public class BeanInstantiationServiceImpl implements BeanInstantiationService {
+public class BeanDefinitionServiceImpl implements BeanDefinitionService {
 
     private final RecordInspector recordInspector;
     private final BeanDescriptionFactory beanDescriptionFactory;
-    private final Map<Class<?>, BeanInstantiation> cachedInstantiationsByType = new ConcurrentHashMap<>();
+    private final Map<Class<?>, BeanDefinition> cachedDefinitionsByType = new ConcurrentHashMap<>();
 
-    public BeanInstantiationServiceImpl() {
+    public BeanDefinitionServiceImpl() {
         this.recordInspector = new RecordInspectorImpl(new ReflectionHelper());
         this.beanDescriptionFactory = new BeanDescriptionFactoryImpl();
     }
 
-    public BeanInstantiationServiceImpl(@NotNull RecordInspector recordInspector,
-                                        @NotNull BeanDescriptionFactory beanDescriptionFactory) {
+    public BeanDefinitionServiceImpl(@NotNull RecordInspector recordInspector,
+                                     @NotNull BeanDescriptionFactory beanDescriptionFactory) {
         this.recordInspector = recordInspector;
         this.beanDescriptionFactory = beanDescriptionFactory;
     }
@@ -53,46 +53,46 @@ public class BeanInstantiationServiceImpl implements BeanInstantiationService {
         return beanDescriptionFactory;
     }
 
-    protected final @NotNull Map<Class<?>, BeanInstantiation> getCachedInstantiationsByType() {
-        return cachedInstantiationsByType;
+    protected final @NotNull Map<Class<?>, BeanDefinition> getCachedDefinitionsByType() {
+        return cachedDefinitionsByType;
     }
 
     @Override
-    public @NotNull Optional<BeanInstantiation> findInstantiation(@NotNull Class<?> clazz) {
-        BeanInstantiation cachedInstantiation = cachedInstantiationsByType.get(clazz);
-        if (cachedInstantiation != null) {
-            return Optional.of(cachedInstantiation);
+    public @NotNull Optional<BeanDefinition> findDefinition(@NotNull Class<?> clazz) {
+        BeanDefinition cachedDefinition = cachedDefinitionsByType.get(clazz);
+        if (cachedDefinition != null) {
+            return Optional.of(cachedDefinition);
         }
 
-        BeanInstantiation instantiation = createInstantiation(clazz);
-        if (instantiation != null) {
-            cachedInstantiationsByType.put(clazz, instantiation);
-            return Optional.of(instantiation);
+        BeanDefinition definition = createDefinitionIfApplicable(clazz);
+        if (definition != null) {
+            cachedDefinitionsByType.put(clazz, definition);
+            return Optional.of(definition);
         }
         return Optional.empty();
     }
 
     /**
-     * Inspects the class and returns an appropriate instantiation for it, if available. Null is returned if no
-     * instantiation could be found for the class.
+     * Inspects the class and returns an appropriate definition for it, if available. Null is returned if no
+     * definition could be found for the class.
      *
      * @param clazz the class to process
-     * @return bean instantiation for the class, or null if not applicable
+     * @return bean definition for the class, or null if not applicable
      */
-    protected @Nullable BeanInstantiation createInstantiation(@NotNull Class<?> clazz) {
+    protected @Nullable BeanDefinition createDefinitionIfApplicable(@NotNull Class<?> clazz) {
         RecordComponent[] recordComponents = recordInspector.getRecordComponents(clazz);
         if (recordComponents != null) {
             List<BeanFieldPropertyDescription> properties =
                 beanDescriptionFactory.collectPropertiesForRecord(clazz, recordComponents);
 
-            return new BeanRecordInstantiation(clazz, properties);
+            return new RecordBeanDefinition(clazz, properties);
         }
 
         Constructor<?> zeroArgConstructor = ConstructorUtils.getConstructorOrNull(clazz);
         if (zeroArgConstructor != null) {
             List<BeanFieldPropertyDescription> properties = beanDescriptionFactory.collectProperties(clazz);
             if (!properties.isEmpty()) {
-                return new BeanZeroArgConstructorInstantiation(zeroArgConstructor, properties);
+                return new ZeroArgConstructorBeanDefinition(zeroArgConstructor, properties);
             }
         }
 

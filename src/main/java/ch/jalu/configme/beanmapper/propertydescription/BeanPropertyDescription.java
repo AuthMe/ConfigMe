@@ -1,12 +1,13 @@
 package ch.jalu.configme.beanmapper.propertydescription;
 
+import ch.jalu.configme.beanmapper.definition.BeanDefinition;
 import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a property within a bean class, as used by
- * {@link ch.jalu.configme.beanmapper.instantiation.BeanInstantiation BeanInstantiation}. Bean property descriptions
+ * {@link BeanDefinition BeanDefinition}. Bean property descriptions
  * are provided by {@link BeanDescriptionFactory}.
  * <p>
  * Default implementation of this interface is {@link BeanFieldPropertyDescription}.

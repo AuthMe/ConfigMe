@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.instantiation;
+package ch.jalu.configme.beanmapper.definition;
 
 import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescription;
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
@@ -24,10 +24,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 /**
- * Test for {@link BeanRecordInstantiation}.
+ * Test for {@link RecordBeanDefinition}.
  */
 @ExtendWith(MockitoExtension.class)
-class BeanRecordInstantiationTest {
+class RecordBeanDefinitionTest {
 
     @Test
     void shouldThrowForMissingConstructor() throws NoSuchFieldException {
@@ -39,21 +39,21 @@ class BeanRecordInstantiationTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> new BeanRecordInstantiation(ExampleRecord.class, properties));
+            () -> new RecordBeanDefinition(ExampleRecord.class, properties));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Could not get canonical constructor of class ch.jalu.configme.beanmapper.instantiation.BeanRecordInstantiationTest$ExampleRecord"));
+        assertThat(ex.getMessage(), equalTo("Could not get canonical constructor of class ch.jalu.configme.beanmapper.definition.RecordBeanDefinitionTest$ExampleRecord"));
         assertThat(ex.getCause(), nullValue());
     }
 
     @Test
     void shouldInstantiateRecord() {
         // given
-        BeanRecordInstantiation instantiation = ExampleRecord.createInstantiation();
+        RecordBeanDefinition definition = ExampleRecord.createDefinition();
         ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
 
         // when
-        ExampleRecord result = (ExampleRecord) instantiation.create(Arrays.asList("Toast", 10), errorRecorder);
+        ExampleRecord result = (ExampleRecord) definition.create(Arrays.asList("Toast", 10), errorRecorder);
 
         // then
         assertThat(result.name(), equalTo("Toast"));
@@ -64,12 +64,12 @@ class BeanRecordInstantiationTest {
     @Test
     void shouldReturnNullIfAnyPropertyIsNull() {
         // given
-        BeanRecordInstantiation instantiation = ExampleRecord.createInstantiation();
+        RecordBeanDefinition definition = ExampleRecord.createDefinition();
         ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
 
         // when / then
-        assertThat(instantiation.create(Arrays.asList("Toast", null), errorRecorder), nullValue());
-        assertThat(instantiation.create(Arrays.asList(null, 33), errorRecorder), nullValue());
+        assertThat(definition.create(Arrays.asList("Toast", null), errorRecorder), nullValue());
+        assertThat(definition.create(Arrays.asList(null, 33), errorRecorder), nullValue());
 
         verifyNoInteractions(errorRecorder);
     }
@@ -77,15 +77,15 @@ class BeanRecordInstantiationTest {
     @Test
     void shouldHandleWrongPropertyValuesGracefully() {
         // given
-        BeanRecordInstantiation instantiation = ExampleRecord.createInstantiation();
+        RecordBeanDefinition definition = ExampleRecord.createDefinition();
         ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> instantiation.create(Arrays.asList(3, 3), errorRecorder));
+            () -> definition.create(Arrays.asList(3, 3), errorRecorder));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Error calling record constructor for class ch.jalu.configme.beanmapper.instantiation.BeanRecordInstantiationTest$ExampleRecord"));
+        assertThat(ex.getMessage(), equalTo("Error calling record constructor for class ch.jalu.configme.beanmapper.definition.RecordBeanDefinitionTest$ExampleRecord"));
         assertThat(ex.getCause(), instanceOf(IllegalArgumentException.class));
         assertThat(ex.getCause().getMessage(), equalTo("argument type mismatch"));
     }
@@ -93,15 +93,15 @@ class BeanRecordInstantiationTest {
     @Test
     void shouldReturnFieldsInGetters() {
         // given
-        BeanRecordInstantiation instantiation = ExampleRecord.createInstantiation();
+        RecordBeanDefinition definition = ExampleRecord.createDefinition();
 
         // when
-        Constructor<?> zeroArgsConstructor = instantiation.getCanonicalConstructor();
-        List<BeanFieldPropertyDescription> fieldProperties = instantiation.getFieldProperties();
+        Constructor<?> zeroArgsConstructor = definition.getCanonicalConstructor();
+        List<BeanFieldPropertyDescription> fieldProperties = definition.getFieldProperties();
 
         // then
         assertThat(zeroArgsConstructor, equalTo(ConstructorUtils.getConstructorOrThrow(ExampleRecord.class, String.class, int.class)));
-        assertThat(fieldProperties, equalTo(instantiation.getProperties()));
+        assertThat(fieldProperties, equalTo(definition.getProperties()));
     }
 
     private static class ExampleRecord { // #347: Change to an actual record :)
@@ -114,13 +114,13 @@ class BeanRecordInstantiationTest {
             this.size = size;
         }
 
-        static BeanRecordInstantiation createInstantiation() {
+        static RecordBeanDefinition createDefinition() {
             List<BeanFieldPropertyDescription> properties = Arrays.stream(ExampleRecord.class.getDeclaredFields())
                 .filter(FieldUtils::isRegularInstanceField)
                 .map(field -> new BeanFieldPropertyDescription(field, null, BeanPropertyComments.EMPTY))
                 .collect(Collectors.toList());
 
-            return new BeanRecordInstantiation(ExampleRecord.class, properties);
+            return new RecordBeanDefinition(ExampleRecord.class, properties);
         }
 
         String name() {

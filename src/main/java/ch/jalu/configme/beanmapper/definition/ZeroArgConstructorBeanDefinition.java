@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.instantiation;
+package ch.jalu.configme.beanmapper.definition;
 
 import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescription;
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
@@ -14,15 +14,15 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Instantiates bean types via zero-arg constructor and sets its instance fields.
+ * Describes a bean type that is a regular Java class with a zero-arg constructor.
  */
-public class BeanZeroArgConstructorInstantiation implements BeanInstantiation {
+public class ZeroArgConstructorBeanDefinition implements BeanDefinition {
 
     private final Constructor<?> zeroArgsConstructor;
     private final List<BeanFieldPropertyDescription> properties;
 
-    public BeanZeroArgConstructorInstantiation(@NotNull Constructor<?> zeroArgsConstructor,
-                                               @NotNull List<BeanFieldPropertyDescription> properties) {
+    public ZeroArgConstructorBeanDefinition(@NotNull Constructor<?> zeroArgsConstructor,
+                                            @NotNull List<BeanFieldPropertyDescription> properties) {
         this.zeroArgsConstructor = zeroArgsConstructor;
         this.properties = properties;
     }

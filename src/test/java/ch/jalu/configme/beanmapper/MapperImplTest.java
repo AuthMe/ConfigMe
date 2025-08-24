@@ -10,7 +10,7 @@ import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommandConf
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexOptionalTypeConfig;
 import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.beanmapper.context.MappingContextImpl;
-import ch.jalu.configme.beanmapper.instantiation.BeanInstantiationService;
+import ch.jalu.configme.beanmapper.definition.BeanDefinitionService;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.beanmapper.typeissues.GenericCollection;
@@ -425,16 +425,16 @@ class MapperImplTest {
     @Test
     void shouldReturnFields() {
         // given
-        BeanInstantiationService beanInstantiationService = mock(BeanInstantiationService.class);
+        BeanDefinitionService beanDefinitionService = mock(BeanDefinitionService.class);
         LeafValueHandlerImpl leafValueHandler = mock(LeafValueHandlerImpl.class);
-        MapperImpl mapper = new MapperImpl(beanInstantiationService, leafValueHandler);
+        MapperImpl mapper = new MapperImpl(beanDefinitionService, leafValueHandler);
 
         // when
-        BeanInstantiationService returnedBeanInstantiationService = mapper.getBeanInstantiationService();
+        BeanDefinitionService returnedBeanDefinitionService = mapper.getBeanDefinitionService();
         LeafValueHandler returnedLeafValueHandler = mapper.getLeafValueHandler();
 
         // then
-        assertThat(returnedBeanInstantiationService, sameInstance(beanInstantiationService));
+        assertThat(returnedBeanDefinitionService, sameInstance(beanDefinitionService));
         assertThat(returnedLeafValueHandler, sameInstance(leafValueHandler));
     }
 

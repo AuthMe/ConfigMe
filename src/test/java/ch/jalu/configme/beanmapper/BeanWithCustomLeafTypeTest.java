@@ -4,7 +4,7 @@ import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.configme.TestUtils;
-import ch.jalu.configme.beanmapper.instantiation.BeanInstantiationServiceImpl;
+import ch.jalu.configme.beanmapper.definition.BeanDefinitionServiceImpl;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.beanmapper.leafvaluehandler.MapperLeafType;
 import ch.jalu.configme.properties.BeanProperty;
@@ -84,7 +84,7 @@ class BeanWithCustomLeafTypeTest {
     public static final class MapperWithCustomIntSupport extends MapperImpl {
 
         MapperWithCustomIntSupport() {
-            super(new BeanInstantiationServiceImpl(),
+            super(new BeanDefinitionServiceImpl(),
                   LeafValueHandlerImpl.builder().addDefaults().addType(new CustomIntegerLeafType()).build());
         }
     }

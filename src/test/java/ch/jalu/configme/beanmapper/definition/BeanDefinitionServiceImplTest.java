@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.instantiation;
+package ch.jalu.configme.beanmapper.definition;
 
 import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescription;
@@ -31,12 +31,12 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.BDDMockito.given;
 
 /**
- * Test for {@link BeanInstantiationServiceImpl}.
+ * Test for {@link BeanDefinitionServiceImpl}.
  */
 @ExtendWith(MockitoExtension.class)
-class BeanInstantiationServiceImplTest {
+class BeanDefinitionServiceImplTest {
 
-    private BeanInstantiationServiceImpl beanInstantiationService;
+    private BeanDefinitionServiceImpl beanDefinitionService;
 
     @Mock
     private RecordInspector recordInspector;
@@ -45,12 +45,12 @@ class BeanInstantiationServiceImplTest {
     private BeanDescriptionFactory beanDescriptionFactory;
 
     @BeforeEach
-    void createBeanInstantiationService() {
-        this.beanInstantiationService = new BeanInstantiationServiceImpl(recordInspector, beanDescriptionFactory);
+    void createBeanDefinitionService() {
+        this.beanDefinitionService = new BeanDefinitionServiceImpl(recordInspector, beanDescriptionFactory);
     }
 
     @Test
-    void shouldProvideInstantiationForRecord() throws NoSuchFieldException {
+    void shouldProvideBeanDefinitionForRecord() throws NoSuchFieldException {
         // given
         RecordComponent nameComponent = new RecordComponent("name", String.class, String.class);
         RecordComponent shoeSizeComponent = new RecordComponent("shoeSize", int.class, int.class);
@@ -66,14 +66,14 @@ class BeanInstantiationServiceImplTest {
         given(beanDescriptionFactory.collectPropertiesForRecord(FakeRecord.class, components)).willReturn(beanProperties);
 
         // when
-        Optional<BeanInstantiation> instantiation = beanInstantiationService.findInstantiation(FakeRecord.class);
+        Optional<BeanDefinition> definition = beanDefinitionService.findDefinition(FakeRecord.class);
 
         // then
-        assertThat(instantiation.isPresent(), equalTo(true));
-        assertThat(instantiation.get(), instanceOf(BeanRecordInstantiation.class));
-        assertThat(instantiation.get().getProperties(), hasSize(3));
+        assertThat(definition.isPresent(), equalTo(true));
+        assertThat(definition.get(), instanceOf(RecordBeanDefinition.class));
+        assertThat(definition.get().getProperties(), hasSize(3));
 
-        Object bean = instantiation.get().create(Arrays.asList("Test", 39, 40.25), new ConvertErrorRecorder());
+        Object bean = definition.get().create(Arrays.asList("Test", 39, 40.25), new ConvertErrorRecorder());
         assertThat(bean, notNullValue());
         assertThat(((FakeRecord) bean).name, equalTo("Test"));
         assertThat(((FakeRecord) bean).shoeSize, equalTo(39));
@@ -81,7 +81,7 @@ class BeanInstantiationServiceImplTest {
     }
 
     @Test
-    void shouldProvideInstantiationForZeroArgConstructorClass() throws NoSuchFieldException {
+    void shouldProvideDefinitionForZeroArgConstructorClass() throws NoSuchFieldException {
         // given
         given(recordInspector.getRecordComponents(SampleBean.class)).willReturn(null);
         List<BeanFieldPropertyDescription> beanProperties = Arrays.asList(
@@ -91,14 +91,14 @@ class BeanInstantiationServiceImplTest {
         given(beanDescriptionFactory.collectProperties(SampleBean.class)).willReturn(beanProperties);
 
         // when
-        Optional<BeanInstantiation> instantiation = beanInstantiationService.findInstantiation(SampleBean.class);
+        Optional<BeanDefinition> definition = beanDefinitionService.findDefinition(SampleBean.class);
 
         // then
-        assertThat(instantiation.isPresent(), equalTo(true));
-        assertThat(instantiation.get(), instanceOf(BeanZeroArgConstructorInstantiation.class));
-        assertThat(instantiation.get().getProperties(), hasSize(3));
+        assertThat(definition.isPresent(), equalTo(true));
+        assertThat(definition.get(), instanceOf(ZeroArgConstructorBeanDefinition.class));
+        assertThat(definition.get().getProperties(), hasSize(3));
 
-        Object bean = instantiation.get().create(Arrays.asList("Test", 39, 40.25), new ConvertErrorRecorder());
+        Object bean = definition.get().create(Arrays.asList("Test", 39, 40.25), new ConvertErrorRecorder());
         assertThat(bean, notNullValue());
         assertThat(((SampleBean) bean).name, equalTo("Test"));
         assertThat(((SampleBean) bean).shoeSize, equalTo(39));
@@ -108,9 +108,9 @@ class BeanInstantiationServiceImplTest {
     @Test
     void shouldReturnEmptyOptionalForClassesWithNoInstantiationMethod() {
         // given / when
-        Optional<BeanInstantiation> result1 = beanInstantiationService.findInstantiation(String.class);
-        Optional<BeanInstantiation> result2 = beanInstantiationService.findInstantiation(TimeUnit.class);
-        Optional<BeanInstantiation> result3 = beanInstantiationService.findInstantiation(StringProperty.class);
+        Optional<BeanDefinition> result1 = beanDefinitionService.findDefinition(String.class);
+        Optional<BeanDefinition> result2 = beanDefinitionService.findDefinition(TimeUnit.class);
+        Optional<BeanDefinition> result3 = beanDefinitionService.findDefinition(StringProperty.class);
 
         // then
         assertThat(result1.isPresent(), equalTo(false));
@@ -119,9 +119,9 @@ class BeanInstantiationServiceImplTest {
     }
 
     @Test
-    void shouldCacheInstantiations() throws NoSuchFieldException {
+    void shouldCacheBeanDefinitions() throws NoSuchFieldException {
         // given
-        // Set up record instantiation
+        // Set up record-based bean definition
         RecordComponent ageComponent = new RecordComponent("age", double.class, double.class);
         RecordComponent[] components = {ageComponent};
         given(recordInspector.getRecordComponents(FakeRecord.class)).willReturn(components);
@@ -131,7 +131,7 @@ class BeanInstantiationServiceImplTest {
         BeanFieldPropertyDescription recordAgeProperty = new BeanFieldPropertyDescription(recordAgeField, null, recordAgeComments);
         given(beanDescriptionFactory.collectPropertiesForRecord(FakeRecord.class, components)).willReturn(Collections.singletonList(recordAgeProperty));
 
-        // Set up zero-args constructor instantiation
+        // Set up zero-args constructor bean definition
         given(recordInspector.getRecordComponents(SampleBean.class)).willReturn(null);
 
         Field beanNameField = SampleBean.class.getDeclaredField("name");
@@ -140,28 +140,28 @@ class BeanInstantiationServiceImplTest {
         given(beanDescriptionFactory.collectProperties(SampleBean.class)).willReturn(Collections.singletonList(beanNameProperty));
 
         // when
-        Optional<BeanInstantiation> recordInstantiation1 = beanInstantiationService.findInstantiation(FakeRecord.class);
-        Optional<BeanInstantiation> recordInstantiation2 = beanInstantiationService.findInstantiation(FakeRecord.class);
-        Optional<BeanInstantiation> zeroArgsInstantiation1 = beanInstantiationService.findInstantiation(SampleBean.class);
-        Optional<BeanInstantiation> zeroArgsInstantiation2 = beanInstantiationService.findInstantiation(SampleBean.class);
+        Optional<BeanDefinition> recordDefinition1 = beanDefinitionService.findDefinition(FakeRecord.class);
+        Optional<BeanDefinition> recordDefinition2 = beanDefinitionService.findDefinition(FakeRecord.class);
+        Optional<BeanDefinition> zeroArgsDefinition1 = beanDefinitionService.findDefinition(SampleBean.class);
+        Optional<BeanDefinition> zeroArgsDefinition2 = beanDefinitionService.findDefinition(SampleBean.class);
 
         // then
-        assertThat(recordInstantiation1.get(), sameInstance(recordInstantiation2.get()));
-        assertThat(recordInstantiation1.get().getProperties().get(0).getComments().getUuid(), equalTo(recordAgeComments.getUuid()));
-        assertThat(recordInstantiation2.get().getProperties().get(0).getComments().getUuid(), equalTo(recordAgeComments.getUuid()));
+        assertThat(recordDefinition1.get(), sameInstance(recordDefinition2.get()));
+        assertThat(recordDefinition1.get().getProperties().get(0).getComments().getUuid(), equalTo(recordAgeComments.getUuid()));
+        assertThat(recordDefinition2.get().getProperties().get(0).getComments().getUuid(), equalTo(recordAgeComments.getUuid()));
 
-        assertThat(zeroArgsInstantiation1.get(), sameInstance(zeroArgsInstantiation2.get()));
-        assertThat(zeroArgsInstantiation1.get().getProperties().get(0).getComments().getUuid(), equalTo(beanNameComments.getUuid()));
-        assertThat(zeroArgsInstantiation2.get().getProperties().get(0).getComments().getUuid(), equalTo(beanNameComments.getUuid()));
+        assertThat(zeroArgsDefinition1.get(), sameInstance(zeroArgsDefinition2.get()));
+        assertThat(zeroArgsDefinition1.get().getProperties().get(0).getComments().getUuid(), equalTo(beanNameComments.getUuid()));
+        assertThat(zeroArgsDefinition2.get().getProperties().get(0).getComments().getUuid(), equalTo(beanNameComments.getUuid()));
 
-        assertThat(beanInstantiationService.getCachedInstantiationsByType().keySet(), containsInAnyOrder(FakeRecord.class, SampleBean.class));
+        assertThat(beanDefinitionService.getCachedDefinitionsByType().keySet(), containsInAnyOrder(FakeRecord.class, SampleBean.class));
     }
 
     @Test
     void shouldReturnFields() {
         // given / when
-        RecordInspector returnedRecordInspector = beanInstantiationService.getRecordInspector();
-        BeanDescriptionFactory returnedBeanDescriptionFactory = beanInstantiationService.getBeanDescriptionFactory();
+        RecordInspector returnedRecordInspector = beanDefinitionService.getRecordInspector();
+        BeanDescriptionFactory returnedBeanDescriptionFactory = beanDefinitionService.getBeanDescriptionFactory();
 
         // then
         assertThat(returnedRecordInspector, sameInstance(recordInspector));

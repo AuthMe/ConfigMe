@@ -4,9 +4,9 @@ import ch.jalu.configme.beanmapper.context.ExportContext;
 import ch.jalu.configme.beanmapper.context.ExportContextImpl;
 import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.beanmapper.context.MappingContextImpl;
-import ch.jalu.configme.beanmapper.instantiation.BeanInstantiation;
-import ch.jalu.configme.beanmapper.instantiation.BeanInstantiationService;
-import ch.jalu.configme.beanmapper.instantiation.BeanInstantiationServiceImpl;
+import ch.jalu.configme.beanmapper.definition.BeanDefinition;
+import ch.jalu.configme.beanmapper.definition.BeanDefinitionService;
+import ch.jalu.configme.beanmapper.definition.BeanDefinitionServiceImpl;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
@@ -40,7 +40,7 @@ import static ch.jalu.configme.internal.PathUtils.pathSpecifierForMapKey;
  * has a property {@code length} and it should be mapped from the property resource's value at path {@code definition},
  * the mapper will look up {@code definition.length} in the resource to determine the value.
  * <p>
- * Classes are created by the {@link BeanInstantiationService}. The {@link BeanInstantiationServiceImpl
+ * Classes are created by the {@link BeanDefinitionService}. The {@link BeanDefinitionServiceImpl
  * default implementation} supports Java classes with a zero-args constructor, as well as Java records. The service can
  * be extended to support more types of classes.
  * <br>For Java classes with a zero-args constructor, the class's instance fields are taken as properties. You can
@@ -73,21 +73,21 @@ public class MapperImpl implements Mapper {
     // ---------
 
     private final LeafValueHandler leafValueHandler;
-    private final BeanInstantiationService beanInstantiationService;
+    private final BeanDefinitionService beanDefinitionService;
 
     public MapperImpl() {
-        this(new BeanInstantiationServiceImpl(),
+        this(new BeanDefinitionServiceImpl(),
              new LeafValueHandlerImpl(LeafValueHandlerImpl.createDefaultLeafTypes()));
     }
 
-    public MapperImpl(@NotNull BeanInstantiationService beanInstantiationService,
+    public MapperImpl(@NotNull BeanDefinitionService beanDefinitionService,
                       @NotNull LeafValueHandler leafValueHandler) {
-        this.beanInstantiationService = beanInstantiationService;
+        this.beanDefinitionService = beanDefinitionService;
         this.leafValueHandler = leafValueHandler;
     }
 
-    protected final @NotNull BeanInstantiationService getBeanInstantiationService() {
-        return beanInstantiationService;
+    protected final @NotNull BeanDefinitionService getBeanDefinitionService() {
+        return beanDefinitionService;
     }
 
     protected final @NotNull LeafValueHandler getLeafValueHandler() {
@@ -151,8 +151,8 @@ public class MapperImpl implements Mapper {
     }
 
     protected @NotNull List<BeanPropertyDescription> getBeanProperties(@NotNull Object value) {
-        return beanInstantiationService.findInstantiation(value.getClass())
-            .map(BeanInstantiation::getProperties)
+        return beanDefinitionService.findDefinition(value.getClass())
+            .map(BeanDefinition::getProperties)
             .orElse(Collections.emptyList());
     }
 
@@ -381,17 +381,17 @@ public class MapperImpl implements Mapper {
         }
         Map<?, ?> entries = (Map<?, ?>) value;
 
-        Optional<BeanInstantiation> instantiation =
-            beanInstantiationService.findInstantiation(context.getTargetTypeAsClassOrThrow());
-        if (instantiation.isPresent()) {
-            List<Object> propertyValues = instantiation.get().getProperties().stream()
+        Optional<BeanDefinition> definition =
+            beanDefinitionService.findDefinition(context.getTargetTypeAsClassOrThrow());
+        if (definition.isPresent()) {
+            List<Object> propertyValues = definition.get().getProperties().stream()
                 .map(prop -> {
                     MappingContext childContext = context.createChild(prop.getName(), prop.getTypeInformation());
                     return convertValueForType(childContext, entries.get(prop.getName()));
                 })
                 .collect(Collectors.toList());
 
-            return instantiation.get().create(propertyValues, context.getErrorRecorder());
+            return definition.get().create(propertyValues, context.getErrorRecorder());
         }
         return null;
     }

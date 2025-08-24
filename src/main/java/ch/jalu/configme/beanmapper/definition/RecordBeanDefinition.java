@@ -1,7 +1,7 @@
-package ch.jalu.configme.beanmapper.instantiation;
+package ch.jalu.configme.beanmapper.definition;
 
-import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
 import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescription;
+import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.typeresolver.reflect.ConstructorUtils;
@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Instantiates a bean type that is a Java record.
+ * Definition of a bean based on a Java record type.
  */
-public class BeanRecordInstantiation implements BeanInstantiation {
+public class RecordBeanDefinition implements BeanDefinition {
 
     private final Constructor<?> canonicalConstructor;
     private final List<BeanFieldPropertyDescription> properties;
@@ -27,7 +27,7 @@ public class BeanRecordInstantiation implements BeanInstantiation {
      * @param clazz the record type
      * @param properties the properties of the record
      */
-    public BeanRecordInstantiation(@NotNull Class<?> clazz, @NotNull List<BeanFieldPropertyDescription> properties) {
+    public RecordBeanDefinition(@NotNull Class<?> clazz, @NotNull List<BeanFieldPropertyDescription> properties) {
         this.properties = properties;
         Class<?>[] paramTypes = properties.stream().map(BeanFieldPropertyDescription::getType).toArray(Class[]::new);
         this.canonicalConstructor = ConstructorUtils.getConstructorOrNull(clazz, paramTypes);
