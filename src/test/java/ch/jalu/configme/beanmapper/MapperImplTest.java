@@ -37,6 +37,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -420,6 +421,22 @@ class MapperImplTest {
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
         assertThat(result, notNullValue());
         assertThat(result.getCommandconfig(), equalTo(Optional.empty()));
+    }
+
+    @Test
+    void shouldReturnNullForUnsupportedType(@TempDir Path tempDir) throws IOException {
+        // given
+        Path tempFile = TestUtils.createTemporaryFile(tempDir);
+        Files.write(tempFile, "{}".getBytes());
+        PropertyReader reader = new YamlFileReader(tempFile);
+        MapperImpl mapper = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+
+        // when
+        Instant result = mapper.convertToBean(reader.getObject(""), Instant.class, errorRecorder);
+
+        // then
+        assertThat(result, nullValue());
     }
 
     @Test
