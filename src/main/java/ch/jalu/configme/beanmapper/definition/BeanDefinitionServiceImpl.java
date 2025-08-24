@@ -1,8 +1,8 @@
 package ch.jalu.configme.beanmapper.definition;
 
-import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
-import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
-import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescription;
+import ch.jalu.configme.beanmapper.definition.properties.BeanDescriptionFactory;
+import ch.jalu.configme.beanmapper.definition.properties.BeanDescriptionFactoryImpl;
+import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDescription;
 import ch.jalu.configme.internal.ReflectionHelper;
 import ch.jalu.configme.internal.record.RecordComponent;
 import ch.jalu.configme.internal.record.RecordInspector;

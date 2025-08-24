@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.propertydescription;
+package ch.jalu.configme.beanmapper.definition.properties;
 
 import ch.jalu.configme.beanmapper.definition.BeanDefinitionServiceImpl;
 import ch.jalu.configme.internal.record.RecordComponent;

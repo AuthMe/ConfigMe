@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.propertydescription;
+package ch.jalu.configme.beanmapper.definition.properties;
 
 
 import ch.jalu.configme.Comment;
@@ -240,7 +240,7 @@ class BeanDescriptionFactoryImplTest {
             () -> factory.collectPropertiesForRecord(SampleRecordWithDuplicateName.class, new RecordComponent[]{component1, component2}));
 
         // then
-        assertThat(ex.getMessage(), equalTo("class ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImplTest$SampleRecordWithDuplicateName has multiple properties with name 'name'"));
+        assertThat(ex.getMessage(), equalTo("class ch.jalu.configme.beanmapper.definition.properties.BeanDescriptionFactoryImplTest$SampleRecordWithDuplicateName has multiple properties with name 'name'"));
     }
 
     @Test
@@ -267,7 +267,7 @@ class BeanDescriptionFactoryImplTest {
             () -> factory.collectPropertiesForRecord(SampleRecord.class, new RecordComponent[]{component1, component2}));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Record component 'bogus' for ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImplTest$SampleRecord does not have a field with the same name"));
+        assertThat(ex.getMessage(), equalTo("Record component 'bogus' for ch.jalu.configme.beanmapper.definition.properties.BeanDescriptionFactoryImplTest$SampleRecord does not have a field with the same name"));
     }
 
     @Test
@@ -281,7 +281,7 @@ class BeanDescriptionFactoryImplTest {
             () -> factory.collectPropertiesForRecord(SampleRecordWithIgnoredField.class, new RecordComponent[]{component1, component2}));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Record component 'desc' for ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImplTest$SampleRecordWithIgnoredField has a field defined to be ignored: this is not supported for records"));
+        assertThat(ex.getMessage(), equalTo("Record component 'desc' for ch.jalu.configme.beanmapper.definition.properties.BeanDescriptionFactoryImplTest$SampleRecordWithIgnoredField has a field defined to be ignored: this is not supported for records"));
     }
 
     private static BeanPropertyDescription getDescription(String name,

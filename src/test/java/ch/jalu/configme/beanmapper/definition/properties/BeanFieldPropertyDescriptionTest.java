@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.propertydescription;
+package ch.jalu.configme.beanmapper.definition.properties;
 
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;

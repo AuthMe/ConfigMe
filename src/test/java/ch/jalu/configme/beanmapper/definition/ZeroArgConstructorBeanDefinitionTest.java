@@ -1,7 +1,7 @@
 package ch.jalu.configme.beanmapper.definition;
 
-import ch.jalu.configme.beanmapper.propertydescription.BeanFieldPropertyDescription;
-import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
+import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDescription;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyComments;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.typeresolver.reflect.ConstructorUtils;
