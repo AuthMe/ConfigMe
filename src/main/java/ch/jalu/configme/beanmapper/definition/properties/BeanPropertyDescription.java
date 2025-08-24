@@ -6,9 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a property within a bean class, as used by
- * {@link BeanDefinition BeanDefinition}. Bean property descriptions
- * are provided by {@link BeanDescriptionFactory}.
+ * Represents a property within a bean class, as used by {@link BeanDefinition}.
+ * Bean property descriptions are provided by {@link BeanPropertyExtractor}.
  * <p>
  * Default implementation of this interface is {@link BeanFieldPropertyDescription}.
  */

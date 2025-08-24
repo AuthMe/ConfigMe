@@ -74,7 +74,7 @@ class BeanFieldPropertyDescriptionTest {
     }
 
     private static BeanFieldPropertyDescription getDescription(String name, Class<?> clazz) {
-        return new BeanDescriptionFactoryImpl().collectProperties(clazz)
+        return new BeanPropertyExtractorImpl().collectProperties(clazz)
             .stream()
             .filter(prop -> name.equals(prop.getName()))
             .findFirst()

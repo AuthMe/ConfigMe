@@ -1,8 +1,8 @@
 package ch.jalu.configme.beanmapper.definition;
 
-import ch.jalu.configme.beanmapper.definition.properties.BeanDescriptionFactory;
-import ch.jalu.configme.beanmapper.definition.properties.BeanDescriptionFactoryImpl;
 import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDescription;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractor;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractorImpl;
 import ch.jalu.configme.internal.ReflectionHelper;
 import ch.jalu.configme.internal.record.RecordComponent;
 import ch.jalu.configme.internal.record.RecordInspector;
@@ -26,31 +26,31 @@ import java.util.concurrent.ConcurrentHashMap;
  *  <li>Java records</li>
  * </ul>
  *
- * See {@link BeanDescriptionFactory} for details on how the properties are determined for a bean class.
+ * See {@link BeanPropertyExtractor} for details on how the properties are determined for a bean class.
  */
 public class BeanDefinitionServiceImpl implements BeanDefinitionService {
 
     private final RecordInspector recordInspector;
-    private final BeanDescriptionFactory beanDescriptionFactory;
+    private final BeanPropertyExtractor beanPropertyExtractor;
     private final Map<Class<?>, BeanDefinition> cachedDefinitionsByType = new ConcurrentHashMap<>();
 
     public BeanDefinitionServiceImpl() {
         this.recordInspector = new RecordInspectorImpl(new ReflectionHelper());
-        this.beanDescriptionFactory = new BeanDescriptionFactoryImpl();
+        this.beanPropertyExtractor = new BeanPropertyExtractorImpl();
     }
 
     public BeanDefinitionServiceImpl(@NotNull RecordInspector recordInspector,
-                                     @NotNull BeanDescriptionFactory beanDescriptionFactory) {
+                                     @NotNull BeanPropertyExtractor beanPropertyExtractor) {
         this.recordInspector = recordInspector;
-        this.beanDescriptionFactory = beanDescriptionFactory;
+        this.beanPropertyExtractor = beanPropertyExtractor;
     }
 
     protected final @NotNull RecordInspector getRecordInspector() {
         return recordInspector;
     }
 
-    protected final @NotNull BeanDescriptionFactory getBeanDescriptionFactory() {
-        return beanDescriptionFactory;
+    protected final @NotNull BeanPropertyExtractor getBeanPropertyExtractor() {
+        return beanPropertyExtractor;
     }
 
     protected final @NotNull Map<Class<?>, BeanDefinition> getCachedDefinitionsByType() {
@@ -83,14 +83,14 @@ public class BeanDefinitionServiceImpl implements BeanDefinitionService {
         RecordComponent[] recordComponents = recordInspector.getRecordComponents(clazz);
         if (recordComponents != null) {
             List<BeanFieldPropertyDescription> properties =
-                beanDescriptionFactory.collectPropertiesForRecord(clazz, recordComponents);
+                beanPropertyExtractor.collectPropertiesForRecord(clazz, recordComponents);
 
             return new RecordBeanDefinition(clazz, properties);
         }
 
         Constructor<?> zeroArgConstructor = ConstructorUtils.getConstructorOrNull(clazz);
         if (zeroArgConstructor != null) {
-            List<BeanFieldPropertyDescription> properties = beanDescriptionFactory.collectProperties(clazz);
+            List<BeanFieldPropertyDescription> properties = beanPropertyExtractor.collectProperties(clazz);
             if (!properties.isEmpty()) {
                 return new ZeroArgConstructorBeanDefinition(zeroArgConstructor, properties);
             }

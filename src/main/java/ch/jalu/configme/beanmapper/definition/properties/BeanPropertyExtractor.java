@@ -9,10 +9,10 @@ import java.util.List;
 /**
  * Factory which analyzes a bean class and returns all properties which ConfigMe should consider.
  * <p>
- * Default implementation: {@link BeanDescriptionFactoryImpl}. This interface is used by
- * {@link BeanDefinitionServiceImpl BeanDefinitionServiceImpl}.
+ * Default implementation: {@link BeanPropertyExtractorImpl}. This interface is used by
+ * {@link BeanDefinitionServiceImpl}.
  */
-public interface BeanDescriptionFactory {
+public interface BeanPropertyExtractor {
 
     /**
      * Collects all properties for the given bean type; this is done based on the class's fields.

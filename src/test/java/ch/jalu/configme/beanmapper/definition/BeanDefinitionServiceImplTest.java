@@ -1,8 +1,8 @@
 package ch.jalu.configme.beanmapper.definition;
 
-import ch.jalu.configme.beanmapper.definition.properties.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDescription;
 import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyComments;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractor;
 import ch.jalu.configme.internal.record.RecordComponent;
 import ch.jalu.configme.internal.record.RecordInspector;
 import ch.jalu.configme.properties.StringProperty;
@@ -42,11 +42,11 @@ class BeanDefinitionServiceImplTest {
     private RecordInspector recordInspector;
 
     @Mock
-    private BeanDescriptionFactory beanDescriptionFactory;
+    private BeanPropertyExtractor beanPropertyExtractor;
 
     @BeforeEach
     void createBeanDefinitionService() {
-        this.beanDefinitionService = new BeanDefinitionServiceImpl(recordInspector, beanDescriptionFactory);
+        this.beanDefinitionService = new BeanDefinitionServiceImpl(recordInspector, beanPropertyExtractor);
     }
 
     @Test
@@ -63,7 +63,7 @@ class BeanDefinitionServiceImplTest {
             new BeanFieldPropertyDescription(FakeRecord.class.getDeclaredField("name"), null, BeanPropertyComments.EMPTY),
             new BeanFieldPropertyDescription(FakeRecord.class.getDeclaredField("shoeSize"), null, BeanPropertyComments.EMPTY),
             new BeanFieldPropertyDescription(FakeRecord.class.getDeclaredField("age"), null, BeanPropertyComments.EMPTY));
-        given(beanDescriptionFactory.collectPropertiesForRecord(FakeRecord.class, components)).willReturn(beanProperties);
+        given(beanPropertyExtractor.collectPropertiesForRecord(FakeRecord.class, components)).willReturn(beanProperties);
 
         // when
         Optional<BeanDefinition> definition = beanDefinitionService.findDefinition(FakeRecord.class);
@@ -88,7 +88,7 @@ class BeanDefinitionServiceImplTest {
             new BeanFieldPropertyDescription(SampleBean.class.getDeclaredField("name"), null, BeanPropertyComments.EMPTY),
             new BeanFieldPropertyDescription(SampleBean.class.getDeclaredField("shoeSize"), null, BeanPropertyComments.EMPTY),
             new BeanFieldPropertyDescription(SampleBean.class.getDeclaredField("age"), null, BeanPropertyComments.EMPTY));
-        given(beanDescriptionFactory.collectProperties(SampleBean.class)).willReturn(beanProperties);
+        given(beanPropertyExtractor.collectProperties(SampleBean.class)).willReturn(beanProperties);
 
         // when
         Optional<BeanDefinition> definition = beanDefinitionService.findDefinition(SampleBean.class);
@@ -129,7 +129,7 @@ class BeanDefinitionServiceImplTest {
         Field recordAgeField = FakeRecord.class.getDeclaredField("age");
         BeanPropertyComments recordAgeComments = new BeanPropertyComments(Arrays.asList("some", "comment"), UUID.randomUUID());
         BeanFieldPropertyDescription recordAgeProperty = new BeanFieldPropertyDescription(recordAgeField, null, recordAgeComments);
-        given(beanDescriptionFactory.collectPropertiesForRecord(FakeRecord.class, components)).willReturn(Collections.singletonList(recordAgeProperty));
+        given(beanPropertyExtractor.collectPropertiesForRecord(FakeRecord.class, components)).willReturn(Collections.singletonList(recordAgeProperty));
 
         // Set up zero-args constructor bean definition
         given(recordInspector.getRecordComponents(SampleBean.class)).willReturn(null);
@@ -137,7 +137,7 @@ class BeanDefinitionServiceImplTest {
         Field beanNameField = SampleBean.class.getDeclaredField("name");
         BeanPropertyComments beanNameComments = new BeanPropertyComments(Collections.singletonList("comment"), UUID.randomUUID());
         BeanFieldPropertyDescription beanNameProperty = new BeanFieldPropertyDescription(beanNameField, null, beanNameComments);
-        given(beanDescriptionFactory.collectProperties(SampleBean.class)).willReturn(Collections.singletonList(beanNameProperty));
+        given(beanPropertyExtractor.collectProperties(SampleBean.class)).willReturn(Collections.singletonList(beanNameProperty));
 
         // when
         Optional<BeanDefinition> recordDefinition1 = beanDefinitionService.findDefinition(FakeRecord.class);
@@ -161,11 +161,11 @@ class BeanDefinitionServiceImplTest {
     void shouldReturnFields() {
         // given / when
         RecordInspector returnedRecordInspector = beanDefinitionService.getRecordInspector();
-        BeanDescriptionFactory returnedBeanDescriptionFactory = beanDefinitionService.getBeanDescriptionFactory();
+        BeanPropertyExtractor returnedBeanPropertyExtractor = beanDefinitionService.getBeanPropertyExtractor();
 
         // then
         assertThat(returnedRecordInspector, sameInstance(recordInspector));
-        assertThat(returnedBeanDescriptionFactory, sameInstance(beanDescriptionFactory));
+        assertThat(returnedBeanPropertyExtractor, sameInstance(beanPropertyExtractor));
     }
 
     private static final class FakeRecord { // #347: Change to record when the Java version allows it

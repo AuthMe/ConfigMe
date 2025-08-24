@@ -35,16 +35,16 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Test for {@link BeanDescriptionFactoryImpl}.
+ * Test for {@link BeanPropertyExtractorImpl}.
  */
-class BeanDescriptionFactoryImplTest {
+class BeanPropertyExtractorImplTest {
 
-    private final BeanDescriptionFactoryImpl factory = new BeanDescriptionFactoryImpl();
+    private final BeanPropertyExtractorImpl extractor = new BeanPropertyExtractorImpl();
 
     @Test
     void shouldReturnWritableProperties() {
         // given / when
-        List<BeanFieldPropertyDescription> descriptions = factory.collectProperties(SampleBean.class);
+        List<BeanFieldPropertyDescription> descriptions = extractor.collectProperties(SampleBean.class);
 
         // then
         assertThat(descriptions, hasSize(4));
@@ -74,13 +74,13 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldReturnEmptyListForNonBeanClass() {
         // given / when / then
-        assertThat(factory.collectProperties(List.class), empty());
+        assertThat(extractor.collectProperties(List.class), empty());
     }
 
     @Test
     void shouldNotConsiderTransientFields() {
         // given / when
-        Collection<BeanFieldPropertyDescription> properties = factory.collectProperties(BeanWithTransientFields.class);
+        Collection<BeanFieldPropertyDescription> properties = extractor.collectProperties(BeanWithTransientFields.class);
 
         // then
         assertThat(properties, hasSize(2));
@@ -90,7 +90,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldBeAwareOfInheritanceAndRespectOrder() {
         // given / when
-        Collection<BeanFieldPropertyDescription> properties = factory.collectProperties(Middle.class);
+        Collection<BeanFieldPropertyDescription> properties = extractor.collectProperties(Middle.class);
 
         // then
         assertThat(properties, hasSize(3));
@@ -100,7 +100,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldLetChildFieldsOverrideParentFields() {
         // given / when
-        Collection<BeanFieldPropertyDescription> properties = factory.collectProperties(Child.class);
+        Collection<BeanFieldPropertyDescription> properties = extractor.collectProperties(Child.class);
 
         // then
         assertThat(properties, hasSize(5));
@@ -111,7 +111,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldUseExportName() {
         // given / when
-        Collection<BeanFieldPropertyDescription> properties = factory.collectProperties(AnnotatedEntry.class);
+        Collection<BeanFieldPropertyDescription> properties = extractor.collectProperties(AnnotatedEntry.class);
 
         // then
         assertThat(properties, hasSize(2));
@@ -123,7 +123,7 @@ class BeanDescriptionFactoryImplTest {
     void shouldThrowForMultiplePropertiesWithSameName() {
         // given / when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> factory.collectProperties(BeanWithNameClash.class));
+            () -> extractor.collectProperties(BeanWithNameClash.class));
 
         // then
         assertThat(ex.getMessage(),
@@ -134,7 +134,7 @@ class BeanDescriptionFactoryImplTest {
     void shouldThrowForWhenExportNameIsNullForProperty() {
         // given / when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> factory.collectProperties(BeanWithEmptyName.class));
+            () -> extractor.collectProperties(BeanWithEmptyName.class));
 
         // then
         assertThat(ex.getMessage(),
@@ -144,7 +144,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldReturnCommentsWithoutUuid() {
         // given / when
-        List<BeanFieldPropertyDescription> execDetailsProperties = factory.collectProperties(ExecutionDetails.class);
+        List<BeanFieldPropertyDescription> execDetailsProperties = extractor.collectProperties(ExecutionDetails.class);
 
         // then
         BeanPropertyComments executorComments = getDescription("executor", execDetailsProperties).getComments();
@@ -158,7 +158,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldPickUpCustomNameFromField() {
         // given / when
-        List<BeanFieldPropertyDescription> properties = factory.collectProperties(BeanWithExportName.class);
+        List<BeanFieldPropertyDescription> properties = extractor.collectProperties(BeanWithExportName.class);
 
         // then
         assertThat(properties, hasSize(3));
@@ -173,7 +173,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldPickUpCustomNameFromFieldsIncludingInheritance() {
         // given / when
-        List<BeanFieldPropertyDescription> properties = factory.collectProperties(BeanWithExportNameExtension.class);
+        List<BeanFieldPropertyDescription> properties = extractor.collectProperties(BeanWithExportNameExtension.class);
 
         // then
         assertThat(properties, hasSize(4));
@@ -190,7 +190,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldTakeOverFieldConfigsFromOverridingClass() {
         // given / when
-        List<BeanFieldPropertyDescription> properties = factory.collectProperties(ChildWithFieldOverrides.class);
+        List<BeanFieldPropertyDescription> properties = extractor.collectProperties(ChildWithFieldOverrides.class);
 
         // then
         assertThat(transform(properties, BeanPropertyDescription::getName),
@@ -201,11 +201,11 @@ class BeanDescriptionFactoryImplTest {
     void shouldThrowForFinalField() {
         // given / when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> factory.collectProperties(BeanWithFinalField.class));
+            () -> extractor.collectProperties(BeanWithFinalField.class));
 
         // then
         assertThat(ex.getMessage(), equalTo(
-            "Field 'BeanDescriptionFactoryImplTest$BeanWithFinalField#version' is final. Final fields cannot be set by the mapper. Remove final or mark it to be ignored."));
+            "Field 'BeanPropertyExtractorImplTest$BeanWithFinalField#version' is final. Final fields cannot be set by the mapper. Remove final or mark it to be ignored."));
     }
 
     @Test
@@ -216,7 +216,7 @@ class BeanDescriptionFactoryImplTest {
 
         // when
         List<BeanFieldPropertyDescription> properties =
-            factory.collectPropertiesForRecord(SampleRecord.class, new RecordComponent[]{component1, component2});
+            extractor.collectPropertiesForRecord(SampleRecord.class, new RecordComponent[]{component1, component2});
 
         // then
         SampleRecord sampleRecord = new SampleRecord();
@@ -237,10 +237,10 @@ class BeanDescriptionFactoryImplTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> factory.collectPropertiesForRecord(SampleRecordWithDuplicateName.class, new RecordComponent[]{component1, component2}));
+            () -> extractor.collectPropertiesForRecord(SampleRecordWithDuplicateName.class, new RecordComponent[]{component1, component2}));
 
         // then
-        assertThat(ex.getMessage(), equalTo("class ch.jalu.configme.beanmapper.definition.properties.BeanDescriptionFactoryImplTest$SampleRecordWithDuplicateName has multiple properties with name 'name'"));
+        assertThat(ex.getMessage(), equalTo("class ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractorImplTest$SampleRecordWithDuplicateName has multiple properties with name 'name'"));
     }
 
     @Test
@@ -250,10 +250,10 @@ class BeanDescriptionFactoryImplTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> factory.collectPropertiesForRecord(SampleRecordWithEmptyName.class, new RecordComponent[]{component1}));
+            () -> extractor.collectPropertiesForRecord(SampleRecordWithEmptyName.class, new RecordComponent[]{component1}));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Custom name of FieldProperty '' for field 'BeanDescriptionFactoryImplTest$SampleRecordWithEmptyName#location' may not be empty"));
+        assertThat(ex.getMessage(), equalTo("Custom name of FieldProperty '' for field 'BeanPropertyExtractorImplTest$SampleRecordWithEmptyName#location' may not be empty"));
     }
 
     @Test
@@ -264,10 +264,10 @@ class BeanDescriptionFactoryImplTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> factory.collectPropertiesForRecord(SampleRecord.class, new RecordComponent[]{component1, component2}));
+            () -> extractor.collectPropertiesForRecord(SampleRecord.class, new RecordComponent[]{component1, component2}));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Record component 'bogus' for ch.jalu.configme.beanmapper.definition.properties.BeanDescriptionFactoryImplTest$SampleRecord does not have a field with the same name"));
+        assertThat(ex.getMessage(), equalTo("Record component 'bogus' for ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractorImplTest$SampleRecord does not have a field with the same name"));
     }
 
     @Test
@@ -278,10 +278,10 @@ class BeanDescriptionFactoryImplTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> factory.collectPropertiesForRecord(SampleRecordWithIgnoredField.class, new RecordComponent[]{component1, component2}));
+            () -> extractor.collectPropertiesForRecord(SampleRecordWithIgnoredField.class, new RecordComponent[]{component1, component2}));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Record component 'desc' for ch.jalu.configme.beanmapper.definition.properties.BeanDescriptionFactoryImplTest$SampleRecordWithIgnoredField has a field defined to be ignored: this is not supported for records"));
+        assertThat(ex.getMessage(), equalTo("Record component 'desc' for ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractorImplTest$SampleRecordWithIgnoredField has a field defined to be ignored: this is not supported for records"));
     }
 
     private static BeanPropertyDescription getDescription(String name,

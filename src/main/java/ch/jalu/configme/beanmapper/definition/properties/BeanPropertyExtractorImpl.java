@@ -25,14 +25,13 @@ import java.util.UUID;
 /**
  * Creates all {@link BeanPropertyDescription} objects for a given class.
  * <p>
- * This description factory returns property descriptions for all instance fields on a class,
- * including the fields of its parents. If a field in a bean class has the same name as a field of a parent type,
- * the parent field is ignored.
+ * This extractor returns property descriptions for all instance fields on a class, including the fields of its parents.
+ * If a field in a bean class has the same name as a field of a parent type, the parent field is ignored.
  * <p>
  * This implementation supports &#64;{@link ExportName} and ignores fields that are {@code transient} or annotated
  * with &#64;{@link IgnoreInMapping}.
  */
-public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
+public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
 
     @Override
     public @NotNull List<BeanFieldPropertyDescription> collectPropertiesForRecord(@NotNull Class<?> clazz,
