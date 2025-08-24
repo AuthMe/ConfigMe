@@ -1,7 +1,5 @@
 package ch.jalu.configme.samples.inheritance;
 
-import java.beans.Transient;
-
 /**
  * Parent class.
  */
@@ -10,20 +8,22 @@ public class Parent {
     private long id;
     private transient boolean temporary;
 
-    public long getId() {
+
+    // Intentionally not named like getters because methods are ignored by the mapper
+
+    public long readId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void writeId(long id) {
         this.id = id;
     }
 
-    public boolean isTemporary() {
+    public boolean readTemporary() {
         return temporary;
     }
 
-    @Transient
-    public void setTemporary(boolean temporary) {
-        this.temporary = temporary;
+    public void writeTemporary(boolean temp) {
+        this.temporary = temp;
     }
 }

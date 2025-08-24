@@ -4,13 +4,13 @@ import ch.jalu.configme.beanmapper.context.ExportContext;
 import ch.jalu.configme.beanmapper.context.ExportContextImpl;
 import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.beanmapper.context.MappingContextImpl;
+import ch.jalu.configme.beanmapper.definition.BeanDefinition;
+import ch.jalu.configme.beanmapper.definition.BeanDefinitionService;
+import ch.jalu.configme.beanmapper.definition.BeanDefinitionServiceImpl;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyComments;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDefinition;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
-import ch.jalu.configme.beanmapper.leafvaluehandler.MapperLeafType;
-import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
-import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
-import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
-import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.convertresult.ValueWithComments;
 import ch.jalu.typeresolver.TypeInfo;
@@ -19,45 +19,50 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static ch.jalu.configme.internal.PathUtils.OPTIONAL_SPECIFIER;
 import static ch.jalu.configme.internal.PathUtils.pathSpecifierForIndex;
 import static ch.jalu.configme.internal.PathUtils.pathSpecifierForMapKey;
 
 /**
- * Implementation of {@link Mapper}.
+ * Default implementation of {@link Mapper}.
  * <p>
- * Maps a section of a property resource to the provided JavaBean class. The mapping is based on the bean's properties,
- * whose names must correspond with the names in the property resource. For example, if a JavaBean class has a property
- * {@code length} and should be mapped from the property resource's value at path {@code definition}, the mapper will
- * look up {@code definition.length} to get the value of the JavaBean property.
+ * Maps a section of a property resource to the provided Java class (called a "bean" type). The mapping is based on the
+ * bean's properties, whose names must correspond to the names in the property resource. For example, if a bean
+ * has a property {@code length} and it should be mapped from the property resource's value at path {@code definition},
+ * the mapper will look up {@code definition.length} in the resource to determine the value of the bean's property.
  * <p>
- * Classes must be JavaBeans. These are simple classes with private fields, accompanied by getters and setters.
- * <b>The mapper only considers properties which have both a getter and a setter method.</b> Any Java class without
- * at least one property with both a getter <i>and</i> a setter is not considered as a JavaBean class. Such classes can
- * be supported by implementing a custom {@link MapperLeafType} that performs the conversion from the value coming
- * from the property reader to an object of the class's type.
+ * Classes are created by the {@link BeanDefinitionService}. The {@link BeanDefinitionServiceImpl
+ * default implementation} supports Java classes with a no-arg constructor, as well as Java records.
+ * The service can be extended to support more types of classes.
+ * <br>For Java classes with a no-arg constructor, the class's instance fields (= non-static fields) are considered
+ * as properties. You can change the behavior of the fields with &#64;{@link ExportName} and
+ * &#64;{@link IgnoreInMapping}. There must be at least one property for a class to be treated as a bean.
  * <p>
- * <b>Recursion:</b> the mapping of values to a JavaBean is performed recursively, i.e. a JavaBean may have other
- * JavaBeans as fields and generic types at any arbitrary "depth".
+ * <b>Recursion:</b> the mapping of values to a bean is performed recursively, i.e. a bean may have other beans
+ * as fields and generic types at any arbitrary "depth".
  * <p>
- * <b>Collections</b> are only supported if they are explicitly typed, i.e. a field of {@code List<String>}
+ * <b>Collections</b> are only supported if they have an explicit type argument, i.e. a field of {@code List<String>}
  * is supported but {@code List<?>} and {@code List<T extends Number>} are not supported. Specifically, you may
  * only declare fields of type {@link java.util.List} or {@link java.util.Set}, or a parent type ({@link Collection}
- * or {@link Iterable}).
+ * or {@link Iterable}) by default.
  * Fields of type <b>Map</b> are supported also, with similar limitations. Additionally, maps may only have
  * {@code String} as key type, but no restrictions are imposed on the value type.
  * <p>
- * JavaBeans may have <b>optional fields</b>. If the mapper cannot map the property resource value to the corresponding
+ * Beans may have <b>optional fields</b>. If the mapper cannot map the property resource value to the corresponding
  * field, it only treats it as a failure if the field's value is {@code null}. If the field has a default value assigned
- * to it on initialization, the default value remains and the mapping process continues. A JavaBean field whose value is
- * {@code null} signifies a failure and stops the mapping process immediately.
+ * to it on initialization, the default value remains and the mapping process continues. If a bean is constructed to
+ * have a property with a null value, the mapping is considered unsuccessful, and the mapping process is stopped
+ * immediately.
+ * <br>Optional properties can also be defined by declaring them with {@link Optional}.
  */
 public class MapperImpl implements Mapper {
 
@@ -68,22 +73,22 @@ public class MapperImpl implements Mapper {
     // Fields and general configurable methods
     // ---------
 
-    private final BeanDescriptionFactory beanDescriptionFactory;
     private final LeafValueHandler leafValueHandler;
+    private final BeanDefinitionService beanDefinitionService;
 
     public MapperImpl() {
-        this(new BeanDescriptionFactoryImpl(),
+        this(new BeanDefinitionServiceImpl(),
              new LeafValueHandlerImpl(LeafValueHandlerImpl.createDefaultLeafTypes()));
     }
 
-    public MapperImpl(@NotNull BeanDescriptionFactory beanDescriptionFactory,
+    public MapperImpl(@NotNull BeanDefinitionService beanDefinitionService,
                       @NotNull LeafValueHandler leafValueHandler) {
-        this.beanDescriptionFactory = beanDescriptionFactory;
+        this.beanDefinitionService = beanDefinitionService;
         this.leafValueHandler = leafValueHandler;
     }
 
-    protected final @NotNull BeanDescriptionFactory getBeanDescriptionFactory() {
-        return beanDescriptionFactory;
+    protected final @NotNull BeanDefinitionService getBeanDefinitionService() {
+        return beanDefinitionService;
     }
 
     protected final @NotNull LeafValueHandler getLeafValueHandler() {
@@ -131,7 +136,7 @@ public class MapperImpl implements Mapper {
 
         // Step 3: treat as bean
         Map<String, Object> mappedBean = new LinkedHashMap<>();
-        for (BeanPropertyDescription property : beanDescriptionFactory.getAllProperties(value.getClass())) {
+        for (BeanPropertyDefinition property : getBeanProperties(value)) {
             Object exportValueOfProperty = toExportValue(property.getValue(value), exportContext);
             if (exportValueOfProperty != null) {
                 BeanPropertyComments propComments = property.getComments();
@@ -144,6 +149,12 @@ public class MapperImpl implements Mapper {
             }
         }
         return mappedBean;
+    }
+
+    protected @NotNull List<BeanPropertyDefinition> getBeanProperties(@NotNull Object value) {
+        return beanDefinitionService.findDefinition(value.getClass())
+            .map(BeanDefinition::getProperties)
+            .orElse(Collections.emptyList());
     }
 
     /**
@@ -358,7 +369,7 @@ public class MapperImpl implements Mapper {
     // -- Bean
 
     /**
-     * Converts the provided value to the requested JavaBeans class if possible.
+     * Converts the provided value to the requested bean class if possible.
      *
      * @param context mapping context (incl. desired type)
      * @param value the value from the property resource
@@ -369,46 +380,20 @@ public class MapperImpl implements Mapper {
         if (!(value instanceof Map<?, ?>)) {
             return null;
         }
-
-        Collection<BeanPropertyDescription> properties =
-            beanDescriptionFactory.getAllProperties(context.getTargetTypeAsClassOrThrow());
-        // Check that we have properties (or else we don't have a bean)
-        if (properties.isEmpty()) {
-            return null;
-        }
-
         Map<?, ?> entries = (Map<?, ?>) value;
-        Object bean = createBeanMatchingType(context);
-        for (BeanPropertyDescription property : properties) {
-            Object result = convertValueForType(
-                context.createChild(property.getName(), property.getTypeInformation()),
-                entries.get(property.getName()));
-            if (result == null) {
-                if (property.getValue(bean) == null) {
-                    return null; // We do not support beans with a null value
-                }
-                context.registerError("No value found, fallback to field default value");
-            } else {
-                property.setValue(bean, result);
-            }
-        }
-        return bean;
-    }
 
-    /**
-     * Creates an object matching the given type information.
-     *
-     * @param mappingContext current mapping context
-     * @return new instance of the given type
-     */
-    protected @NotNull Object createBeanMatchingType(@NotNull MappingContext mappingContext) {
-        // clazz is never null given the only path that leads to this method already performs that check
-        final Class<?> clazz = mappingContext.getTargetTypeAsClassOrThrow();
-        try {
-            return clazz.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new ConfigMeMapperException(mappingContext, "Could not create object of type '"
-                + clazz.getName() + "'. It is required to have a default constructor", e);
+        Optional<BeanDefinition> definition =
+            beanDefinitionService.findDefinition(context.getTargetTypeAsClassOrThrow());
+        if (definition.isPresent()) {
+            List<Object> propertyValues = definition.get().getProperties().stream()
+                .map(prop -> {
+                    MappingContext childContext = context.createChild(prop.getName(), prop.getTypeInformation());
+                    return convertValueForType(childContext, entries.get(prop.getName()));
+                })
+                .collect(Collectors.toList());
+
+            return definition.get().create(propertyValues, context.getErrorRecorder());
         }
+        return null;
     }
 }

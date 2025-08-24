@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Creates JavaBeans based on the values coming from a property reader. See the JavaDoc on the default implementation,
- * {@link MapperImpl}, for more details.
+ * Maps the values of a property reader to Java classes (referred to as beans). See the JavaDoc on the default
+ * implementation, {@link MapperImpl}, for more details.
  */
 public interface Mapper {
 
@@ -42,9 +42,9 @@ public interface Mapper {
     }
 
     /**
-     * Converts a complex type such as a JavaBean object to simple types suitable for exporting. This method
+     * Converts a complex type such as a bean to simple types suitable for exporting. This method
      * typically returns a Map of values, or simple types like String / Number for scalar values.
-     * Used in the {@link ch.jalu.configme.properties.BeanProperty#toExportValue} method.
+     * Used by {@link ch.jalu.configme.properties.types.BeanPropertyType#toExportValue}.
      *
      * @param object the object to convert to its export value
      * @return export value to use
