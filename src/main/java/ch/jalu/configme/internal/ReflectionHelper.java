@@ -25,14 +25,14 @@ public class ReflectionHelper {
     }
 
     /**
-     * Returns the method with the given name on the given class. The method is assumed to have zero arguments;
+     * Returns the method with the given name on the given class. The method is assumed to have no arguments;
      * if it doesn't exist, a runtime exception is thrown.
      *
      * @param declarer the class declaring the method
      * @param name the name of the method to retrieve
      * @return the specified method
      */
-    public @NotNull Method getZeroArgMethod(@NotNull Class<?> declarer, @NotNull String name) {
+    public @NotNull Method getNoArgMethod(@NotNull Class<?> declarer, @NotNull String name) {
         try {
             return declarer.getDeclaredMethod(name);
         } catch (NoSuchMethodException e) {
@@ -41,7 +41,7 @@ public class ReflectionHelper {
     }
 
     /**
-     * Invokes the given method (with zero arguments) on the given {@code instance} object. A runtime exception is
+     * Invokes the given method (which takes no arguments) on the given {@code instance} object. A runtime exception is
      * thrown if the method invocation failed. An exception is thrown if the return value is null.
      *
      * @param method the method to invoke
@@ -50,7 +50,7 @@ public class ReflectionHelper {
      * @return the return value of the method
      */
     @SuppressWarnings("unchecked")
-    public <T> @NotNull T invokeZeroArgMethod(@NotNull Method method, @Nullable Object instance) {
+    public <T> @NotNull T invokeNoArgMethod(@NotNull Method method, @Nullable Object instance) {
         try {
             T result = (T) method.invoke(instance);
             if (result == null) { // Should never happen; used to guarantee @NotNull, as per the method declaration
@@ -68,11 +68,12 @@ public class ReflectionHelper {
      * @param accessibleObject the reflected object to make accessible (if needed)
      */
     public static void setAccessibleIfNeeded(AccessibleObject accessibleObject) {
-        // #347: Handle InaccessibleObjectException, consider using #trySetAccessible
         if (!accessibleObject.isAccessible()) {
             try {
                 accessibleObject.setAccessible(true);
-            } catch (SecurityException e) {
+                // CHECKSTYLE:OFF
+            } catch (Exception e) {
+                // CHECKSTYLE:ON
                 throw new ConfigMeException("Failed to make " + accessibleObject + " accessible", e);
             }
         }

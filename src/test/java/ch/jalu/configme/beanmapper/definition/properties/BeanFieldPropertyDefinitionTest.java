@@ -18,7 +18,7 @@ class BeanFieldPropertyDefinitionTest {
     @Test
     void shouldGetProperties() {
         // given
-        BeanFieldPropertyDefinition sizeProperty = getDescription("size", SampleBean.class);
+        BeanFieldPropertyDefinition sizeProperty = getPropertyDefinition("size", SampleBean.class);
         SampleBean bean = new SampleBean();
         bean.size = 77;
 
@@ -35,7 +35,7 @@ class BeanFieldPropertyDefinitionTest {
     @Test
     void shouldHandlePropertySetError() {
         // given
-        BeanFieldPropertyDefinition sizeProperty = getDescription("size", SampleBean.class);
+        BeanFieldPropertyDefinition sizeProperty = getPropertyDefinition("size", SampleBean.class);
         String wrongObject = "test";
 
         // when
@@ -50,7 +50,7 @@ class BeanFieldPropertyDefinitionTest {
     @Test
     void shouldHandlePropertyGetError() {
         // given
-        BeanPropertyDefinition sizeProperty = getDescription("size", SampleBean.class);
+        BeanPropertyDefinition sizeProperty = getPropertyDefinition("size", SampleBean.class);
         String wrongObject = "test";
 
         // when
@@ -65,7 +65,7 @@ class BeanFieldPropertyDefinitionTest {
     @Test
     void shouldHaveAppropriateStringRepresentation() {
         // given
-        BeanFieldPropertyDefinition hasIdProperty = getDescription("has-id", AnnotatedEntry.class);
+        BeanFieldPropertyDefinition hasIdProperty = getPropertyDefinition("has-id", AnnotatedEntry.class);
 
         // when
         String output = "Found " + hasIdProperty;
@@ -77,8 +77,8 @@ class BeanFieldPropertyDefinitionTest {
     @Test
     void shouldReturnExportName() {
         // given
-        BeanFieldPropertyDefinition hasIdProperty = getDescription("has-id", AnnotatedEntry.class);
-        BeanFieldPropertyDefinition sizeProperty = getDescription("size", SampleBean.class);
+        BeanFieldPropertyDefinition hasIdProperty = getPropertyDefinition("has-id", AnnotatedEntry.class);
+        BeanFieldPropertyDefinition sizeProperty = getPropertyDefinition("size", SampleBean.class);
 
         // when
         String hasIdExportName = hasIdProperty.getExportName();
@@ -89,7 +89,7 @@ class BeanFieldPropertyDefinitionTest {
         assertThat(sizeExportName, nullValue());
     }
 
-    private static BeanFieldPropertyDefinition getDescription(String name, Class<?> clazz) {
+    private static BeanFieldPropertyDefinition getPropertyDefinition(String name, Class<?> clazz) {
         return new BeanPropertyExtractorImpl().collectProperties(clazz)
             .stream()
             .filter(prop -> name.equals(prop.getName()))

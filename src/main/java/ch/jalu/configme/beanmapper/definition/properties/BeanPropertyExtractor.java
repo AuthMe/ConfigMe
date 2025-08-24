@@ -1,16 +1,14 @@
 package ch.jalu.configme.beanmapper.definition.properties;
 
-import ch.jalu.configme.beanmapper.definition.BeanDefinitionServiceImpl;
 import ch.jalu.configme.internal.record.RecordComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 /**
- * Factory which analyzes a bean class and returns all properties which ConfigMe should consider.
+ * Analyzes bean classes and returns all properties which ConfigMe should consider.
  * <p>
- * Default implementation: {@link BeanPropertyExtractorImpl}. This interface is used by
- * {@link BeanDefinitionServiceImpl}, which returns bean definitions.
+ * Default implementation is {@link BeanPropertyExtractorImpl}.
  */
 public interface BeanPropertyExtractor {
 

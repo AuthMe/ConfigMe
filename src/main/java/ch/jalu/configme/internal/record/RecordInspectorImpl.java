@@ -39,9 +39,9 @@ public class RecordInspectorImpl implements RecordInspector {
         // calls to the method if we can rule out records anyway
         if (hasRecordAsSuperclass(clazz)) {
             if (isRecordMethod == null) {
-                isRecordMethod = reflectionHelper.getZeroArgMethod(Class.class, "isRecord");
+                isRecordMethod = reflectionHelper.getNoArgMethod(Class.class, "isRecord");
             }
-            return reflectionHelper.invokeZeroArgMethod(isRecordMethod, clazz);
+            return reflectionHelper.invokeNoArgMethod(isRecordMethod, clazz);
         }
         return false;
     }
@@ -52,15 +52,15 @@ public class RecordInspectorImpl implements RecordInspector {
             return null;
         }
         if (getRecordComponentsMethod == null) {
-            getRecordComponentsMethod = reflectionHelper.getZeroArgMethod(Class.class, "getRecordComponents");
+            getRecordComponentsMethod = reflectionHelper.getNoArgMethod(Class.class, "getRecordComponents");
         }
 
-        Object[] components = reflectionHelper.invokeZeroArgMethod(getRecordComponentsMethod, clazz);
+        Object[] components = reflectionHelper.invokeNoArgMethod(getRecordComponentsMethod, clazz);
         if (getComponentGenericTypeMethod == null) {
             Class<?> recordComponentClass = reflectionHelper.getClassOrThrow("java.lang.reflect.RecordComponent");
-            getComponentNameMethod = reflectionHelper.getZeroArgMethod(recordComponentClass, "getName");
-            getComponentTypeMethod = reflectionHelper.getZeroArgMethod(recordComponentClass, "getType");
-            getComponentGenericTypeMethod = reflectionHelper.getZeroArgMethod(recordComponentClass, "getGenericType");
+            getComponentNameMethod = reflectionHelper.getNoArgMethod(recordComponentClass, "getName");
+            getComponentTypeMethod = reflectionHelper.getNoArgMethod(recordComponentClass, "getType");
+            getComponentGenericTypeMethod = reflectionHelper.getNoArgMethod(recordComponentClass, "getGenericType");
         }
 
         return Arrays.stream(components)
@@ -74,9 +74,9 @@ public class RecordInspectorImpl implements RecordInspector {
     }
 
     private @NotNull RecordComponent mapComponent(@NotNull Object component) {
-        String name = reflectionHelper.invokeZeroArgMethod(getComponentNameMethod, component);
-        Class<?> type = reflectionHelper.invokeZeroArgMethod(getComponentTypeMethod, component);
-        Type genericType = reflectionHelper.invokeZeroArgMethod(getComponentGenericTypeMethod, component);
+        String name = reflectionHelper.invokeNoArgMethod(getComponentNameMethod, component);
+        Class<?> type = reflectionHelper.invokeNoArgMethod(getComponentTypeMethod, component);
+        Type genericType = reflectionHelper.invokeNoArgMethod(getComponentGenericTypeMethod, component);
 
         return new RecordComponent(name, type, genericType);
     }

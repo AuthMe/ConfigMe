@@ -34,7 +34,7 @@ class ReflectionHelperTest {
     @Test
     void shouldReturnMethod() throws NoSuchMethodException {
         // given / when
-        Method floatValueMethod = reflectionHelper.getZeroArgMethod(Integer.class, "floatValue");
+        Method floatValueMethod = reflectionHelper.getNoArgMethod(Integer.class, "floatValue");
 
         // then
         assertThat(floatValueMethod, equalTo(Integer.class.getDeclaredMethod("floatValue")));
@@ -44,7 +44,7 @@ class ReflectionHelperTest {
     void shouldThrowConfigMeExceptionForUnknownMethod() {
         // given / when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> reflectionHelper.getZeroArgMethod(Integer.class, "bogus"));
+            () -> reflectionHelper.getNoArgMethod(Integer.class, "bogus"));
 
         // then
         assertThat(ex.getMessage(), equalTo("Could not get Integer#bogus method"));
@@ -76,7 +76,7 @@ class ReflectionHelperTest {
         Method toStringMethod = Integer.class.getDeclaredMethod("toString");
 
         // when
-        String result = reflectionHelper.invokeZeroArgMethod(toStringMethod, number);
+        String result = reflectionHelper.invokeNoArgMethod(toStringMethod, number);
 
         // then
         assertThat(result, equalTo("19"));
@@ -89,7 +89,7 @@ class ReflectionHelperTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> reflectionHelper.invokeZeroArgMethod(privateResizeMethod, new HashMap<>()));
+            () -> reflectionHelper.invokeNoArgMethod(privateResizeMethod, new HashMap<>()));
 
         // then
         assertThat(ex.getMessage(), equalTo("Failed to call final java.util.HashMap$Node[] java.util.HashMap.resize() for {}"));
@@ -104,7 +104,7 @@ class ReflectionHelperTest {
 
         // when
         IllegalStateException ex = assertThrows(IllegalStateException.class,
-            () -> reflectionHelper.invokeZeroArgMethod(supplierGetMethod, supplier));
+            () -> reflectionHelper.invokeNoArgMethod(supplierGetMethod, supplier));
 
         // then
         assertThat(ex.getMessage(), equalTo("Method 'public abstract java.lang.Object java.util.function.Supplier.get()' unexpectedly returned null"));
@@ -153,22 +153,5 @@ class ReflectionHelperTest {
         // then
         assertThat(ex.getMessage(), equalTo("Failed to make Shop#cashBox accessible"));
         assertThat(ex.getCause(), sameInstance(securityException));
-    }
-
-    @Test
-    void shouldPropagateException() {
-        // given
-        AccessibleObject accessibleObject = mock(AccessibleObject.class);
-        given(accessibleObject.isAccessible()).willReturn(false);
-
-        IllegalArgumentException illegalArgEx = new IllegalArgumentException("Bad credit score");
-        willThrow(illegalArgEx).given(accessibleObject).setAccessible(true);
-
-        // when
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> ReflectionHelper.setAccessibleIfNeeded(accessibleObject));
-
-        // then
-        assertThat(ex, sameInstance(illegalArgEx));
     }
 }

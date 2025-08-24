@@ -23,15 +23,11 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Creates all {@link BeanPropertyDefinition} objects for a given class.
+ * Default implementation of {@link BeanPropertyExtractor}: creates all {@link BeanPropertyDefinition}
+ * objects for a given class. You can override the default name of a property with &#64;{@link ExportName}.
  * <p>
- * This extractor returns property definitions for all instance fields on a class, including the fields of its parents.
- * If a non-static field in a bean class has the same name as a field of a parent type, the parent field is ignored.
  * See <a href="https://github.com/AuthMe/ConfigMe/wiki/Bean-properties">Bean properties</a> on the ConfigMe wiki
- * for more details.
- * <p>
- * This implementation supports &#64;{@link ExportName} and ignores fields that are {@code transient} or annotated
- * with &#64;{@link IgnoreInMapping}.
+ * for more details about how properties are extracted.
  */
 public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
 
@@ -46,7 +42,7 @@ public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
         for (RecordComponent component : components) {
             Field field = instanceFieldsByName.get(component.getName());
             validateFieldForRecord(clazz, component, field);
-            BeanFieldPropertyDefinition property = convert(field);
+            BeanFieldPropertyDefinition property = createDefinition(field);
             properties.add(property);
         }
 
@@ -54,6 +50,17 @@ public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
         return properties;
     }
 
+    /**
+     * Constructs property definitions based on the given class's instance fields (i.e. non-static), including the
+     * instance fields of all parent classes. If a non-static field of a bean class has the same name as a field of a
+     * parent type, the parent field is ignored.
+     * <p>
+     * Instance fields can be ignored by declaring them as {@code transient} or by annotating them with
+     * &#64;{@link IgnoreInMapping}.
+     *
+     * @param clazz the bean type
+     * @return the properties of the given bean type
+     */
     @Override
     public @NotNull List<BeanFieldPropertyDefinition> collectProperties(@NotNull Class<?> clazz) {
         @SuppressWarnings("checkstyle:IllegalType") // LinkedHashMap indicates the values are ordered (important here)
@@ -65,7 +72,7 @@ public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
         for (Field field : instanceFieldsByName.values()) {
             if (!isFieldIgnored(field)) {
                 validateFieldForBean(clazz, field);
-                BeanFieldPropertyDefinition property = convert(field);
+                BeanFieldPropertyDefinition property = createDefinition(field);
                 properties.add(property);
             }
         }
@@ -105,7 +112,7 @@ public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
         }
     }
 
-    protected @NotNull BeanFieldPropertyDefinition convert(@NotNull Field field) {
+    protected @NotNull BeanFieldPropertyDefinition createDefinition(@NotNull Field field) {
         return new BeanFieldPropertyDefinition(field, getCustomExportName(field), getComments(field));
     }
 
@@ -133,7 +140,7 @@ public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
      * Validates the class's properties.
      *
      * @param clazz the class to which the properties belong
-     * @param properties the properties that will be used on the class
+     * @param properties the properties that were constructed from the given class
      */
     protected void validateProperties(@NotNull Class<?> clazz,
                                       @NotNull Collection<? extends BeanPropertyDefinition> properties) {

@@ -44,8 +44,8 @@ class RecordInspectorImplTest {
         // given
         ReflectionHelper reflectionHelper = mock(ReflectionHelper.class);
         Method isPrimitiveMethod = Class.class.getDeclaredMethod("isPrimitive");
-        given(reflectionHelper.getZeroArgMethod(Class.class, "isRecord")).willReturn(isPrimitiveMethod);
-        given(reflectionHelper.invokeZeroArgMethod(any(Method.class), any(Class.class))).willCallRealMethod();
+        given(reflectionHelper.getNoArgMethod(Class.class, "isRecord")).willReturn(isPrimitiveMethod);
+        given(reflectionHelper.invokeNoArgMethod(any(Method.class), any(Class.class))).willCallRealMethod();
 
         RecordInspectorImpl recordInspector = new RecordInspectorImpl(reflectionHelper) {
             @Override
@@ -66,11 +66,11 @@ class RecordInspectorImplTest {
 
         // Use Class#isMemberClass instead of Class#isRecord -> will be true for FakeRecordComponent.class
         Method isMemberClassMethod = Class.class.getDeclaredMethod("isMemberClass");
-        given(reflectionHelper.getZeroArgMethod(Class.class, "isRecord")).willReturn(isMemberClassMethod);
+        given(reflectionHelper.getNoArgMethod(Class.class, "isRecord")).willReturn(isMemberClassMethod);
 
         // Instead of Class#getRecordComponents, return method for FakeRecord#getComponents
         Method fakeGetComponentsMethod = FakeRecordType.class.getDeclaredMethod("getComponents");
-        given(reflectionHelper.getZeroArgMethod(Class.class, "getRecordComponents"))
+        given(reflectionHelper.getNoArgMethod(Class.class, "getRecordComponents"))
             .willReturn(fakeGetComponentsMethod);
 
         // Return FakeRecordComponent.class when we want to load Java 14+ RecordComponent
@@ -79,9 +79,9 @@ class RecordInspectorImplTest {
             .willReturn((Class) fakeRecordComponentClass);
 
         // All methods on FakeRecordComponent are named as on the RecordComponent, so pass the calls through
-        given(reflectionHelper.getZeroArgMethod(eq(fakeRecordComponentClass), anyString()))
+        given(reflectionHelper.getNoArgMethod(eq(fakeRecordComponentClass), anyString()))
             .willCallRealMethod();
-        given(reflectionHelper.invokeZeroArgMethod(any(Method.class), any(Object.class))).willCallRealMethod();
+        given(reflectionHelper.invokeNoArgMethod(any(Method.class), any(Object.class))).willCallRealMethod();
 
         RecordInspectorImpl recordInspector = new RecordInspectorImpl(reflectionHelper) {
             @Override

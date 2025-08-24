@@ -6,10 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to tell ConfigMe to ignore the field during bean mapping. Fields with this annotation
- * are not processed by ConfigMe while creating or saving a bean property.
+ * Annotation to tell ConfigMe to ignore the field during bean mapping. Fields of bean types with this annotation
+ * are not picked up by ConfigMe.
  * <p>
- * Fields declared as {@code transient} are also ignored by ConfigMe.
+ * Fields can also be ignored by declaring them as {@code transient}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

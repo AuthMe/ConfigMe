@@ -107,7 +107,7 @@ class BeanDefinitionServiceImplTest {
     }
 
     @Test
-    void shouldReturnEmptyOptionalForClassesWithNoInstantiationMethod() {
+    void shouldReturnEmptyOptionalForClassesThatCannotBeTreatedAsBean() {
         // given / when
         Optional<BeanDefinition> result1 = beanDefinitionService.findDefinition(String.class);
         Optional<BeanDefinition> result2 = beanDefinitionService.findDefinition(TimeUnit.class);
