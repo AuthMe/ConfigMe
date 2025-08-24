@@ -3,6 +3,7 @@ package ch.jalu.configme.resource;
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.samples.TestConfiguration;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
@@ -99,8 +100,9 @@ class YamlFileReaderTest {
         expected.put(TestConfiguration.FORBIDDEN_NAMES, new LinkedHashSet<>(Arrays.asList("admin", "staff", "moderator")));
 
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
+            PropertyValue<Object> actualValue = (PropertyValue<Object>) entry.getKey().determineValue(reader);
             assertThat("Property '" + entry.getKey().getPath() + "' has expected value",
-                entry.getKey().determineValue(reader), isValidValueOf(entry.getValue()));
+                actualValue, isValidValueOf(entry.getValue()));
         }
     }
 

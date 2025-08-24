@@ -163,9 +163,10 @@ public final class TestUtils {
      * the given value and its validity flag is set to true.
      *
      * @param expectedValue the value expected to be contained in the property value
+     * @param <T> the value type
      * @return matcher for fully valid property value
      */
-    public static @NotNull Matcher<PropertyValue> isValidValueOf(@NotNull Object expectedValue) {
+    public static <T> @NotNull Matcher<PropertyValue<T>> isValidValueOf(@NotNull T expectedValue) {
         return isPropertyValueOf(expectedValue, true);
     }
 
@@ -174,16 +175,17 @@ public final class TestUtils {
      * the given value and its validity flag is set to false.
      *
      * @param expectedValue the value expected to be contained in the property value
+     * @param <T> the value type
      * @return matcher for property value with error
      */
-    public static @NotNull Matcher<PropertyValue> isErrorValueOf(@NotNull Object expectedValue) {
+    public static <T> @NotNull Matcher<PropertyValue<T>> isErrorValueOf(@NotNull T expectedValue) {
         return isPropertyValueOf(expectedValue, false);
     }
 
-    private static @NotNull Matcher<PropertyValue> isPropertyValueOf(@Nullable Object expectedValue,
-                                                                     boolean expectedValid) {
-        Matcher<PropertyValue> valueMatcher = hasProperty("value", equalTo(expectedValue));
-        Matcher<PropertyValue> validFlagMatcher = hasProperty("validInResource", equalTo(expectedValid));
+    private static <T> @NotNull Matcher<PropertyValue<T>> isPropertyValueOf(@Nullable T expectedValue,
+                                                                            boolean expectedValid) {
+        Matcher<PropertyValue<T>> valueMatcher = hasProperty("value", equalTo(expectedValue));
+        Matcher<PropertyValue<T>> validFlagMatcher = hasProperty("validInResource", equalTo(expectedValid));
         return both(valueMatcher).and(validFlagMatcher);
     }
 
