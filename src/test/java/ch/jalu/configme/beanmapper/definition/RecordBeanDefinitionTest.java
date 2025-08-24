@@ -1,7 +1,8 @@
 package ch.jalu.configme.beanmapper.definition;
 
-import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDescription;
+import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDefinition;
 import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyComments;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDefinition;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.typeresolver.reflect.ConstructorUtils;
@@ -33,9 +34,9 @@ class RecordBeanDefinitionTest {
     void shouldThrowForMissingConstructor() throws NoSuchFieldException {
         // given
         // Size & name properties are in the wrong order
-        List<BeanFieldPropertyDescription> properties = Arrays.asList(
-            new BeanFieldPropertyDescription(ExampleRecord.class.getDeclaredField("size"), null, BeanPropertyComments.EMPTY),
-            new BeanFieldPropertyDescription(ExampleRecord.class.getDeclaredField("name"), null, BeanPropertyComments.EMPTY));
+        List<BeanPropertyDefinition> properties = Arrays.asList(
+            new BeanFieldPropertyDefinition(ExampleRecord.class.getDeclaredField("size"), null, BeanPropertyComments.EMPTY),
+            new BeanFieldPropertyDefinition(ExampleRecord.class.getDeclaredField("name"), null, BeanPropertyComments.EMPTY));
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
@@ -97,11 +98,9 @@ class RecordBeanDefinitionTest {
 
         // when
         Constructor<?> zeroArgsConstructor = definition.getCanonicalConstructor();
-        List<BeanFieldPropertyDescription> fieldProperties = definition.getFieldProperties();
 
         // then
         assertThat(zeroArgsConstructor, equalTo(ConstructorUtils.getConstructorOrThrow(ExampleRecord.class, String.class, int.class)));
-        assertThat(fieldProperties, equalTo(definition.getProperties()));
     }
 
     private static class ExampleRecord { // #347: Change to an actual record :)
@@ -115,9 +114,9 @@ class RecordBeanDefinitionTest {
         }
 
         static RecordBeanDefinition createDefinition() {
-            List<BeanFieldPropertyDescription> properties = Arrays.stream(ExampleRecord.class.getDeclaredFields())
+            List<BeanPropertyDefinition> properties = Arrays.stream(ExampleRecord.class.getDeclaredFields())
                 .filter(FieldUtils::isRegularInstanceField)
-                .map(field -> new BeanFieldPropertyDescription(field, null, BeanPropertyComments.EMPTY))
+                .map(field -> new BeanFieldPropertyDefinition(field, null, BeanPropertyComments.EMPTY))
                 .collect(Collectors.toList());
 
             return new RecordBeanDefinition(ExampleRecord.class, properties);

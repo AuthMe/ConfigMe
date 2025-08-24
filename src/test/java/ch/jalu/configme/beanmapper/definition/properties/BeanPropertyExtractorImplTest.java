@@ -44,28 +44,28 @@ class BeanPropertyExtractorImplTest {
     @Test
     void shouldReturnWritableProperties() {
         // given / when
-        List<BeanFieldPropertyDescription> descriptions = extractor.collectProperties(SampleBean.class);
+        List<BeanFieldPropertyDefinition> descriptions = extractor.collectProperties(SampleBean.class);
 
         // then
         assertThat(descriptions, hasSize(4));
 
-        BeanPropertyDescription nameProperty = descriptions.get(0);
+        BeanPropertyDefinition nameProperty = descriptions.get(0);
         assertThat(nameProperty.getName(), equalTo("name"));
         assertThat(nameProperty.getTypeInformation(), equalTo(new TypeInfo(String.class)));
         assertThat(nameProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
 
-        BeanPropertyDescription sizeProperty = descriptions.get(1);
+        BeanPropertyDefinition sizeProperty = descriptions.get(1);
         assertThat(sizeProperty.getName(), equalTo("size"));
         assertThat(sizeProperty.getTypeInformation(), equalTo(new TypeInfo(int.class)));
         assertThat(sizeProperty.getComments().getComments(), contains("Size of this entry (cm)"));
         assertThat(sizeProperty.getComments().getUuid(), notNullValue());
 
-        BeanPropertyDescription longFieldProperty = descriptions.get(2);
+        BeanPropertyDefinition longFieldProperty = descriptions.get(2);
         assertThat(longFieldProperty.getName(), equalTo("longField"));
         assertThat(longFieldProperty.getTypeInformation(), equalTo(new TypeInfo(long.class)));
         assertThat(longFieldProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
 
-        BeanPropertyDescription uuidProperty = descriptions.get(3);
+        BeanPropertyDefinition uuidProperty = descriptions.get(3);
         assertThat(uuidProperty.getName(), equalTo("uuid"));
         assertThat(uuidProperty.getTypeInformation(), equalTo(new TypeInfo(UUID.class)));
         assertThat(uuidProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
@@ -80,42 +80,42 @@ class BeanPropertyExtractorImplTest {
     @Test
     void shouldNotConsiderTransientFields() {
         // given / when
-        Collection<BeanFieldPropertyDescription> properties = extractor.collectProperties(BeanWithTransientFields.class);
+        Collection<BeanFieldPropertyDefinition> properties = extractor.collectProperties(BeanWithTransientFields.class);
 
         // then
         assertThat(properties, hasSize(2));
-        assertThat(transform(properties, BeanPropertyDescription::getName), contains("name", "isMandatory"));
+        assertThat(transform(properties, BeanPropertyDefinition::getName), contains("name", "isMandatory"));
     }
 
     @Test
     void shouldBeAwareOfInheritanceAndRespectOrder() {
         // given / when
-        Collection<BeanFieldPropertyDescription> properties = extractor.collectProperties(Middle.class);
+        Collection<BeanFieldPropertyDefinition> properties = extractor.collectProperties(Middle.class);
 
         // then
         assertThat(properties, hasSize(3));
-        assertThat(transform(properties, BeanPropertyDescription::getName), contains("id", "name", "ratio"));
+        assertThat(transform(properties, BeanPropertyDefinition::getName), contains("id", "name", "ratio"));
     }
 
     @Test
     void shouldLetChildFieldsOverrideParentFields() {
         // given / when
-        Collection<BeanFieldPropertyDescription> properties = extractor.collectProperties(Child.class);
+        Collection<BeanFieldPropertyDefinition> properties = extractor.collectProperties(Child.class);
 
         // then
         assertThat(properties, hasSize(5));
-        assertThat(transform(properties, BeanPropertyDescription::getName),
+        assertThat(transform(properties, BeanPropertyDefinition::getName),
             contains("id", "temporary", "name", "ratio", "importance"));
     }
 
     @Test
     void shouldUseExportName() {
         // given / when
-        Collection<BeanFieldPropertyDescription> properties = extractor.collectProperties(AnnotatedEntry.class);
+        Collection<BeanFieldPropertyDefinition> properties = extractor.collectProperties(AnnotatedEntry.class);
 
         // then
         assertThat(properties, hasSize(2));
-        assertThat(transform(properties, BeanPropertyDescription::getName),
+        assertThat(transform(properties, BeanPropertyDefinition::getName),
             contains("id", "has-id"));
     }
 
@@ -144,7 +144,7 @@ class BeanPropertyExtractorImplTest {
     @Test
     void shouldReturnCommentsWithoutUuid() {
         // given / when
-        List<BeanFieldPropertyDescription> execDetailsProperties = extractor.collectProperties(ExecutionDetails.class);
+        List<BeanFieldPropertyDefinition> execDetailsProperties = extractor.collectProperties(ExecutionDetails.class);
 
         // then
         BeanPropertyComments executorComments = getDescription("executor", execDetailsProperties).getComments();
@@ -158,7 +158,7 @@ class BeanPropertyExtractorImplTest {
     @Test
     void shouldPickUpCustomNameFromField() {
         // given / when
-        List<BeanFieldPropertyDescription> properties = extractor.collectProperties(BeanWithExportName.class);
+        List<BeanFieldPropertyDefinition> properties = extractor.collectProperties(BeanWithExportName.class);
 
         // then
         assertThat(properties, hasSize(3));
@@ -173,7 +173,7 @@ class BeanPropertyExtractorImplTest {
     @Test
     void shouldPickUpCustomNameFromFieldsIncludingInheritance() {
         // given / when
-        List<BeanFieldPropertyDescription> properties = extractor.collectProperties(BeanWithExportNameExtension.class);
+        List<BeanFieldPropertyDefinition> properties = extractor.collectProperties(BeanWithExportNameExtension.class);
 
         // then
         assertThat(properties, hasSize(4));
@@ -190,10 +190,10 @@ class BeanPropertyExtractorImplTest {
     @Test
     void shouldTakeOverFieldConfigsFromOverridingClass() {
         // given / when
-        List<BeanFieldPropertyDescription> properties = extractor.collectProperties(ChildWithFieldOverrides.class);
+        List<BeanFieldPropertyDefinition> properties = extractor.collectProperties(ChildWithFieldOverrides.class);
 
         // then
-        assertThat(transform(properties, BeanPropertyDescription::getName),
+        assertThat(transform(properties, BeanPropertyDefinition::getName),
             contains("id", "o_ratio"));
     }
 
@@ -215,17 +215,17 @@ class BeanPropertyExtractorImplTest {
         RecordComponent component2 = new RecordComponent("size", int.class, int.class);
 
         // when
-        List<BeanFieldPropertyDescription> properties =
+        List<BeanPropertyDefinition> properties =
             extractor.collectPropertiesForRecord(SampleRecord.class, new RecordComponent[]{component1, component2});
 
         // then
         SampleRecord sampleRecord = new SampleRecord();
         assertThat(properties, hasSize(2));
         assertThat(properties.get(0).getName(), equalTo("name"));
-        assertThat(properties.get(0).getType(), equalTo(String.class));
+        assertThat(properties.get(0).getTypeInformation(), equalTo(new TypeInfo(String.class)));
         assertThat(properties.get(0).getValue(sampleRecord), equalTo("cur_name"));
         assertThat(properties.get(1).getName(), equalTo("size"));
-        assertThat(properties.get(1).getType(), equalTo(int.class));
+        assertThat(properties.get(1).getTypeInformation(), equalTo(new TypeInfo(int.class)));
         assertThat(properties.get(1).getValue(sampleRecord), equalTo(20));
     }
 
@@ -284,9 +284,9 @@ class BeanPropertyExtractorImplTest {
         assertThat(ex.getMessage(), equalTo("Record component 'desc' for ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractorImplTest$SampleRecordWithIgnoredField has a field defined to be ignored: this is not supported for records"));
     }
 
-    private static BeanPropertyDescription getDescription(String name,
-                                                          Collection<? extends BeanPropertyDescription> descriptions) {
-        for (BeanPropertyDescription description : descriptions) {
+    private static BeanPropertyDefinition getDescription(String name,
+                                                         Collection<? extends BeanPropertyDefinition> descriptions) {
+        for (BeanPropertyDefinition description : descriptions) {
             if (name.equals(description.getName())) {
                 return description;
             }

@@ -1,7 +1,8 @@
 package ch.jalu.configme.beanmapper.definition;
 
-import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDescription;
+import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDefinition;
 import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyComments;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDefinition;
 import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractor;
 import ch.jalu.configme.internal.record.RecordComponent;
 import ch.jalu.configme.internal.record.RecordInspector;
@@ -59,10 +60,10 @@ class BeanDefinitionServiceImplTest {
         given(recordInspector.getRecordComponents(FakeRecord.class))
             .willReturn(components);
 
-        List<BeanFieldPropertyDescription> beanProperties = Arrays.asList(
-            new BeanFieldPropertyDescription(FakeRecord.class.getDeclaredField("name"), null, BeanPropertyComments.EMPTY),
-            new BeanFieldPropertyDescription(FakeRecord.class.getDeclaredField("shoeSize"), null, BeanPropertyComments.EMPTY),
-            new BeanFieldPropertyDescription(FakeRecord.class.getDeclaredField("age"), null, BeanPropertyComments.EMPTY));
+        List<BeanPropertyDefinition> beanProperties = Arrays.asList(
+            new BeanFieldPropertyDefinition(FakeRecord.class.getDeclaredField("name"), null, BeanPropertyComments.EMPTY),
+            new BeanFieldPropertyDefinition(FakeRecord.class.getDeclaredField("shoeSize"), null, BeanPropertyComments.EMPTY),
+            new BeanFieldPropertyDefinition(FakeRecord.class.getDeclaredField("age"), null, BeanPropertyComments.EMPTY));
         given(beanPropertyExtractor.collectPropertiesForRecord(FakeRecord.class, components)).willReturn(beanProperties);
 
         // when
@@ -84,10 +85,10 @@ class BeanDefinitionServiceImplTest {
     void shouldProvideDefinitionForZeroArgConstructorClass() throws NoSuchFieldException {
         // given
         given(recordInspector.getRecordComponents(SampleBean.class)).willReturn(null);
-        List<BeanFieldPropertyDescription> beanProperties = Arrays.asList(
-            new BeanFieldPropertyDescription(SampleBean.class.getDeclaredField("name"), null, BeanPropertyComments.EMPTY),
-            new BeanFieldPropertyDescription(SampleBean.class.getDeclaredField("shoeSize"), null, BeanPropertyComments.EMPTY),
-            new BeanFieldPropertyDescription(SampleBean.class.getDeclaredField("age"), null, BeanPropertyComments.EMPTY));
+        List<BeanFieldPropertyDefinition> beanProperties = Arrays.asList(
+            new BeanFieldPropertyDefinition(SampleBean.class.getDeclaredField("name"), null, BeanPropertyComments.EMPTY),
+            new BeanFieldPropertyDefinition(SampleBean.class.getDeclaredField("shoeSize"), null, BeanPropertyComments.EMPTY),
+            new BeanFieldPropertyDefinition(SampleBean.class.getDeclaredField("age"), null, BeanPropertyComments.EMPTY));
         given(beanPropertyExtractor.collectProperties(SampleBean.class)).willReturn(beanProperties);
 
         // when
@@ -128,7 +129,7 @@ class BeanDefinitionServiceImplTest {
 
         Field recordAgeField = FakeRecord.class.getDeclaredField("age");
         BeanPropertyComments recordAgeComments = new BeanPropertyComments(Arrays.asList("some", "comment"), UUID.randomUUID());
-        BeanFieldPropertyDescription recordAgeProperty = new BeanFieldPropertyDescription(recordAgeField, null, recordAgeComments);
+        BeanFieldPropertyDefinition recordAgeProperty = new BeanFieldPropertyDefinition(recordAgeField, null, recordAgeComments);
         given(beanPropertyExtractor.collectPropertiesForRecord(FakeRecord.class, components)).willReturn(Collections.singletonList(recordAgeProperty));
 
         // Set up zero-args constructor bean definition
@@ -136,7 +137,7 @@ class BeanDefinitionServiceImplTest {
 
         Field beanNameField = SampleBean.class.getDeclaredField("name");
         BeanPropertyComments beanNameComments = new BeanPropertyComments(Collections.singletonList("comment"), UUID.randomUUID());
-        BeanFieldPropertyDescription beanNameProperty = new BeanFieldPropertyDescription(beanNameField, null, beanNameComments);
+        BeanFieldPropertyDefinition beanNameProperty = new BeanFieldPropertyDefinition(beanNameField, null, beanNameComments);
         given(beanPropertyExtractor.collectProperties(SampleBean.class)).willReturn(Collections.singletonList(beanNameProperty));
 
         // when

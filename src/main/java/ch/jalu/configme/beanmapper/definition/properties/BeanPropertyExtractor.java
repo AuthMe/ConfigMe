@@ -21,7 +21,7 @@ public interface BeanPropertyExtractor {
      * @param clazz the bean type
      * @return the properties of the given bean type
      */
-    @NotNull List<BeanFieldPropertyDescription> collectProperties(@NotNull Class<?> clazz);
+    @NotNull List<BeanFieldPropertyDefinition> collectProperties(@NotNull Class<?> clazz);
 
     /**
      * Collects all properties for the given type that is a record; this is done based on the class's record components.
@@ -31,7 +31,7 @@ public interface BeanPropertyExtractor {
      * @param components the class's record components
      * @return the properties of the given bean type
      */
-    @NotNull List<BeanFieldPropertyDescription> collectPropertiesForRecord(@NotNull Class<?> clazz,
-                                                                           RecordComponent @NotNull [] components);
+    @NotNull List<BeanPropertyDefinition> collectPropertiesForRecord(@NotNull Class<?> clazz,
+                                                                     RecordComponent @NotNull [] components);
 
 }

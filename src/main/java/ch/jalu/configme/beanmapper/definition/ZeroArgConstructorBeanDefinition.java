@@ -1,7 +1,7 @@
 package ch.jalu.configme.beanmapper.definition;
 
-import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDescription;
-import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDescription;
+import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDefinition;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDefinition;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.internal.ReflectionHelper;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
@@ -19,10 +19,10 @@ import java.util.List;
 public class ZeroArgConstructorBeanDefinition implements BeanDefinition {
 
     private final Constructor<?> zeroArgsConstructor;
-    private final List<BeanFieldPropertyDescription> properties;
+    private final List<BeanFieldPropertyDefinition> properties;
 
     public ZeroArgConstructorBeanDefinition(@NotNull Constructor<?> zeroArgsConstructor,
-                                            @NotNull List<BeanFieldPropertyDescription> properties) {
+                                            @NotNull List<BeanFieldPropertyDefinition> properties) {
         this.zeroArgsConstructor = zeroArgsConstructor;
         this.properties = properties;
     }
@@ -31,12 +31,12 @@ public class ZeroArgConstructorBeanDefinition implements BeanDefinition {
         return zeroArgsConstructor;
     }
 
-    protected final @NotNull List<BeanFieldPropertyDescription> getFieldProperties() {
+    protected final @NotNull List<BeanFieldPropertyDefinition> getFieldProperties() {
         return properties;
     }
 
     @Override
-    public @NotNull List<BeanPropertyDescription> getProperties() {
+    public @NotNull List<BeanPropertyDefinition> getProperties() {
         return Collections.unmodifiableList(properties);
     }
 
@@ -50,10 +50,10 @@ public class ZeroArgConstructorBeanDefinition implements BeanDefinition {
                 + zeroArgsConstructor.getDeclaringClass() + " has " + properties.size() + " properties");
         }
 
-        Iterator<BeanFieldPropertyDescription> propIt = properties.iterator();
+        Iterator<BeanFieldPropertyDefinition> propIt = properties.iterator();
         Iterator<Object> valuesIt = propertyValues.iterator();
         while (propIt.hasNext() && valuesIt.hasNext()) {
-            BeanFieldPropertyDescription property = propIt.next();
+            BeanFieldPropertyDefinition property = propIt.next();
             Object value = valuesIt.next();
 
             boolean isValid = handleProperty(bean, property, value, errorRecorder);
@@ -88,7 +88,7 @@ public class ZeroArgConstructorBeanDefinition implements BeanDefinition {
      * @param errorRecorder error recorder for conversion errors
      * @return false if the bean cannot be constructed, true otherwise (to continue)
      */
-    protected boolean handleProperty(@NotNull Object bean, @NotNull BeanFieldPropertyDescription property,
+    protected boolean handleProperty(@NotNull Object bean, @NotNull BeanFieldPropertyDefinition property,
                                      @Nullable Object value, @NotNull ConvertErrorRecorder errorRecorder) {
         if (value == null) {
             if (property.getValue(bean) == null) {

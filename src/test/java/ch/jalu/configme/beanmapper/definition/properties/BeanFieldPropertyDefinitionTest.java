@@ -10,14 +10,14 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Test for {@link BeanFieldPropertyDescription}.
+ * Test for {@link BeanFieldPropertyDefinition}.
  */
-class BeanFieldPropertyDescriptionTest {
+class BeanFieldPropertyDefinitionTest {
 
     @Test
     void shouldGetProperties() {
         // given
-        BeanFieldPropertyDescription sizeProperty = getDescription("size", SampleBean.class);
+        BeanFieldPropertyDefinition sizeProperty = getDescription("size", SampleBean.class);
         SampleBean bean = new SampleBean();
         bean.size = 77;
 
@@ -34,7 +34,7 @@ class BeanFieldPropertyDescriptionTest {
     @Test
     void shouldHandlePropertySetError() {
         // given
-        BeanFieldPropertyDescription sizeProperty = getDescription("size", SampleBean.class);
+        BeanFieldPropertyDefinition sizeProperty = getDescription("size", SampleBean.class);
         String wrongObject = "test";
 
         // when
@@ -42,14 +42,14 @@ class BeanFieldPropertyDescriptionTest {
             () -> sizeProperty.setValue(wrongObject, -120));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Failed to set value to field BeanFieldPropertyDescriptionTest$SampleBean#size. Value: -120"));
+        assertThat(ex.getMessage(), equalTo("Failed to set value to field BeanFieldPropertyDefinitionTest$SampleBean#size. Value: -120"));
         assertThat(ex.getCause(), instanceOf(IllegalArgumentException.class));
     }
 
     @Test
     void shouldHandlePropertyGetError() {
         // given
-        BeanPropertyDescription sizeProperty = getDescription("size", SampleBean.class);
+        BeanPropertyDefinition sizeProperty = getDescription("size", SampleBean.class);
         String wrongObject = "test";
 
         // when
@@ -57,14 +57,14 @@ class BeanFieldPropertyDescriptionTest {
             () -> sizeProperty.getValue(wrongObject));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Failed to get value for field BeanFieldPropertyDescriptionTest$SampleBean#size"));
+        assertThat(ex.getMessage(), equalTo("Failed to get value for field BeanFieldPropertyDefinitionTest$SampleBean#size"));
         assertThat(ex.getCause(), instanceOf(IllegalArgumentException.class));
     }
 
     @Test
     void shouldHaveAppropriateStringRepresentation() {
         // given
-        BeanFieldPropertyDescription hasIdProperty = getDescription("has-id", AnnotatedEntry.class);
+        BeanFieldPropertyDefinition hasIdProperty = getDescription("has-id", AnnotatedEntry.class);
 
         // when
         String output = "Found " + hasIdProperty;
@@ -73,7 +73,7 @@ class BeanFieldPropertyDescriptionTest {
         assertThat(output, equalTo("Found FieldProperty 'has-id' for field 'AnnotatedEntry#hasId'"));
     }
 
-    private static BeanFieldPropertyDescription getDescription(String name, Class<?> clazz) {
+    private static BeanFieldPropertyDefinition getDescription(String name, Class<?> clazz) {
         return new BeanPropertyExtractorImpl().collectProperties(clazz)
             .stream()
             .filter(prop -> name.equals(prop.getName()))

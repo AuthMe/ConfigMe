@@ -1,6 +1,6 @@
 package ch.jalu.configme.beanmapper.definition;
 
-import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDescription;
+import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDefinition;
 import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyComments;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
@@ -98,9 +98,9 @@ class ZeroArgConstructorBeanDefinitionTest {
     @Test
     void shouldAcceptNullValuesIfFieldHasDefault() throws NoSuchMethodException {
         // given
-        List<BeanFieldPropertyDescription> properties = Arrays.stream(BeanWithFieldDefaults.class.getDeclaredFields())
+        List<BeanFieldPropertyDefinition> properties = Arrays.stream(BeanWithFieldDefaults.class.getDeclaredFields())
             .filter(FieldUtils::isRegularInstanceField)
-            .map(field -> new BeanFieldPropertyDescription(field, null, BeanPropertyComments.EMPTY))
+            .map(field -> new BeanFieldPropertyDefinition(field, null, BeanPropertyComments.EMPTY))
             .collect(Collectors.toList());
 
         ZeroArgConstructorBeanDefinition definition = new ZeroArgConstructorBeanDefinition(
@@ -148,7 +148,7 @@ class ZeroArgConstructorBeanDefinitionTest {
 
         // when
         Constructor<?> zeroArgsConstructor = definition.getZeroArgsConstructor();
-        List<BeanFieldPropertyDescription> fieldProperties = definition.getFieldProperties();
+        List<BeanFieldPropertyDefinition> fieldProperties = definition.getFieldProperties();
 
         // then
         assertThat(zeroArgsConstructor, equalTo(ConstructorUtils.getConstructorOrThrow(SampleBean.class)));
@@ -172,9 +172,9 @@ class ZeroArgConstructorBeanDefinitionTest {
         }
 
         static ZeroArgConstructorBeanDefinition createDefinition() {
-            List<BeanFieldPropertyDescription> properties = Arrays.stream(SampleBean.class.getDeclaredFields())
+            List<BeanFieldPropertyDefinition> properties = Arrays.stream(SampleBean.class.getDeclaredFields())
                 .filter(FieldUtils::isRegularInstanceField)
-                .map(field -> new BeanFieldPropertyDescription(field, null, BeanPropertyComments.EMPTY))
+                .map(field -> new BeanFieldPropertyDefinition(field, null, BeanPropertyComments.EMPTY))
                 .collect(Collectors.toList());
 
             try {

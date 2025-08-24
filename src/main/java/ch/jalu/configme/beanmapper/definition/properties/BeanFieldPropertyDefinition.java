@@ -10,9 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 
 /**
- * Bean property description based on a {@link Field}.
+ * A bean property defined by a {@link Field}.
  */
-public class BeanFieldPropertyDescription implements BeanPropertyDescription {
+public class BeanFieldPropertyDefinition implements BeanPropertyDefinition {
 
     private final Field field;
     private final String exportName;
@@ -21,13 +21,13 @@ public class BeanFieldPropertyDescription implements BeanPropertyDescription {
     /**
      * Constructor.
      *
-     * @param field the field this description is for
+     * @param field the field this definition is for
      * @param exportName the custom name of this property in the property resource, null for default
      * @param comments the comments associated with this property
      */
-    public BeanFieldPropertyDescription(@NotNull Field field,
-                                        @Nullable String exportName,
-                                        @NotNull BeanPropertyComments comments) {
+    public BeanFieldPropertyDefinition(@NotNull Field field,
+                                       @Nullable String exportName,
+                                       @NotNull BeanPropertyComments comments) {
         this.field = field;
         this.exportName = exportName;
         this.comments = comments;
@@ -41,10 +41,6 @@ public class BeanFieldPropertyDescription implements BeanPropertyDescription {
     @Override
     public @NotNull TypeInfo getTypeInformation() {
         return TypeInfo.of(field);
-    }
-
-    public @NotNull Class<?> getType() {
-        return field.getType();
     }
 
     /**

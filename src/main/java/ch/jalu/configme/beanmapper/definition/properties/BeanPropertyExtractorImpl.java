@@ -23,9 +23,9 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Creates all {@link BeanPropertyDescription} objects for a given class.
+ * Creates all {@link BeanPropertyDefinition} objects for a given class.
  * <p>
- * This extractor returns property descriptions for all instance fields on a class, including the fields of its parents.
+ * This extractor returns property definitions for all instance fields on a class, including the fields of its parents.
  * If a field in a bean class has the same name as a field of a parent type, the parent field is ignored.
  * <p>
  * This implementation supports &#64;{@link ExportName} and ignores fields that are {@code transient} or annotated
@@ -34,17 +34,17 @@ import java.util.UUID;
 public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
 
     @Override
-    public @NotNull List<BeanFieldPropertyDescription> collectPropertiesForRecord(@NotNull Class<?> clazz,
-                                                                               RecordComponent @NotNull [] components) {
+    public @NotNull List<BeanPropertyDefinition> collectPropertiesForRecord(@NotNull Class<?> clazz,
+                                                                            RecordComponent @NotNull [] components) {
         Map<String, Field> instanceFieldsByName = FieldUtils.getAllFields(clazz)
             .filter(FieldUtils::isRegularInstanceField)
             .collect(FieldUtils.collectByName(false));
 
-        List<BeanFieldPropertyDescription> properties = new ArrayList<>(components.length);
+        List<BeanPropertyDefinition> properties = new ArrayList<>(components.length);
         for (RecordComponent component : components) {
             Field field = instanceFieldsByName.get(component.getName());
             validateFieldForRecord(clazz, component, field);
-            BeanFieldPropertyDescription property = convert(field);
+            BeanFieldPropertyDefinition property = convert(field);
             properties.add(property);
         }
 
@@ -53,17 +53,17 @@ public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
     }
 
     @Override
-    public @NotNull List<BeanFieldPropertyDescription> collectProperties(@NotNull Class<?> clazz) {
+    public @NotNull List<BeanFieldPropertyDefinition> collectProperties(@NotNull Class<?> clazz) {
         @SuppressWarnings("checkstyle:IllegalType") // LinkedHashMap indicates the values are ordered (important here)
         LinkedHashMap<String, Field> instanceFieldsByName = FieldUtils.getAllFields(clazz)
             .filter(FieldUtils::isRegularInstanceField)
             .collect(FieldUtils.collectByName(false));
 
-        List<BeanFieldPropertyDescription> properties = new ArrayList<>();
+        List<BeanFieldPropertyDefinition> properties = new ArrayList<>();
         for (Field field : instanceFieldsByName.values()) {
             if (!isFieldIgnored(field)) {
                 validateFieldForBean(clazz, field);
-                BeanFieldPropertyDescription property = convert(field);
+                BeanFieldPropertyDefinition property = convert(field);
                 properties.add(property);
             }
         }
@@ -103,8 +103,8 @@ public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
         }
     }
 
-    protected @NotNull BeanFieldPropertyDescription convert(@NotNull Field field) {
-        return new BeanFieldPropertyDescription(field, getCustomExportName(field), getComments(field));
+    protected @NotNull BeanFieldPropertyDefinition convert(@NotNull Field field) {
+        return new BeanFieldPropertyDefinition(field, getCustomExportName(field), getComments(field));
     }
 
     protected boolean isFieldIgnored(@NotNull Field field) {
@@ -134,7 +134,7 @@ public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
      * @param properties the properties that will be used on the class
      */
     protected void validateProperties(@NotNull Class<?> clazz,
-                                      @NotNull Collection<? extends BeanPropertyDescription> properties) {
+                                      @NotNull Collection<? extends BeanPropertyDefinition> properties) {
         Set<String> names = new HashSet<>(properties.size());
         properties.forEach(property -> {
             if (property.getName().isEmpty()) {

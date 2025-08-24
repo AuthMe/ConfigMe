@@ -8,7 +8,7 @@ import ch.jalu.configme.beanmapper.definition.BeanDefinition;
 import ch.jalu.configme.beanmapper.definition.BeanDefinitionService;
 import ch.jalu.configme.beanmapper.definition.BeanDefinitionServiceImpl;
 import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyComments;
-import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDescription;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDefinition;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
@@ -135,7 +135,7 @@ public class MapperImpl implements Mapper {
 
         // Step 3: treat as bean
         Map<String, Object> mappedBean = new LinkedHashMap<>();
-        for (BeanPropertyDescription property : getBeanProperties(value)) {
+        for (BeanPropertyDefinition property : getBeanProperties(value)) {
             Object exportValueOfProperty = toExportValue(property.getValue(value), exportContext);
             if (exportValueOfProperty != null) {
                 BeanPropertyComments propComments = property.getComments();
@@ -150,7 +150,7 @@ public class MapperImpl implements Mapper {
         return mappedBean;
     }
 
-    protected @NotNull List<BeanPropertyDescription> getBeanProperties(@NotNull Object value) {
+    protected @NotNull List<BeanPropertyDefinition> getBeanProperties(@NotNull Object value) {
         return beanDefinitionService.findDefinition(value.getClass())
             .map(BeanDefinition::getProperties)
             .orElse(Collections.emptyList());

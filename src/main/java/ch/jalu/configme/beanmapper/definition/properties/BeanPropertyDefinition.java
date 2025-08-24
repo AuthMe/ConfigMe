@@ -7,11 +7,11 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a property within a bean class, as used by {@link BeanDefinition}.
- * Bean property descriptions are provided by {@link BeanPropertyExtractor}.
+ * Bean property definitions are provided by {@link BeanPropertyExtractor}.
  * <p>
- * Default implementation of this interface is {@link BeanFieldPropertyDescription}.
+ * Default implementation of this interface is {@link BeanFieldPropertyDefinition}.
  */
-public interface BeanPropertyDescription {
+public interface BeanPropertyDefinition {
 
     /**
      * @return the name of the property in the configuration file

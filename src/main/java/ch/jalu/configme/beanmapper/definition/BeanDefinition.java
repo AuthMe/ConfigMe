@@ -1,6 +1,6 @@
 package ch.jalu.configme.beanmapper.definition;
 
-import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDescription;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDefinition;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +18,7 @@ public interface BeanDefinition {
      *
      * @return the bean's properties
      */
-    @NotNull List<BeanPropertyDescription> getProperties();
+    @NotNull List<BeanPropertyDefinition> getProperties();
 
     /**
      * Creates a new bean with the given property values. The provided property values must be in the same order as

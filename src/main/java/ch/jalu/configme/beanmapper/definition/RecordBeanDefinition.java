@@ -1,7 +1,6 @@
 package ch.jalu.configme.beanmapper.definition;
 
-import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDescription;
-import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDescription;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDefinition;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.typeresolver.reflect.ConstructorUtils;
@@ -19,7 +18,7 @@ import java.util.Objects;
 public class RecordBeanDefinition implements BeanDefinition {
 
     private final Constructor<?> canonicalConstructor;
-    private final List<BeanFieldPropertyDescription> properties;
+    private final List<BeanPropertyDefinition> properties;
 
     /**
      * Constructor.
@@ -27,9 +26,11 @@ public class RecordBeanDefinition implements BeanDefinition {
      * @param clazz the record type
      * @param properties the properties of the record
      */
-    public RecordBeanDefinition(@NotNull Class<?> clazz, @NotNull List<BeanFieldPropertyDescription> properties) {
+    public RecordBeanDefinition(@NotNull Class<?> clazz, @NotNull List<BeanPropertyDefinition> properties) {
         this.properties = properties;
-        Class<?>[] paramTypes = properties.stream().map(BeanFieldPropertyDescription::getType).toArray(Class[]::new);
+        Class<?>[] paramTypes = properties.stream()
+            .map(property -> property.getTypeInformation().toClass())
+            .toArray(Class[]::new);
         this.canonicalConstructor = ConstructorUtils.getConstructorOrNull(clazz, paramTypes);
         if (this.canonicalConstructor == null) {
             throw new ConfigMeException("Could not get canonical constructor of " + clazz);
@@ -40,12 +41,8 @@ public class RecordBeanDefinition implements BeanDefinition {
         return canonicalConstructor;
     }
 
-    protected final @NotNull List<BeanFieldPropertyDescription> getFieldProperties() {
-        return properties;
-    }
-
     @Override
-    public @NotNull List<BeanPropertyDescription> getProperties() {
+    public @NotNull List<BeanPropertyDefinition> getProperties() {
         return Collections.unmodifiableList(properties);
     }
 

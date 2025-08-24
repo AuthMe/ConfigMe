@@ -1,6 +1,7 @@
 package ch.jalu.configme.beanmapper.definition;
 
-import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDescription;
+import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDefinition;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDefinition;
 import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractor;
 import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractorImpl;
 import ch.jalu.configme.internal.ReflectionHelper;
@@ -82,7 +83,7 @@ public class BeanDefinitionServiceImpl implements BeanDefinitionService {
     protected @Nullable BeanDefinition createDefinitionIfApplicable(@NotNull Class<?> clazz) {
         RecordComponent[] recordComponents = recordInspector.getRecordComponents(clazz);
         if (recordComponents != null) {
-            List<BeanFieldPropertyDescription> properties =
+            List<BeanPropertyDefinition> properties =
                 beanPropertyExtractor.collectPropertiesForRecord(clazz, recordComponents);
 
             return new RecordBeanDefinition(clazz, properties);
@@ -90,7 +91,7 @@ public class BeanDefinitionServiceImpl implements BeanDefinitionService {
 
         Constructor<?> zeroArgConstructor = ConstructorUtils.getConstructorOrNull(clazz);
         if (zeroArgConstructor != null) {
-            List<BeanFieldPropertyDescription> properties = beanPropertyExtractor.collectProperties(clazz);
+            List<BeanFieldPropertyDefinition> properties = beanPropertyExtractor.collectProperties(clazz);
             if (!properties.isEmpty()) {
                 return new ZeroArgConstructorBeanDefinition(zeroArgConstructor, properties);
             }
