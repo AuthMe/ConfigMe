@@ -230,6 +230,27 @@ class BeanPropertyExtractorImplTest {
     }
 
     @Test
+    void shouldGetPropertiesForRecordWithCustomNames() {
+        // given
+        RecordComponent component1 = new RecordComponent("isoCode", String.class, String.class);
+        RecordComponent component2 = new RecordComponent("phoneCode", long.class, long.class);
+
+        // when
+        List<BeanPropertyDefinition> properties =
+            extractor.collectPropertiesForRecord(SampleRecordWithCustomName.class, new RecordComponent[]{component1, component2});
+
+        // then
+        SampleRecordWithCustomName sampleRecord = new SampleRecordWithCustomName();
+        assertThat(properties, hasSize(2));
+        assertThat(properties.get(0).getName(), equalTo("iso-code"));
+        assertThat(properties.get(0).getTypeInformation(), equalTo(new TypeInfo(String.class)));
+        assertThat(properties.get(0).getValue(sampleRecord), equalTo("CH"));
+        assertThat(properties.get(1).getName(), equalTo("phone-code"));
+        assertThat(properties.get(1).getTypeInformation(), equalTo(new TypeInfo(long.class)));
+        assertThat(properties.get(1).getValue(sampleRecord), equalTo(41L));
+    }
+
+    @Test
     void shouldThrowForRecordWithDuplicatePropertyName() {
         // given
         RecordComponent component1 = new RecordComponent("name", String.class, String.class);
@@ -328,6 +349,15 @@ class BeanPropertyExtractorImplTest {
 
         private final String name = "cur_name";
         private final int size = 20;
+
+    }
+
+    private static final class SampleRecordWithCustomName { // #347: Change to an actual record
+
+        @ExportName("iso-code")
+        private final String isoCode = "CH";
+        @ExportName("phone-code")
+        private final long phoneCode = 41;
 
     }
 
