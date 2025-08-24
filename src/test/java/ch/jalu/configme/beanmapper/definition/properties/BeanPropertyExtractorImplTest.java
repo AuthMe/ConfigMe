@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.propertydescription;
+package ch.jalu.configme.beanmapper.definition.properties;
 
 
 import ch.jalu.configme.Comment;
@@ -33,25 +33,25 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Test for {@link BeanDescriptionFactoryImpl}.
+ * Test for {@link BeanPropertyExtractorImpl}.
  */
-class BeanDescriptionFactoryImplTest {
+class BeanPropertyExtractorImplTest {
 
-    private final BeanDescriptionFactoryImpl factory = new BeanDescriptionFactoryImpl();
+    private final BeanPropertyExtractorImpl factory = new BeanPropertyExtractorImpl();
 
     @Test
     void shouldReturnWritableProperties() {
         // given / when
-        Collection<BeanPropertyDescription> descriptions = factory.getAllProperties(SampleBean.class);
+        Collection<BeanPropertyDefinition> descriptions = factory.getAllProperties(SampleBean.class);
 
         // then
         assertThat(descriptions, hasSize(2));
 
-        BeanPropertyDescription sizeProperty = getDescription("size", descriptions);
+        BeanPropertyDefinition sizeProperty = getDescription("size", descriptions);
         assertThat(sizeProperty.getTypeInformation(), equalTo(new TypeInfo(int.class)));
         assertThat(sizeProperty.getComments().getComments(), contains("Size of this entry (cm)"));
 
-        BeanPropertyDescription nameProperty = getDescription("name", descriptions);
+        BeanPropertyDefinition nameProperty = getDescription("name", descriptions);
         assertThat(nameProperty.getTypeInformation(), equalTo(new TypeInfo(String.class)));
         assertThat(nameProperty.getComments(), sameInstance(BeanPropertyComments.EMPTY));
     }
@@ -65,11 +65,11 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldHandleBooleanMethodsAndMatchWithFields() {
         // given / when
-        List<BeanPropertyDescription> properties = new ArrayList<>(factory.getAllProperties(BooleanTestBean.class));
+        List<BeanPropertyDefinition> properties = new ArrayList<>(factory.getAllProperties(BooleanTestBean.class));
 
         // then
         assertThat(properties, hasSize(4));
-        assertThat(transform(properties, BeanPropertyDescription::getName),
+        assertThat(transform(properties, BeanPropertyDefinition::getName),
             containsInAnyOrder("active", "isField", "empty", "isNotMatched"));
 
         // First two elements can be mapped to fields, so check their order. For the two unknown ones, we don't make any guarantees
@@ -80,42 +80,42 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldNotConsiderTransientFields() {
         // given / when
-        Collection<BeanPropertyDescription> properties = factory.getAllProperties(BeanWithTransientFields.class);
+        Collection<BeanPropertyDefinition> properties = factory.getAllProperties(BeanWithTransientFields.class);
 
         // then
         assertThat(properties, hasSize(2));
-        assertThat(transform(properties, BeanPropertyDescription::getName), contains("name", "mandatory"));
+        assertThat(transform(properties, BeanPropertyDefinition::getName), contains("name", "mandatory"));
     }
 
     @Test
     void shouldBeAwareOfInheritanceAndRespectOrder() {
         // given / when
-        Collection<BeanPropertyDescription> properties = factory.getAllProperties(Middle.class);
+        Collection<BeanPropertyDefinition> properties = factory.getAllProperties(Middle.class);
 
         // then
         assertThat(properties, hasSize(3));
-        assertThat(transform(properties, BeanPropertyDescription::getName), contains("id", "name", "ratio"));
+        assertThat(transform(properties, BeanPropertyDefinition::getName), contains("id", "name", "ratio"));
     }
 
     @Test
     void shouldLetChildFieldsOverrideParentFields() {
         // given / when
-        Collection<BeanPropertyDescription> properties = factory.getAllProperties(Child.class);
+        Collection<BeanPropertyDefinition> properties = factory.getAllProperties(Child.class);
 
         // then
         assertThat(properties, hasSize(5));
-        assertThat(transform(properties, BeanPropertyDescription::getName),
+        assertThat(transform(properties, BeanPropertyDefinition::getName),
             contains("id", "temporary", "name", "ratio", "importance"));
     }
 
     @Test
     void shouldUseExportName() {
         // given / when
-        Collection<BeanPropertyDescription> properties = factory.getAllProperties(AnnotatedEntry.class);
+        Collection<BeanPropertyDefinition> properties = factory.getAllProperties(AnnotatedEntry.class);
 
         // then
         assertThat(properties, hasSize(2));
-        assertThat(transform(properties, BeanPropertyDescription::getName),
+        assertThat(transform(properties, BeanPropertyDefinition::getName),
             contains("id", "has-id"));
     }
 
@@ -144,8 +144,8 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldReturnCommentsWithUuidIfNotRepeatable() {
         // given / when
-        Collection<BeanPropertyDescription> sampleBeanProperties = factory.getAllProperties(SampleBean.class);
-        Collection<BeanPropertyDescription> sampleBeanProperties2 = factory.getAllProperties(SampleBean.class);
+        Collection<BeanPropertyDefinition> sampleBeanProperties = factory.getAllProperties(SampleBean.class);
+        Collection<BeanPropertyDefinition> sampleBeanProperties2 = factory.getAllProperties(SampleBean.class);
 
         // then
         BeanPropertyComments sizeComments = getDescription("size", sampleBeanProperties).getComments();
@@ -161,7 +161,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldReturnCommentsWithoutUuid() {
         // given / when
-        Collection<BeanPropertyDescription> execDetailsProperties = factory.getAllProperties(ExecutionDetails.class);
+        Collection<BeanPropertyDefinition> execDetailsProperties = factory.getAllProperties(ExecutionDetails.class);
 
         // then
         BeanPropertyComments executorComments = getDescription("executor", execDetailsProperties).getComments();
@@ -175,7 +175,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldPickUpCustomNameFromField() {
         // given / when
-        List<BeanPropertyDescription> properties = new ArrayList<>(factory.getAllProperties(BeanWithExportName.class));
+        List<BeanPropertyDefinition> properties = new ArrayList<>(factory.getAllProperties(BeanWithExportName.class));
 
         // then
         assertThat(properties, hasSize(3));
@@ -190,7 +190,7 @@ class BeanDescriptionFactoryImplTest {
     @Test
     void shouldPickUpCustomNameFromFieldsIncludingInheritance() {
         // given / when
-        List<BeanPropertyDescription> properties = new ArrayList<>(factory.getAllProperties(BeanWithExportNameExtension.class));
+        List<BeanPropertyDefinition> properties = new ArrayList<>(factory.getAllProperties(BeanWithExportNameExtension.class));
 
         // then
         assertThat(properties, hasSize(4));
@@ -204,9 +204,9 @@ class BeanDescriptionFactoryImplTest {
         assertThat(properties.get(3).getComments().getComments(), contains("weight_com"));
     }
 
-    private static BeanPropertyDescription getDescription(String name,
-                                                          Collection<BeanPropertyDescription> descriptions) {
-        for (BeanPropertyDescription description : descriptions) {
+    private static BeanPropertyDefinition getDescription(String name,
+                                                         Collection<BeanPropertyDefinition> descriptions) {
+        for (BeanPropertyDefinition description : descriptions) {
             if (name.equals(description.getName())) {
                 return description;
             }

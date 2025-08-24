@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.propertydescription;
+package ch.jalu.configme.beanmapper.definition.properties;
 
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
@@ -26,7 +26,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Creates all {@link BeanPropertyDescription} objects for a given class.
+ * Creates all {@link BeanPropertyDefinition} objects for a given class.
  * <p>
  * This description factory returns property descriptions for all properties on a class
  * for which a getter and setter is associated. Inherited properties are considered.
@@ -34,9 +34,9 @@ import java.util.stream.Collectors;
  * This implementation supports {@link ExportName} and transient properties, declared either
  * with the {@code transient} keyword or by adding the {@link java.beans.Transient} annotation.
  */
-public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
+public class BeanPropertyExtractorImpl implements BeanPropertyExtractor {
 
-    private final Map<Class<?>, List<BeanPropertyDescription>> classProperties = new HashMap<>();
+    private final Map<Class<?>, List<BeanPropertyDefinition>> classProperties = new HashMap<>();
 
     /**
      * Returns all properties of the given bean class for which there exists a getter and setter.
@@ -45,7 +45,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @return the bean class's properties to handle
      */
     @Override
-    public @NotNull Collection<BeanPropertyDescription> getAllProperties(@NotNull Class<?> clazz) {
+    public @NotNull Collection<BeanPropertyDefinition> getAllProperties(@NotNull Class<?> clazz) {
         return classProperties.computeIfAbsent(clazz, this::collectAllProperties);
     }
 
@@ -55,10 +55,10 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param clazz the class to process
      * @return properties of the class
      */
-    protected @NotNull List<BeanPropertyDescription> collectAllProperties(@NotNull Class<?> clazz) {
+    protected @NotNull List<BeanPropertyDefinition> collectAllProperties(@NotNull Class<?> clazz) {
         List<PropertyDescriptor> descriptors = getWritableProperties(clazz);
 
-        List<BeanPropertyDescription> properties = descriptors.stream()
+        List<BeanPropertyDefinition> properties = descriptors.stream()
             .map(this::convert)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -68,19 +68,19 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
     }
 
     /**
-     * Converts a {@link PropertyDescriptor} to a {@link BeanPropertyDescription} object.
+     * Converts a {@link PropertyDescriptor} to a {@link BeanPropertyDefinition} object.
      *
      * @param descriptor the descriptor to convert
      * @return the converted object, or null if the property should be skipped
      */
-    protected @Nullable BeanPropertyDescription convert(@NotNull PropertyDescriptor descriptor) {
+    protected @Nullable BeanPropertyDefinition convert(@NotNull PropertyDescriptor descriptor) {
         if (Boolean.TRUE.equals(descriptor.getValue("transient"))) {
             return null;
         }
 
         Field field = tryGetField(descriptor.getWriteMethod().getDeclaringClass(), descriptor.getName());
         BeanPropertyComments comments = getComments(field);
-        return new BeanPropertyDescriptionImpl(
+        return new BeanFieldPropertyDefinition(
             getPropertyName(descriptor, field),
             createTypeInfo(descriptor),
             descriptor.getReadMethod(),
@@ -126,7 +126,7 @@ public class BeanDescriptionFactoryImpl implements BeanDescriptionFactory {
      * @param properties the properties that will be used on the class
      */
     protected void validateProperties(@NotNull Class<?> clazz,
-                                      @NotNull Collection<BeanPropertyDescription> properties) {
+                                      @NotNull Collection<BeanPropertyDefinition> properties) {
         Set<String> names = new HashSet<>(properties.size());
         properties.forEach(property -> {
             if (property.getName().isEmpty()) {

@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.propertydescription;
+package ch.jalu.configme.beanmapper.definition.properties;
 
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.typeresolver.TypeInfo;
@@ -9,9 +9,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Default implementation of {@link BeanPropertyDescription}.
+ * Default implementation of {@link BeanPropertyDefinition}.
  */
-public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
+public class BeanFieldPropertyDefinition implements BeanPropertyDefinition {
 
     private final String name;
     private final TypeInfo typeInformation;
@@ -28,7 +28,7 @@ public class BeanPropertyDescriptionImpl implements BeanPropertyDescription {
      * @param setter setter for the property
      * @param comments the comments of the property
      */
-    public BeanPropertyDescriptionImpl(@NotNull String name, @NotNull TypeInfo typeInformation,
+    public BeanFieldPropertyDefinition(@NotNull String name, @NotNull TypeInfo typeInformation,
                                        @NotNull Method getter, @NotNull Method setter,
                                        @NotNull BeanPropertyComments comments) {
         this.name = name;

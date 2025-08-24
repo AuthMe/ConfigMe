@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.propertydescription;
+package ch.jalu.configme.beanmapper.definition.properties;
 
 import ch.jalu.configme.beanmapper.ConfigMeMapperException;
 import ch.jalu.configme.samples.beanannotations.AnnotatedEntry;
@@ -11,14 +11,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Test for {@link BeanPropertyDescriptionImpl}.
+ * Test for {@link BeanFieldPropertyDefinition}.
  */
-public class BeanPropertyDescriptionImplTest {
+public class BeanFieldPropertyDefinitionTest {
 
     @Test
     void shouldGetAndSetProperties() {
         // given
-        BeanPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
+        BeanPropertyDefinition sizeProperty = getDescriptor("size", SampleBean.class);
         SampleBean bean = new SampleBean();
         bean.setSize(77);
 
@@ -36,7 +36,7 @@ public class BeanPropertyDescriptionImplTest {
     @Test
     void shouldHandlePropertySetError() {
         // given
-        BeanPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
+        BeanPropertyDefinition sizeProperty = getDescriptor("size", SampleBean.class);
         SampleBean bean = new ThrowingBean();
 
         // when / then
@@ -47,7 +47,7 @@ public class BeanPropertyDescriptionImplTest {
     @Test
     void shouldHandlePropertyGetError() {
         // given
-        BeanPropertyDescription sizeProperty = getDescriptor("size", SampleBean.class);
+        BeanPropertyDefinition sizeProperty = getDescriptor("size", SampleBean.class);
         SampleBean bean = new ThrowingBean();
 
         // when / then
@@ -58,9 +58,9 @@ public class BeanPropertyDescriptionImplTest {
     @Test
     void shouldHaveAppropriateStringRepresentation() {
         // given
-        Collection<BeanPropertyDescription> properties = new BeanDescriptionFactoryImpl()
+        Collection<BeanPropertyDefinition> properties = new BeanPropertyExtractorImpl()
             .collectAllProperties(AnnotatedEntry.class);
-        BeanPropertyDescription hasIdProperty = properties.stream()
+        BeanPropertyDefinition hasIdProperty = properties.stream()
             .filter(prop -> "has-id".equals(prop.getName())).findFirst().get();
 
         // when
@@ -71,8 +71,8 @@ public class BeanPropertyDescriptionImplTest {
             + "'public boolean ch.jalu.configme.samples.beanannotations.AnnotatedEntry.getHasId()'"));
     }
 
-    private static BeanPropertyDescription getDescriptor(String name, Class<?> clazz) {
-        return new BeanDescriptionFactoryImpl().collectAllProperties(clazz)
+    private static BeanPropertyDefinition getDescriptor(String name, Class<?> clazz) {
+        return new BeanPropertyExtractorImpl().collectAllProperties(clazz)
             .stream()
             .filter(prop -> name.equals(prop.getName()))
             .findFirst()

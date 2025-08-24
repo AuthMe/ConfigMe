@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.propertydescription;
+package ch.jalu.configme.beanmapper.definition.properties;
 
 import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
@@ -6,11 +6,11 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a property within a bean class, as used in {@link ch.jalu.configme.beanmapper.MapperImpl}.
- * There, for instance, there is a {@link BeanDescriptionFactory} field responsible for creating bean descriptions.
+ * There, for instance, there is a {@link BeanPropertyExtractor} field responsible for creating bean descriptions.
  * <p>
- * Default implementation is {@link BeanPropertyDescriptionImpl}.
+ * Default implementation is {@link BeanFieldPropertyDefinition}.
  */
-public interface BeanPropertyDescription {
+public interface BeanPropertyDefinition {
 
     /**
      * @return the name of the property in the configuration file

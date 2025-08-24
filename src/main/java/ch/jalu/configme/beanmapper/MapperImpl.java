@@ -4,13 +4,13 @@ import ch.jalu.configme.beanmapper.context.ExportContext;
 import ch.jalu.configme.beanmapper.context.ExportContextImpl;
 import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.beanmapper.context.MappingContextImpl;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyComments;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyDefinition;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractor;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractorImpl;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.beanmapper.leafvaluehandler.MapperLeafType;
-import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
-import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactoryImpl;
-import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
-import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyDescription;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.convertresult.ValueWithComments;
 import ch.jalu.typeresolver.TypeInfo;
@@ -68,22 +68,22 @@ public class MapperImpl implements Mapper {
     // Fields and general configurable methods
     // ---------
 
-    private final BeanDescriptionFactory beanDescriptionFactory;
+    private final BeanPropertyExtractor beanPropertyExtractor;
     private final LeafValueHandler leafValueHandler;
 
     public MapperImpl() {
-        this(new BeanDescriptionFactoryImpl(),
+        this(new BeanPropertyExtractorImpl(),
              new LeafValueHandlerImpl(LeafValueHandlerImpl.createDefaultLeafTypes()));
     }
 
-    public MapperImpl(@NotNull BeanDescriptionFactory beanDescriptionFactory,
+    public MapperImpl(@NotNull BeanPropertyExtractor beanPropertyExtractor,
                       @NotNull LeafValueHandler leafValueHandler) {
-        this.beanDescriptionFactory = beanDescriptionFactory;
+        this.beanPropertyExtractor = beanPropertyExtractor;
         this.leafValueHandler = leafValueHandler;
     }
 
-    protected final @NotNull BeanDescriptionFactory getBeanDescriptionFactory() {
-        return beanDescriptionFactory;
+    protected final @NotNull BeanPropertyExtractor getBeanDescriptionFactory() {
+        return beanPropertyExtractor;
     }
 
     protected final @NotNull LeafValueHandler getLeafValueHandler() {
@@ -131,7 +131,7 @@ public class MapperImpl implements Mapper {
 
         // Step 3: treat as bean
         Map<String, Object> mappedBean = new LinkedHashMap<>();
-        for (BeanPropertyDescription property : beanDescriptionFactory.getAllProperties(value.getClass())) {
+        for (BeanPropertyDefinition property : beanPropertyExtractor.getAllProperties(value.getClass())) {
             Object exportValueOfProperty = toExportValue(property.getValue(value), exportContext);
             if (exportValueOfProperty != null) {
                 BeanPropertyComments propComments = property.getComments();
@@ -370,8 +370,8 @@ public class MapperImpl implements Mapper {
             return null;
         }
 
-        Collection<BeanPropertyDescription> properties =
-            beanDescriptionFactory.getAllProperties(context.getTargetTypeAsClassOrThrow());
+        Collection<BeanPropertyDefinition> properties =
+            beanPropertyExtractor.getAllProperties(context.getTargetTypeAsClassOrThrow());
         // Check that we have properties (or else we don't have a bean)
         if (properties.isEmpty()) {
             return null;
@@ -379,7 +379,7 @@ public class MapperImpl implements Mapper {
 
         Map<?, ?> entries = (Map<?, ?>) value;
         Object bean = createBeanMatchingType(context);
-        for (BeanPropertyDescription property : properties) {
+        for (BeanPropertyDefinition property : properties) {
             Object result = convertValueForType(
                 context.createChild(property.getName(), property.getTypeInformation()),
                 entries.get(property.getName()));
