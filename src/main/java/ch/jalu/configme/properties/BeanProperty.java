@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * using a {@link Mapper}.
  *
  * @param <T> the bean type
+ * @link <a href="https://github.com/AuthMe/ConfigMe/wiki/Bean-properties">ConfigMe Wiki: Bean properties</a>
  */
 public class BeanProperty<T> extends TypeBasedProperty<T> {
 

@@ -53,7 +53,7 @@ public class BeanFieldPropertyDefinition implements BeanPropertyDefinition {
      */
     // Surprisingly, setting a value to a final field is allowed in some circumstances, but the value doesn't seem to
     // actually be changed outside of the current context. For now, we keep this method free of any validation but
-    // note that a final field here might NOT cause any exception.
+    // note that a final field here might NOT cause an exception.
     public void setValue(@NotNull Object bean, @NotNull Object value) {
         ReflectionHelper.setAccessibleIfNeeded(field);
 

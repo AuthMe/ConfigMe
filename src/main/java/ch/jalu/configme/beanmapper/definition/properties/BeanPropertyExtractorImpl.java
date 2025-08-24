@@ -26,7 +26,9 @@ import java.util.UUID;
  * Creates all {@link BeanPropertyDefinition} objects for a given class.
  * <p>
  * This extractor returns property definitions for all instance fields on a class, including the fields of its parents.
- * If a field in a bean class has the same name as a field of a parent type, the parent field is ignored.
+ * If a non-static field in a bean class has the same name as a field of a parent type, the parent field is ignored.
+ * See <a href="https://github.com/AuthMe/ConfigMe/wiki/Bean-properties">Bean properties</a> on the ConfigMe wiki
+ * for more details.
  * <p>
  * This implementation supports &#64;{@link ExportName} and ignores fields that are {@code transient} or annotated
  * with &#64;{@link IgnoreInMapping}.
