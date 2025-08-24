@@ -8,10 +8,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.EnumSet;
-import java.util.Set;
 
 import static ch.jalu.configme.TestUtils.isErrorValueOf;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.mockito.BDDMockito.given;
 
 /**
@@ -27,13 +27,11 @@ class EnumSetPropertyTest {
     void shouldReturnEnumSetDefaultValue() {
         // given
         EnumSet<TestEnum> set = EnumSet.of(TestEnum.ENTRY_A);
-        EnumSetProperty<TestEnum> property =
-            new EnumSetProperty<>("enum.path", TestEnum.class, set);
-        given(reader.getObject(property.getPath()))
-            .willReturn(null);
+        EnumSetProperty<TestEnum> property = new EnumSetProperty<>("enum.path", TestEnum.class, set);
+        given(reader.getObject(property.getPath())).willReturn(null);
 
         // when
-        PropertyValue<Set<TestEnum>> result = property.determineValue(reader);
+        PropertyValue<EnumSet<TestEnum>> result = property.determineValue(reader);
 
         // then
         assertThat(result, isErrorValueOf(EnumSet.of(TestEnum.ENTRY_A)));
@@ -43,15 +41,13 @@ class EnumSetPropertyTest {
     void shouldReturnEnumSetDefaultValueFromArray() {
         // given
         EnumSetProperty<TestEnum> property =
-            new EnumSetProperty<>("enum.path", TestEnum.class, new TestEnum[]{TestEnum.ENTRY_B, TestEnum.ENTRY_C});
-        given(reader.getObject(property.getPath()))
-            .willReturn(null);
+            new EnumSetProperty<>("enum.path", TestEnum.class, TestEnum.ENTRY_B, TestEnum.ENTRY_C);
 
         // when
-        PropertyValue<Set<TestEnum>> result = property.determineValue(reader);
+        EnumSet<TestEnum> defaultValue = property.getDefaultValue();
 
         // then
-        assertThat(result, isErrorValueOf(EnumSet.of(TestEnum.ENTRY_B, TestEnum.ENTRY_C)));
+        assertThat(defaultValue, contains(TestEnum.ENTRY_B, TestEnum.ENTRY_C));
     }
 
     private enum TestEnum {
