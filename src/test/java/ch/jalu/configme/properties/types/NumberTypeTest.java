@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -240,6 +241,17 @@ class NumberTypeTest {
         assertThat(NumberType.BIG_DECIMAL.convert("88223372036854775807.999", bigDecimalType, errorRecorder), equalTo(new BigDecimal("88223372036854775807.999")));
         assertThat(NumberType.BIG_DECIMAL.convert(largeBigDecimal, bigDecimalType, errorRecorder), equalTo(largeBigDecimal));
         verifyNoInteractions(errorRecorder);
+    }
+
+    @Test
+    void jdk12_failure_debug() {
+        System.out.println("Look here!");
+        System.out.println(-1e18f);
+        System.out.println("As BigDecimal:");
+        BigDecimal bd = BigDecimal.valueOf(-1e18f);
+        System.out.println(bd);
+
+        assertEquals("-9.9999998430674944E+17", bd.toString());
     }
 
     @Test
