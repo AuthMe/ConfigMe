@@ -45,6 +45,18 @@ public class BeanInstantiationServiceImpl implements BeanInstantiationService {
         this.beanDescriptionFactory = beanDescriptionFactory;
     }
 
+    protected final @NotNull RecordInspector getRecordInspector() {
+        return recordInspector;
+    }
+
+    protected final @NotNull BeanDescriptionFactory getBeanDescriptionFactory() {
+        return beanDescriptionFactory;
+    }
+
+    protected final @NotNull Map<Class<?>, BeanInstantiation> getCachedInstantiationsByType() {
+        return cachedInstantiationsByType;
+    }
+
     @Override
     public @NotNull Optional<BeanInstantiation> findInstantiation(@NotNull Class<?> clazz) {
         BeanInstantiation cachedInstantiation = cachedInstantiationsByType.get(clazz);
@@ -85,17 +97,5 @@ public class BeanInstantiationServiceImpl implements BeanInstantiationService {
         }
 
         return null;
-    }
-
-    protected final @NotNull RecordInspector getRecordInspector() {
-        return recordInspector;
-    }
-
-    protected final @NotNull BeanDescriptionFactory getBeanDescriptionFactory() {
-        return beanDescriptionFactory;
-    }
-
-    protected final @NotNull Map<Class<?>, BeanInstantiation> getCachedInstantiationsByType() {
-        return cachedInstantiationsByType;
     }
 }
