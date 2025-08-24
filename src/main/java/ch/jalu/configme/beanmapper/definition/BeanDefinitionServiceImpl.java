@@ -19,12 +19,12 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Default implementation of {@link BeanDefinitionService}: defines how bean classes can be created.
+ * Default implementation of {@link BeanDefinitionService}: provides bean definitions and caches them.
  * <p>
- * This service can handle two different types of classes as beans:<ul>
- *  <li>Regular Java classes with a <b>no-args constructor</b>: all fields that aren't static or transient
+ * This service supports two different types of classes as beans:<ul>
+ *  <li>Regular Java classes with a <b>no-arg constructor</b>: all fields that aren't static or transient
  *      will be considered as bean properties. Must have at least one property.</li>
- *  <li>Java records</li>
+ *  <li>Java records, whose components are considered as the bean's properties.</li>
  * </ul>
  *
  * See {@link BeanPropertyExtractor} for details on how the properties are determined for a bean class.
@@ -75,7 +75,7 @@ public class BeanDefinitionServiceImpl implements BeanDefinitionService {
 
     /**
      * Inspects the class and returns an appropriate definition for it, if available. Null is returned if no
-     * definition could be found for the class.
+     * definition could be constructed for the class.
      *
      * @param clazz the class to process
      * @return bean definition for the class, or null if not applicable
@@ -89,11 +89,11 @@ public class BeanDefinitionServiceImpl implements BeanDefinitionService {
             return new RecordBeanDefinition(clazz, properties);
         }
 
-        Constructor<?> zeroArgConstructor = ConstructorUtils.getConstructorOrNull(clazz);
-        if (zeroArgConstructor != null) {
+        Constructor<?> noArgConstructor = ConstructorUtils.getConstructorOrNull(clazz);
+        if (noArgConstructor != null) {
             List<BeanFieldPropertyDefinition> properties = beanPropertyExtractor.collectProperties(clazz);
             if (!properties.isEmpty()) {
-                return new ZeroArgConstructorBeanDefinition(zeroArgConstructor, properties);
+                return new NoArgConstructorBeanDefinition(noArgConstructor, properties);
             }
         }
 

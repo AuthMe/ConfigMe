@@ -19,6 +19,7 @@ public class ReflectionHelper {
      * @param name the name of the class to return (e.g. java.lang.Integer)
      * @return the requested class
      */
+    // Note: Needed as separate method so it can be mocked in tests to return classes in our control
     public @NotNull Class<?> getClassOrThrow(@NotNull String name) {
         return ClassUtils.loadClassOrThrow(name);
     }

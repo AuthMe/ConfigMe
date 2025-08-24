@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -71,6 +72,21 @@ class BeanFieldPropertyDefinitionTest {
 
         // then
         assertThat(output, equalTo("Found FieldProperty 'has-id' for field 'AnnotatedEntry#hasId'"));
+    }
+
+    @Test
+    void shouldReturnExportName() {
+        // given
+        BeanFieldPropertyDefinition hasIdProperty = getDescription("has-id", AnnotatedEntry.class);
+        BeanFieldPropertyDefinition sizeProperty = getDescription("size", SampleBean.class);
+
+        // when
+        String hasIdExportName = hasIdProperty.getExportName();
+        String sizeExportName = sizeProperty.getExportName();
+
+        // then
+        assertThat(hasIdExportName, equalTo("has-id"));
+        assertThat(sizeExportName, nullValue());
     }
 
     private static BeanFieldPropertyDefinition getDescription(String name, Class<?> clazz) {

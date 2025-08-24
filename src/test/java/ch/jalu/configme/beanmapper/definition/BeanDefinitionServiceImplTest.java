@@ -82,7 +82,7 @@ class BeanDefinitionServiceImplTest {
     }
 
     @Test
-    void shouldProvideDefinitionForZeroArgConstructorClass() throws NoSuchFieldException {
+    void shouldProvideDefinitionForNoArgConstructorClass() throws NoSuchFieldException {
         // given
         given(recordInspector.getRecordComponents(SampleBean.class)).willReturn(null);
         List<BeanFieldPropertyDefinition> beanProperties = Arrays.asList(
@@ -96,7 +96,7 @@ class BeanDefinitionServiceImplTest {
 
         // then
         assertThat(definition.isPresent(), equalTo(true));
-        assertThat(definition.get(), instanceOf(ZeroArgConstructorBeanDefinition.class));
+        assertThat(definition.get(), instanceOf(NoArgConstructorBeanDefinition.class));
         assertThat(definition.get().getProperties(), hasSize(3));
 
         Object bean = definition.get().create(Arrays.asList("Test", 39, 40.25), new ConvertErrorRecorder());
@@ -132,7 +132,7 @@ class BeanDefinitionServiceImplTest {
         BeanFieldPropertyDefinition recordAgeProperty = new BeanFieldPropertyDefinition(recordAgeField, null, recordAgeComments);
         given(beanPropertyExtractor.collectPropertiesForRecord(FakeRecord.class, components)).willReturn(Collections.singletonList(recordAgeProperty));
 
-        // Set up zero-args constructor bean definition
+        // Set up no-arg constructor bean definition
         given(recordInspector.getRecordComponents(SampleBean.class)).willReturn(null);
 
         Field beanNameField = SampleBean.class.getDeclaredField("name");
@@ -143,17 +143,17 @@ class BeanDefinitionServiceImplTest {
         // when
         Optional<BeanDefinition> recordDefinition1 = beanDefinitionService.findDefinition(FakeRecord.class);
         Optional<BeanDefinition> recordDefinition2 = beanDefinitionService.findDefinition(FakeRecord.class);
-        Optional<BeanDefinition> zeroArgsDefinition1 = beanDefinitionService.findDefinition(SampleBean.class);
-        Optional<BeanDefinition> zeroArgsDefinition2 = beanDefinitionService.findDefinition(SampleBean.class);
+        Optional<BeanDefinition> noArgConstrDefinition1 = beanDefinitionService.findDefinition(SampleBean.class);
+        Optional<BeanDefinition> noArgConstrDefinition2 = beanDefinitionService.findDefinition(SampleBean.class);
 
         // then
         assertThat(recordDefinition1.get(), sameInstance(recordDefinition2.get()));
         assertThat(recordDefinition1.get().getProperties().get(0).getComments().getUuid(), equalTo(recordAgeComments.getUuid()));
         assertThat(recordDefinition2.get().getProperties().get(0).getComments().getUuid(), equalTo(recordAgeComments.getUuid()));
 
-        assertThat(zeroArgsDefinition1.get(), sameInstance(zeroArgsDefinition2.get()));
-        assertThat(zeroArgsDefinition1.get().getProperties().get(0).getComments().getUuid(), equalTo(beanNameComments.getUuid()));
-        assertThat(zeroArgsDefinition2.get().getProperties().get(0).getComments().getUuid(), equalTo(beanNameComments.getUuid()));
+        assertThat(noArgConstrDefinition1.get(), sameInstance(noArgConstrDefinition2.get()));
+        assertThat(noArgConstrDefinition1.get().getProperties().get(0).getComments().getUuid(), equalTo(beanNameComments.getUuid()));
+        assertThat(noArgConstrDefinition2.get().getProperties().get(0).getComments().getUuid(), equalTo(beanNameComments.getUuid()));
 
         assertThat(beanDefinitionService.getCachedDefinitionsByType().keySet(), containsInAnyOrder(FakeRecord.class, SampleBean.class));
     }

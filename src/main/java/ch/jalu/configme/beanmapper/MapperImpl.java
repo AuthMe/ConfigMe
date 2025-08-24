@@ -38,14 +38,14 @@ import static ch.jalu.configme.internal.PathUtils.pathSpecifierForMapKey;
  * Maps a section of a property resource to the provided Java class (called a "bean" type). The mapping is based on the
  * bean's properties, whose names must correspond to the names in the property resource. For example, if a bean
  * has a property {@code length} and it should be mapped from the property resource's value at path {@code definition},
- * the mapper will look up {@code definition.length} in the resource to determine the value.
+ * the mapper will look up {@code definition.length} in the resource to determine the value of the bean's property.
  * <p>
  * Classes are created by the {@link BeanDefinitionService}. The {@link BeanDefinitionServiceImpl
- * default implementation} supports Java classes with a zero-args constructor, as well as Java records. The service can
- * be extended to support more types of classes.
- * <br>For Java classes with a zero-args constructor, the class's instance fields are taken as properties. You can
- * change the behavior of the fields with &#64;{@link ExportName} and &#64;{@link IgnoreInMapping}. There must be at
- * least one property for the class to be treated as a bean.
+ * default implementation} supports Java classes with a no-arg constructor, as well as Java records.
+ * The service can be extended to support more types of classes.
+ * <br>For Java classes with a no-arg constructor, the class's instance fields (= non-static fields) are considered
+ * as properties. You can change the behavior of the fields with &#64;{@link ExportName} and
+ * &#64;{@link IgnoreInMapping}. There must be at least one property for a class to be treated as a bean.
  * <p>
  * <b>Recursion:</b> the mapping of values to a bean is performed recursively, i.e. a bean may have other beans
  * as fields and generic types at any arbitrary "depth".
@@ -59,8 +59,9 @@ import static ch.jalu.configme.internal.PathUtils.pathSpecifierForMapKey;
  * <p>
  * Beans may have <b>optional fields</b>. If the mapper cannot map the property resource value to the corresponding
  * field, it only treats it as a failure if the field's value is {@code null}. If the field has a default value assigned
- * to it on initialization, the default value remains and the mapping process continues. If a bean is created with a
- * null property, the mapping process is stopped immediately.
+ * to it on initialization, the default value remains and the mapping process continues. If a bean is constructed to
+ * have a property with a null value, the mapping is considered unsuccessful, and the mapping process is stopped
+ * immediately.
  * <br>Optional properties can also be defined by declaring them with {@link Optional}.
  */
 public class MapperImpl implements Mapper {

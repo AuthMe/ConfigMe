@@ -29,15 +29,15 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 /**
- * Test for {@link ZeroArgConstructorBeanDefinition}.
+ * Test for {@link NoArgConstructorBeanDefinition}.
  */
 @ExtendWith(MockitoExtension.class)
-class ZeroArgConstructorBeanDefinitionTest {
+class NoArgConstructorBeanDefinitionTest {
 
     @Test
     void shouldCreateBeanWithProperties() {
         // given
-        ZeroArgConstructorBeanDefinition definition = SampleBean.createDefinition();
+        NoArgConstructorBeanDefinition definition = SampleBean.createDefinition();
         ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
 
         // when
@@ -52,7 +52,7 @@ class ZeroArgConstructorBeanDefinitionTest {
     @Test
     void shouldNotCreateBeanForNullValue() {
         // given
-        ZeroArgConstructorBeanDefinition definition = SampleBean.createDefinition();
+        NoArgConstructorBeanDefinition definition = SampleBean.createDefinition();
         ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
 
         // when
@@ -66,7 +66,7 @@ class ZeroArgConstructorBeanDefinitionTest {
     @Test
     void shouldThrowForValueThatDoesNotMatchField() {
         // given
-        ZeroArgConstructorBeanDefinition definition = SampleBean.createDefinition();
+        NoArgConstructorBeanDefinition definition = SampleBean.createDefinition();
         ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
 
         // when
@@ -74,14 +74,14 @@ class ZeroArgConstructorBeanDefinitionTest {
             () -> definition.create(Arrays.asList("Toast", "wrong"), errorRecorder));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Failed to set value to field ZeroArgConstructorBeanDefinitionTest$SampleBean#size. Value: wrong"));
+        assertThat(ex.getMessage(), equalTo("Failed to set value to field NoArgConstructorBeanDefinitionTest$SampleBean#size. Value: wrong"));
         assertThat(ex.getCause(), instanceOf(IllegalArgumentException.class));
     }
 
     @Test
     void shouldPropagateExceptionInConstructor() throws NoSuchMethodException {
         // given
-        ZeroArgConstructorBeanDefinition definition = new ZeroArgConstructorBeanDefinition(
+        NoArgConstructorBeanDefinition definition = new NoArgConstructorBeanDefinition(
             BeanWithThrowingConstructor.class.getDeclaredConstructor(),
             Collections.emptyList());
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
@@ -91,7 +91,7 @@ class ZeroArgConstructorBeanDefinitionTest {
             () -> definition.create(Collections.emptyList(), errorRecorder));
 
         // then
-        assertThat(ex.getMessage(), equalTo("Failed to call constructor for class ch.jalu.configme.beanmapper.definition.ZeroArgConstructorBeanDefinitionTest$BeanWithThrowingConstructor"));
+        assertThat(ex.getMessage(), equalTo("Failed to call constructor for class ch.jalu.configme.beanmapper.definition.NoArgConstructorBeanDefinitionTest$BeanWithThrowingConstructor"));
         assertThat(ex.getCause(), instanceOf(InvocationTargetException.class));
     }
 
@@ -103,7 +103,7 @@ class ZeroArgConstructorBeanDefinitionTest {
             .map(field -> new BeanFieldPropertyDefinition(field, null, BeanPropertyComments.EMPTY))
             .collect(Collectors.toList());
 
-        ZeroArgConstructorBeanDefinition definition = new ZeroArgConstructorBeanDefinition(
+        NoArgConstructorBeanDefinition definition = new NoArgConstructorBeanDefinition(
             BeanWithFieldDefaults.class.getDeclaredConstructor(),
             properties);
 
@@ -117,12 +117,12 @@ class ZeroArgConstructorBeanDefinitionTest {
         assertThat(bean1, notNullValue());
         assertThat(bean1.name, equalTo("def"));
         assertThat(bean1.size, equalTo(3));
-        verify(errorRecorder).setHasError("Fallback to default value for FieldProperty 'name' for field 'ZeroArgConstructorBeanDefinitionTest$BeanWithFieldDefaults#name'");
+        verify(errorRecorder).setHasError("Fallback to default value for FieldProperty 'name' for field 'NoArgConstructorBeanDefinitionTest$BeanWithFieldDefaults#name'");
 
         assertThat(bean2, notNullValue());
         assertThat(bean2.name, equalTo("test"));
         assertThat(bean2.size, equalTo(0));
-        verify(errorRecorder).setHasError("Fallback to default value for FieldProperty 'size' for field 'ZeroArgConstructorBeanDefinitionTest$BeanWithFieldDefaults#size'");
+        verify(errorRecorder).setHasError("Fallback to default value for FieldProperty 'size' for field 'NoArgConstructorBeanDefinitionTest$BeanWithFieldDefaults#size'");
 
         verifyNoMoreInteractions(errorRecorder);
     }
@@ -130,7 +130,7 @@ class ZeroArgConstructorBeanDefinitionTest {
     @Test
     void shouldThrowForPropertyValuesMismatch() {
         // given
-        ZeroArgConstructorBeanDefinition definition = SampleBean.createDefinition();
+        NoArgConstructorBeanDefinition definition = SampleBean.createDefinition();
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
@@ -138,20 +138,20 @@ class ZeroArgConstructorBeanDefinitionTest {
 
         // then
         assertThat(ex.getMessage(), equalTo("Invalid property values, 3 were given, but class "
-            + "ch.jalu.configme.beanmapper.definition.ZeroArgConstructorBeanDefinitionTest$SampleBean has 2 properties"));
+            + "ch.jalu.configme.beanmapper.definition.NoArgConstructorBeanDefinitionTest$SampleBean has 2 properties"));
     }
 
     @Test
     void shouldReturnFieldsInGetters() {
         // given
-        ZeroArgConstructorBeanDefinition definition = SampleBean.createDefinition();
+        NoArgConstructorBeanDefinition definition = SampleBean.createDefinition();
 
         // when
-        Constructor<?> zeroArgsConstructor = definition.getZeroArgsConstructor();
+        Constructor<?> noArgConstructor = definition.getNoArgConstructor();
         List<BeanFieldPropertyDefinition> fieldProperties = definition.getFieldProperties();
 
         // then
-        assertThat(zeroArgsConstructor, equalTo(ConstructorUtils.getConstructorOrThrow(SampleBean.class)));
+        assertThat(noArgConstructor, equalTo(ConstructorUtils.getConstructorOrThrow(SampleBean.class)));
         assertThat(fieldProperties, equalTo(definition.getProperties()));
     }
 
@@ -171,14 +171,14 @@ class ZeroArgConstructorBeanDefinitionTest {
             return size;
         }
 
-        static ZeroArgConstructorBeanDefinition createDefinition() {
+        static NoArgConstructorBeanDefinition createDefinition() {
             List<BeanFieldPropertyDefinition> properties = Arrays.stream(SampleBean.class.getDeclaredFields())
                 .filter(FieldUtils::isRegularInstanceField)
                 .map(field -> new BeanFieldPropertyDefinition(field, null, BeanPropertyComments.EMPTY))
                 .collect(Collectors.toList());
 
             try {
-                return new ZeroArgConstructorBeanDefinition(SampleBean.class.getDeclaredConstructor(), properties);
+                return new NoArgConstructorBeanDefinition(SampleBean.class.getDeclaredConstructor(), properties);
             } catch (NoSuchMethodException e) {
                 throw new IllegalStateException(e);
             }

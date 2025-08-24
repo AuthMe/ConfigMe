@@ -14,21 +14,21 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Describes a bean type that is a regular Java class with a zero-arg constructor.
+ * Definition of a bean based on a regular Java class with a no-arg constructor.
  */
-public class ZeroArgConstructorBeanDefinition implements BeanDefinition {
+public class NoArgConstructorBeanDefinition implements BeanDefinition {
 
-    private final Constructor<?> zeroArgsConstructor;
+    private final Constructor<?> noArgConstructor;
     private final List<BeanFieldPropertyDefinition> properties;
 
-    public ZeroArgConstructorBeanDefinition(@NotNull Constructor<?> zeroArgsConstructor,
-                                            @NotNull List<BeanFieldPropertyDefinition> properties) {
-        this.zeroArgsConstructor = zeroArgsConstructor;
+    public NoArgConstructorBeanDefinition(@NotNull Constructor<?> noArgConstructor,
+                                          @NotNull List<BeanFieldPropertyDefinition> properties) {
+        this.noArgConstructor = noArgConstructor;
         this.properties = properties;
     }
 
-    protected final @NotNull Constructor<?> getZeroArgsConstructor() {
-        return zeroArgsConstructor;
+    protected final @NotNull Constructor<?> getNoArgConstructor() {
+        return noArgConstructor;
     }
 
     protected final @NotNull List<BeanFieldPropertyDefinition> getFieldProperties() {
@@ -47,7 +47,7 @@ public class ZeroArgConstructorBeanDefinition implements BeanDefinition {
 
         if (propertyValues.size() != properties.size()) {
             throw new ConfigMeException("Invalid property values, " + propertyValues.size() + " were given, but "
-                + zeroArgsConstructor.getDeclaringClass() + " has " + properties.size() + " properties");
+                + noArgConstructor.getDeclaringClass() + " has " + properties.size() + " properties");
         }
 
         Iterator<BeanFieldPropertyDefinition> propIt = properties.iterator();
@@ -70,11 +70,11 @@ public class ZeroArgConstructorBeanDefinition implements BeanDefinition {
      * @return the new instance
      */
     protected @NotNull Object createNewInstance() {
-        ReflectionHelper.setAccessibleIfNeeded(zeroArgsConstructor);
+        ReflectionHelper.setAccessibleIfNeeded(noArgConstructor);
         try {
-            return zeroArgsConstructor.newInstance();
+            return noArgConstructor.newInstance();
         } catch (ReflectiveOperationException e) {
-            throw new ConfigMeException("Failed to call constructor for " + zeroArgsConstructor.getDeclaringClass(), e);
+            throw new ConfigMeException("Failed to call constructor for " + noArgConstructor.getDeclaringClass(), e);
         }
     }
 

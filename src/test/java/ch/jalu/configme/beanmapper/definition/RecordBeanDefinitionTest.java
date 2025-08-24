@@ -92,15 +92,15 @@ class RecordBeanDefinitionTest {
     }
 
     @Test
-    void shouldReturnFieldsInGetters() {
+    void shouldReturnCanonicalConstructor() {
         // given
         RecordBeanDefinition definition = ExampleRecord.createDefinition();
 
         // when
-        Constructor<?> zeroArgsConstructor = definition.getCanonicalConstructor();
+        Constructor<?> canonicalConstructor = definition.getCanonicalConstructor();
 
         // then
-        assertThat(zeroArgsConstructor, equalTo(ConstructorUtils.getConstructorOrThrow(ExampleRecord.class, String.class, int.class)));
+        assertThat(canonicalConstructor, equalTo(ConstructorUtils.getConstructorOrThrow(ExampleRecord.class, String.class, int.class)));
     }
 
     private static class ExampleRecord { // #347: Change to an actual record :)

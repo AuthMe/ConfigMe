@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
 public class BeanFieldPropertyDefinition implements BeanPropertyDefinition {
 
     private final Field field;
-    private final String exportName;
+    private final @Nullable String exportName;
     private final BeanPropertyComments comments;
 
     /**
@@ -31,6 +31,13 @@ public class BeanFieldPropertyDefinition implements BeanPropertyDefinition {
         this.field = field;
         this.exportName = exportName;
         this.comments = comments;
+    }
+
+    /**
+     * @return custom export name, or null if none present
+     */
+    protected final @Nullable String getExportName() {
+        return exportName;
     }
 
     @Override

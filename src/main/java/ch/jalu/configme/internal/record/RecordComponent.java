@@ -7,6 +7,8 @@ import java.lang.reflect.Type;
 /**
  * Represents information about the component (a "property") of a Java record.
  */
+// This contains the relevant portions of java.lang.reflect.RecordComponent, because ConfigMe still supports
+// older versions of Java.
 public class RecordComponent {
 
     private final String name;

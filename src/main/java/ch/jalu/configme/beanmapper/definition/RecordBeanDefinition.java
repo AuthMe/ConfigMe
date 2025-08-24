@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Definition of a bean based on a Java record type.
+ * Definition of a bean based on a Java record class.
  */
 public class RecordBeanDefinition implements BeanDefinition {
 

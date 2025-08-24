@@ -5,9 +5,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 /**
- * Service for the definition of bean types.
- *
- * @see BeanDefinitionServiceImpl
+ * Service for constructing and retrieving bean definitions. A bean definition contains the properties of a bean
+ * type and allows to create objects of its type.
+ * <p>
+ * Default implementation is {@link BeanDefinitionServiceImpl}.
  */
 public interface BeanDefinitionService {
 

@@ -9,8 +9,8 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 
 /**
- * Inspects classes and returns Record information (Java 14+). The inspection is performed by reflection
- * because ConfigMe is still compiled against Java 8.
+ * Inspects classes and returns Record information (Java 16+). The inspection is performed by reflection
+ * because ConfigMe is still compiled with Java 8.
  */
 public class RecordInspectorImpl implements RecordInspector {
 

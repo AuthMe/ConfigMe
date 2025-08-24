@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to tell ConfigMe to ignore the field during bean mapping. In other words, when a bean is created,
- * a field with this annotation will not be written to or read.
+ * Annotation to tell ConfigMe to ignore the field during bean mapping. Fields with this annotation
+ * are not processed by ConfigMe while creating or saving a bean property.
  * <p>
  * Fields declared as {@code transient} are also ignored by ConfigMe.
  */
