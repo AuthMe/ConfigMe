@@ -1,12 +1,11 @@
 package ch.jalu.configme.properties.types;
 
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Property type and mapper leaf type for regex.
@@ -16,7 +15,7 @@ public class RegexType extends PropertyAndLeafType<Pattern> {
     /** Default regex type. */
     public static final RegexType REGEX = new RegexType();
 
-    /** Case insensitive regex type. */
+    /** Case-insensitive regex type. */
     public static final RegexType REGEX_CASE_INSENSITIVE = new RegexType() {
         @Override
         protected @NotNull Pattern compileToPattern(@NotNull String regex) {

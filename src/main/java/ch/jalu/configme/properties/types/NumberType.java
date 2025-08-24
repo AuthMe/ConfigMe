@@ -123,7 +123,7 @@ public class NumberType<N extends Number> extends PropertyAndLeafType<N> {
 
     @Override
     public @NotNull String toString() {
-        return "NumberTypeHandler[" + getType().getSimpleName() + "]";
+        return "NumberType[" + getType().getSimpleName() + "]";
     }
 
     /**

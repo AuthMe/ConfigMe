@@ -10,9 +10,9 @@ import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommandConf
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexOptionalTypeConfig;
 import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.beanmapper.context.MappingContextImpl;
+import ch.jalu.configme.beanmapper.definition.BeanDefinitionService;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
-import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.typeissues.GenericCollection;
 import ch.jalu.configme.beanmapper.typeissues.MapWithNonStringKeys;
 import ch.jalu.configme.beanmapper.typeissues.UnsupportedCollection;
@@ -21,7 +21,6 @@ import ch.jalu.configme.beanmapper.typeissues.UntypedMap;
 import ch.jalu.configme.beanmapper.worldgroup.GameMode;
 import ch.jalu.configme.beanmapper.worldgroup.Group;
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
-import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.YamlFileReader;
@@ -38,6 +37,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -50,7 +50,6 @@ import static ch.jalu.configme.TestUtils.getJarPath;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -425,44 +424,34 @@ class MapperImplTest {
     }
 
     @Test
-    void shouldInvokeDefaultConstructor() {
+    void shouldReturnNullForUnsupportedType(@TempDir Path tempDir) throws IOException {
         // given
+        Path tempFile = TestUtils.createTemporaryFile(tempDir);
+        Files.write(tempFile, "{}".getBytes());
+        PropertyReader reader = new YamlFileReader(tempFile);
         MapperImpl mapper = new MapperImpl();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        Object command = mapper.createBeanMatchingType(createContextWithTargetType(Command.class));
+        Instant result = mapper.convertToBean(reader.getObject(""), Instant.class, errorRecorder);
 
         // then
-        assertThat(command, instanceOf(Command.class));
-    }
-
-    @Test
-    void shouldForwardException() {
-        // given
-        MapperImpl mapper = new MapperImpl();
-
-        // when
-        ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> mapper.createBeanMatchingType(createContextWithTargetType(Iterable.class)));
-
-        // then
-        assertThat(ex.getMessage(), containsString("It is required to have a default constructor"));
-        assertThat(ex.getCause(), instanceOf(NoSuchMethodException.class));
+        assertThat(result, nullValue());
     }
 
     @Test
     void shouldReturnFields() {
         // given
-        BeanDescriptionFactory descriptionFactory = mock(BeanDescriptionFactory.class);
+        BeanDefinitionService beanDefinitionService = mock(BeanDefinitionService.class);
         LeafValueHandlerImpl leafValueHandler = mock(LeafValueHandlerImpl.class);
-        MapperImpl mapper = new MapperImpl(descriptionFactory, leafValueHandler);
+        MapperImpl mapper = new MapperImpl(beanDefinitionService, leafValueHandler);
 
         // when
-        BeanDescriptionFactory returnedDescriptionFactory = mapper.getBeanDescriptionFactory();
+        BeanDefinitionService returnedBeanDefinitionService = mapper.getBeanDefinitionService();
         LeafValueHandler returnedLeafValueHandler = mapper.getLeafValueHandler();
 
         // then
-        assertThat(returnedDescriptionFactory, sameInstance(descriptionFactory));
+        assertThat(returnedBeanDefinitionService, sameInstance(beanDefinitionService));
         assertThat(returnedLeafValueHandler, sameInstance(leafValueHandler));
     }
 

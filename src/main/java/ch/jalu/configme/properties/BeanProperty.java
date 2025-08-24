@@ -8,9 +8,11 @@ import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Property whose value is a bean class.
+ * Property whose value is a bean class: maps to a custom Java class (called a "bean")
+ * using a {@link Mapper}.
  *
  * @param <T> the bean type
+ * @link <a href="https://github.com/AuthMe/ConfigMe/wiki/Bean-properties">ConfigMe Wiki: Bean properties</a>
  */
 public class BeanProperty<T> extends TypeBasedProperty<T> {
 

@@ -32,7 +32,7 @@ public final class TestVersionConfiguration implements SettingsHolder {
     public static final Property<Integer> VERSION_NUMBER =
         newProperty("version", 2);
 
-    public static final Property<Integer> SHELF_POPATOES =
+    public static final Property<Integer> SHELF_POTATOES =
         newProperty("shelf.potatoes", 40);
 
     public static final Property<Integer> SHELF_TOMATOES =
