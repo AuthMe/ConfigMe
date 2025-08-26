@@ -387,7 +387,8 @@ public class MapperImpl implements Mapper {
         if (definition.isPresent()) {
             List<Object> propertyValues = definition.get().getProperties().stream()
                 .map(prop -> {
-                    MappingContext childContext = context.createChild(prop.getName(), prop.getTypeInformation());
+                    TypeInfo propertyType = context.getTargetType().resolve(prop.getTypeInformation().getType());
+                    MappingContext childContext = context.createChild(prop.getName(), propertyType);
                     return convertValueForType(childContext, entries.get(prop.getName()));
                 })
                 .collect(Collectors.toList());
