@@ -65,16 +65,17 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(MockitoExtension.class)
 class MapperImplTest {
 
+    private final MapperImpl mapper = new MapperImpl();
+
     @Test
     void shouldCreateWorldGroups() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds.yml");
-        MapperImpl mapperImpl = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
         WorldGroupConfig result =
-            mapperImpl.convertToBean(reader.getObject(""), WorldGroupConfig.class, errorRecorder);
+            mapper.convertToBean(reader.getObject(""), WorldGroupConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
@@ -92,12 +93,11 @@ class MapperImplTest {
     void shouldCreateCommands() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
-        MapperImpl mapperImpl = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
         CommandConfig config =
-            mapperImpl.convertToBean(reader.getObject("commandconfig"), CommandConfig.class, errorRecorder);
+            mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(false));
@@ -128,11 +128,10 @@ class MapperImplTest {
     void shouldSkipInvalidEntry() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds_invalid.yml");
-        MapperImpl mapperImpl = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        WorldGroupConfig config = mapperImpl.convertToBean(
+        WorldGroupConfig config = mapper.convertToBean(
             reader.getObject(""), WorldGroupConfig.class, errorRecorder);
 
         // then
@@ -145,7 +144,6 @@ class MapperImplTest {
     void shouldHandleInvalidErrors() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -164,7 +162,6 @@ class MapperImplTest {
     @Test
     void shouldReturnNullForUnavailableSection() {
         // given
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -178,7 +175,6 @@ class MapperImplTest {
     void shouldThrowForMapWithNonStringKeyType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/mapconfig.yml");
-        MapperImpl mapper = new MapperImpl();
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
@@ -194,7 +190,6 @@ class MapperImplTest {
     void shouldThrowForUnsupportedCollectionType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
-        MapperImpl mapper = new MapperImpl();
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
@@ -209,7 +204,6 @@ class MapperImplTest {
     void shouldThrowForUntypedCollection() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
-        MapperImpl mapper = new MapperImpl();
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
@@ -224,7 +218,6 @@ class MapperImplTest {
     void shouldThrowForUntypedMap() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/mapconfig.yml");
-        MapperImpl mapper = new MapperImpl();
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
@@ -239,7 +232,6 @@ class MapperImplTest {
     void shouldThrowForCollectionWithGenerics() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
-        MapperImpl mapper = new MapperImpl();
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
@@ -253,7 +245,6 @@ class MapperImplTest {
     @Test
     void shouldThrowForUnsupportedMapType() {
         // given
-        MapperImpl mapper = new MapperImpl();
         Class<?> type = new HashMap() { }.getClass();
         MappingContext context = createContextWithTargetType(type);
 
@@ -268,7 +259,6 @@ class MapperImplTest {
     @Test
     void shouldCreateCorrectMapType() {
         // given
-        MapperImpl mapper = new MapperImpl();
         MappingContext interfaceCtx = createContextWithTargetType(Map.class);
         MappingContext hashCtx = createContextWithTargetType(HashMap.class);
         MappingContext navigableCtx = createContextWithTargetType(NavigableMap.class);
@@ -285,7 +275,6 @@ class MapperImplTest {
     void shouldReturnNullForUnmappableMandatoryField() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid_2.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -299,7 +288,6 @@ class MapperImplTest {
     void shouldReturnNullForMissingSection() {
         // given
         PropertyReader reader = createReaderFromFile("/empty_file.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -313,7 +301,6 @@ class MapperImplTest {
     void shouldHandleEmptyOptionalFields() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -333,7 +320,6 @@ class MapperImplTest {
     void shouldLoadConfigWithOptionalProperties() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/optionalproperties/complex-commands.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -374,7 +360,6 @@ class MapperImplTest {
     void shouldHandleComplexOptionalType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -392,7 +377,6 @@ class MapperImplTest {
     void shouldReturnEmptyOptionalForEmptyFile() {
         // given
         PropertyReader reader = createReaderFromFile("/empty_file.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -410,7 +394,6 @@ class MapperImplTest {
         Path tempFile = TestUtils.createTemporaryFile(tempDir);
         Files.write(tempFile, "{}".getBytes());
         PropertyReader reader = new YamlFileReader(tempFile);
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -429,7 +412,6 @@ class MapperImplTest {
         Path tempFile = TestUtils.createTemporaryFile(tempDir);
         Files.write(tempFile, "{}".getBytes());
         PropertyReader reader = new YamlFileReader(tempFile);
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
