@@ -1,22 +1,33 @@
 package ch.jalu.configme.beanmapper;
 
+import ch.jalu.configme.TestUtils;
+import ch.jalu.configme.beanmapper.worldgroup.GameMode;
+import ch.jalu.configme.beanmapper.worldgroup.Group;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.types.BeanPropertyType;
+import ch.jalu.configme.resource.YamlFileReader;
 import ch.jalu.typeresolver.reference.TypeReference;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
@@ -93,24 +104,33 @@ class MapperTypeResolutionTest {
     }
 
     @Test
-    void shouldMapToRecursiveBean() {
+    void shouldMapToRecursiveBean(@TempDir Path tempDir) throws IOException {
         // given
         TypeReference<RecursiveBean<TimeUnit>> typeReference = new TypeReference<RecursiveBean<TimeUnit>>() { };
-        // todo: consider making this a yaml
-        Map<String, Object> map = new HashMap<>();
-        map.put("value", TimeUnit.MILLISECONDS.name());
-        map.put("optionalExtension", createMap("comment", "Fallback value",
-                                               "value", createMap("value", "HOURS", "children", Collections.emptyList())));
-        map.put("children", Arrays.asList(
-            createMap("value", "DAYS", "children", Collections.emptyList()),
-            createMap("value", "NANOSECONDS", "optionalExtension", createMap("comment", "more",
-                "value", createMap("value", "MINUTES", "children", Collections.emptyList())),
-                    "children", Collections.emptyMap())
-        ));
+        List<String> yaml = Arrays.asList(
+            "value: 'MILLISECONDS'",
+            "optionalExtension:",
+            "    comment: 'Fallback value'",
+            "    value:",
+            "        value: 'HOURS'",
+            "        children: []",
+            "children:",
+            "    - value: 'DAYS'",
+            "      children: []",
+            "    - value: 'NANOSECONDS'",
+            "      optionalExtension:",
+            "          comment: 'more'",
+            "          value: {value: 'MINUTES', children: []}",
+            "          children: []",
+            "      children: []");
+        Path file = TestUtils.createTemporaryFile(tempDir);
+        Files.write(file, yaml);
+        YamlFileReader reader = new YamlFileReader(file);
+        BeanPropertyType<RecursiveBean<TimeUnit>> beanPropertyType = new BeanPropertyType<>(typeReference, mapper);
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        RecursiveBean<TimeUnit> result = (RecursiveBean<TimeUnit>) mapper.convertToBean(map, typeReference, errorRecorder);
+        RecursiveBean<TimeUnit> result = beanPropertyType.convert(reader.getObject(""), errorRecorder);
 
         // then
         assertThat(result, notNullValue());
@@ -124,7 +144,7 @@ class MapperTypeResolutionTest {
         assertThat(result.children.get(1).optionalExtension.isPresent(), equalTo(true));
         assertThat(result.children.get(1).optionalExtension.get().value.value, equalTo(TimeUnit.MINUTES));
         assertThat(result.children.get(1).optionalExtension.get().comment, equalTo("more"));
-        assertThat(errorRecorder.isFullyValid(), equalTo(false)); // todo - expect true
+        assertThat(errorRecorder.isFullyValid(), equalTo(true));
     }
 
     @Test
@@ -160,6 +180,76 @@ class MapperTypeResolutionTest {
 
         // then
         assertThat(ex.getMessage(), equalTo("The target type cannot be converted to a class, for mapping of: [Bean path: 'value', type: 'V']"));
+    }
+
+    @Test
+    void shouldSupportMapWithTypeArgument() {
+        // given
+        TypeReference<Map<String, HistorizedValue<Double>>> typeReference = new TypeReference<Map<String, HistorizedValue<Double>>>() { };
+        Map<String, Object> map = new HashMap<>();
+        map.put("float", createMap("value", 5.0f, "comment", "From float", "previousValues", Arrays.asList(3.0f)));
+        map.put("int", createMap("value", 12, "comment", "From integer", "previousValues", Arrays.asList(15, 8)));
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+
+        // when
+        Map<String, HistorizedValue<Double>> result =
+            (Map<String, HistorizedValue<Double>>) mapper.convertToBean(map, typeReference, errorRecorder);
+
+        // then
+        assertThat(result.keySet(), containsInAnyOrder("float", "int"));
+        CommentedValue.assertValues(result.get("float"), 5d, "From float");
+        assertThat(result.get("float").previousValues, contains(3d));
+        CommentedValue.assertValues(result.get("int"), 12d, "From integer");
+        assertThat(result.get("int").previousValues, contains(15d, 8d));
+        assertThat(errorRecorder.isFullyValid(), equalTo(true));
+    }
+
+    @Test
+    void shouldSupportSetWithTypeArgument() {
+        // given
+        TypeReference<LinkedHashSet<CommentedValue<Group>>> typeReference = new TypeReference<LinkedHashSet<CommentedValue<Group>>>() { };
+        List<Object> list = Arrays.asList(
+            createMap("comment", "1", "value", createMap("worlds", Arrays.asList("lobby", "surv"), "default-gamemode", "SURVIVAL")),
+            createMap("comment", "2", "value", createMap("worlds", Arrays.asList("artistry"), "default-gamemode", "CREATIVE")));
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+
+        // when
+        LinkedHashSet<CommentedValue<Group>> result =
+            (LinkedHashSet<CommentedValue<Group>>) mapper.convertToBean(list, typeReference, errorRecorder);
+
+        // then
+        List<CommentedValue<Group>> resultAsList = new ArrayList<>(result);
+        assertThat(resultAsList, hasSize(2));
+        assertThat(resultAsList.get(0).comment, equalTo("1"));
+        assertThat(resultAsList.get(0).value.getWorlds(), contains("lobby", "surv"));
+        assertThat(resultAsList.get(0).value.getDefaultGamemode(), equalTo(GameMode.SURVIVAL));
+        assertThat(resultAsList.get(1).comment, equalTo("2"));
+        assertThat(resultAsList.get(1).value.getWorlds(), contains("artistry"));
+        assertThat(resultAsList.get(1).value.getDefaultGamemode(), equalTo(GameMode.CREATIVE));
+        assertThat(errorRecorder.isFullyValid(), equalTo(true));
+    }
+
+    @Test
+    void shouldSupportOptionalWithTypeArgument() {
+        // given
+        TypeReference<Optional<BeanWithTypeArg<Pattern>>> typeReference = new TypeReference<Optional<BeanWithTypeArg<Pattern>>>() { };
+        Map<String, Object> map = new HashMap<>();
+        map.put("version", "v[0-9]+");
+        map.put("value", createMap("value", "[a-z0-9]*", "comment", "Only lowercase"));
+        map.put("factors", createMap("a", "\\d+", "b", "0\\.\\d+"));
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+
+        // when
+        Optional<BeanWithTypeArg<Pattern>> result =
+            (Optional<BeanWithTypeArg<Pattern>>) mapper.convertToBean(map, typeReference, errorRecorder);
+
+        // then
+        assertThat(result.isPresent(), equalTo(true));
+        assertThat(result.get().version.pattern(), equalTo("v[0-9]+"));
+        assertThat(result.get().value.comment, equalTo("Only lowercase"));
+        assertThat(result.get().value.value.pattern(), equalTo("[a-z0-9]*"));
+        assertThat(result.get().factors.keySet(), containsInAnyOrder("a", "b"));
+        assertThat(errorRecorder.isFullyValid(), equalTo(true));
     }
 
     // #347: Replace with Map#of
