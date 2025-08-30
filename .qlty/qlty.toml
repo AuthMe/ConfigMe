@@ -5,5 +5,5 @@ exclude_patterns = ["src/test/java/**"]
 
 [[plugin]]
 name = "checkstyle"
-mode = "enabled"
+enabled = true
 config_files = [".checkstyle.xml"]
