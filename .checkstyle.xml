@@ -3,12 +3,10 @@
         "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
         "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 <!--
- In order to be compatible with CodeClimate, we have to stay in sync with the version of Checkstyle that they are using.
- It doesn't seem to be updated much by default, but we can specify a channel, which is currently using 10.7.0.
- Check the links below to get up-to-date version information.
- https://github.com/codeclimate/codeclimate-checkstyle/branches/all (channel/ branches)
- https://docs.codeclimate.com/docs/checkstyle
- https://github.com/codeclimate/codeclimate-checkstyle/blob/master/bin/install-checkstyle.sh
+ In order to be compatible with qlty, we have to stay in sync with the version of Checkstyle that they are using.
+ It doesn't seem to be documented at an obvious location, but can be looked up in the plugin definition:
+ https://github.com/qltysh/qlty/blob/main/qlty-plugins/plugins/linters/checkstyle/plugin.toml
+ The version at the time of writing is 11.0.0.
 -->
 
 <module name="Checker">
