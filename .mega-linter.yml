@@ -37,10 +37,11 @@ ENABLE_LINTERS:
   - JAVA_CHECKSTYLE
   - JAVA_PMD
 
-YAML_FILTER_REGEX_INCLUDE: "(\\.github/.*|config/.*)"
+YAML_FILTER_REGEX_INCLUDE: '\\.github/.*'
 
 # https://megalinter.io/8.8.0/descriptors/java_checkstyle/
-JAVA_CHECKSTYLE_CONFIG_FILE: ".checkstyle.xml"
+JAVA_CHECKSTYLE_CONFIG_FILE: '.checkstyle.xml'
+JAVA_CHECKSTYLE_FILTER_REGEX_INCLUDE: 'src/main'
 
 DISABLE:
   # - COPYPASTE # Uncomment to disable checks of excessive copy-pastes
