@@ -145,7 +145,7 @@
         <module name="JavadocTagContinuationIndentation" />
         <module name="JavadocType" />
         <module name="JavadocVariable">
-            <property name="scope" value="package" />
+            <property name="accessModifiers" value="package" />
         </module>
         <module name="MissingJavadocMethod">
             <property name="scope" value="package" />
