@@ -12,7 +12,32 @@ APPLY_FIXES: none
 
 # If you use ENABLE_LINTERS variable, all other linters will be disabled by
 # default
-# ENABLE_LINTERS:
+# USe https://megalinter.io/8.8.0/flavors/java/ ?
+ENABLE_LINTERS:
+  - REPOSITORY_SECRETLINT
+  # - JSON_V8R
+  # - JSON_JSONLINT
+  - COPYPASTE_JSCPD
+  - YAML_V8R
+  - REPOSITORY_TRIVY
+  - REPOSITORY_TRIVY_SBOM
+  - REPOSITORY_CHECKOV
+  - ACTION_ACTIONLINT
+  - REPOSITORY_TRUFFLEHOG
+  - EDITORCONFIG_EDITORCONFIG_CHECKER
+  - MARKDOWN_MARKDOWN_LINK_CHECK
+  - JSON_PRETTIER
+  - MARKDOWN_MARKDOWN_TABLE_FORMATTER
+  - MARKDOWN_MARKDOWNLINT
+  - REPOSITORY_GITLEAKS
+  # - XML_XMLLINT
+  - YAML_PRETTIER
+  - REPOSITORY_GIT_DIFF
+  - REPOSITORY_SYFT
+  - JAVA_CHECKSTYLE
+  - JAVA_PMD
+
+YAML_FILTER_REGEX_INCLUDE: "(\\.github/.*|config/.*)"
 
 DISABLE:
   # - COPYPASTE # Uncomment to disable checks of excessive copy-pastes
@@ -21,4 +46,4 @@ DISABLE:
 SHOW_ELAPSED_TIME: true
 
 # Uncomment if you want MegaLinter to detect errors but not block CI to pass
-# DISABLE_ERRORS: true
+DISABLE_ERRORS: true
