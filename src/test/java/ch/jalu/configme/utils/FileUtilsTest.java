@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -88,7 +88,8 @@ class FileUtilsTest {
         given(fileSystem.provider()).willReturn(provider);
         Path child = mock(Path.class);
         given(child.getFileSystem()).willReturn(fileSystem);
-        doThrow(NoSuchFileException.class).when(provider).checkAccess(child); // for Files#exists
+        // #347: JDK21 does not call checkAccess anymore
+        lenient().doThrow(NoSuchFileException.class).when(provider).checkAccess(child); // for Files#exists
         IOException ioException = new IOException("File creation not supported");
         given(provider.newByteChannel(eq(child), anySet(), any(FileAttribute[].class))).willThrow(ioException);
 
