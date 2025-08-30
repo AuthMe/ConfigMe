@@ -209,10 +209,6 @@ public class MapperImpl implements Mapper {
     @Override
     public @Nullable Object convertToBean(@Nullable Object value, @NotNull TypeInfo targetType,
                                           @NotNull ConvertErrorRecorder errorRecorder) {
-        if (value == null) {
-            return null;
-        }
-
         return convertValueForType(createRootMappingContext(targetType, errorRecorder), value);
     }
 
