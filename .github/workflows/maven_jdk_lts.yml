@@ -2,6 +2,8 @@
 
 name: Maven build
 on: [push, pull_request]
+permissions:
+  contents: read
 
 jobs:
   build:
