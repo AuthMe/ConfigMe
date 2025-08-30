@@ -3,12 +3,10 @@
         "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
         "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 <!--
- In order to be compatible with CodeClimate, we have to stay in sync with the version of Checkstyle that they are using.
- It doesn't seem to be updated much by default, but we can specify a channel, which is currently using 10.7.0.
+ In order to be compatible with Megalint, we have to stay in sync with the version of Checkstyle that they are using.
+ This is, at the time of writing, 10.25.0.
  Check the links below to get up-to-date version information.
- https://github.com/codeclimate/codeclimate-checkstyle/branches/all (channel/ branches)
- https://docs.codeclimate.com/docs/checkstyle
- https://github.com/codeclimate/codeclimate-checkstyle/blob/master/bin/install-checkstyle.sh
+ https://megalinter.io/8.8.0/descriptors/java_checkstyle/
 -->
 
 <module name="Checker">
