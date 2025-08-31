@@ -45,14 +45,14 @@ public class SetProperty<E> extends CollectionProperty<E, Set<E>> {
     /**
      * Constructor. Use {@link #withSetType}.
      *
+     * @param setType the type of the set
      * @param path the path of the property
-     * @param type the type of the set
      * @param defaultValue the default value of the property
      */
     // Constructor arguments are usually (path, type, defaultValue), but this is not possible here because there
     // are other constructors with the same argument order.
-    protected SetProperty(@NotNull PropertyType<Set<E>> type, @NotNull String path, @NotNull Set<E> defaultValue) {
-        super(path, type, Collections.unmodifiableSet(defaultValue));
+    protected SetProperty(@NotNull PropertyType<Set<E>> setType, @NotNull String path, @NotNull Set<E> defaultValue) {
+        super(path, setType, Collections.unmodifiableSet(defaultValue));
     }
 
     /**

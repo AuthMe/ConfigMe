@@ -42,14 +42,15 @@ public class ListProperty<E> extends CollectionProperty<E, List<E>> {
     /**
      * Constructor. Use {@link #withListType}.
      *
+     * @param listType the list type
      * @param path the path of the property
-     * @param type the list type
      * @param defaultValue the default value of the property
      */
     // Constructor arguments are usually (path, type, defaultValue), but this is not possible here because there
     // are other constructors with the same argument order.
-    protected ListProperty(@NotNull PropertyType<List<E>> type, @NotNull String path, @NotNull List<E> defaultValue) {
-        super(path, type, Collections.unmodifiableList(defaultValue));
+    protected ListProperty(@NotNull PropertyType<List<E>> listType, @NotNull String path,
+                           @NotNull List<E> defaultValue) {
+        super(path, listType, Collections.unmodifiableList(defaultValue));
     }
 
     /**
