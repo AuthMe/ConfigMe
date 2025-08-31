@@ -46,7 +46,7 @@ public class PropertyListBuilder {
 
     /**
      * Creates a list of properties that have been added, by insertion order but grouped by path parents
-     * (see class JavaDoc).
+     * (see class Javadoc).
      *
      * @return ordered list of registered properties
      */

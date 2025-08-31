@@ -23,7 +23,7 @@ public class SettingsHolderWithInvalidConstants implements SettingsHolder {
     private SettingsHolderWithInvalidConstants() {
     }
 
-    // used for test ensuring classes only have a sole no-args private constructor
+    // used for test ensuring classes only have a sole no-arg private constructor
     private SettingsHolderWithInvalidConstants(boolean other) {
     }
 

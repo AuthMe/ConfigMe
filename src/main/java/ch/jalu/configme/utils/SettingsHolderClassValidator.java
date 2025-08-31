@@ -141,7 +141,7 @@ public class SettingsHolderClassValidator {
 
     /**
      * Throws an exception if any of the provided setting holder classes does not have a single private
-     * no-args constructor.
+     * no-arg constructor.
      *
      * @param settingHolders the classes to check
      */
@@ -156,7 +156,7 @@ public class SettingsHolderClassValidator {
         }
 
         if (!invalidClasses.isEmpty()) {
-            throw new IllegalStateException("The following classes do not have a single no-args private constructor:"
+            throw new IllegalStateException("The following classes do not have a single no-arg private constructor:"
                 + "\n- " + String.join("\n- ", invalidClasses));
         }
     }

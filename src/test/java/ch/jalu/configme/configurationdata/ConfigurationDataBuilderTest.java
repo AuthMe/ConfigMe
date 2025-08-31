@@ -61,10 +61,10 @@ class ConfigurationDataBuilderTest {
     void shouldHandleSettingsHolderConstructorIssues() {
         ConfigMeException ex;
 
-        // Missing no-args constructor
+        // Missing no-arg constructor
         ex = assertThrows(ConfigMeException.class,
-            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.MissingNoArgsConstructor.class));
-        assertThat(ex.getMessage(), startsWith("Expected no-args constructor to be available for class "));
+            () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.MissingNoArgConstructor.class));
+        assertThat(ex.getMessage(), startsWith("Expected no-arg constructor to be available for class "));
 
         // Constructor throws exception
         ex = assertThrows(ConfigMeException.class,
@@ -79,7 +79,7 @@ class ConfigurationDataBuilderTest {
         // Class is interface
         ex = assertThrows(ConfigMeException.class,
             () -> ConfigurationDataBuilder.createConfiguration(IllegalSettingsHolderConstructorClasses.InterfaceSettingsHolder.class));
-        assertThat(ex.getMessage(), startsWith("Expected no-args constructor to be available for interface "));
+        assertThat(ex.getMessage(), startsWith("Expected no-arg constructor to be available for interface "));
     }
 
     @Test

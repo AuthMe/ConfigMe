@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Maps the values of a property reader to Java classes (referred to as beans). See the JavaDoc on the default
+ * Maps the values of a property reader to Java classes (referred to as beans). See the Javadoc on the default
  * implementation, {@link MapperImpl}, for more details.
  */
 public interface Mapper {

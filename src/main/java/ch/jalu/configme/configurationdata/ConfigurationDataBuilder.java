@@ -181,7 +181,7 @@ public class ConfigurationDataBuilder {
             ReflectionHelper.setAccessibleIfNeeded(constructor);
             return constructor.newInstance();
         } catch (NoSuchMethodException e) {
-            throw new ConfigMeException("Expected no-args constructor to be available for " + clazz, e);
+            throw new ConfigMeException("Expected no-arg constructor to be available for " + clazz, e);
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new ConfigMeException("Could not create instance of " + clazz, e);
         }

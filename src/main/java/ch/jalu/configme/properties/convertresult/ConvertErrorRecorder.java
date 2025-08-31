@@ -19,7 +19,7 @@ public class ConvertErrorRecorder {
     private boolean hasError;
 
     /**
-     * Registers that some error occurred during the conversion of the value. See class javadoc: no need to register
+     * Registers that some error occurred during the conversion of the value. See class Javadoc: no need to register
      * an error if the return value of the conversion implies there is an issue (such as returning null).
      *
      * @param reason the reason (not used in this implementation but may be extended for debugging)
