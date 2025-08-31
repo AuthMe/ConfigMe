@@ -66,9 +66,6 @@ import static ch.jalu.configme.internal.PathUtils.pathSpecifierForMapKey;
  */
 public class MapperImpl implements Mapper {
 
-    /** Marker object to signal that null is meant to be used as value. */
-    public static final Object RETURN_NULL = new Object();
-
     // ---------
     // Fields and general configurable methods
     // ---------
@@ -159,12 +156,12 @@ public class MapperImpl implements Mapper {
 
     /**
      * Handles values of types which need special handling (such as Optional). Null means the value is not
-     * a special type and that the export value should be built differently. Use {@link #RETURN_NULL} to
+     * a special type and that the export value should be built differently. Use {@link LeafValueHandler#RETURN_NULL} to
      * signal that null should be used as the export value of the provided value.
      *
      * @param value the value to convert
      * @param exportContext export context
-     * @return the export value to use or {@link #RETURN_NULL}, or null if not applicable
+     * @return the export value to use or {@link LeafValueHandler#RETURN_NULL}, or null if not applicable
      */
     protected @Nullable Object createExportValueForSpecialTypes(@Nullable Object value,
                                                                 @NotNull ExportContext exportContext) {
@@ -192,14 +189,14 @@ public class MapperImpl implements Mapper {
             Optional<?> optional = (Optional<?>) value;
             return optional
                 .map(v -> toExportValue(v, exportContext.createChildContext(OPTIONAL_SPECIFIER)))
-                .orElse(RETURN_NULL);
+                .orElse(LeafValueHandler.RETURN_NULL);
         }
 
         return null;
     }
 
     protected static @Nullable Object unwrapReturnNull(@Nullable Object o) {
-        return o == RETURN_NULL ? null : o;
+        return o == LeafValueHandler.RETURN_NULL ? null : o;
     }
 
     // ---------

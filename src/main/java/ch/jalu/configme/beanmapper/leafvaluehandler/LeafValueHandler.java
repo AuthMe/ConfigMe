@@ -20,6 +20,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface LeafValueHandler {
 
+    /** Marker object to signal that null is meant to be used as value. */
+    Object RETURN_NULL = new Object();
+
     /**
      * Converts the given value to the target type (as defined by the mapping context), if supported. Otherwise,
      * null is returned. If a value is returned, its type is guaranteed to match the target type.
@@ -33,6 +36,8 @@ public interface LeafValueHandler {
     /**
      * Converts the value of a property to a value suitable for exporting. This method converts the opposite
      * way of {@link #convert}. Null is returned if this leaf value handler does not support the object's type.
+     * If the leaf value handler determines that {@code null} should be used as export value, then {@link #RETURN_NULL}
+     * is returned, which the caller needs to unwrap to {@code null}.
      *
      * @param value the value to convert
      * @param exportContext the export context (usually not needed)
