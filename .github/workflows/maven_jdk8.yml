@@ -1,7 +1,7 @@
 # Builds the project with Java 8.
 
 name: Java 8 build
-on: [ push, pull_request ]
+on: [push, pull_request]
 permissions:
   contents: read
 
@@ -30,4 +30,3 @@ jobs:
           base-path: src/main/java
           # The file is optional, but the documentation says it's better to specify it.
           file: target/site/jacoco/jacoco.xml
-
