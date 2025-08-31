@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * of {@link ch.jalu.configme.properties.Property} type in a class
  * which implements this interface.
  * <p>
- * Classes implementing this interface must have a no-args constructor (any visibility).
+ * Classes implementing this interface must have a no-arg constructor (any visibility).
  *
  * @see ch.jalu.configme.properties.PropertyInitializer
  * @see ch.jalu.configme.configurationdata.ConfigurationDataBuilder

@@ -203,7 +203,7 @@ class SettingsHolderClassValidatorTest {
             () -> validator.validateClassesHaveHiddenNoArgConstructor(classes));
 
         // then
-        assertThat(e.getMessage(), equalTo("The following classes do not have a single no-args private constructor:"
+        assertThat(e.getMessage(), equalTo("The following classes do not have a single no-arg private constructor:"
             + "\n- ch.jalu.configme.samples.settingsholders.SettingsHolderWithEnumPropertyComments"
             + "\n- ch.jalu.configme.samples.settingsholders.SettingsHolderWithInvalidConstants"));
     }

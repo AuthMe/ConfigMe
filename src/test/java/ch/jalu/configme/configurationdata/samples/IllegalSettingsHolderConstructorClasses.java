@@ -12,11 +12,11 @@ public final class IllegalSettingsHolderConstructorClasses {
     }
 
     /**
-     * Class doesn't have a no-args constructor.
+     * Class doesn't have a no-arg constructor.
      */
-    public final static class MissingNoArgsConstructor implements SettingsHolder {
+    public final static class MissingNoArgConstructor implements SettingsHolder {
 
-        MissingNoArgsConstructor(String str) {
+        MissingNoArgConstructor(String str) {
         }
     }
 

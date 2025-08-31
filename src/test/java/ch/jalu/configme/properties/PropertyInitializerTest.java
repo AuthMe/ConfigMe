@@ -89,7 +89,7 @@ class PropertyInitializerTest {
     }
 
     @Test
-    void shouldHaveAccessibleNoArgsConstructorForExtensions() {
+    void shouldHaveAccessibleNoArgConstructorForExtensions() {
         // given / when
         new PropertyInitializer() { };
 
