@@ -3,9 +3,7 @@ package ch.jalu.configme.resource;
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
-import ch.jalu.configme.properties.BaseProperty;
-import ch.jalu.configme.properties.Property;
-import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.EnumSetProperty;
 import ch.jalu.configme.samples.TestEnum;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,14 +13,11 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ch.jalu.configme.TestUtils.transform;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -48,9 +43,9 @@ class YamlSetPropertyExportTest {
     void shouldLoadAndExportProperly() throws IOException {
         // given
         PropertyResource resource = new YamlFileResource(configFile);
-        Property<Set<TestEnum>> setProperty = new EnumSetProperty("sample.ratio.fields", Collections.emptySet());
+        EnumSetProperty<TestEnum> setProperty = new ExportToSetProperty("sample.ratio.fields");
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(singletonList(setProperty));
-        configurationData.setValue(setProperty, new LinkedHashSet<>(Arrays.asList(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD)));
+        configurationData.setValue(setProperty, EnumSet.of(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD));
 
         // when
         resource.exportProperties(configurationData);
@@ -68,25 +63,14 @@ class YamlSetPropertyExportTest {
             "        - THIRD"));
     }
 
-    private static final class EnumSetProperty extends BaseProperty<Set<TestEnum>> {
+    private static final class ExportToSetProperty extends EnumSetProperty<TestEnum> {
 
-        EnumSetProperty(String path, Set<TestEnum> defaultValue) {
-            super(path, defaultValue);
+        ExportToSetProperty(String path) {
+            super(path, TestEnum.class, EnumSet.noneOf(TestEnum.class));
         }
 
         @Override
-        protected Set<TestEnum> getFromReader(@NotNull PropertyReader reader,
-                                              @NotNull ConvertErrorRecorder errorRecorder) {
-            List<?> list = reader.getList(getPath());
-            if (list == null) {
-                return null;
-            }
-            return new LinkedHashSet<>(
-                transform(list, v -> TestEnum.valueOf(v.toString())));
-        }
-
-        @Override
-        public Set<String> toExportValue(@NotNull Set<TestEnum> value) {
+        public Set<String> toExportValue(@NotNull EnumSet<TestEnum> value) {
             return value.stream()
                 .map(Enum::name)
                 .collect(Collectors.toCollection(LinkedHashSet::new));

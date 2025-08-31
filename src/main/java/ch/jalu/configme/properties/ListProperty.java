@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @param <E> the type of the elements in the list
  */
-public class ListProperty<E> extends TypeBasedProperty<List<E>> {
+public class ListProperty<E> extends CollectionProperty<E, List<E>> {
 
     /**
      * Constructor.
