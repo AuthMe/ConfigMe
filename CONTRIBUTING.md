@@ -20,6 +20,14 @@ of the AuthMe Discord server.
 
 No sweat if some points aren't met since they can be addressed in pull requests, and PRs can be squashed.
 
+### Glossary
+
+Try to use and write terms consistently. Some spellings:
+
+- ConfigMe
+- Javadoc (always capitalized)
+- _no-arg constructor_ (not "zero-arg(s)")
+
 ## Code style
 
 Please try to match the current code style. A few pointers:
