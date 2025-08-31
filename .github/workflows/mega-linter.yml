@@ -14,6 +14,10 @@ on:
     branches:
       - master
 
+# Permissions. Depending on config, contents: write, issues: write and pull-requests: write should be added
+permissions:
+  contents: read
+
 # Comment env block if you do not want to apply fixes
 env:
   # Apply linter fixes configuration
@@ -38,10 +42,6 @@ jobs:
   megalinter:
     name: MegaLinter
     runs-on: ubuntu-latest
-
-    # Permissions. Depending on config, contents: write, issues: write and pull-requests: write should be added
-    permissions:
-      contents: read
 
     steps:
       # Git Checkout
