@@ -11,6 +11,6 @@
     "**/.idea/**",
     "**/report/**",
     "**/*.svg",
-    "**/*Test.java"
+    "**/src/test/**"
   ]
 }
