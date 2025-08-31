@@ -1,0 +1,37 @@
+# Configuration file for MegaLinter
+#
+# See all available variables at https://megalinter.io/latest/config-file/ and in
+# linters documentation
+
+# all, none, or list of linter keys
+APPLY_FIXES: none
+PRINT_ALPACA: false
+
+# See https://megalinter.io/8.8.0/flavors/java/ for a list of linters
+DISABLE_LINTERS:
+  - COPYPASTE_JSCPD
+  - EDITORCONFIG_EDITORCONFIG_CHECKER
+  - JAVA_PMD
+  - JSON_V8R
+  - JSON_JSONLINT
+  - JSON_PRETTIER
+  - SPELL_CSPELL
+  - SPELL_LYCHEE
+  - XML_XMLLINT
+  - YAML_PRETTIER
+
+# Exclude test files - some are intentionally badly formatted, some produce encoding issues, etc.
+YAML_FILTER_REGEX_EXCLUDE: 'src/test/.*'
+YAML_YAMLLINT_CONFIG_FILE: '.config/yamllint.yml'
+# YAML lint errors shouldn't mark the MegaLinter action as failed
+YAML_YAMLLINT_DISABLE_ERRORS: true
+
+# Markdown lint errors shouldn't mark the MegaLinter action as failed
+MARKDOWN_MARKDOWNLINT_DISABLE_ERRORS: true
+
+# https://megalinter.io/8.8.0/descriptors/java_checkstyle/
+JAVA_CHECKSTYLE_CONFIG_FILE: '.checkstyle.xml'
+JAVA_CHECKSTYLE_FILTER_REGEX_INCLUDE: 'src/main'
+
+# Uncomment if you want MegaLinter to detect errors but not block CI to pass
+# DISABLE_ERRORS: true
