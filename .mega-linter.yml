@@ -8,7 +8,6 @@ APPLY_FIXES: none
 PRINT_ALPACA: false
 
 TEXT_REPORTER: true
-SARIF_REPORTER: true
 
 # If you use ENABLE variable, all other languages/formats/tooling-formats will
 # be disabled by default

@@ -17,6 +17,7 @@ on:
 # Permissions. Depending on config, contents: write, issues: write and pull-requests: write should be added
 permissions:
   contents: read
+  pull-requests: write
 
 # Comment env block if you do not want to apply fixes
 env:

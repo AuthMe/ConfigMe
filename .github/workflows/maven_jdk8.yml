@@ -1,7 +1,7 @@
 # Builds the project with Java 8.
 
 name: Java 8 build
-on: [push, pull_request]
+on: [ push, pull_request ]
 permissions:
   contents: read
 
