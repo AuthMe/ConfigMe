@@ -1,18 +1,18 @@
 # Contributing
 
 Contributions are very much welcome! This can be in form of pull requests, issues, providing opinions on existing issues
-or pull request reviews. Moreover, let us know if you have a nice project that can be added to the list of 
+or pull request reviews. Moreover, let us know if you have a nice project that can be added to the list of
 [integrators](https://github.com/AuthMe/ConfigMe/wiki/Integrators)—seeing ConfigMe "out in the wild" helps understand
 the needs and the pain points of users!
 
-ConfigMe is managed heavily based on GitHub issues, so you're invited to open a new issue also for questions 
+ConfigMe is managed heavily based on GitHub issues, so you're invited to open a new issue also for questions
 (like [#126](https://github.com/AuthMe/ConfigMe/issues/126)) or for any other discussion points. Please discuss larger
 code changes first, either by creating an issue or by writing in the [`#configme` channel](https://discord.com/channels/295623711485198357/1143605240520769547)
 of the AuthMe Discord server.
 
 ## General conventions
 
-- If you're using IntelliJ, please install the Checkstyle plugin and configure it to use the rules from 
+- If you're using IntelliJ, please install the Checkstyle plugin and configure it to use the rules from
   `.checkstyle.xml`, located in the project's root directory.
 - Commit messages ideally start with the issue number they relate to, e.g. `#229 Remove option to split map keys by "."`
 - Please use sensibly-sized commits (e.g. don't commit every change separately).
