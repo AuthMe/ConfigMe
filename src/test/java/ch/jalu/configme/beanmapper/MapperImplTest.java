@@ -10,9 +10,9 @@ import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexCommandConf
 import ch.jalu.configme.beanmapper.command.optionalproperties.ComplexOptionalTypeConfig;
 import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.beanmapper.context.MappingContextImpl;
+import ch.jalu.configme.beanmapper.definition.BeanDefinitionService;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandler;
 import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
-import ch.jalu.configme.beanmapper.propertydescription.BeanDescriptionFactory;
 import ch.jalu.configme.beanmapper.typeissues.GenericCollection;
 import ch.jalu.configme.beanmapper.typeissues.MapWithNonStringKeys;
 import ch.jalu.configme.beanmapper.typeissues.UnsupportedCollection;
@@ -21,36 +21,42 @@ import ch.jalu.configme.beanmapper.typeissues.UntypedMap;
 import ch.jalu.configme.beanmapper.worldgroup.GameMode;
 import ch.jalu.configme.beanmapper.worldgroup.Group;
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
-import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.YamlFileReader;
 import ch.jalu.configme.samples.TestEnum;
 import ch.jalu.typeresolver.TypeInfo;
+import ch.jalu.typeresolver.reference.TypeReference;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 import static ch.jalu.configme.TestUtils.getJarPath;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -66,16 +72,17 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(MockitoExtension.class)
 class MapperImplTest {
 
+    private final MapperImpl mapper = new MapperImpl();
+
     @Test
     void shouldCreateWorldGroups() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds.yml");
-        MapperImpl mapperImpl = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
         WorldGroupConfig result =
-            mapperImpl.convertToBean(reader.getObject(""), WorldGroupConfig.class, errorRecorder);
+            mapper.convertToBean(reader.getObject(""), WorldGroupConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
@@ -93,12 +100,11 @@ class MapperImplTest {
     void shouldCreateCommands() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
-        MapperImpl mapperImpl = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
         CommandConfig config =
-            mapperImpl.convertToBean(reader.getObject("commandconfig"), CommandConfig.class, errorRecorder);
+            mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(false));
@@ -129,11 +135,10 @@ class MapperImplTest {
     void shouldSkipInvalidEntry() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds_invalid.yml");
-        MapperImpl mapperImpl = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        WorldGroupConfig config = mapperImpl.convertToBean(
+        WorldGroupConfig config = mapper.convertToBean(
             reader.getObject(""), WorldGroupConfig.class, errorRecorder);
 
         // then
@@ -146,7 +151,6 @@ class MapperImplTest {
     void shouldHandleInvalidErrors() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -165,7 +169,6 @@ class MapperImplTest {
     @Test
     void shouldReturnNullForUnavailableSection() {
         // given
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -179,7 +182,6 @@ class MapperImplTest {
     void shouldThrowForMapWithNonStringKeyType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/mapconfig.yml");
-        MapperImpl mapper = new MapperImpl();
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
@@ -195,7 +197,6 @@ class MapperImplTest {
     void shouldThrowForUnsupportedCollectionType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
-        MapperImpl mapper = new MapperImpl();
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
@@ -210,7 +211,6 @@ class MapperImplTest {
     void shouldThrowForUntypedCollection() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
-        MapperImpl mapper = new MapperImpl();
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
@@ -225,7 +225,6 @@ class MapperImplTest {
     void shouldThrowForUntypedMap() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/mapconfig.yml");
-        MapperImpl mapper = new MapperImpl();
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
@@ -240,7 +239,6 @@ class MapperImplTest {
     void shouldThrowForCollectionWithGenerics() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/typeissues/collectionconfig.yml");
-        MapperImpl mapper = new MapperImpl();
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
@@ -254,7 +252,6 @@ class MapperImplTest {
     @Test
     void shouldThrowForUnsupportedMapType() {
         // given
-        MapperImpl mapper = new MapperImpl();
         Class<?> type = new HashMap() { }.getClass();
         MappingContext context = createContextWithTargetType(type);
 
@@ -269,7 +266,6 @@ class MapperImplTest {
     @Test
     void shouldCreateCorrectMapType() {
         // given
-        MapperImpl mapper = new MapperImpl();
         MappingContext interfaceCtx = createContextWithTargetType(Map.class);
         MappingContext hashCtx = createContextWithTargetType(HashMap.class);
         MappingContext navigableCtx = createContextWithTargetType(NavigableMap.class);
@@ -286,7 +282,6 @@ class MapperImplTest {
     void shouldReturnNullForUnmappableMandatoryField() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid_2.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -300,7 +295,6 @@ class MapperImplTest {
     void shouldReturnNullForMissingSection() {
         // given
         PropertyReader reader = createReaderFromFile("/empty_file.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -314,7 +308,6 @@ class MapperImplTest {
     void shouldHandleEmptyOptionalFields() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -334,7 +327,6 @@ class MapperImplTest {
     void shouldLoadConfigWithOptionalProperties() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/optionalproperties/complex-commands.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -375,7 +367,6 @@ class MapperImplTest {
     void shouldHandleComplexOptionalType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -393,7 +384,6 @@ class MapperImplTest {
     void shouldReturnEmptyOptionalForEmptyFile() {
         // given
         PropertyReader reader = createReaderFromFile("/empty_file.yml");
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -411,7 +401,6 @@ class MapperImplTest {
         Path tempFile = TestUtils.createTemporaryFile(tempDir);
         Files.write(tempFile, "{}".getBytes());
         PropertyReader reader = new YamlFileReader(tempFile);
-        MapperImpl mapper = new MapperImpl();
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -425,45 +414,114 @@ class MapperImplTest {
     }
 
     @Test
-    void shouldInvokeDefaultConstructor() {
+    void shouldReturnNullForUnsupportedType(@TempDir Path tempDir) throws IOException {
         // given
-        MapperImpl mapper = new MapperImpl();
+        Path tempFile = TestUtils.createTemporaryFile(tempDir);
+        Files.write(tempFile, "{}".getBytes());
+        PropertyReader reader = new YamlFileReader(tempFile);
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        Object command = mapper.createBeanMatchingType(createContextWithTargetType(Command.class));
+        Instant result = mapper.convertToBean(reader.getObject(""), Instant.class, errorRecorder);
 
         // then
-        assertThat(command, instanceOf(Command.class));
-    }
-
-    @Test
-    void shouldForwardException() {
-        // given
-        MapperImpl mapper = new MapperImpl();
-
-        // when
-        ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> mapper.createBeanMatchingType(createContextWithTargetType(Iterable.class)));
-
-        // then
-        assertThat(ex.getMessage(), containsString("It is required to have a default constructor"));
-        assertThat(ex.getCause(), instanceOf(NoSuchMethodException.class));
+        assertThat(result, nullValue());
     }
 
     @Test
     void shouldReturnFields() {
         // given
-        BeanDescriptionFactory descriptionFactory = mock(BeanDescriptionFactory.class);
+        BeanDefinitionService beanDefinitionService = mock(BeanDefinitionService.class);
         LeafValueHandlerImpl leafValueHandler = mock(LeafValueHandlerImpl.class);
-        MapperImpl mapper = new MapperImpl(descriptionFactory, leafValueHandler);
+        MapperImpl mapper = new MapperImpl(beanDefinitionService, leafValueHandler);
 
         // when
-        BeanDescriptionFactory returnedDescriptionFactory = mapper.getBeanDescriptionFactory();
+        BeanDefinitionService returnedBeanDefinitionService = mapper.getBeanDefinitionService();
         LeafValueHandler returnedLeafValueHandler = mapper.getLeafValueHandler();
 
         // then
-        assertThat(returnedDescriptionFactory, sameInstance(descriptionFactory));
+        assertThat(returnedBeanDefinitionService, sameInstance(beanDefinitionService));
         assertThat(returnedLeafValueHandler, sameInstance(leafValueHandler));
+    }
+
+    /**
+     * Ensures consistent behavior between a type that should directly be mapped vs. same type encountered later
+     * inside of a bean. This test is for the Optional special case.
+     */
+    @ParameterizedTest
+    @MethodSource("mismatchingArguments")
+    void shouldReturnSameResultOnMismatchAsFromFieldForOptional(Object in) {
+        // given
+        TypeReference<Optional<TimeUnit>> optionalType = new TypeReference<Optional<TimeUnit>>() { };
+        Map<String, Object> map = new HashMap<>();
+        if (in != null) {
+            map.put("unit", in);
+        }
+
+        // when
+        Object directResult = mapper.convertToBean(in, optionalType, new ConvertErrorRecorder());
+        BeanWithOptional beanResult = mapper.convertToBean(map, BeanWithOptional.class, new ConvertErrorRecorder());
+
+        // then
+        assertThat(directResult, equalTo(Optional.empty()));
+        assertThat(beanResult.unit, equalTo(Optional.empty()));
+    }
+
+    /**
+     * Ensures consistent behavior for lists as described in
+     * {@link #shouldReturnSameResultOnMismatchAsFromFieldForOptional}.
+     */
+    @ParameterizedTest
+    @MethodSource("mismatchingArguments")
+    void shouldReturnSameResultOnMismatchAsFromFieldForList(Object in) {
+        // given
+        TypeReference<List<TimeUnit>> listType = new TypeReference<List<TimeUnit>>() { };
+        Map<String, Object> map = new HashMap<>();
+        if (in != null) {
+            map.put("list", in);
+        }
+
+        // when
+        Object directResult = mapper.convertToBean(in, listType, new ConvertErrorRecorder());
+        BeanWithList beanResult = mapper.convertToBean(map, BeanWithList.class, new ConvertErrorRecorder());
+
+        // then
+        if (in instanceof List<?>) {
+            assertThat(directResult, equalTo(Collections.emptyList()));
+            assertThat(beanResult.list, equalTo(Collections.emptyList()));
+        } else {
+            assertThat(directResult, nullValue());
+            assertThat(beanResult, nullValue());
+        }
+    }
+
+    /**
+     * Ensures consistent behavior for maps as described in
+     * {@link #shouldReturnSameResultOnMismatchAsFromFieldForOptional}.
+     */
+    @ParameterizedTest
+    @MethodSource("mismatchingArguments")
+    void shouldReturnSameResultOnMismatchAsFromFieldForMap(Object in) {
+        // given
+        TypeReference<Map<String, TimeUnit>> mapType = new TypeReference<Map<String, TimeUnit>>() { };
+
+        Map<String, Object> map = new HashMap<>();
+        if (in != null) {
+            map.put("map", in);
+        }
+
+        // when
+        Object directResult = mapper.convertToBean(in, mapType, new ConvertErrorRecorder());
+        BeanWithMap beanResult = mapper.convertToBean(map, BeanWithMap.class, new ConvertErrorRecorder());
+
+        // then
+        if (in instanceof Map<?, ?>) {
+            assertThat(directResult, equalTo(Collections.emptyMap()));
+            assertThat(beanResult.map, equalTo(Collections.emptyMap()));
+        } else {
+            assertThat(directResult, nullValue());
+            assertThat(beanResult, nullValue());
+        }
     }
 
     private static void assertAllOptionalFieldsEmpty(ComplexCommand complexCommand) {
@@ -488,6 +546,17 @@ class MapperImplTest {
         TypeInfo type = new TypeInfo(targetType);
         MappingContextImpl root = MappingContextImpl.createRoot(type, new ConvertErrorRecorder());
         return root.createChild("path.in.test", type);
+    }
+
+    static List<Object> mismatchingArguments() {
+        return Arrays.asList(
+            null,
+            "invalid",
+            17,
+            Collections.emptyList(),
+            Collections.singletonList("unknown"),
+            Collections.emptyMap(),
+            Collections.singletonMap("foo", 14));
     }
 
     private static Matcher<Command> hasExecution(Executor executor, boolean optional, Double importance) {
@@ -521,5 +590,17 @@ class MapperImplTest {
                     executor, optional, importance);
             }
         };
+    }
+
+    private static final class BeanWithOptional {
+        Optional<TimeUnit> unit;
+    }
+
+    private static final class BeanWithList {
+        List<TimeUnit> list;
+    }
+
+    private static final class BeanWithMap {
+        Map<String, TimeUnit> map;
     }
 }

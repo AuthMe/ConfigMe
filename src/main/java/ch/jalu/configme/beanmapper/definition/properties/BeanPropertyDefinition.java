@@ -1,16 +1,17 @@
-package ch.jalu.configme.beanmapper.propertydescription;
+package ch.jalu.configme.beanmapper.definition.properties;
 
+import ch.jalu.configme.beanmapper.definition.BeanDefinition;
 import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a property within a bean class, as used in {@link ch.jalu.configme.beanmapper.MapperImpl}.
- * There, for instance, there is a {@link BeanDescriptionFactory} field responsible for creating bean descriptions.
+ * Represents a property within a bean class, as used by {@link BeanDefinition}.
+ * Bean property definitions are provided by {@link BeanPropertyExtractor}.
  * <p>
- * Default implementation is {@link BeanPropertyDescriptionImpl}.
+ * Default implementation of this interface is {@link BeanFieldPropertyDefinition}.
  */
-public interface BeanPropertyDescription {
+public interface BeanPropertyDefinition {
 
     /**
      * @return the name of the property in the configuration file
@@ -21,15 +22,6 @@ public interface BeanPropertyDescription {
      * @return property type
      */
     @NotNull TypeInfo getTypeInformation();
-
-    /**
-     * Sets the given value on the provided bean for this property. The value should correspond
-     * to the {@link #getTypeInformation() property type}.
-     *
-     * @param bean the bean to set the property on
-     * @param value the value to set
-     */
-    void setValue(@NotNull Object bean, @NotNull Object value);
 
     /**
      * Returns the value of the property for the given bean.

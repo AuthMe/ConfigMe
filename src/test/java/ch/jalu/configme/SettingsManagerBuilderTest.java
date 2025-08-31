@@ -195,7 +195,7 @@ class SettingsManagerBuilderTest {
         PropertyReader reader = manager.getPropertyResource().createReader();
 
         assertThat(TestVersionConfiguration.VERSION_NUMBER.determineValue(reader).getValue(), equalTo(2));
-        assertThat(TestVersionConfiguration.SHELF_POPATOES.determineValue(reader).getValue(), equalTo(4));
+        assertThat(TestVersionConfiguration.SHELF_POTATOES.determineValue(reader).getValue(), equalTo(4));
         assertThat(TestVersionConfiguration.SHELF_TOMATOES.determineValue(reader).getValue(), equalTo(10));
     }
 
@@ -219,7 +219,7 @@ class SettingsManagerBuilderTest {
             Property<Integer> oldPotatoesProperty = PropertyInitializer.newProperty("potatoes", 4);
             Property<Integer> oldTomatoesProperty = PropertyInitializer.newProperty("tomatoes", 10);
 
-            Property<Integer> newPotatoesProperty = TestVersionConfiguration.SHELF_POPATOES;
+            Property<Integer> newPotatoesProperty = TestVersionConfiguration.SHELF_POTATOES;
             Property<Integer> newTomatoesProperty = TestVersionConfiguration.SHELF_TOMATOES;
 
             MigrationUtils.moveProperty(oldPotatoesProperty, newPotatoesProperty, reader, configurationData);

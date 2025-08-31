@@ -1,6 +1,6 @@
 package ch.jalu.configme.beanmapper.context;
 
-import ch.jalu.configme.beanmapper.propertydescription.BeanPropertyComments;
+import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyComments;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

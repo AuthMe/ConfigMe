@@ -2,7 +2,7 @@
 [![Build Status](https://github.com/AuthMe/ConfigMe/actions/workflows/maven_jdk8.yml/badge.svg)](https://github.com/AuthMe/ConfigMe/actions?query=branch%3Amaster)
 [![Coverage Status](https://coveralls.io/repos/github/AuthMe/ConfigMe/badge.svg?branch=master)](https://coveralls.io/github/AuthMe/ConfigMe?branch=master)
 [![Javadocs](https://www.javadoc.io/badge/ch.jalu/configme.svg)](https://www.javadoc.io/doc/ch.jalu/configme)
-[![Code Climate](https://codeclimate.com/github/AuthMe/ConfigMe/badges/gpa.svg)](https://codeclimate.com/github/AuthMe/ConfigMe)
+[![MegaLinter](https://github.com/AuthMe/ConfigMe/workflows/MegaLinter/badge.svg?branch=master)](https://github.com/AuthMe/ConfigMe/actions?query=workflow%3AMegaLinter+branch%3Amaster)
 
 A simple configuration management library with YAML support out of the box.
 
@@ -78,8 +78,8 @@ public class WelcomeWriter {
 ```
 :pencil: Read the full documentation in the [ConfigMe Wiki](https://github.com/AuthMe/ConfigMe/wiki).
 
-:pencil: See a full working example based on this
-[here](https://github.com/AuthMe/ConfigMe/tree/master/src/test/java/ch/jalu/configme/demo).
+:pencil: See a full working example based on this:
+[ConfigMe demo](https://github.com/AuthMe/ConfigMe/tree/master/src/test/java/ch/jalu/configme/demo).
 
 :pencil: See how to use custom classes as property types in the
 [bean properties demo](https://github.com/AuthMe/ConfigMe/tree/master/src/test/java/ch/jalu/configme/demo/beans).

@@ -1,4 +1,4 @@
-package ch.jalu.configme.beanmapper.propertydescription;
+package ch.jalu.configme.beanmapper.definition.properties;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
