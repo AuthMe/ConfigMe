@@ -1,19 +1,18 @@
 <?xml version="1.0"?>
 <!DOCTYPE module PUBLIC
-        "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
-        "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
 <!--
- In order to be compatible with CodeClimate, we have to stay in sync with the version of Checkstyle that they are using.
- It doesn't seem to be updated much by default, but we can specify a channel, which is currently using 10.7.0.
- Check the links below to get up-to-date version information.
- https://github.com/codeclimate/codeclimate-checkstyle/branches/all (channel/ branches)
- https://docs.codeclimate.com/docs/checkstyle
- https://github.com/codeclimate/codeclimate-checkstyle/blob/master/bin/install-checkstyle.sh
+ In order to be compatible with Megalint, we have to stay in sync with the version of Checkstyle that they are using.
+ This is, at the time of writing, 10.25.0. Check the documentation to get up-to-date version information:
+   https://megalinter.io/8.8.0/descriptors/java_checkstyle/
+ The output of the GitHub Action also reports the Checkstyle version:
+   https://github.com/AuthMe/ConfigMe/actions/workflows/mega-linter.yml?query=branch%3Amaster
 -->
 
 <module name="Checker">
     <property name="charset" value="UTF-8" />
-    <property name="severity" value="warning" />
+    <property name="severity" value="error" />
     <property name="fileExtensions" value="java" />
 
     <module name="SuppressWarningsFilter" />
@@ -147,7 +146,7 @@
         <module name="JavadocTagContinuationIndentation" />
         <module name="JavadocType" />
         <module name="JavadocVariable">
-            <property name="scope" value="package" />
+            <property name="accessModifiers" value="package" />
         </module>
         <module name="MissingJavadocMethod">
             <property name="scope" value="package" />

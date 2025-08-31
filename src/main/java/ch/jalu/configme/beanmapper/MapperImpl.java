@@ -209,10 +209,6 @@ public class MapperImpl implements Mapper {
     @Override
     public @Nullable Object convertToBean(@Nullable Object value, @NotNull TypeInfo targetType,
                                           @NotNull ConvertErrorRecorder errorRecorder) {
-        if (value == null) {
-            return null;
-        }
-
         return convertValueForType(createRootMappingContext(targetType, errorRecorder), value);
     }
 
@@ -387,7 +383,8 @@ public class MapperImpl implements Mapper {
         if (definition.isPresent()) {
             List<Object> propertyValues = definition.get().getProperties().stream()
                 .map(prop -> {
-                    MappingContext childContext = context.createChild(prop.getName(), prop.getTypeInformation());
+                    TypeInfo propertyType = context.getTargetType().resolve(prop.getTypeInformation().getType());
+                    MappingContext childContext = context.createChild(prop.getName(), propertyType);
                     return convertValueForType(childContext, entries.get(prop.getName()));
                 })
                 .collect(Collectors.toList());

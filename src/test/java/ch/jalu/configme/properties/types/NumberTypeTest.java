@@ -3,6 +3,7 @@ package ch.jalu.configme.properties.types;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.typeresolver.TypeInfo;
 import ch.jalu.typeresolver.numbers.StandardNumberType;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -236,7 +237,9 @@ class NumberTypeTest {
         // when / then
         assertThat(NumberType.BIG_DECIMAL.convert(longImpreciseAsDouble, bigDecimalType, errorRecorder), equalTo(new BigDecimal("5076541234567890123")));
         assertThat(NumberType.BIG_DECIMAL.convert(2e50, bigDecimalType, errorRecorder), equalTo(new BigDecimal("2.0E+50")));
-        assertThat(NumberType.BIG_DECIMAL.convert(-1e18f, bigDecimalType, errorRecorder), equalTo(new BigDecimal("-9.9999998430674944E+17")));
+        assertThat(NumberType.BIG_DECIMAL.convert(-1e18f, bigDecimalType, errorRecorder),
+            Matchers.<Object>either(equalTo(new BigDecimal("-9.9999998430674944E+17")))
+                .or(equalTo(new BigDecimal("-9.999999843067494E+17")))); // #347: JDK21 has different Double#toString impl.
         assertThat(NumberType.BIG_DECIMAL.convert("88223372036854775807.999", bigDecimalType, errorRecorder), equalTo(new BigDecimal("88223372036854775807.999")));
         assertThat(NumberType.BIG_DECIMAL.convert(largeBigDecimal, bigDecimalType, errorRecorder), equalTo(largeBigDecimal));
         verifyNoInteractions(errorRecorder);

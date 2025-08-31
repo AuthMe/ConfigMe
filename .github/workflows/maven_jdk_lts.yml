@@ -1,0 +1,25 @@
+# Secondary build that builds the project with JDK 11+. Note that the target in the pom.xml is still Java 8.
+
+name: Maven build
+on: [push, pull_request]
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Java 8 has its own file so we can do other stuff like Coveralls
+        java: ['11', '17', '21']
+    name: Java ${{ matrix.java }} build
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'adopt'
+      - name: Build with Maven
+        run: mvn -B --file pom.xml package
