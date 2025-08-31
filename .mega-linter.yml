@@ -8,7 +8,7 @@ APPLY_FIXES: none
 PRINT_ALPACA: false
 
 TEXT_REPORTER: true
-SARIF_REPORTER: true
+#SARIF_REPORTER: true
 
 # If you use ENABLE variable, all other languages/formats/tooling-formats will
 # be disabled by default
@@ -48,7 +48,7 @@ JAVA_CHECKSTYLE_CONFIG_FILE: '.checkstyle.xml'
 JAVA_CHECKSTYLE_FILTER_REGEX_INCLUDE: 'src/main'
 
 # https://github.com/adrienverge/yamllint/issues/430
-YAML_YAMLLINT_ARGUMENTS: 'check-keys=false'
+YAML_YAMLLINT_ARGUMENTS: '--check-keys=false'
 
 DISABLE:
   # - COPYPASTE # Uncomment to disable checks of excessive copy-pastes
