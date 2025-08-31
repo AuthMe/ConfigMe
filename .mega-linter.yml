@@ -20,10 +20,13 @@ DISABLE_LINTERS:
   - XML_XMLLINT
   - YAML_PRETTIER
 
+# Exclude test files - some are intentionally badly formatted, some produce encoding issues, etc.
 YAML_FILTER_REGEX_EXCLUDE: 'src/test/.*'
 YAML_YAMLLINT_CONFIG_FILE: '.config/yamllint.yml'
+# YAML lint errors shouldn't mark the MegaLinter action as failed
 YAML_YAMLLINT_DISABLE_ERRORS: true
 
+# Markdown lint errors shouldn't mark the MegaLinter action as failed
 MARKDOWN_MARKDOWNLINT_DISABLE_ERRORS: true
 
 # https://megalinter.io/8.8.0/descriptors/java_checkstyle/
