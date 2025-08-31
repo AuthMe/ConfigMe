@@ -71,9 +71,7 @@ public class ReflectionHelper {
         if (!accessibleObject.isAccessible()) {
             try {
                 accessibleObject.setAccessible(true);
-                // CHECKSTYLE:OFF
             } catch (Exception e) {
-                // CHECKSTYLE:ON
                 throw new ConfigMeException("Failed to make " + accessibleObject + " accessible", e);
             }
         }

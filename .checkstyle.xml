@@ -4,9 +4,10 @@
         "https://checkstyle.org/dtds/configuration_1_3.dtd">
 <!--
  In order to be compatible with Megalint, we have to stay in sync with the version of Checkstyle that they are using.
- This is, at the time of writing, 10.25.0.
- Check the links below to get up-to-date version information.
- https://megalinter.io/8.8.0/descriptors/java_checkstyle/
+ This is, at the time of writing, 10.25.0. Check the documentation to get up-to-date version information:
+   https://megalinter.io/8.8.0/descriptors/java_checkstyle/
+ The output of the GitHub Action also reports the Checkstyle version:
+   https://github.com/AuthMe/ConfigMe/actions/workflows/mega-linter.yml?query=branch%3Amaster
 -->
 
 <module name="Checker">
