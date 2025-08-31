@@ -5,6 +5,7 @@ import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.properties.EnumSetProperty;
 import ch.jalu.configme.samples.TestEnum;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -13,6 +14,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.EnumSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,7 +43,7 @@ class YamlSetPropertyExportTest {
     void shouldLoadAndExportProperly() throws IOException {
         // given
         PropertyResource resource = new YamlFileResource(configFile);
-        EnumSetProperty<TestEnum> setProperty = new EnumSetProperty<>("sample.ratio.fields", TestEnum.class);
+        EnumSetProperty<TestEnum> setProperty = new ExportToSetProperty("sample.ratio.fields");
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(singletonList(setProperty));
         configurationData.setValue(setProperty, EnumSet.of(TestEnum.FIRST, TestEnum.SECOND, TestEnum.THIRD));
 
@@ -57,5 +61,19 @@ class YamlSetPropertyExportTest {
             "        - FIRST",
             "        - SECOND",
             "        - THIRD"));
+    }
+
+    private static final class ExportToSetProperty extends EnumSetProperty<TestEnum> {
+
+        ExportToSetProperty(String path) {
+            super(path, TestEnum.class, EnumSet.noneOf(TestEnum.class));
+        }
+
+        @Override
+        public Set<String> toExportValue(@NotNull EnumSet<TestEnum> value) {
+            return value.stream()
+                .map(Enum::name)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
     }
 }
