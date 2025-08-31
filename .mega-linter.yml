@@ -42,15 +42,20 @@ DISABLE_LINTERS:
   - JSON_V8R
   - JSON_JSONLINT
   - JSON_PRETTIER
+  - SPELL_CSPELL
+  - SPELL_LYCHEE
   - XML_XMLLINT
   - YAML_PRETTIER
 
-YAML_FILTER_REGEX_INCLUDE: '(\.github/.*|[^/]+\.yml)'
+YAML_FILTER_REGEX_INCLUDE: '(\.github/.*|\.config/.*)'
+YAML_YAMLLINT_CONFIG_FILE: '.config/yamllint.yml'
+YAML_YAMLLINT_DISABLE_ERRORS: true
+
+MARKDOWN_MARKDOWNLINT_DISABLE_ERRORS: true
 
 # https://megalinter.io/8.8.0/descriptors/java_checkstyle/
 JAVA_CHECKSTYLE_CONFIG_FILE: '.checkstyle.xml'
 JAVA_CHECKSTYLE_FILTER_REGEX_INCLUDE: 'src/main'
 
-
 # MegaLinter should detect errors but not block CI to pass
-DISABLE_ERRORS: true
+DISABLE_ERRORS: false

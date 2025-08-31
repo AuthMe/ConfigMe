@@ -1,3 +1,0 @@
-# https://github.com/adrienverge/yamllint/issues/430
-truthy:
-  check-keys: false
