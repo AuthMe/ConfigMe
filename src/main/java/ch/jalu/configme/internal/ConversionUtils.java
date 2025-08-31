@@ -26,7 +26,9 @@ public final class ConversionUtils {
      * @param <T> type of values the property type produces
      * @return the converted element, or null if not possible
      */
-    public static <T> @Nullable T convertOrLogError(@Nullable Object element, @NotNull PropertyType<T> type, @NotNull ConvertErrorRecorder errorRecorder) {
+    public static <T> @Nullable T convertOrLogError(@Nullable Object element,
+                                                    @NotNull PropertyType<T> type,
+                                                    @NotNull ConvertErrorRecorder errorRecorder) {
         return convertOrLogError(element, elem -> type.convert(elem, errorRecorder), errorRecorder);
     }
 
