@@ -6,6 +6,7 @@ they have and will then use the config.yml file to create new objects with the d
 config.yml. `BeanPropertiesDemo` creates a settings manager and uses it to get the
 `DemoSettings.USER_BASE` setting.
 
-You can find the config YAML file [here](https://github.com/AuthMe/ConfigMe/blob/master/src/test/resources/demo/bean_demo_config.yml).
+The config YAML file is here:
+[bean_demo_config.yml](https://github.com/AuthMe/ConfigMe/blob/master/src/test/resources/demo/bean_demo_config.yml).
 Detailed information about using beans as properties can be found on the
 [Bean properties page](https://github.com/AuthMe/ConfigMe/wiki/Bean-properties) of the Wiki.

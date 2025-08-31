@@ -1,7 +1,8 @@
 # ConfigMe demo
 
 This folder contains a small demonstration showing how ConfigMe can be used.
-You can find the config.yml file [here](https://github.com/AuthMe/ConfigMe/blob/master/src/test/resources/demo/config.yml).
+The configuration file with the values is here:
+[config.yml](https://github.com/AuthMe/ConfigMe/blob/master/src/test/resources/demo/config.yml).
 
 TitleConfig contains some `Property` fields which represent the properties in the config.yml file.
 These sample properties are then used in `WelcomeWriter` in order to generate a short text with
