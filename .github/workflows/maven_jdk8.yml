@@ -30,3 +30,4 @@ jobs:
           base-path: src/main/java
           # The file is optional, but the documentation says it's better to specify it.
           file: target/site/jacoco/jacoco.xml
+

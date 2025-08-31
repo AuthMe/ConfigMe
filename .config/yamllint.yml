@@ -2,6 +2,7 @@ rules:
   line-length:
     max: 120
 
+  # GitHub Actions use 'on' as key in their config, which hits the "truthy" check. Disable it.
   # https://github.com/adrienverge/yamllint/issues/430
   truthy:
     check-keys: false
