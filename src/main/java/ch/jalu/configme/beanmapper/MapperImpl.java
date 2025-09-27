@@ -275,7 +275,7 @@ public class MapperImpl implements Mapper {
                 MappingContext entryContext = context.createChild(pathSpecifierForIndex(index), entryType);
                 Object convertedEntry = convertValueForType(entryContext, entry);
                 if (convertedEntry == null) {
-                    context.registerError("Cannot convert value at index " + index);
+                    entryContext.createErrorRecorder().setHasError("Cannot convert value");
                 } else {
                     result.add(convertedEntry);
                 }
@@ -326,7 +326,7 @@ public class MapperImpl implements Mapper {
                 MappingContext entryContext = context.createChild(pathSpecifierForMapKey(entry), mapValueType);
                 Object mappedValue = convertValueForType(entryContext, entry.getValue());
                 if (mappedValue == null) {
-                    context.registerError("Cannot map value for key " + entry.getKey());
+                    entryContext.createErrorRecorder().setHasError("Cannot map value for key '" + entry.getKey() + "'");
                 } else {
                     result.put(entry.getKey(), mappedValue);
                 }
@@ -389,7 +389,7 @@ public class MapperImpl implements Mapper {
                 })
                 .collect(Collectors.toList());
 
-            return definition.get().create(propertyValues, context.getErrorRecorder());
+            return definition.get().create(propertyValues, context.createErrorRecorder());
         }
         return null;
     }

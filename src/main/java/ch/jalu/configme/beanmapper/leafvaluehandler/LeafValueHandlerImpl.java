@@ -81,7 +81,7 @@ public class LeafValueHandlerImpl implements LeafValueHandler {
     @Override
     public @Nullable Object convert(@Nullable Object value, @NotNull MappingContext mappingContext) {
         TypeInfo targetType = mappingContext.getTargetType();
-        ConvertErrorRecorder errorRecorder = mappingContext.getErrorRecorder();
+        ConvertErrorRecorder errorRecorder = mappingContext.createErrorRecorder();
 
         for (MapperLeafType leafType : leafTypes) {
             Object result = leafType.convert(value, targetType, errorRecorder);

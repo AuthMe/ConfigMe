@@ -1,11 +1,12 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.resource.PropertyReader;
 import org.jetbrains.annotations.NotNull;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 /**
@@ -46,7 +47,7 @@ public abstract class BaseProperty<T> implements Property<T> {
 
     @Override
     public @NotNull PropertyValue<T> determineValue(@NotNull PropertyReader reader) {
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         T value = getFromReader(reader, errorRecorder);
         if (isValidValue(value)) {
             return new PropertyValue<>(value, errorRecorder.isFullyValid());

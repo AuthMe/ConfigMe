@@ -66,18 +66,8 @@ public interface MappingContext {
     @NotNull String createDescription();
 
     /**
-     * Registers an error during the mapping process, which delegates to the supplied
-     * {@link ch.jalu.configme.properties.convertresult.ConvertErrorRecorder ConvertErrorRecorder},
-     * associated to the property this conversion is being performed for.
-     *
-     * @param reason the error reason (ignored by the default context implementation)
+     * @return an error recorder for this mapping context (i.e. the value in the bean this context is for)
      */
-    default void registerError(@NotNull String reason) {
-        getErrorRecorder().setHasError("For bean path '" + getBeanPath() + "': " + reason);
-    }
+    @NotNull ConvertErrorRecorder createErrorRecorder();
 
-    /**
-     * @return error recorder to register errors even when a value can be created
-     */
-    @NotNull ConvertErrorRecorder getErrorRecorder();
 }

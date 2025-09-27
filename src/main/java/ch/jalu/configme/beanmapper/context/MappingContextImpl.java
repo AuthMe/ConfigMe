@@ -54,8 +54,8 @@ public class MappingContextImpl implements MappingContext {
     }
 
     @Override
-    public @NotNull ConvertErrorRecorder getErrorRecorder() {
-        return errorRecorder;
+    public @NotNull ConvertErrorRecorder createErrorRecorder() {
+        return new BeanConvertErrorRecorder(errorRecorder, beanPath);
     }
 
     @Override

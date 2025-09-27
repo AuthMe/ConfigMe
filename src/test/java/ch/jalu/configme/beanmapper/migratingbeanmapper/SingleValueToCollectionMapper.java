@@ -20,7 +20,7 @@ public class SingleValueToCollectionMapper extends MapperImpl {
         if (!(value instanceof Iterable)) {
             Collection<?> coll = super.convertToCollection(context, Collections.singleton(value));
             // Register error to trigger a rewrite with the proper structure
-            context.registerError("Found single value where a collection is expected");
+            context.createErrorRecorder().setHasError("Found single value where a collection is expected");
             return isCollectionWithOneElement(coll) ? coll : null;
         }
         return super.convertToCollection(context, value);

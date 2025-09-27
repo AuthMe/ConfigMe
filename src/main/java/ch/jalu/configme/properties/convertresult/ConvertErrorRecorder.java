@@ -1,6 +1,5 @@
 package ch.jalu.configme.properties.convertresult;
 
-import ch.jalu.configme.resource.PropertyReader;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,21 +11,18 @@ import org.jetbrains.annotations.NotNull;
  * Instead, errors are typically registered with this recorder when an object <b>can</b> be created, but there is some
  * error in the representation that should be corrected (e.g. a value is missing but there is a sensible fallback).
  *
- * @see ch.jalu.configme.properties.BaseProperty#determineValue(PropertyReader)
+ * @see ch.jalu.configme.properties.types.PropertyType#convert
  */
-public class ConvertErrorRecorder {
-
-    private boolean hasError;
+public interface ConvertErrorRecorder {
 
     /**
      * Registers that some error occurred during the conversion of the value. See class Javadoc: no need to register
-     * an error if the return value of the conversion implies there is an issue (such as returning null).
+     * an error if the return value of the conversion implies the conversion altogether is not possible
+     * (such as returning null).
      *
-     * @param reason the reason (not used in this implementation but may be extended for debugging)
+     * @param reason the reason
      */
-    public void setHasError(@NotNull String reason) {
-        hasError = true;
-    }
+    void setHasError(@NotNull String reason);
 
     /**
      * Returns whether the value that was returned from the property or property type was fully valid and
@@ -36,7 +32,6 @@ public class ConvertErrorRecorder {
      *
      * @return true if no error was registered, false otherwise (see class Javadoc for semantics)
      */
-    public boolean isFullyValid() {
-        return !hasError;
-    }
+    boolean isFullyValid();
+
 }

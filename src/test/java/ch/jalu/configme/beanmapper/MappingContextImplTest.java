@@ -3,6 +3,7 @@ package ch.jalu.configme.beanmapper;
 import ch.jalu.configme.beanmapper.context.MappingContext;
 import ch.jalu.configme.beanmapper.context.MappingContextImpl;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.typeresolver.TypeInfo;
 import ch.jalu.typeresolver.reference.TypeReference;
 import ch.jalu.typeresolver.typeimpl.WildcardTypeImpl;
@@ -21,7 +22,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 /**
  * Test for {@link MappingContextImpl}.
@@ -33,8 +33,8 @@ class MappingContextImplTest {
     void shouldCreateProperPath() {
         // given
         TypeInfo typeInformation = of(Integer.class);
-        MappingContext parent1 = MappingContextImpl.createRoot(typeInformation, new ConvertErrorRecorder());
-        MappingContext parent2 = MappingContextImpl.createRoot(typeInformation, new ConvertErrorRecorder()).createChild("foo", typeInformation);
+        MappingContext parent1 = MappingContextImpl.createRoot(typeInformation, new ConvertErrorRecorderImpl());
+        MappingContext parent2 = MappingContextImpl.createRoot(typeInformation, new ConvertErrorRecorderImpl()).createChild("foo", typeInformation);
 
         // when
         MappingContext child1 = parent1.createChild("bar", typeInformation);
@@ -53,7 +53,7 @@ class MappingContextImplTest {
     @Test
     void shouldCreateDescription() {
         // given
-        MappingContext context = MappingContextImpl.createRoot(of(String.class), new ConvertErrorRecorder())
+        MappingContext context = MappingContextImpl.createRoot(of(String.class), new ConvertErrorRecorderImpl())
             .createChild("oh.em.gee", of(ArrayList.class));
 
         // when
@@ -61,20 +61,6 @@ class MappingContextImplTest {
 
         // then
         assertThat(description, equalTo("Bean path: 'oh.em.gee', type: '" + ArrayList.class + "'"));
-    }
-
-    @Test
-    void shouldForwardErrorToErrorRecorder() {
-        // given
-        ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
-        MappingContext root = MappingContextImpl.createRoot(of(String.class), errorRecorder);
-        MappingContext context = root.createChild("bar", of(Double.class));
-
-        // when
-        context.registerError("Not a valid value");
-
-        // then
-        verify(errorRecorder).setHasError("For bean path 'bar': Not a valid value");
     }
 
     @Test
@@ -136,7 +122,7 @@ class MappingContextImplTest {
     void shouldConcatenatePathsAppropriately() {
         // given
         TypeInfo typeInfo = of(String.class);
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         MappingContext context = MappingContextImpl.createRoot(typeInfo, errorRecorder)
