@@ -2,6 +2,7 @@ package ch.jalu.configme.properties;
 
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +40,7 @@ class RegexPropertyTest {
         RegexProperty property = new RegexProperty("names.whitelist", "s_.*?");
         PropertyReader reader = mock(PropertyReader.class);
         given(reader.getObject("names.whitelist")).willReturn("m[0-9]+");
-        ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         Pattern result = property.getFromReader(reader, convertErrorRecorder);
@@ -54,7 +55,7 @@ class RegexPropertyTest {
         RegexProperty property = new RegexProperty("names.whitelist", "s_.*?");
         PropertyReader reader = mock(PropertyReader.class);
         given(reader.getObject("names.whitelist")).willReturn(null);
-        ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         Pattern result = property.getFromReader(reader, convertErrorRecorder);
@@ -69,7 +70,7 @@ class RegexPropertyTest {
         RegexProperty property = new RegexProperty("names.whitelist", "s_.*?");
         PropertyReader reader = mock(PropertyReader.class);
         given(reader.getObject("names.whitelist")).willReturn("m[0-9+");
-        ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         Pattern result = property.getFromReader(reader, convertErrorRecorder);

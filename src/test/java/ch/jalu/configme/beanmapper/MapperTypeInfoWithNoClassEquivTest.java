@@ -7,6 +7,7 @@ import ch.jalu.configme.beanmapper.leafvaluehandler.LeafValueHandlerImpl;
 import ch.jalu.configme.beanmapper.leafvaluehandler.MapperLeafType;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.typeresolver.TypeInfo;
 import ch.jalu.typeresolver.typeimpl.WildcardTypeImpl;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +33,7 @@ class MapperTypeInfoWithNoClassEquivTest {
     void shouldNotThrowForTypeInfoWithNoClassEquivalentTooEarly() {
         // given
         TypeInfo targetType = new TypeInfo(WildcardTypeImpl.newWildcardExtends(Number.class));
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // validate assumption -> #getTargetTypeAsClassOrThrow throws an exception
         assertThrows(ConfigMeException.class,

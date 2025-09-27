@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.typeresolver.reference.NestedTypeReference;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ class StringTypeTest {
     @Test
     void shouldConvertForMatchingType() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         int value = 4;
 
         // when / then
@@ -36,7 +37,7 @@ class StringTypeTest {
     @Test
     void shouldNotConvertIfTypeDoesNotMatch() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when / then
         assertThat(StringType.STRING.convert("test", of(Character.class), errorRecorder), nullValue());
@@ -48,7 +49,7 @@ class StringTypeTest {
     @Test
     void shouldConvertToString() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when / then
         assertThat(StringType.STRING.convert("Test text", errorRecorder), equalTo("Test text"));
@@ -61,7 +62,7 @@ class StringTypeTest {
     @Test
     void shouldConvertToStringInLowercase() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when / then
         assertThat(StringType.STRING_LOWER_CASE.convert("Test text", errorRecorder), equalTo("test text"));
@@ -98,7 +99,7 @@ class StringTypeTest {
         ArrayPropertyType<String> arrayType = StringType.STRING.arrayType();
 
         // then
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         assertThat(arrayType.convert(Arrays.asList(false, "test"), errorRecorder),
             arrayContaining("false", "test"));
     }
@@ -110,7 +111,7 @@ class StringTypeTest {
             StringType.STRING_LOWER_CASE.inlineArrayType("~~");
 
         // then
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         assertThat(inlineArrayType.convert("LIVE~~Laugh~~ lovE", errorRecorder),
             arrayContaining("live", "laugh", " love"));
     }

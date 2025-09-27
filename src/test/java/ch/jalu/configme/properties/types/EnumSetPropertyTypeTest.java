@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +30,7 @@ class EnumSetPropertyTypeTest {
     @Test
     void shouldConvertProperly() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         EnumSetPropertyType<TimeUnit> type = new EnumSetPropertyType<>(TimeUnit.class);
         Object value = Arrays.asList("HOURS", TimeUnit.SECONDS);
 
@@ -44,7 +45,7 @@ class EnumSetPropertyTypeTest {
     @Test
     void shouldConvertAndIgnoreInvalidEntries() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         EnumSetPropertyType<TimeUnit> type = new EnumSetPropertyType<>(EnumPropertyType.of(TimeUnit.class));
         Set<Object> value = new HashSet<>();
         value.add(true);

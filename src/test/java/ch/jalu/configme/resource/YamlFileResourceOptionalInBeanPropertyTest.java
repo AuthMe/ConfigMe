@@ -11,6 +11,7 @@ import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.properties.BeanProperty;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -44,7 +45,7 @@ class YamlFileResourceOptionalInBeanPropertyTest {
         PropertyResource resource = new YamlFileResource(file);
         PropertyReader reader = resource.createReader();
         Mapper mapper = new MapperImpl();
-        ComplexCommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), ComplexCommandConfig.class, new ConvertErrorRecorder());
+        ComplexCommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), ComplexCommandConfig.class, new ConvertErrorRecorderImpl());
         result.getCommands().put("shutdown", createShutdownCommand());
         ConfigurationData configurationData = createConfigurationData();
         configurationData.setValue(commandConfigProperty, result);
@@ -54,7 +55,7 @@ class YamlFileResourceOptionalInBeanPropertyTest {
 
         // then
         PropertyResource resourceAfterSave = new YamlFileResource(file);
-        ConvertErrorRecorder errorRecorderAfterSave = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorderAfterSave = new ConvertErrorRecorderImpl();
         ComplexCommandConfig commandConfig = mapper.convertToBean(
             resourceAfterSave.createReader().getObject("commandconfig"), ComplexCommandConfig.class, errorRecorderAfterSave);
         assertThat(errorRecorderAfterSave.isFullyValid(), equalTo(true));

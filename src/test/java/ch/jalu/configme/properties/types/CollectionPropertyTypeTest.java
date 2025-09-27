@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -42,7 +43,7 @@ class CollectionPropertyTypeTest {
     @Test
     void shouldConvertAndIgnoreInvalidValues() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         CollectionPropertyType<Long, Vector<Long>> type = newVectorType(NumberType.LONG);
         List<String> value = Arrays.asList("3", "a", "15,77");
 

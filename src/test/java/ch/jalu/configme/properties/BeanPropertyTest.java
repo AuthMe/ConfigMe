@@ -10,6 +10,7 @@ import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.configme.properties.types.BeanPropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
@@ -59,7 +60,7 @@ class BeanPropertyTest {
         resource.exportProperties(configurationData);
 
         // then
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         CommandConfig config = property.getFromReader(resource.createReader(), errorRecorder);
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
 
@@ -88,7 +89,7 @@ class BeanPropertyTest {
         resource.exportProperties(configurationData);
 
         // then
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         CommandConfig config = property.getFromReader(resource.createReader(), errorRecorder);
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
 

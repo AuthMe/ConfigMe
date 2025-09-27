@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.properties.types.ListPropertyType;
 import ch.jalu.configme.properties.types.NumberType;
@@ -98,7 +99,7 @@ class ListPropertyTest {
         String path = "duration.units";
         PropertyType<List<TimeUnit>> timeUnitListType = mock(PropertyType.class);
 
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         String value = "s,h";
         given(timeUnitListType.convert(value, errorRecorder)).willReturn(Arrays.asList(TimeUnit.SECONDS, TimeUnit.HOURS));
         given(reader.getObject(path)).willReturn(value);

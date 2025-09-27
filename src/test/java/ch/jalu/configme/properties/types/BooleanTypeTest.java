@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
@@ -39,7 +40,7 @@ class BooleanTypeTest {
     @Test
     void shouldConvertFromBooleanValue() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when / then
         assertThat(BooleanType.BOOLEAN.convert(true, errorRecorder), equalTo(true));
@@ -49,7 +50,7 @@ class BooleanTypeTest {
     @Test
     void shouldConvertFromStringValue() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when / then
         assertThat(BooleanType.BOOLEAN.convert("true", errorRecorder), equalTo(true));
@@ -64,7 +65,7 @@ class BooleanTypeTest {
     @Test
     void shouldReturnNullForNull() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when / then
         assertThat(BooleanType.BOOLEAN.convert(null, errorRecorder), nullValue());
@@ -73,7 +74,7 @@ class BooleanTypeTest {
     @Test
     void shouldReturnNullForUnsupportedTypes() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when / then
         assertThat(BooleanType.BOOLEAN.convert(3, of(Boolean.class), errorRecorder), nullValue());
@@ -107,7 +108,7 @@ class BooleanTypeTest {
         ArrayPropertyType<Boolean> arrayType = BooleanType.BOOLEAN.arrayType();
 
         // then
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         assertThat(arrayType.convert(Arrays.asList("true", "false"), errorRecorder), arrayContaining(true, false));
     }
 }

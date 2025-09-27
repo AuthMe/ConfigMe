@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,7 +30,7 @@ class SetPropertyTypeTest {
     @Test
     void shouldConvertProperly() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         SetPropertyType<Float> type = new SetPropertyType<>(NumberType.FLOAT);
         Object value = Arrays.asList(3, "4.5");
 
@@ -45,7 +46,7 @@ class SetPropertyTypeTest {
     @Test
     void shouldConvertAndIgnoreInvalidEntries() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         SetPropertyType<TimeUnit> type = new SetPropertyType<>(EnumPropertyType.of(TimeUnit.class));
         Set<Object> value = new HashSet<>();
         value.add(true);

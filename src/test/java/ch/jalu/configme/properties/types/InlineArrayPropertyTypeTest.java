@@ -2,6 +2,7 @@ package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.internal.ConversionUtils;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,7 +35,7 @@ class InlineArrayPropertyTypeTest {
     void shouldConvertValueFromString(String name, InlineArrayPropertyType<?> converter, TestData testData) {
         // given
         String input = testData.inputValue;
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         Object[] result = converter.convert(input, errorRecorder);
@@ -62,7 +63,7 @@ class InlineArrayPropertyTypeTest {
     void shouldNotThrowErrorForInvalidValues(String name, InlineArrayPropertyType<?> converter, TestData testData) {
         // given
         String input = testData.inputWithErrors;
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         Object[] result = converter.convert(input, errorRecorder);
@@ -78,7 +79,7 @@ class InlineArrayPropertyTypeTest {
     @MethodSource("data")
     void shouldConvertFromEmptyString(String name, InlineArrayPropertyType<?> converter) {
         // given / when
-        Object[] result = converter.convert("", new ConvertErrorRecorder());
+        Object[] result = converter.convert("", new ConvertErrorRecorderImpl());
 
         // then
         if (converter == InlineArrayPropertyType.STRING) {
@@ -107,7 +108,7 @@ class InlineArrayPropertyTypeTest {
         // given
         assumeTrue(converter != InlineArrayPropertyType.STRING && converter != InlineArrayPropertyType.BOOLEAN);
 
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         String value = "2, 3,";
 
         // when

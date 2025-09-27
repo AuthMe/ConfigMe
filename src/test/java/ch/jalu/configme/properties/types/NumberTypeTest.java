@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.typeresolver.TypeInfo;
 import ch.jalu.typeresolver.numbers.StandardNumberType;
 import org.hamcrest.Matchers;
@@ -92,7 +93,7 @@ class NumberTypeTest {
                                  Number input, Number expectedResult,
                                  boolean isFullyValid) {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         Number result = numberType.convert(input, errorRecorder);
@@ -128,7 +129,7 @@ class NumberTypeTest {
                                  String input, Number expectedResult,
                                  boolean isFullyValid) {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         Number result = numberType.convert(input, errorRecorder);
@@ -161,7 +162,7 @@ class NumberTypeTest {
     void shouldReturnNullForUnsupportedValues(NumberType<?> numberType,
                                               Object input) {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when / then
         assertThat(numberType.convert(input, errorRecorder), nullValue());
@@ -173,7 +174,7 @@ class NumberTypeTest {
             Arguments.of(NumberType.SHORT, Collections.singletonList("test")),
             Arguments.of(NumberType.INTEGER, Boolean.FALSE),
             Arguments.of(NumberType.LONG, "35d"),
-            Arguments.of(NumberType.FLOAT, new ConvertErrorRecorder()),
+            Arguments.of(NumberType.FLOAT, new ConvertErrorRecorderImpl()),
             Arguments.of(NumberType.DOUBLE, null),
             Arguments.of(NumberType.BIG_INTEGER, 'a'),
             Arguments.of(NumberType.BIG_DECIMAL, "invalid"),
@@ -295,7 +296,7 @@ class NumberTypeTest {
         ArrayPropertyType<Double> arrayType = NumberType.DOUBLE.arrayType();
 
         // then
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         assertThat(arrayType.convert(Arrays.asList("3.4", "22"), errorRecorder),
             arrayContaining(3.4, 22.0));
     }
@@ -306,7 +307,7 @@ class NumberTypeTest {
         InlineArrayPropertyType<Integer> inlineArrayType = NumberType.INTEGER.inlineArrayType("|");
 
         // then
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         assertThat(inlineArrayType.convert("14 | 16 || 22", errorRecorder),
             arrayContaining(14, 16, 22));
     }

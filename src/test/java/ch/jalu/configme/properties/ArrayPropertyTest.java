@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.properties.types.StringType;
@@ -43,7 +44,7 @@ class ArrayPropertyTest {
         given(reader.getObject("singleton")).willReturn("hello");
 
         // when
-        String[] result = property.getFromReader(reader, new ConvertErrorRecorder());
+        String[] result = property.getFromReader(reader, new ConvertErrorRecorderImpl());
 
         // then
         assertThat(result, nullValue());
@@ -59,7 +60,7 @@ class ArrayPropertyTest {
         given(reader.getObject("singleton")).willReturn(null);
 
         // when
-        String[] result = property.getFromReader(reader, new ConvertErrorRecorder());
+        String[] result = property.getFromReader(reader, new ConvertErrorRecorderImpl());
 
         // then
         assertThat(result, nullValue());
@@ -120,7 +121,7 @@ class ArrayPropertyTest {
         String path = "engine.probabilities";
         PropertyType<Integer[]> intArrayType = mock(PropertyType.class);
 
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         String value = "test";
         given(intArrayType.convert(value, errorRecorder)).willReturn(new Integer[]{3, 4});
         given(reader.getObject(path)).willReturn(value);

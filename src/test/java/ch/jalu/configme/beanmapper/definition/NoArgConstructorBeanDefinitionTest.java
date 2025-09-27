@@ -4,6 +4,7 @@ import ch.jalu.configme.beanmapper.definition.properties.BeanFieldPropertyDefini
 import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyComments;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.typeresolver.reflect.ConstructorUtils;
 import ch.jalu.typeresolver.reflect.FieldUtils;
 import org.junit.jupiter.api.Test;
@@ -84,7 +85,7 @@ class NoArgConstructorBeanDefinitionTest {
         NoArgConstructorBeanDefinition definition = new NoArgConstructorBeanDefinition(
             BeanWithThrowingConstructor.class.getDeclaredConstructor(),
             Collections.emptyList());
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
@@ -134,7 +135,7 @@ class NoArgConstructorBeanDefinitionTest {
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class,
-            () -> definition.create(Arrays.asList(3, 4, 5), new ConvertErrorRecorder()));
+            () -> definition.create(Arrays.asList(3, 4, 5), new ConvertErrorRecorderImpl()));
 
         // then
         assertThat(ex.getMessage(), equalTo("Invalid property values, 3 were given, but class "

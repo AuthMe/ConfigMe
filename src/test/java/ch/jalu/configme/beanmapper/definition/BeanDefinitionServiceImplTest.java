@@ -7,7 +7,7 @@ import ch.jalu.configme.beanmapper.definition.properties.BeanPropertyExtractor;
 import ch.jalu.configme.internal.record.RecordComponent;
 import ch.jalu.configme.internal.record.RecordInspector;
 import ch.jalu.configme.properties.StringProperty;
-import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,7 +74,7 @@ class BeanDefinitionServiceImplTest {
         assertThat(definition.get(), instanceOf(RecordBeanDefinition.class));
         assertThat(definition.get().getProperties(), hasSize(3));
 
-        Object bean = definition.get().create(Arrays.asList("Test", 39, 40.25), new ConvertErrorRecorder());
+        Object bean = definition.get().create(Arrays.asList("Test", 39, 40.25), new ConvertErrorRecorderImpl());
         assertThat(bean, notNullValue());
         assertThat(((FakeRecord) bean).name, equalTo("Test"));
         assertThat(((FakeRecord) bean).shoeSize, equalTo(39));
@@ -99,7 +99,7 @@ class BeanDefinitionServiceImplTest {
         assertThat(definition.get(), instanceOf(NoArgConstructorBeanDefinition.class));
         assertThat(definition.get().getProperties(), hasSize(3));
 
-        Object bean = definition.get().create(Arrays.asList("Test", 39, 40.25), new ConvertErrorRecorder());
+        Object bean = definition.get().create(Arrays.asList("Test", 39, 40.25), new ConvertErrorRecorderImpl());
         assertThat(bean, notNullValue());
         assertThat(((SampleBean) bean).name, equalTo("Test"));
         assertThat(((SampleBean) bean).shoeSize, equalTo(39));

@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.configme.properties.types.InlineArrayPropertyType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ class InlineArrayPropertyTest {
         given(reader.getObject("inline_value")).willReturn("hello\nkek");
 
         // when
-        String[] result = property.getFromReader(reader, new ConvertErrorRecorder());
+        String[] result = property.getFromReader(reader, new ConvertErrorRecorderImpl());
 
         // then
         assertThat(result, equalTo(new String[] {"hello", "kek"}));
@@ -56,7 +57,7 @@ class InlineArrayPropertyTest {
         // given
         String value = "3,four,5";
         InlineArrayProperty<Integer> property = new InlineArrayProperty<>("path", InlineArrayPropertyType.INTEGER,  new Integer[0]);
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         PropertyReader reader = mock(PropertyReader.class);
         given(reader.getObject("path")).willReturn(value);
 

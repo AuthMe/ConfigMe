@@ -6,6 +6,7 @@ import ch.jalu.configme.beanmapper.command.Command;
 import ch.jalu.configme.demo.beans.CoordinateSystem;
 import ch.jalu.configme.demo.beans.Location;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.typeresolver.TypeInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +38,7 @@ class BeanPropertyTypeTest {
         location.setLatitude(360f);
         location.setLongitude(123f);
         BeanPropertyType<Location> beanPropertyType = new BeanPropertyType<>(typeInformation, mapper);
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         given(mapper.convertToBean("test_bean", typeInformation, errorRecorder)).willReturn(location);
 
         // when

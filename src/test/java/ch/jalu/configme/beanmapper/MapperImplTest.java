@@ -22,6 +22,7 @@ import ch.jalu.configme.beanmapper.worldgroup.GameMode;
 import ch.jalu.configme.beanmapper.worldgroup.Group;
 import ch.jalu.configme.beanmapper.worldgroup.WorldGroupConfig;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.YamlFileReader;
 import ch.jalu.configme.samples.TestEnum;
@@ -78,7 +79,7 @@ class MapperImplTest {
     void shouldCreateWorldGroups() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds.yml");
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         WorldGroupConfig result =
@@ -100,7 +101,7 @@ class MapperImplTest {
     void shouldCreateCommands() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         CommandConfig config =
@@ -135,7 +136,7 @@ class MapperImplTest {
     void shouldSkipInvalidEntry() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/worlds_invalid.yml");
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         WorldGroupConfig config = mapper.convertToBean(
@@ -151,7 +152,7 @@ class MapperImplTest {
     void shouldHandleInvalidErrors() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid.yml");
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         CommandConfig config = mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class, errorRecorder);
@@ -169,7 +170,7 @@ class MapperImplTest {
     @Test
     void shouldReturnNullForUnavailableSection() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         CommandConfig result = mapper.convertToBean(null, CommandConfig.class, errorRecorder);
@@ -185,7 +186,7 @@ class MapperImplTest {
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> mapper.convertToBean(reader.getObject(""), MapWithNonStringKeys.class, new ConvertErrorRecorder()));
+            () -> mapper.convertToBean(reader.getObject(""), MapWithNonStringKeys.class, new ConvertErrorRecorderImpl()));
 
         // then
         assertThat(ex.getMessage(), equalTo(
@@ -200,7 +201,7 @@ class MapperImplTest {
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> mapper.convertToBean(reader.getObject(""), UnsupportedCollection.class, new ConvertErrorRecorder()));
+            () -> mapper.convertToBean(reader.getObject(""), UnsupportedCollection.class, new ConvertErrorRecorderImpl()));
 
         // then
         assertThat(ex.getMessage(),
@@ -214,7 +215,7 @@ class MapperImplTest {
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> mapper.convertToBean(reader.getObject(""), UntypedCollection.class, new ConvertErrorRecorder()));
+            () -> mapper.convertToBean(reader.getObject(""), UntypedCollection.class, new ConvertErrorRecorderImpl()));
 
         // then
         assertThat(ex.getMessage(),
@@ -228,7 +229,7 @@ class MapperImplTest {
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> mapper.convertToBean(reader.getObject(""), UntypedMap.class, new ConvertErrorRecorder()));
+            () -> mapper.convertToBean(reader.getObject(""), UntypedMap.class, new ConvertErrorRecorderImpl()));
 
         // then
         assertThat(ex.getMessage(),
@@ -242,7 +243,7 @@ class MapperImplTest {
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> mapper.convertToBean(reader.getObject(""), GenericCollection.class, new ConvertErrorRecorder()));
+            () -> mapper.convertToBean(reader.getObject(""), GenericCollection.class, new ConvertErrorRecorderImpl()));
 
         // then
         assertThat(ex.getMessage(),
@@ -282,7 +283,7 @@ class MapperImplTest {
     void shouldReturnNullForUnmappableMandatoryField() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands_invalid_2.yml");
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         CommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class, errorRecorder);
@@ -295,7 +296,7 @@ class MapperImplTest {
     void shouldReturnNullForMissingSection() {
         // given
         PropertyReader reader = createReaderFromFile("/empty_file.yml");
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         CommandConfig result = mapper.convertToBean(reader.getObject("commands"), CommandConfig.class, errorRecorder);
@@ -308,7 +309,7 @@ class MapperImplTest {
     void shouldHandleEmptyOptionalFields() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         ComplexCommandConfig result =
@@ -327,7 +328,7 @@ class MapperImplTest {
     void shouldLoadConfigWithOptionalProperties() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/optionalproperties/complex-commands.yml");
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         ComplexCommandConfig result = mapper.convertToBean(
@@ -367,7 +368,7 @@ class MapperImplTest {
     void shouldHandleComplexOptionalType() {
         // given
         PropertyReader reader = createReaderFromFile("/beanmapper/commands.yml");
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         ComplexOptionalTypeConfig result =
@@ -384,7 +385,7 @@ class MapperImplTest {
     void shouldReturnEmptyOptionalForEmptyFile() {
         // given
         PropertyReader reader = createReaderFromFile("/empty_file.yml");
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         ComplexOptionalTypeConfig result =
@@ -401,7 +402,7 @@ class MapperImplTest {
         Path tempFile = TestUtils.createTemporaryFile(tempDir);
         Files.write(tempFile, "{}".getBytes());
         PropertyReader reader = new YamlFileReader(tempFile);
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         ComplexOptionalTypeConfig result =
@@ -419,7 +420,7 @@ class MapperImplTest {
         Path tempFile = TestUtils.createTemporaryFile(tempDir);
         Files.write(tempFile, "{}".getBytes());
         PropertyReader reader = new YamlFileReader(tempFile);
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         Instant result = mapper.convertToBean(reader.getObject(""), Instant.class, errorRecorder);
@@ -459,8 +460,8 @@ class MapperImplTest {
         }
 
         // when
-        Object directResult = mapper.convertToBean(in, optionalType, new ConvertErrorRecorder());
-        BeanWithOptional beanResult = mapper.convertToBean(map, BeanWithOptional.class, new ConvertErrorRecorder());
+        Object directResult = mapper.convertToBean(in, optionalType, new ConvertErrorRecorderImpl());
+        BeanWithOptional beanResult = mapper.convertToBean(map, BeanWithOptional.class, new ConvertErrorRecorderImpl());
 
         // then
         assertThat(directResult, equalTo(Optional.empty()));
@@ -482,8 +483,8 @@ class MapperImplTest {
         }
 
         // when
-        Object directResult = mapper.convertToBean(in, listType, new ConvertErrorRecorder());
-        BeanWithList beanResult = mapper.convertToBean(map, BeanWithList.class, new ConvertErrorRecorder());
+        Object directResult = mapper.convertToBean(in, listType, new ConvertErrorRecorderImpl());
+        BeanWithList beanResult = mapper.convertToBean(map, BeanWithList.class, new ConvertErrorRecorderImpl());
 
         // then
         if (in instanceof List<?>) {
@@ -511,8 +512,8 @@ class MapperImplTest {
         }
 
         // when
-        Object directResult = mapper.convertToBean(in, mapType, new ConvertErrorRecorder());
-        BeanWithMap beanResult = mapper.convertToBean(map, BeanWithMap.class, new ConvertErrorRecorder());
+        Object directResult = mapper.convertToBean(in, mapType, new ConvertErrorRecorderImpl());
+        BeanWithMap beanResult = mapper.convertToBean(map, BeanWithMap.class, new ConvertErrorRecorderImpl());
 
         // then
         if (in instanceof Map<?, ?>) {
@@ -544,7 +545,7 @@ class MapperImplTest {
 
     private static MappingContext createContextWithTargetType(Class<?> targetType) {
         TypeInfo type = new TypeInfo(targetType);
-        MappingContextImpl root = MappingContextImpl.createRoot(type, new ConvertErrorRecorder());
+        MappingContextImpl root = MappingContextImpl.createRoot(type, new ConvertErrorRecorderImpl());
         return root.createChild("path.in.test", type);
     }
 

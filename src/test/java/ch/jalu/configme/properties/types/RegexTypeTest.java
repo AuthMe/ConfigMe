@@ -1,8 +1,8 @@
 package ch.jalu.configme.properties.types;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
+import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,14 +10,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import org.junit.jupiter.api.Test;
-
-import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
-
 import static ch.jalu.typeresolver.TypeInfo.of;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test for {@link RegexType}.
@@ -41,7 +40,7 @@ public class RegexTypeTest {
     @Test
     void shouldConvertForValidRegex() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // then / when
         assertInstanceOf(Pattern.class, RegexType.REGEX.convert("s_.*?", errorRecorder));
@@ -55,7 +54,7 @@ public class RegexTypeTest {
     @Test
     void shouldReturnNullForInvalidRegex() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when / then
         assertThat(RegexType.REGEX.convert("[abc", errorRecorder), nullValue());
@@ -70,7 +69,7 @@ public class RegexTypeTest {
     @Test
     void shouldReturnNullForNull() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when / then
         assertThat(RegexType.REGEX.convert(null, errorRecorder), nullValue());
@@ -80,7 +79,7 @@ public class RegexTypeTest {
     @Test
     void shouldReturnNullForUnsupportedTypes() {
         // given
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when / then
         assertThat(RegexType.REGEX.convert(3, of(Pattern.class), errorRecorder), nullValue());

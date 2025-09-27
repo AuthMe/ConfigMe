@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.properties.types.PropertyType;
@@ -102,7 +103,7 @@ class SetPropertyTest {
         String path = "duration.units";
         PropertyType<Set<String>> greekStringSetType = mock(PropertyType.class);
 
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         String value = "a,m";
         LinkedHashSet<String> convertedValue = new LinkedHashSet<>(Arrays.asList("α", "μ"));
         given(greekStringSetType.convert(value, errorRecorder)).willReturn(convertedValue);

@@ -4,6 +4,7 @@ import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.beanmapper.worldgroup.GameMode;
 import ch.jalu.configme.beanmapper.worldgroup.Group;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import ch.jalu.configme.properties.types.BeanPropertyType;
 import ch.jalu.configme.resource.YamlFileReader;
 import ch.jalu.typeresolver.reference.TypeReference;
@@ -46,7 +47,7 @@ class MapperTypeResolutionTest {
         Map<String, Object> map = new HashMap<>();
         map.put("title", "First test");
         map.put("length", createMap("value", 5, "comment", "Chosen randomly"));
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         SimpleBean result = mapper.convertToBean(map, SimpleBean.class, errorRecorder);
@@ -65,7 +66,7 @@ class MapperTypeResolutionTest {
         map.put("interval", createMap("value", "MINUTES", "comment", "Longer than seconds"));
         map.put("username", createMap("value", "Bobby", "comment", "",
                                       "previousValues", Arrays.asList("Bobster", "Bober")));
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         ComplexBean result = mapper.convertToBean(map, ComplexBean.class, errorRecorder);
@@ -87,7 +88,7 @@ class MapperTypeResolutionTest {
         map.put("value", createMap("value", 15, "comment", "Multiple of five"));
         map.put("vectors", Arrays.asList(1.4, 1.7, 2.0));
         map.put("factors", createMap("a", 14, "d", 8, "f", 6));
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         BeanWithTypeArg<BigDecimal> bean = (BeanWithTypeArg<BigDecimal>) mapper.convertToBean(map, typeReference, errorRecorder);
@@ -127,7 +128,7 @@ class MapperTypeResolutionTest {
         Files.write(file, yaml);
         YamlFileReader reader = new YamlFileReader(file);
         BeanPropertyType<RecursiveBean<TimeUnit>> beanPropertyType = new BeanPropertyType<>(typeReference, mapper);
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         RecursiveBean<TimeUnit> result = beanPropertyType.convert(reader.getObject(""), errorRecorder);
@@ -154,7 +155,7 @@ class MapperTypeResolutionTest {
         map.put("comment", "Howdy");
         map.put("value", 4.0);
         map.put("previousValues", Arrays.asList(8.0, 3.0));
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         IntegerHistorizedValue result = mapper.convertToBean(map, IntegerHistorizedValue.class, errorRecorder);
@@ -176,7 +177,7 @@ class MapperTypeResolutionTest {
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> mapper.convertToBean(map, HistorizedValue.class, new ConvertErrorRecorder()));
+            () -> mapper.convertToBean(map, HistorizedValue.class, new ConvertErrorRecorderImpl()));
 
         // then
         assertThat(ex.getMessage(), equalTo("The target type cannot be converted to a class, for mapping of: [Bean path: 'value', type: 'V']"));
@@ -189,7 +190,7 @@ class MapperTypeResolutionTest {
         Map<String, Object> map = new HashMap<>();
         map.put("float", createMap("value", 5.0f, "comment", "From float", "previousValues", Arrays.asList(3.0f)));
         map.put("int", createMap("value", 12, "comment", "From integer", "previousValues", Arrays.asList(15, 8)));
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         Map<String, HistorizedValue<Double>> result =
@@ -211,7 +212,7 @@ class MapperTypeResolutionTest {
         List<Object> list = Arrays.asList(
             createMap("comment", "1", "value", createMap("worlds", Arrays.asList("lobby", "surv"), "default-gamemode", "SURVIVAL")),
             createMap("comment", "2", "value", createMap("worlds", Arrays.asList("artistry"), "default-gamemode", "CREATIVE")));
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         LinkedHashSet<CommentedValue<Group>> result =
@@ -237,7 +238,7 @@ class MapperTypeResolutionTest {
         map.put("version", "v[0-9]+");
         map.put("value", createMap("value", "[a-z0-9]*", "comment", "Only lowercase"));
         map.put("factors", createMap("a", "\\d+", "b", "0\\.\\d+"));
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
 
         // when
         Optional<BeanWithTypeArg<Pattern>> result =

@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.convertresult.ConvertErrorRecorderImpl;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.StandardOpenOption;
@@ -23,7 +24,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert("unknown", new ConvertErrorRecorder());
+        TimeUnit result = propertyType.convert("unknown", new ConvertErrorRecorderImpl());
 
         // then
         assertThat(result, nullValue());
@@ -35,7 +36,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert(new Object(), new ConvertErrorRecorder());
+        TimeUnit result = propertyType.convert(new Object(), new ConvertErrorRecorderImpl());
 
         // then
         assertThat(result, nullValue());
@@ -47,7 +48,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert(null, new ConvertErrorRecorder());
+        TimeUnit result = propertyType.convert(null, new ConvertErrorRecorderImpl());
 
         // then
         assertThat(result, nullValue());
@@ -59,7 +60,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert(TimeUnit.SECONDS, new ConvertErrorRecorder());
+        TimeUnit result = propertyType.convert(TimeUnit.SECONDS, new ConvertErrorRecorderImpl());
 
         // then
         assertThat(result, equalTo(TimeUnit.SECONDS));
@@ -71,7 +72,7 @@ class EnumPropertyTypeTest {
         EnumPropertyType<TimeUnit> propertyType = new EnumPropertyType<>(TimeUnit.class);
 
         // when
-        TimeUnit result = propertyType.convert("SECONDS", new ConvertErrorRecorder());
+        TimeUnit result = propertyType.convert("SECONDS", new ConvertErrorRecorderImpl());
 
         // then
         assertThat(result, equalTo(TimeUnit.SECONDS));
@@ -104,7 +105,7 @@ class EnumPropertyTypeTest {
         ArrayPropertyType<StandardOpenOption> arrayType = EnumPropertyType.of(StandardOpenOption.class).arrayType();
 
         // then
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         assertThat(arrayType.convert(Arrays.asList("READ", "CREATE"), errorRecorder),
             arrayContaining(StandardOpenOption.READ, StandardOpenOption.CREATE));
     }
@@ -116,7 +117,7 @@ class EnumPropertyTypeTest {
             EnumPropertyType.of(StandardOpenOption.class).inlineArrayType(";;");
 
         // then
-        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorderImpl();
         assertThat(inlineArrayType.convert("READ;;CREATE;;", errorRecorder),
             arrayContaining(StandardOpenOption.READ, StandardOpenOption.CREATE));
     }
