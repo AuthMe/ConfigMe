@@ -3,6 +3,7 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
 import ch.jalu.configme.properties.convertresult.PropertyValue;
+import ch.jalu.configme.properties.types.MapPropertyType;
 import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.properties.types.StringType;
@@ -21,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static ch.jalu.configme.TestUtils.isErrorValueOf;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
@@ -41,7 +43,7 @@ class MapPropertyTest {
     private PropertyReader reader;
 
     @TempDir
-    public Path temporaryFolder;
+    Path temporaryFolder;
 
     @Test
     void shouldReturnValueFromResource() {
@@ -118,13 +120,70 @@ class MapPropertyTest {
         // given
         MapProperty<Integer> property = new MapProperty<>("test", NumberType.INTEGER);
 
-        //when
+        // when
         Map<String, Integer> actualDefaultValue = property.getDefaultValue();
         String actualPath = property.getPath();
 
         // then
         assertThat(actualDefaultValue, anEmptyMap());
         assertThat(actualPath, equalTo("test"));
+    }
+
+    @Test
+    void shouldBuildMapWithCustomPropertyType() {
+        // given
+        PropertyType<Map<String, Double>> customMapType = new MapPropertyType<Double>(NumberType.DOUBLE) {
+            @Override
+            protected @Nullable String convertKeyToString(@Nullable Object key) {
+                if (key instanceof Integer) {
+                    return "k" + key;
+                }
+                return null;
+            }
+        };
+        MapProperty<Double> mapProperty = MapProperty.withMapType("mapping", customMapType);
+
+        Map<Integer, Integer> inputMap = new LinkedHashMap<>();
+        inputMap.put(1, 1);
+        inputMap.put(4, 4);
+        given(reader.getObject("mapping")).willReturn(inputMap);
+
+        // when
+        PropertyValue<Map<String, Double>> propertyValue = mapProperty.determineValue(reader);
+
+        // then
+        assertThat(propertyValue.isValidInResource(), equalTo(true));
+        assertThat(propertyValue.getValue().keySet(), contains("k1", "k4"));
+        assertThat(propertyValue.getValue().values(), contains(1.0, 4.0));
+        assertThat(mapProperty.getDefaultValue(), anEmptyMap());
+    }
+
+    @Test
+    void shouldBuildMapWithCustomPropertyTypeAndDefaultValue() {
+        // given
+        PropertyType<Map<String, Double>> customMapType = new MapPropertyType<Double>(NumberType.DOUBLE) {
+            @Override
+            protected @NotNull Map<String, Double> createResultMap() {
+                return new TreeMap<>();
+            }
+        };
+        Map<String, Double> defaultMap = new TreeMap<>();
+        defaultMap.put("7", 3.5);
+        MapProperty<Double> mapProperty = MapProperty.withMapType("mapping", customMapType, defaultMap);
+
+        Map<Integer, Integer> inputMap = new LinkedHashMap<>();
+        inputMap.put(8, 3);
+        inputMap.put(4, 6);
+        given(reader.getObject("mapping")).willReturn(inputMap);
+
+        // when
+        PropertyValue<Map<String, Double>> propertyValue = mapProperty.determineValue(reader);
+
+        // then
+        assertThat(propertyValue.isValidInResource(), equalTo(true));
+        assertThat(propertyValue.getValue().keySet(), contains("4", "8"));
+        assertThat(propertyValue.getValue().values(), contains(6.0, 3.0));
+        assertThat(mapProperty.getDefaultValue(), equalTo(defaultMap));
     }
 
     private static Map<String, String> createSampleMap() {

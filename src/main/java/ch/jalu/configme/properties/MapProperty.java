@@ -1,25 +1,19 @@
 package ch.jalu.configme.properties;
 
-import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.types.MapPropertyType;
 import ch.jalu.configme.properties.types.PropertyType;
-import ch.jalu.configme.resource.PropertyReader;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
- * Property for an immutable map whose keys is of type String and whose values can be configured.
- * The map retains the order of the elements.
+ * Property for a map with String keys and a configurable value type. The map retains the order of the elements.
+ * Maps produced by this property are guaranteed to never have a null key or null value.
  *
  * @param <V> the value type of the map
  */
-public class MapProperty<V> extends BaseProperty<Map<String, V>> {
-
-    private final PropertyType<V> valueType;
+public class MapProperty<V> extends TypeBasedProperty<Map<String, V>> {
 
     /**
      * Constructor. Builds a {@link MapProperty} with an empty map as default value.
@@ -28,9 +22,7 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
      * @param valueType the property type of the values
      */
     public MapProperty(@NotNull String path, @NotNull PropertyType<V> valueType) {
-        super(path, Collections.emptyMap());
-        Objects.requireNonNull(valueType, "valueType");
-        this.valueType = valueType;
+        super(path, new MapPropertyType<>(valueType), Collections.emptyMap());
     }
 
     /**
@@ -41,48 +33,46 @@ public class MapProperty<V> extends BaseProperty<Map<String, V>> {
      * @param defaultValue the default value of the property
      */
     public MapProperty(@NotNull String path, @NotNull PropertyType<V> valueType, @NotNull Map<String, V> defaultValue) {
-        super(path, Collections.unmodifiableMap(defaultValue));
-        Objects.requireNonNull(valueType, "valueType");
-        this.valueType = valueType;
+        super(path, new MapPropertyType<>(valueType), defaultValue);
     }
 
-    @Override
-    protected @Nullable Map<String, V> getFromReader(@NotNull PropertyReader reader,
-                                                     @NotNull ConvertErrorRecorder errorRecorder) {
-        Object rawObject = reader.getObject(getPath());
-
-        if (!(rawObject instanceof Map<?, ?>)) {
-            return null;
-        }
-
-        Map<?, ?> rawMap = (Map<?, ?>) rawObject;
-        Map<String, V> map = new LinkedHashMap<>();
-
-        for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
-            String path = entry.getKey().toString();
-            V value = valueType.convert(entry.getValue(), errorRecorder);
-
-            if (value != null) {
-                map.put(path, value);
-            }
-        }
-
-        return postProcessMap(map);
+    /**
+     * Constructor. Use {@link #withMapType}.
+     *
+     * @param mapType the map type
+     * @param path the path of the property
+     * @param defaultValue the default value of the property
+     */
+    // Constructor arguments are usually (path, type, defaultValue), but this is not possible here because there
+    // are other constructors with the same argument order.
+    protected MapProperty(@NotNull PropertyType<Map<String, V>> mapType, @NotNull String path,
+                          @NotNull Map<String, V> defaultValue) {
+        super(path, mapType, defaultValue);
     }
 
-    @Override
-    public @NotNull Object toExportValue(@NotNull Map<String, V> value) {
-        Map<String, Object> exportMap = new LinkedHashMap<>();
-
-        for (Map.Entry<String, V> entry : value.entrySet()) {
-            exportMap.put(entry.getKey(), valueType.toExportValue(entry.getValue()));
-        }
-
-        return exportMap;
+    /**
+     * Creates a new map property with the given path and type. An empty map is set as default value.
+     *
+     * @param path the path of the property
+     * @param mapType the map type
+     * @param <V> the type of the values in the map
+     * @return a new map property
+     */
+    public static <V> MapProperty<V> withMapType(@NotNull String path, @NotNull PropertyType<Map<String, V>> mapType) {
+        return new MapProperty<>(mapType, path, Collections.emptyMap());
     }
 
-    /* Allows to modify the map once its fully built based on the values in the property reader. */
-    protected @NotNull Map<String, V> postProcessMap(@NotNull Map<String, V> constructedMap) {
-        return Collections.unmodifiableMap(constructedMap);
+    /**
+     * Creates a new map property with the given path, type and default value.
+     *
+     * @param path the path of the property
+     * @param mapType the map type
+     * @param defaultValue the default value of the property
+     * @param <V> the type of the values in the map
+     * @return a new map property
+     */
+    public static <V> MapProperty<V> withMapType(@NotNull String path, @NotNull PropertyType<Map<String, V>> mapType,
+                                                 @NotNull Map<String, V> defaultValue) {
+        return new MapProperty<>(mapType, path, defaultValue);
     }
 }
