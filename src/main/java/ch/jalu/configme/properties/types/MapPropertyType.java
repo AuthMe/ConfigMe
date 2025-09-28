@@ -8,8 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Property types for maps with strings as keys and any value type. The produced maps keep insertion order (as seen
- * in the property resource). Maps produced by this type never have a null key or null value.
+ * Property types for maps with strings as keys and any value type. The produced maps keep insertion order (as given
+ * in the property resource). Maps produced by this type never have a null key or a null value.
  *
  * @param <V> the type of values in the map
  */
@@ -40,7 +40,10 @@ public class MapPropertyType<V> implements PropertyType<Map<String, V>> {
             V value = valueType.convert(entry.getValue(), errorRecorder);
 
             if (key != null && value != null) {
-                map.put(key, value);
+                V previous = map.put(key, value);
+                if (previous != null) {
+                    errorRecorder.setHasError("Duplicate key detected: '" + key + "'");
+                }
             } else {
                 errorRecorder.setHasError("Key or value could not be converted for key '" + entry.getKey() + "'");
             }
@@ -57,7 +60,7 @@ public class MapPropertyType<V> implements PropertyType<Map<String, V>> {
         return exportMap;
     }
 
-    public @NotNull PropertyType<V> getValueType() {
+    public final @NotNull PropertyType<V> getValueType() {
         return valueType;
     }
 

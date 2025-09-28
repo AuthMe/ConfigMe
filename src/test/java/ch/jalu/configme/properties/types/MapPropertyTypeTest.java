@@ -86,6 +86,28 @@ class MapPropertyTypeTest {
     }
 
     @Test
+    void shouldRegisterErrorOnDuplicateKey() {
+        // given
+        MapPropertyType<TestEnum> mapType = new MapPropertyType<>(EnumPropertyType.of(TestEnum.class));
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+
+        Map<Object, String> inputMap = new LinkedHashMap<>();
+        inputMap.put(1, "SECOND");
+        inputMap.put("3", "THIRD");
+        inputMap.put(3, "FIRST");
+
+        // when
+        Map<String, TestEnum> result = mapType.convert(inputMap, errorRecorder);
+
+        // then
+        assertThat(result, instanceOf(LinkedHashMap.class));
+        assertThat(result.keySet(), contains("1", "3"));
+        assertThat(result.get("1"), equalTo(TestEnum.SECOND));
+        assertThat(result.get("3"), equalTo(TestEnum.FIRST));
+        assertThat(errorRecorder.isFullyValid(), equalTo(false));
+    }
+
+    @Test
     void shouldExportMap() {
         // given
         MapPropertyType<TestEnum> mapType = new MapPropertyType<>(EnumPropertyType.of(TestEnum.class));
