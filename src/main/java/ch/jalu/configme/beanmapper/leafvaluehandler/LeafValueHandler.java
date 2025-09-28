@@ -45,4 +45,16 @@ public interface LeafValueHandler {
      */
     @Nullable Object toExportValue(@Nullable Object value, @NotNull ExportContext exportContext);
 
+    /**
+     * Returns null if the object is {@link #RETURN_NULL}, otherwise the given object. Used to process return values
+     * from methods like {@link #toExportValue}, where {@code null} means the instance doesn't support the value,
+     * while {@link #RETURN_NULL} means null should be used as export value.
+     *
+     * @param object the object to potentially unwrap
+     * @param <T> the object type
+     * @return null, or the provided object
+     */
+    static <T> @Nullable T unwrapReturnNull(@Nullable T object) {
+        return object == RETURN_NULL ? null : object;
+    }
 }

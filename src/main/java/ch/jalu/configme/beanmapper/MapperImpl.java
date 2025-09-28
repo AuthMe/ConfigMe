@@ -122,13 +122,13 @@ public class MapperImpl implements Mapper {
         // Step 1: attempt simple value transformation
         Object exportValue = leafValueHandler.toExportValue(value, exportContext);
         if (exportValue != null || value == null) {
-            return unwrapReturnNull(exportValue);
+            return LeafValueHandler.unwrapReturnNull(exportValue);
         }
 
         // Step 2: handle special cases like Collection
         exportValue = createExportValueForSpecialTypes(value, exportContext);
         if (exportValue != null) {
-            return unwrapReturnNull(exportValue);
+            return LeafValueHandler.unwrapReturnNull(exportValue);
         }
 
         // Step 3: treat as bean
@@ -193,10 +193,6 @@ public class MapperImpl implements Mapper {
         }
 
         return null;
-    }
-
-    protected static @Nullable Object unwrapReturnNull(@Nullable Object o) {
-        return o == LeafValueHandler.RETURN_NULL ? null : o;
     }
 
     // ---------
