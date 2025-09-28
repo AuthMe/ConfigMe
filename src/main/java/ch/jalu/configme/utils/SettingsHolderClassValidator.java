@@ -44,7 +44,7 @@ public class SettingsHolderClassValidator {
      * @param settingHolders settings holder classes that make up the configuration data of the project
      */
     @SafeVarargs
-    public final void validate(@NotNull Class<? extends SettingsHolder>... settingHolders) {
+    public final void validate(@NotNull Class<? extends SettingsHolder> @NotNull ... settingHolders) {
         validate(Arrays.asList(settingHolders));
     }
 

@@ -1,8 +1,8 @@
 # ConfigMe
 [![Build Status](https://github.com/AuthMe/ConfigMe/actions/workflows/maven_jdk8.yml/badge.svg)](https://github.com/AuthMe/ConfigMe/actions?query=branch%3Amaster)
 [![Coverage Status](https://coveralls.io/repos/github/AuthMe/ConfigMe/badge.svg?branch=master)](https://coveralls.io/github/AuthMe/ConfigMe?branch=master)
-[![Javadocs](https://www.javadoc.io/badge/ch.jalu/configme.svg)](https://www.javadoc.io/doc/ch.jalu/configme)
-[![MegaLinter](https://github.com/AuthMe/ConfigMe/workflows/MegaLinter/badge.svg?branch=master)](https://github.com/AuthMe/ConfigMe/actions?query=workflow%3AMegaLinter+branch%3Amaster)
+[![Javadoc](https://www.javadoc.io/badge/ch.jalu/configme.svg)](https://www.javadoc.io/doc/ch.jalu/configme)
+[![MegaLinter](https://github.com/AuthMe/ConfigMe/actions/workflows/mega-linter.yml/badge.svg?branch=master)](https://github.com/AuthMe/ConfigMe/actions?query=workflow%3AMegaLinter+branch%3Amaster)
 
 A simple configuration management library with YAML support out of the box.
 

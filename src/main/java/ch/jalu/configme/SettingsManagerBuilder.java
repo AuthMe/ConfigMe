@@ -91,7 +91,7 @@ public final class SettingsManagerBuilder {
      */
     @SafeVarargs
     public final @NotNull SettingsManagerBuilder configurationData(
-                                                                  @NotNull Class<? extends SettingsHolder>... classes) {
+                                                        @NotNull Class<? extends SettingsHolder> @NotNull ... classes) {
         this.configurationData = ConfigurationDataBuilder.createConfiguration(classes);
         return this;
     }

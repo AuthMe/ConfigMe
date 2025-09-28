@@ -41,7 +41,7 @@ public class CommentsConfiguration {
      * @param path the path to register the comment lines for
      * @param commentLines the comment lines to set for the path
      */
-    public void setComment(@NotNull String path, @NotNull String... commentLines) {
+    public void setComment(@NotNull String path, @NotNull String @NotNull ... commentLines) {
         List<String> replaced = comments.put(path, Collections.unmodifiableList(Arrays.asList(commentLines)));
         
         if (replaced != null) {

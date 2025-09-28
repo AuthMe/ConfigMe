@@ -56,7 +56,8 @@ public class ConfigurationDataBuilder {
      * @return collected configuration data
      */
     @SafeVarargs
-    public static @NotNull ConfigurationData createConfiguration(@NotNull Class<? extends SettingsHolder>... classes) {
+    public static @NotNull ConfigurationData createConfiguration(
+                                                        @NotNull Class<? extends SettingsHolder> @NotNull ... classes) {
         return createConfiguration(Arrays.asList(classes));
     }
 
