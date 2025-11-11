@@ -1,5 +1,6 @@
 package ch.jalu.configme.resource;
 
+import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.internal.StreamUtils;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.comments.CommentLine;
 import org.yaml.snakeyaml.nodes.Node;
 
 import java.io.IOException;
@@ -68,6 +70,16 @@ public class YamlFileResource implements PropertyResource {
             rootNode = root.getRootValueNode();
         } else {
             rootNode = root.convertToNode(nodeBuilder);
+        }
+
+        List<String> footerStrings = configurationData.getAllComments().get(CommentsConfiguration.FOOTER_KEY);
+        if (footerStrings != null && !footerStrings.isEmpty()) {
+
+            List<CommentLine> footerCommentLines = footerStrings.stream()
+                .flatMap(nodeBuilder::createCommentLines)
+                .collect(Collectors.toList());
+
+            rootNode.setEndComments(footerCommentLines);
         }
 
         try (OutputStream os = Files.newOutputStream(path);

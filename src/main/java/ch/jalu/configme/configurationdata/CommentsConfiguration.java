@@ -18,6 +18,8 @@ public class CommentsConfiguration {
 
     private final @NotNull Map<String, List<String>> comments;
 
+    public static final String FOOTER_KEY = "..FOOTER";
+
     /**
      * Constructor.
      */
@@ -59,4 +61,24 @@ public class CommentsConfiguration {
     public @NotNull @UnmodifiableView Map<String, @UnmodifiableView List<String>> getAllComments() {
         return Collections.unmodifiableMap(comments);
     }
+
+    /**
+     * Adds a footer comment so they are stored in the same map under a reserved key.
+     * This allows footer comments to be written at the end of the configuration file.
+     *
+     * @param commentLines the comment lines to add as footer comments
+     */
+    public void addFooterComments(@NotNull String... commentLines) {
+        setComment(FOOTER_KEY, commentLines);
+    }
+
+    /**
+     * Adds header comments which are registered for the root path ("").
+     *
+     * @param commentLines the comment lines to add as header comments
+     */
+    public void addHeaderComments(@NotNull String... commentLines) {
+        setComment("", commentLines);
+    }
+
 }
