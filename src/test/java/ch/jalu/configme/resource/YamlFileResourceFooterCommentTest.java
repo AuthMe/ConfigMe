@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -87,7 +86,7 @@ public class YamlFileResourceFooterCommentTest {
         @Override
         public void registerComments(@NotNull CommentsConfiguration conf) {
             conf.setComment("", "Header comment line 1", "Header comment line 2");
-            conf.addFooterComments("Footer comment line 1", "Footer comment line 2");
+            conf.setFooterComments("Footer comment line 1", "Footer comment line 2");
         }
     }
 
@@ -105,7 +104,7 @@ public class YamlFileResourceFooterCommentTest {
         @Override
         public void registerComments(@NotNull CommentsConfiguration conf) {
             conf.setComment("", "Header comment line 1", "Header comment line 2");
-            conf.addFooterComments("Footer comment line 1", "Footer comment line 2");
+            conf.setFooterComments("Footer comment line 1", "Footer comment line 2");
         }
     }
 

@@ -72,15 +72,13 @@ public class YamlFileResource implements PropertyResource {
             rootNode = root.convertToNode(nodeBuilder);
         }
 
-        List<String> footerStrings = configurationData.getAllComments().get(CommentsConfiguration.FOOTER_KEY);
-        if (footerStrings != null && !footerStrings.isEmpty()) {
+        List<String> footerStrings = configurationData.getCommentsForSection(CommentsConfiguration.FOOTER_KEY);
 
-            List<CommentLine> footerCommentLines = footerStrings.stream()
-                .flatMap(nodeBuilder::createCommentLines)
-                .collect(Collectors.toList());
+        List<CommentLine> footerCommentLines = footerStrings.stream()
+            .flatMap(nodeBuilder::createCommentLines)
+            .collect(Collectors.toList());
 
-            rootNode.setEndComments(footerCommentLines);
-        }
+        rootNode.setEndComments(footerCommentLines);
 
         try (OutputStream os = Files.newOutputStream(path);
              OutputStreamWriter writer = new OutputStreamWriter(os, options.getCharset())) {

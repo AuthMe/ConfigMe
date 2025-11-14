@@ -63,21 +63,20 @@ public class CommentsConfiguration {
     }
 
     /**
-     * Adds a footer comment so they are stored in the same map under a reserved key.
-     * This allows footer comments to be written at the end of the configuration file.
+     * Adds the given lines as footer comments. They will be written at the end of the configuration file.
      *
      * @param commentLines the comment lines to add as footer comments
      */
-    public void addFooterComments(@NotNull String... commentLines) {
+    public void setFooterComments(@NotNull String... commentLines) {
         setComment(FOOTER_KEY, commentLines);
     }
 
     /**
-     * Adds header comments which are registered for the root path ("").
+     * Adds the given lines as header comments. They will be written at the start of the configuration file.
      *
      * @param commentLines the comment lines to add as header comments
      */
-    public void addHeaderComments(@NotNull String... commentLines) {
+    public void setHeaderComments(@NotNull String... commentLines) {
         setComment("", commentLines);
     }
 
