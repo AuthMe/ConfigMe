@@ -20,6 +20,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface LeafValueHandler {
 
+    /** Marker object to signal that null is meant to be used as value. */
+    Object RETURN_NULL = new Object();
+
     /**
      * Converts the given value to the target type (as defined by the mapping context), if supported. Otherwise,
      * null is returned. If a value is returned, its type is guaranteed to match the target type.
@@ -33,6 +36,8 @@ public interface LeafValueHandler {
     /**
      * Converts the value of a property to a value suitable for exporting. This method converts the opposite
      * way of {@link #convert}. Null is returned if this leaf value handler does not support the object's type.
+     * If the leaf value handler determines that {@code null} should be used as export value, then {@link #RETURN_NULL}
+     * is returned, which the caller needs to unwrap to {@code null}.
      *
      * @param value the value to convert
      * @param exportContext the export context (usually not needed)
@@ -40,4 +45,16 @@ public interface LeafValueHandler {
      */
     @Nullable Object toExportValue(@Nullable Object value, @NotNull ExportContext exportContext);
 
+    /**
+     * Returns null if the object is {@link #RETURN_NULL}, otherwise the given object. Used to process return values
+     * from methods like {@link #toExportValue}, where {@code null} means the instance doesn't support the value,
+     * while {@link #RETURN_NULL} means null should be used as export value.
+     *
+     * @param object the object to potentially unwrap
+     * @param <T> the object type
+     * @return null, or the provided object
+     */
+    static <T> @Nullable T unwrapReturnNull(@Nullable T object) {
+        return object == RETURN_NULL ? null : object;
+    }
 }

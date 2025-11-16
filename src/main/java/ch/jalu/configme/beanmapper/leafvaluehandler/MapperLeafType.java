@@ -30,7 +30,7 @@ public interface MapperLeafType {
      * when {@link ch.jalu.configme.beanmapper.MapperImpl#toExportValue(Object)} is called.
      * Returns null if the leaf value handler cannot handle the value.
      * <p>
-     * Return {@link ch.jalu.configme.beanmapper.MapperImpl#RETURN_NULL} to signal that null should be used
+     * Return {@link LeafValueHandler#RETURN_NULL} to signal that null should be used
      * as the export value (returning {@code null} itself means this leaf value handler cannot handle it).
      *
      * @param value the value to convert to an export value, if possible

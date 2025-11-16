@@ -69,7 +69,7 @@ public class VersionMigrationService implements MigrationService {
      * @param migrations all known migrations
      */
     public VersionMigrationService(@NotNull Property<Integer> versionProperty,
-                                   @NotNull VersionMigration... migrations) {
+                                   @NotNull VersionMigration @NotNull ... migrations) {
         this(versionProperty, Arrays.asList(migrations));
     }
 

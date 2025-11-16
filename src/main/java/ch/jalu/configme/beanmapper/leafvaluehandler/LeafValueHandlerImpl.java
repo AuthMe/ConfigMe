@@ -144,7 +144,7 @@ public class LeafValueHandlerImpl implements LeafValueHandler {
          * @param typesToAdd the leaf types to add
          * @return this builder
          */
-        public @NotNull Builder addTypes(@NotNull MapperLeafType... typesToAdd) {
+        public @NotNull Builder addTypes(@NotNull MapperLeafType @NotNull ... typesToAdd) {
             leafTypes.addAll(Arrays.asList(typesToAdd));
             return this;
         }
