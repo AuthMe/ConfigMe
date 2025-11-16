@@ -11,6 +11,10 @@ updates:
         versions: [">= 5"]
       - dependency-name: "org.mockito:mockito-junit-jupiter"
         versions: [">= 5"]
+      - dependency-name: "org.junit.jupiter:junit-jupiter-engine"
+        versions: [">= 6"]
+      - dependency-name: "org.junit.jupiter:junit-jupiter-params"
+        versions: [">= 6"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
