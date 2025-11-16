@@ -16,9 +16,10 @@ import java.util.Map;
  */
 public class CommentsConfiguration {
 
-    private final @NotNull Map<String, List<String>> comments;
-
+    /** Fake path under which footer comments are registered. */
     public static final String FOOTER_KEY = "..FOOTER";
+
+    private final @NotNull Map<String, List<String>> comments;
 
     /**
      * Constructor.
