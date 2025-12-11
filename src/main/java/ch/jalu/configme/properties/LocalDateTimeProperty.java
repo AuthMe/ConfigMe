@@ -3,12 +3,12 @@ package ch.jalu.configme.properties;
 import ch.jalu.configme.properties.types.TemporalType;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
- * {@link LocalDate} property.
+ * {@link LocalDateTime} property.
  */
-public class LocalDateProperty extends TypeBasedProperty<LocalDate> {
+public class LocalDateTimeProperty extends TypeBasedProperty<LocalDateTime> {
 
     /**
      * Constructor.
@@ -16,7 +16,7 @@ public class LocalDateProperty extends TypeBasedProperty<LocalDate> {
      * @param path         the path of the property
      * @param defaultValue the default value of the property
      */
-    public LocalDateProperty(@NotNull String path, @NotNull LocalDate defaultValue) {
-        super(path, TemporalType.LOCAL_DATE, defaultValue);
+    public LocalDateTimeProperty(@NotNull String path, @NotNull LocalDateTime defaultValue) {
+        super(path, TemporalType.LOCAL_DATE_TIME, defaultValue);
     }
 }
