@@ -1,7 +1,10 @@
 package ch.jalu.configme.properties.types;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +22,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Test for {@link TemporalType}.
  */
+@ExtendWith(MockitoExtension.class)
 public class TemporalTypeTest {
+
+    @AfterAll
+    static void reset() {
+        ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
+        TemporalType.LOCAL_DATE.convert("1970-01-01", errorRecorder);
+        TemporalType.LOCAL_TIME.convert("12:00:00", errorRecorder);
+        TemporalType.LOCAL_DATE_TIME.convert("1970-01-01 12:00:00", errorRecorder);
+    }
 
     @Test
     void shouldNotAllowToInstantiateTemporalTypeWithInvalidArguments() {
