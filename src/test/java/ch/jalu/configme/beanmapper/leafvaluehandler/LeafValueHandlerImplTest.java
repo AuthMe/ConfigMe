@@ -9,12 +9,12 @@ import ch.jalu.configme.properties.types.BooleanType;
 import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.properties.types.RegexType;
 import ch.jalu.configme.properties.types.StringType;
+import ch.jalu.configme.properties.types.TemporalType;
 import ch.jalu.typeresolver.typeimpl.WildcardTypeImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,7 +59,7 @@ class LeafValueHandlerImplTest {
         List<MapperLeafType> leafTypes = LeafValueHandlerImpl.createDefaultLeafTypes();
 
         // then
-        assertThat(leafTypes, hasSize(12));
+        assertThat(leafTypes, hasSize(15));
         assertThat(leafTypes.get(0), sameInstance(BooleanType.BOOLEAN));
         assertThat(leafTypes.get(1), sameInstance(StringType.STRING));
         assertThat(leafTypes.get(2), sameInstance(NumberType.INTEGER));
@@ -72,6 +72,9 @@ class LeafValueHandlerImplTest {
         assertThat(leafTypes.get(9), sameInstance(NumberType.BIG_INTEGER));
         assertThat(leafTypes.get(10), sameInstance(NumberType.BIG_DECIMAL));
         assertThat(leafTypes.get(11), sameInstance(RegexType.REGEX));
+        assertThat(leafTypes.get(12), sameInstance(TemporalType.LOCAL_DATE));
+        assertThat(leafTypes.get(13), sameInstance(TemporalType.LOCAL_TIME));
+        assertThat(leafTypes.get(14), sameInstance(TemporalType.LOCAL_DATE_TIME));
     }
 
     @Test
@@ -96,7 +99,7 @@ class LeafValueHandlerImplTest {
             .addType(leafType1)
             .addDefaults()
             .addType(leafType2)
-            .removeMatchingTypes(type -> type instanceof NumberType)
+            .removeMatchingTypes(type -> type instanceof NumberType || type instanceof TemporalType)
             .build();
 
         // then
@@ -166,13 +169,11 @@ class LeafValueHandlerImplTest {
         Object object = "2020-02-13";
 
         ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
-        MappingContext dateContext = MappingContextImpl.createRoot(of(LocalDate.class), errorRecorder);
         MappingContext wildcardContext = MappingContextImpl.createRoot(of(WildcardTypeImpl.newUnboundedWildcard()), errorRecorder);
 
         LeafValueHandlerImpl leafValueHandler = new LeafValueHandlerImpl(LeafValueHandlerImpl.createDefaultLeafTypes());
 
         // when / then
-        assertThat(leafValueHandler.convert(object, dateContext), nullValue());
         assertThat(leafValueHandler.convert(object, wildcardContext), nullValue());
     }
 
@@ -194,7 +195,6 @@ class LeafValueHandlerImplTest {
         ExportContext exportContext = ExportContextImpl.createRoot();
 
         // when / then
-        assertThat(leafValueHandler.toExportValue(LocalDate.now(), exportContext), nullValue());
         assertThat(leafValueHandler.toExportValue(new Object(), exportContext), nullValue());
     }
 
