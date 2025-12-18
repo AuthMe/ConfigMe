@@ -7,6 +7,7 @@ import ch.jalu.configme.properties.types.BooleanType;
 import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.properties.types.RegexType;
 import ch.jalu.configme.properties.types.StringType;
+import ch.jalu.configme.properties.types.TemporalType;
 import ch.jalu.typeresolver.TypeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,7 +75,10 @@ public class LeafValueHandlerImpl implements LeafValueHandler {
                 NumberType.SHORT,
                 NumberType.BIG_INTEGER,
                 NumberType.BIG_DECIMAL,
-                RegexType.REGEX)
+                RegexType.REGEX,
+                TemporalType.LOCAL_DATE,
+                TemporalType.LOCAL_TIME,
+                TemporalType.LOCAL_DATE_TIME)
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
