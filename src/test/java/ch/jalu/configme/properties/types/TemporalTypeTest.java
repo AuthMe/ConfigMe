@@ -14,7 +14,6 @@ import java.util.Collections;
 import static ch.jalu.typeresolver.TypeInfo.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Test for {@link TemporalType}.
  */
 @ExtendWith(MockitoExtension.class)
-public class TemporalTypeTest {
+class TemporalTypeTest {
 
     @AfterAll
     static void reset() {
@@ -35,12 +34,12 @@ public class TemporalTypeTest {
 
     @Test
     void shouldNotAllowToInstantiateTemporalTypeWithInvalidArguments() {
-        // when
+        // given / when
         IllegalArgumentException noSupportedFormats = assertThrows(IllegalArgumentException.class,
             () -> new TemporalType<>(LocalDate.class, Collections.emptyList(), LocalDate::parse));
 
         // then
-        assertThat(noSupportedFormats.getMessage(), matchesPattern("At least one supported format must be provided."));
+        assertThat(noSupportedFormats.getMessage(), equalTo("At least one supported format must be provided."));
     }
 
     @Test

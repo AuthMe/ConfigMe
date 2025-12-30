@@ -67,8 +67,8 @@ public class TemporalType<T extends Temporal> extends PropertyAndLeafType<T> {
         return DateTimeFormatter.ofPattern(this.defaultExportFormat).format(value);
     }
 
-    private T convertToTemporalType(String temporalText) {
-        for (String format: this.supportedFormats) {
+    private @Nullable T convertToTemporalType(@NotNull String temporalText) {
+        for (String format : this.supportedFormats) {
             try {
                 T parsedValue = this.temporalParser.apply(temporalText, DateTimeFormatter.ofPattern(format));
                 this.defaultExportFormat = format;

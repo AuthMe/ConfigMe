@@ -8,6 +8,9 @@ import ch.jalu.configme.properties.types.InlineArrayPropertyType;
 import ch.jalu.configme.properties.types.PropertyType;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -119,6 +122,42 @@ public class PropertyInitializer {
                                                                            @NotNull String path,
                                                                            @NotNull E defaultValue) {
         return new EnumProperty<>(path, clazz, defaultValue);
+    }
+
+    /**
+     * Creates a new LocalDate property.
+     *
+     * @param path the property's path
+     * @param defaultValue the default value
+     * @return the created property
+     */
+    public static @NotNull LocalDateProperty newProperty(@NotNull String path,
+                                                         @NotNull LocalDate defaultValue) {
+        return new LocalDateProperty(path, defaultValue);
+    }
+
+    /**
+     * Creates a new LocalTime property.
+     *
+     * @param path the property's path
+     * @param defaultValue the default value
+     * @return the created property
+     */
+    public static @NotNull LocalTimeProperty newProperty(@NotNull String path,
+                                                         @NotNull LocalTime defaultValue) {
+        return new LocalTimeProperty(path, defaultValue);
+    }
+
+    /**
+     * Creates a new LocalDateTime property.
+     *
+     * @param path the property's path
+     * @param defaultValue the default value
+     * @return the created property
+     */
+    public static @NotNull LocalDateTimeProperty newProperty(@NotNull String path,
+                                                             @NotNull LocalDateTime defaultValue) {
+        return new LocalDateTimeProperty(path, defaultValue);
     }
 
     /**

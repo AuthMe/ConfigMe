@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -169,11 +170,13 @@ class LeafValueHandlerImplTest {
         Object object = "2020-02-13";
 
         ConvertErrorRecorder errorRecorder = mock(ConvertErrorRecorder.class);
+        MappingContext durationContext = MappingContextImpl.createRoot(of(Duration.class), errorRecorder);
         MappingContext wildcardContext = MappingContextImpl.createRoot(of(WildcardTypeImpl.newUnboundedWildcard()), errorRecorder);
 
         LeafValueHandlerImpl leafValueHandler = new LeafValueHandlerImpl(LeafValueHandlerImpl.createDefaultLeafTypes());
 
         // when / then
+        assertThat(leafValueHandler.convert(object, durationContext), nullValue());
         assertThat(leafValueHandler.convert(object, wildcardContext), nullValue());
     }
 
@@ -195,6 +198,7 @@ class LeafValueHandlerImplTest {
         ExportContext exportContext = ExportContextImpl.createRoot();
 
         // when / then
+        assertThat(leafValueHandler.toExportValue(Duration.ofSeconds(3), exportContext), nullValue());
         assertThat(leafValueHandler.toExportValue(new Object(), exportContext), nullValue());
     }
 
