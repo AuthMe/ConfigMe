@@ -85,7 +85,7 @@ public class YamlFileResourceFooterCommentTest {
 
         @Override
         public void registerComments(@NotNull CommentsConfiguration conf) {
-            conf.setComment("", "Header comment line 1", "Header comment line 2");
+            conf.setHeaderComments("Header comment line 1", "Header comment line 2");
             conf.setFooterComments("Footer comment line 1", "Footer comment line 2");
         }
     }
@@ -103,7 +103,7 @@ public class YamlFileResourceFooterCommentTest {
 
         @Override
         public void registerComments(@NotNull CommentsConfiguration conf) {
-            conf.setComment("", "Header comment line 1", "Header comment line 2");
+            conf.setHeaderComments("Header comment line 1", "Header comment line 2");
             conf.setFooterComments("Footer comment line 1", "Footer comment line 2");
         }
     }
