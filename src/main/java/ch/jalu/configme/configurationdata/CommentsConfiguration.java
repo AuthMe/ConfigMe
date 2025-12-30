@@ -16,6 +16,9 @@ import java.util.Map;
  */
 public class CommentsConfiguration {
 
+    /** Fake path under which footer comments are registered. */
+    public static final String FOOTER_KEY = "..FOOTER";
+
     private final @NotNull Map<String, List<String>> comments;
 
     /**
@@ -59,4 +62,23 @@ public class CommentsConfiguration {
     public @NotNull @UnmodifiableView Map<String, @UnmodifiableView List<String>> getAllComments() {
         return Collections.unmodifiableMap(comments);
     }
+
+    /**
+     * Adds the given lines as footer comments. They will be written at the end of the configuration file.
+     *
+     * @param commentLines the comment lines to add as footer comments
+     */
+    public void setFooterComments(@NotNull String... commentLines) {
+        setComment(FOOTER_KEY, commentLines);
+    }
+
+    /**
+     * Adds the given lines as header comments. They will be written at the start of the configuration file.
+     *
+     * @param commentLines the comment lines to add as header comments
+     */
+    public void setHeaderComments(@NotNull String... commentLines) {
+        setComment("", commentLines);
+    }
+
 }

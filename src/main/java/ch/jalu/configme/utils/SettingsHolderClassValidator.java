@@ -8,6 +8,7 @@ import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.typeresolver.EnumUtils;
+import ch.jalu.typeresolver.reflect.FieldUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Validates various characteristics of the property implementations of SettingsHolder classes for consistency.
@@ -105,7 +105,7 @@ public class SettingsHolderClassValidator {
         List<String> invalidFields = new ArrayList<>();
 
         for (Class<? extends SettingsHolder> clazz : settingHolders) {
-            List<String> invalidFieldsForClazz = getAllFields(clazz)
+            List<String> invalidFieldsForClazz = FieldUtils.getAllFields(clazz, false)
                 .filter(field -> Property.class.isAssignableFrom(field.getType()))
                 .filter(field -> !isValidConstantField(field))
                 .map(field -> field.getDeclaringClass().getSimpleName() + "#" + field.getName())
@@ -313,29 +313,5 @@ public class SettingsHolderClassValidator {
         return constructors.length == 1
             && constructors[0].getParameterCount() == 0
             && Modifier.isPrivate(constructors[0].getModifiers());
-    }
-
-    /**
-     * Returns all fields of the class, including all fields of parent classes, recursively.
-     *
-     * @param clazz the class whose fields should be retrieved
-     * @return all fields of the class, including its parents
-     */
-    protected @NotNull Stream<Field> getAllFields(@NotNull Class<?> clazz) {
-        // Shortcut: Class does not inherit from another class, so just go through its fields
-        if (Object.class.equals(clazz.getSuperclass())) {
-            return Arrays.stream(clazz.getDeclaredFields());
-        }
-
-        // Collect all classes incl. parents
-        Class<?> currentClass = clazz;
-        List<Class<?>> classes = new ArrayList<>();
-        while (currentClass != null && !currentClass.equals(Object.class)) {
-            classes.add(currentClass);
-            currentClass = currentClass.getSuperclass();
-        }
-
-        // Go through all fields incl. parents
-        return classes.stream().flatMap(clz -> Arrays.stream(clz.getDeclaredFields()));
     }
 }

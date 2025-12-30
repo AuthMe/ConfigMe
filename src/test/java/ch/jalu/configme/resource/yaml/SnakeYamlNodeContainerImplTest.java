@@ -162,4 +162,6 @@ class SnakeYamlNodeContainerImplTest {
         // then
         assertThat(ex.getMessage(), equalTo("No value was stored for the root path ''"));
     }
+
+
 }

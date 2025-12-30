@@ -11,6 +11,9 @@ import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.regex.Pattern;
@@ -55,6 +58,9 @@ class PropertyInitializerTest {
         assertThat(newProperty("my.path", -8.4d), instanceOf(DoubleProperty.class));
         assertThat(newProperty("my.path", "default"), instanceOf(StringProperty.class));
         assertThat(newProperty(TestEnum.class, "my.path", TestEnum.FIRST), instanceOf(EnumProperty.class));
+        assertThat(newProperty("my.path", LocalDate.now()), instanceOf(LocalDateProperty.class));
+        assertThat(newProperty("my.path", LocalTime.now()), instanceOf(LocalTimeProperty.class));
+        assertThat(newProperty("my.path", LocalDateTime.now()), instanceOf(LocalDateTimeProperty.class));
         assertThat(newRegexProperty("reg.path", "abc?"), instanceOf(RegexProperty.class));
         assertThat(newRegexProperty("reg.path", Pattern.compile("w[0-9]*")), instanceOf(RegexProperty.class));
         assertThat(newListProperty("path", "default", "entries"), instanceOf(StringListProperty.class));

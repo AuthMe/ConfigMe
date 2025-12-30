@@ -145,7 +145,7 @@ class YamlFileResourceCommentsExportTest {
 
         @Override
         public void registerComments(@NotNull CommentsConfiguration conf) {
-            conf.setComment("", "Define the command here.", "\n", "Fill out all values.");
+            conf.setHeaderComments("Define the command here.", "\n", "Fill out all values.");
         }
     }
 
