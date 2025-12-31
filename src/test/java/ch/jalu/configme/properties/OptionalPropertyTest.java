@@ -4,6 +4,7 @@ import ch.jalu.configme.properties.convertresult.PropertyValue;
 import ch.jalu.configme.properties.types.BooleanType;
 import ch.jalu.configme.properties.types.EnumPropertyType;
 import ch.jalu.configme.properties.types.NumberType;
+import ch.jalu.configme.properties.types.PropertyType;
 import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.samples.TestEnum;
@@ -13,13 +14,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static ch.jalu.configme.TestUtils.isErrorValueOf;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static java.util.Optional.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link OptionalProperty}.
@@ -109,5 +113,43 @@ class OptionalPropertyTest {
         assertThat(isEmptyValid, equalTo(true));
         assertThat(isValueValid, equalTo(true));
         assertThat(isNullValid, equalTo(false));
+    }
+
+    @Test
+    void shouldReturnNullAsExportValue() {
+        // given
+        OptionalProperty<Integer> property = new OptionalProperty<>("int.path", NumberType.INTEGER);
+
+        // when
+        Object exportValue = property.toExportValue(Optional.empty());
+
+        // then
+        assertThat(exportValue, nullValue());
+    }
+
+    @Test
+    void shouldReturnNullIfValuePropertyTypeReturnsNull() {
+        // given
+        PropertyType<String> valuePropertyType = mock(PropertyType.class);
+        given(valuePropertyType.toExportValue("demo")).willReturn(null);
+        OptionalProperty<String> optionalProperty = new OptionalProperty<>("int.path", valuePropertyType);
+
+        // when
+        Object exportValue = optionalProperty.toExportValue(Optional.of("demo"));
+
+        // then
+        assertThat(exportValue, nullValue());
+    }
+
+    @Test
+    void shouldConstructExportValue() {
+        // given
+        OptionalProperty<TimeUnit> optionalProperty = new OptionalProperty<>("duration.unit", EnumPropertyType.of(TimeUnit.class));
+
+        // when
+        Object exportValue = optionalProperty.toExportValue(Optional.of(TimeUnit.HOURS));
+
+        // then
+        assertThat(exportValue, equalTo("HOURS"));
     }
 }
