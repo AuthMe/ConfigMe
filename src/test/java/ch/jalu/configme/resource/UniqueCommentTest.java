@@ -5,7 +5,6 @@ import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.TestUtils;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.configurationdata.ConfigurationDataBuilder;
-import ch.jalu.configme.properties.BeanProperty;
 import ch.jalu.configme.properties.ListProperty;
 import ch.jalu.configme.properties.MapProperty;
 import ch.jalu.configme.properties.OptionalProperty;
@@ -141,7 +140,7 @@ class UniqueCommentTest {
                 new ServerCollection(true, "reception"), new ServerCollection(false, "lobby"));
 
         public static final Property<Optional<ServerCollection>> ALT =
-            new OptionalProperty<>(new BeanProperty<>("alternative", ServerCollection.class, new ServerCollection()));
+            new OptionalProperty<>("alternative", BeanPropertyType.of(ServerCollection.class));
 
         private ServerSettingHolder() {
         }
