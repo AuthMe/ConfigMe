@@ -25,7 +25,7 @@ public class OptionalPropertyType<T> implements PropertyType<Optional<T>> {
     }
 
     @Override
-    public @Nullable Optional<T> convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
+    public @NotNull Optional<T> convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
         if (object != null) {
             return Optional.ofNullable(valueType.convert(object, errorRecorder));
         }
