@@ -1,6 +1,11 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.PropertyValue;
+import ch.jalu.configme.properties.types.BooleanType;
+import ch.jalu.configme.properties.types.EnumPropertyType;
+import ch.jalu.configme.properties.types.NumberType;
+import ch.jalu.configme.properties.types.PropertyType;
+import ch.jalu.configme.properties.types.StringType;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
@@ -9,17 +14,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static ch.jalu.configme.TestUtils.isErrorValueOf;
 import static ch.jalu.configme.TestUtils.isValidValueOf;
 import static java.util.Optional.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test for {@link OptionalProperty}.
@@ -33,9 +37,9 @@ class OptionalPropertyTest {
     @Test
     void shouldReturnPresentValues() {
         // given
-        OptionalProperty<Boolean> booleanProp = new OptionalProperty<>(new BooleanProperty("bool.path.test", false));
-        OptionalProperty<Integer> intProp = new OptionalProperty<>(new IntegerProperty("int.path.test", 0));
-        OptionalProperty<TestEnum> enumProp = new OptionalProperty<>(new EnumProperty<>("enum.path.test", TestEnum.class, TestEnum.SECOND));
+        OptionalProperty<Boolean> booleanProp = new OptionalProperty<>("bool.path.test", BooleanType.BOOLEAN);
+        OptionalProperty<Integer> intProp = new OptionalProperty<>("int.path.test", NumberType.INTEGER);
+        OptionalProperty<TestEnum> enumProp = new OptionalProperty<>("enum.path.test", new EnumPropertyType<>(TestEnum.class));
 
         given(reader.getObject("bool.path.test")).willReturn(true);
         given(reader.getObject("int.path.test")).willReturn(27);
@@ -55,9 +59,9 @@ class OptionalPropertyTest {
     @Test
     void shouldReturnEmptyOptional() {
         // given
-        OptionalProperty<Boolean> booleanProp = new OptionalProperty<>(new BooleanProperty("bool.path.wrong", false));
-        OptionalProperty<Integer> intProp = new OptionalProperty<>(new IntegerProperty("int.path.wrong", 0));
-        OptionalProperty<TestEnum> enumProp = new OptionalProperty<>(new EnumProperty<>("enum.path.wrong", TestEnum.class, TestEnum.SECOND));
+        OptionalProperty<Boolean> booleanProp = new OptionalProperty<>("bool.path.wrong", BooleanType.BOOLEAN);
+        OptionalProperty<Integer> intProp = new OptionalProperty<>("int.path.wrong", NumberType.INTEGER);
+        OptionalProperty<TestEnum> enumProp = new OptionalProperty<>("enum.path.wrong", new EnumPropertyType<>(TestEnum.class));
 
         // when
         PropertyValue<Optional<Boolean>> boolResult = booleanProp.determineValue(reader);
@@ -73,7 +77,7 @@ class OptionalPropertyTest {
     @Test
     void shouldAllowToDefineDefaultValue() {
         // given
-        OptionalProperty<Integer> integerProp = new OptionalProperty<>(new IntegerProperty("path", 0), 42);
+        OptionalProperty<Integer> integerProp = new OptionalProperty<>("int.path.wrong", NumberType.INTEGER, 42);
 
         // when
         Optional<Integer> defaultValue = integerProp.getDefaultValue();
@@ -85,38 +89,20 @@ class OptionalPropertyTest {
     @Test
     void shouldReturnValueWithInvalidFlagIfReturnedFromReader() {
         // given
-        StringProperty baseProperty = spy(new StringProperty("the.path", "DEFAULT"));
-        doReturn(PropertyValue.withValueRequiringRewrite("this should be discarded")).when(baseProperty).determineValue(reader);
-        given(reader.contains("the.path")).willReturn(true);
-        OptionalProperty<String> optionalProperty = new OptionalProperty<>(baseProperty);
+        given(reader.getObject("the.path")).willReturn(400);
+        OptionalProperty<Byte> optionalProperty = new OptionalProperty<>("the.path", NumberType.BYTE);
 
         // when
-        PropertyValue<Optional<String>> value = optionalProperty.determineValue(reader);
+        PropertyValue<Optional<Byte>> value = optionalProperty.determineValue(reader);
 
         // then
-        assertThat(value, isErrorValueOf(Optional.empty()));
-    }
-
-    @Test
-    void shouldDelegateToBasePropertyAndHaveEmptyOptionalAsDefault() {
-        // given
-        StringProperty baseProperty = new StringProperty("some.path", "Def");
-        OptionalProperty<String> property = new OptionalProperty<>(baseProperty);
-
-        // when
-        Optional<String> defaultValue = property.getDefaultValue();
-        String path = property.getPath();
-
-        // then
-        assertThat(defaultValue, equalTo(Optional.empty()));
-        assertThat(path, equalTo("some.path"));
+        assertThat(value, isErrorValueOf(Optional.of(Byte.MAX_VALUE)));
     }
 
     @Test
     void shouldValidateWithBasePropertyNullSafe() {
         // given
-        StringProperty baseProperty = spy(new StringProperty("some.path", "Def"));
-        OptionalProperty<String> property = new OptionalProperty<>(baseProperty);
+        OptionalProperty<String> property = new OptionalProperty<>("path", StringType.STRING);
 
         // when
         boolean isEmptyValid = property.isValidValue(Optional.empty());
@@ -127,6 +113,43 @@ class OptionalPropertyTest {
         assertThat(isEmptyValid, equalTo(true));
         assertThat(isValueValid, equalTo(true));
         assertThat(isNullValid, equalTo(false));
-        verify(baseProperty, only()).isValidValue("foo");
+    }
+
+    @Test
+    void shouldReturnNullAsExportValue() {
+        // given
+        OptionalProperty<Integer> property = new OptionalProperty<>("int.path", NumberType.INTEGER);
+
+        // when
+        Object exportValue = property.toExportValue(Optional.empty());
+
+        // then
+        assertThat(exportValue, nullValue());
+    }
+
+    @Test
+    void shouldReturnNullIfValuePropertyTypeReturnsNull() {
+        // given
+        PropertyType<String> valuePropertyType = mock(PropertyType.class);
+        given(valuePropertyType.toExportValue("demo")).willReturn(null);
+        OptionalProperty<String> optionalProperty = new OptionalProperty<>("int.path", valuePropertyType);
+
+        // when
+        Object exportValue = optionalProperty.toExportValue(Optional.of("demo"));
+
+        // then
+        assertThat(exportValue, nullValue());
+    }
+
+    @Test
+    void shouldConstructExportValue() {
+        // given
+        OptionalProperty<TimeUnit> optionalProperty = new OptionalProperty<>("duration.unit", EnumPropertyType.of(TimeUnit.class));
+
+        // when
+        Object exportValue = optionalProperty.toExportValue(Optional.of(TimeUnit.HOURS));
+
+        // then
+        assertThat(exportValue, equalTo("HOURS"));
     }
 }

@@ -4,8 +4,15 @@ import ch.jalu.configme.properties.builder.ArrayPropertyBuilder;
 import ch.jalu.configme.properties.builder.CollectionPropertyBuilder;
 import ch.jalu.configme.properties.builder.MapPropertyBuilder;
 import ch.jalu.configme.properties.types.ArrayPropertyType;
+import ch.jalu.configme.properties.types.BooleanType;
+import ch.jalu.configme.properties.types.EnumPropertyType;
 import ch.jalu.configme.properties.types.InlineArrayPropertyType;
+import ch.jalu.configme.properties.types.ListPropertyType;
+import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.properties.types.PropertyType;
+import ch.jalu.configme.properties.types.RegexType;
+import ch.jalu.configme.properties.types.SetPropertyType;
+import ch.jalu.configme.properties.types.StringType;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -311,48 +318,47 @@ public class PropertyInitializer {
     // Optional flavors
     // --------------
     public static @NotNull OptionalProperty<Boolean> optionalBooleanProperty(@NotNull String path) {
-        return new OptionalProperty<>(new BooleanProperty(path, false));
+        return new OptionalProperty<>(path, BooleanType.BOOLEAN);
     }
 
     public static @NotNull OptionalProperty<Short> optionalShortProperty(@NotNull String path) {
-        return new OptionalProperty<>(new ShortProperty(path, (short) 0));
+        return new OptionalProperty<>(path, NumberType.SHORT);
     }
 
     public static @NotNull OptionalProperty<Integer> optionalIntegerProperty(@NotNull String path) {
-        return new OptionalProperty<>(new IntegerProperty(path, 0));
+        return new OptionalProperty<>(path, NumberType.INTEGER);
     }
 
     public static @NotNull OptionalProperty<Long> optionalLongProperty(@NotNull String path) {
-        return new OptionalProperty<>(new LongProperty(path, 0L));
+        return new OptionalProperty<>(path, NumberType.LONG);
     }
 
     public static @NotNull OptionalProperty<Float> optionalFloatProperty(@NotNull String path) {
-        return new OptionalProperty<>(new FloatProperty(path, 0f));
+        return new OptionalProperty<>(path, NumberType.FLOAT);
     }
 
     public static @NotNull OptionalProperty<Double> optionalDoubleProperty(@NotNull String path) {
-        return new OptionalProperty<>(new DoubleProperty(path, 0.0));
+        return new OptionalProperty<>(path, NumberType.DOUBLE);
     }
 
     public static @NotNull OptionalProperty<String> optionalStringProperty(@NotNull String path) {
-        return new OptionalProperty<>(new StringProperty(path, ""));
+        return new OptionalProperty<>(path, StringType.STRING);
     }
 
     public static <E extends Enum<E>> @NotNull OptionalProperty<E> optionalEnumProperty(@NotNull Class<E> clazz,
                                                                                         @NotNull String path) {
-        // default value may never be null, so get the first entry in the enum class
-        return new OptionalProperty<>(new EnumProperty<>(path, clazz, clazz.getEnumConstants()[0]));
+        return new OptionalProperty<>(path, new EnumPropertyType<>(clazz));
     }
 
     public static @NotNull OptionalProperty<Pattern> optionalRegexProperty(@NotNull String path) {
-        return new OptionalProperty<>(new RegexProperty(path, ""));
+        return new OptionalProperty<>(path, RegexType.REGEX);
     }
 
     public static @NotNull OptionalProperty<List<String>> optionalListProperty(@NotNull String path) {
-        return new OptionalProperty<>(new StringListProperty(path));
+        return new OptionalProperty<>(path, new ListPropertyType<>(StringType.STRING));
     }
 
     public static @NotNull OptionalProperty<Set<String>> optionalSetProperty(@NotNull String path) {
-        return new OptionalProperty<>(new StringSetProperty(path));
+        return new OptionalProperty<>(path, new SetPropertyType<>(StringType.STRING));
     }
 }

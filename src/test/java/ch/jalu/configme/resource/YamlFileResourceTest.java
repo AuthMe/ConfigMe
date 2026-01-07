@@ -8,6 +8,8 @@ import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.properties.BeanProperty;
 import ch.jalu.configme.properties.OptionalProperty;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.properties.types.EnumPropertyType;
+import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.samples.TestConfiguration;
 import ch.jalu.configme.samples.TestEnum;
 import org.junit.jupiter.api.Test;
@@ -195,8 +197,8 @@ class YamlFileResourceTest {
     void shouldSkipAbsentOptionalProperty() throws IOException {
         // given
         ConfigurationData configurationData = createConfiguration(asList(
-            new OptionalProperty<>(TestConfiguration.DURATION_IN_SECONDS),
-            new OptionalProperty<>(TestConfiguration.RATIO_ORDER)));
+            new OptionalProperty<>("test.duration", NumberType.INTEGER),
+            new OptionalProperty<>("sample.ratio.order", new EnumPropertyType<>(TestEnum.class))));
         Path file = copyFileFromResources(INCOMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         configurationData.initializeValues(resource.createReader());
@@ -216,8 +218,8 @@ class YamlFileResourceTest {
     void shouldExportAllPresentOptionalProperties() throws IOException {
         // given
         ConfigurationData configurationData = createConfiguration(asList(
-            new OptionalProperty<>(TestConfiguration.DURATION_IN_SECONDS),
-            new OptionalProperty<>(TestConfiguration.RATIO_ORDER)));
+            new OptionalProperty<>("test.duration", NumberType.INTEGER),
+            new OptionalProperty<>("sample.ratio.order", new EnumPropertyType<>(TestEnum.class))));
         Path file = copyFileFromResources(COMPLETE_FILE);
         PropertyResource resource = new YamlFileResource(file);
         configurationData.initializeValues(resource.createReader());

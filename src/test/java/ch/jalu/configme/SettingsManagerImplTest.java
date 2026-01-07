@@ -9,6 +9,7 @@ import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.properties.BeanProperty;
 import ch.jalu.configme.properties.OptionalProperty;
 import ch.jalu.configme.properties.Property;
+import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.resource.PropertyReader;
 import ch.jalu.configme.resource.PropertyResource;
 import ch.jalu.configme.resource.YamlFileResource;
@@ -203,7 +204,7 @@ class SettingsManagerImplTest {
         PropertyResource resource = new YamlFileResource(file);
         SettingsManager settingsManager =
             new SettingsManagerImpl(resource, createConfiguration(TestConfiguration.class), null);
-        OptionalProperty<Integer> intOptional = new OptionalProperty<>(newProperty("version", 65));
+        OptionalProperty<Integer> intOptional = new OptionalProperty<>("version", NumberType.INTEGER);
 
         // when
         settingsManager.setProperty(intOptional, Optional.empty());
