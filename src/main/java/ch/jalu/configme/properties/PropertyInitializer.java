@@ -317,48 +317,62 @@ public class PropertyInitializer {
     // --------------
     // Optional flavors
     // --------------
+    public static <T> @NotNull OptionalProperty<T> optionalProperty(@NotNull String path, PropertyType<T> type) {
+        return new OptionalProperty<>(path, type);
+    }
+
     public static @NotNull OptionalProperty<Boolean> optionalBooleanProperty(@NotNull String path) {
-        return new OptionalProperty<>(path, BooleanType.BOOLEAN);
+        return optionalProperty(path, BooleanType.BOOLEAN);
     }
 
     public static @NotNull OptionalProperty<Short> optionalShortProperty(@NotNull String path) {
-        return new OptionalProperty<>(path, NumberType.SHORT);
+        return optionalProperty(path, NumberType.SHORT);
     }
 
     public static @NotNull OptionalProperty<Integer> optionalIntegerProperty(@NotNull String path) {
-        return new OptionalProperty<>(path, NumberType.INTEGER);
+        return optionalProperty(path, NumberType.INTEGER);
     }
 
     public static @NotNull OptionalProperty<Long> optionalLongProperty(@NotNull String path) {
-        return new OptionalProperty<>(path, NumberType.LONG);
+        return optionalProperty(path, NumberType.LONG);
     }
 
     public static @NotNull OptionalProperty<Float> optionalFloatProperty(@NotNull String path) {
-        return new OptionalProperty<>(path, NumberType.FLOAT);
+        return optionalProperty(path, NumberType.FLOAT);
     }
 
     public static @NotNull OptionalProperty<Double> optionalDoubleProperty(@NotNull String path) {
-        return new OptionalProperty<>(path, NumberType.DOUBLE);
+        return optionalProperty(path, NumberType.DOUBLE);
     }
 
     public static @NotNull OptionalProperty<String> optionalStringProperty(@NotNull String path) {
-        return new OptionalProperty<>(path, StringType.STRING);
+        return optionalProperty(path, StringType.STRING);
     }
 
     public static <E extends Enum<E>> @NotNull OptionalProperty<E> optionalEnumProperty(@NotNull Class<E> clazz,
                                                                                         @NotNull String path) {
-        return new OptionalProperty<>(path, new EnumPropertyType<>(clazz));
+        return optionalProperty(path, new EnumPropertyType<>(clazz));
     }
 
     public static @NotNull OptionalProperty<Pattern> optionalRegexProperty(@NotNull String path) {
-        return new OptionalProperty<>(path, RegexType.REGEX);
+        return optionalProperty(path, RegexType.REGEX);
     }
 
     public static @NotNull OptionalProperty<List<String>> optionalListProperty(@NotNull String path) {
-        return new OptionalProperty<>(path, new ListPropertyType<>(StringType.STRING));
+        return optionalListProperty(path, StringType.STRING);
+    }
+
+    public static <T> @NotNull OptionalProperty<List<T>> optionalListProperty(@NotNull String path,
+                                                                              @NotNull PropertyType<T> type) {
+        return new OptionalProperty<>(path, new ListPropertyType<>(type));
     }
 
     public static @NotNull OptionalProperty<Set<String>> optionalSetProperty(@NotNull String path) {
-        return new OptionalProperty<>(path, new SetPropertyType<>(StringType.STRING));
+        return optionalSetProperty(path, StringType.STRING);
+    }
+
+    public static <T> @NotNull OptionalProperty<Set<T>> optionalSetProperty(@NotNull String path,
+                                                                            @NotNull PropertyType<T> type) {
+        return new OptionalProperty<>(path, new SetPropertyType<>(type));
     }
 }

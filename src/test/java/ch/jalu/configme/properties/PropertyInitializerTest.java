@@ -35,6 +35,7 @@ import static ch.jalu.configme.properties.PropertyInitializer.optionalFloatPrope
 import static ch.jalu.configme.properties.PropertyInitializer.optionalIntegerProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalLongProperty;
+import static ch.jalu.configme.properties.PropertyInitializer.optionalProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalRegexProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalSetProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.optionalShortProperty;
@@ -71,6 +72,7 @@ class PropertyInitializerTest {
         assertThat(newLowercaseStringSetProperty("path", Arrays.asList("5", "7")), instanceOf(LowercaseStringSetProperty.class));
         assertThat(newBeanProperty(WorldGroupConfig.class, "worlds", new WorldGroupConfig()), instanceOf(BeanProperty.class));
 
+        assertThat(optionalProperty("path", NumberType.LONG), instanceOf(OptionalProperty.class));
         assertThat(optionalBooleanProperty("path"), instanceOf(OptionalProperty.class));
         assertThat(optionalShortProperty("path"), instanceOf(OptionalProperty.class));
         assertThat(optionalIntegerProperty("path"), instanceOf(OptionalProperty.class));
@@ -81,7 +83,9 @@ class PropertyInitializerTest {
         assertThat(optionalEnumProperty(TestEnum.class, "path"), instanceOf(OptionalProperty.class));
         assertThat(optionalRegexProperty("path"), instanceOf(OptionalProperty.class));
         assertThat(optionalListProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalListProperty("path", BooleanType.BOOLEAN), instanceOf(OptionalProperty.class));
         assertThat(optionalSetProperty("path"), instanceOf(OptionalProperty.class));
+        assertThat(optionalSetProperty("path", NumberType.INTEGER), instanceOf(OptionalProperty.class));
     }
 
     @Test
