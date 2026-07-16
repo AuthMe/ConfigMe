@@ -19,4 +19,4 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-    target-branch: master
+    target-branch: dependencies
