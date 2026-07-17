@@ -27,8 +27,8 @@ class LocalDatePropertyTest {
     @BeforeAll
     static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
-        when(reader.getObject("local-date.path.test")).thenReturn("1999-01-31");
-        when(reader.getObject("local-date.path.wrong")).thenReturn("31-01-1999");
+        when(reader.getValue("local-date.path.test")).thenReturn("1999-01-31");
+        when(reader.getValue("local-date.path.wrong")).thenReturn("31-01-1999");
     }
 
     @Test

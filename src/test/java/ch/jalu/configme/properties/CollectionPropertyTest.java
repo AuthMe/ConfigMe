@@ -41,7 +41,7 @@ class CollectionPropertyTest {
             CollectionPropertyType.of(NumberType.DOUBLE, Collectors.toCollection(TreeSet::new));
         Property<TreeSet<Double>> sortedValuesProperty =
             new CollectionProperty<>("values", treeSetType, new TreeSet<>());
-        given(reader.getObject("values")).willReturn(Arrays.asList(16, 9, 4));
+        given(reader.getValue("values")).willReturn(Arrays.asList(16, 9, 4));
 
         // when
         PropertyValue<TreeSet<Double>> value = sortedValuesProperty.determineValue(reader);
@@ -60,7 +60,7 @@ class CollectionPropertyTest {
             NumberType.DOUBLE,
             Collectors.toCollection(Vector::new),
             new Vector<>(Arrays.asList(3.0, 4.0)));
-        given(reader.getObject("values")).willReturn(Arrays.asList(1.0, 2.5, 4.0));
+        given(reader.getValue("values")).willReturn(Arrays.asList(1.0, 2.5, 4.0));
 
         // when
         PropertyValue<Vector<Double>> value = valuesProperty.determineValue(reader);
@@ -80,8 +80,8 @@ class CollectionPropertyTest {
         // given
         Property<List<Long>> property1 = CollectionProperty.of("p1", NumberType.LONG, Collectors.toList());
         Property<List<Long>> property2 = CollectionProperty.of("p2", NumberType.LONG, Collectors.toList(), 4L, 6L);
-        given(reader.getObject("p1")).willReturn("invalid");
-        given(reader.getObject("p2")).willReturn(Arrays.asList("1", "2"));
+        given(reader.getValue("p1")).willReturn("invalid");
+        given(reader.getValue("p2")).willReturn(Arrays.asList("1", "2"));
 
         // when
         PropertyValue<List<Long>> value1 = property1.determineValue(reader);

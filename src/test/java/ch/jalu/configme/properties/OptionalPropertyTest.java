@@ -41,9 +41,9 @@ class OptionalPropertyTest {
         OptionalProperty<Integer> intProp = new OptionalProperty<>("int.path.test", NumberType.INTEGER);
         OptionalProperty<TestEnum> enumProp = new OptionalProperty<>("enum.path.test", new EnumPropertyType<>(TestEnum.class));
 
-        given(reader.getObject("bool.path.test")).willReturn(true);
-        given(reader.getObject("int.path.test")).willReturn(27);
-        given(reader.getObject("enum.path.test")).willReturn(TestEnum.FOURTH.name());
+        given(reader.getValue("bool.path.test")).willReturn(true);
+        given(reader.getValue("int.path.test")).willReturn(27);
+        given(reader.getValue("enum.path.test")).willReturn(TestEnum.FOURTH.name());
 
         // when
         PropertyValue<Optional<Boolean>> boolResult = booleanProp.determineValue(reader);
@@ -89,7 +89,7 @@ class OptionalPropertyTest {
     @Test
     void shouldReturnValueWithInvalidFlagIfReturnedFromReader() {
         // given
-        given(reader.getObject("the.path")).willReturn(400);
+        given(reader.getValue("the.path")).willReturn(400);
         OptionalProperty<Byte> optionalProperty = new OptionalProperty<>("the.path", NumberType.BYTE);
 
         // when

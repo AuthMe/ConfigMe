@@ -130,7 +130,7 @@ class MapperTypeResolutionTest {
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        RecursiveBean<TimeUnit> result = beanPropertyType.convert(reader.getObject(""), errorRecorder);
+        RecursiveBean<TimeUnit> result = beanPropertyType.convert(reader.getValue(""), errorRecorder);
 
         // then
         assertThat(result, notNullValue());

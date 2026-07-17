@@ -1,6 +1,7 @@
 package ch.jalu.configme.properties;
 
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
+import ch.jalu.configme.properties.types.NumberType;
 import ch.jalu.configme.resource.PropertyReader;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -51,8 +52,8 @@ class BasePropertyTest {
     void shouldCheckIfIsValidInResource() {
         // given
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getInt("path.1")).willReturn(120);
-        given(reader.getInt("path.2")).willReturn(9999999);
+        given(reader.getValue("path.1")).willReturn(120);
+        given(reader.getValue("path.2")).willReturn(9999999);
         Property<Byte> property1 = new PropertyTestImpl("path.1", (byte) -89);
         Property<Byte> property2 = new PropertyTestImpl("path.2", (byte) -89);
 
@@ -72,7 +73,7 @@ class BasePropertyTest {
 
         @Override
         protected Byte getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
-            Integer value = reader.getInt(getPath());
+            Integer value = NumberType.INTEGER.convert(reader.getValue(getPath()), errorRecorder);
             return value != null && value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE
                 ? value.byteValue()
                 : null;

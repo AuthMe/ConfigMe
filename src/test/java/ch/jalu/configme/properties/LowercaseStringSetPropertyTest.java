@@ -33,10 +33,10 @@ class LowercaseStringSetPropertyTest {
     static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
         List<String> stringList = Arrays.asList("test1", "Test2", "3rd TEST");
-        given(reader.getObject("lowercaselist.path.test")).willReturn(stringList);
-        given(reader.getObject("lowercaselist.path.wrong")).willReturn(null);
+        given(reader.getValue("lowercaselist.path.test")).willReturn(stringList);
+        given(reader.getValue("lowercaselist.path.wrong")).willReturn(null);
         List<Object> mixedList = Arrays.asList('b', "test", 1);
-        given(reader.getObject("lowercaselist.path.mixed")).willReturn(mixedList);
+        given(reader.getValue("lowercaselist.path.mixed")).willReturn(mixedList);
     }
 
     @Test
@@ -82,7 +82,7 @@ class LowercaseStringSetPropertyTest {
         // given
         Property<Set<String>> property = new LowercaseStringSetProperty("path");
         List<?> list = Arrays.asList(null, "test", null, "test");
-        given(reader.getObject(property.getPath())).willReturn(list);
+        given(reader.getValue(property.getPath())).willReturn(list);
 
         // when
         PropertyValue<Set<String>> result = property.determineValue(reader);

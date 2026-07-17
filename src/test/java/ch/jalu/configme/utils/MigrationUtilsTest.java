@@ -32,7 +32,7 @@ class MigrationUtilsTest {
         PropertyReader reader = mock(PropertyReader.class);
         given(reader.contains(oldProperty.getPath())).willReturn(true);
         given(reader.contains(newProperty.getPath())).willReturn(false);
-        given(reader.getObject(oldProperty.getPath())).willReturn(22);
+        given(reader.getValue(oldProperty.getPath())).willReturn(22);
 
         // when
         boolean result = MigrationUtils.moveProperty(oldProperty, newProperty, reader, configurationData);

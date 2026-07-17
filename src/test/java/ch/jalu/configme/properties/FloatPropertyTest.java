@@ -26,7 +26,7 @@ class FloatPropertyTest {
     void shouldReturnFloatFromResource() {
         // given
         Property<Float> property = new FloatProperty("test.path", -4.11f);
-        given(reader.getObject("test.path")).willReturn(-2508.346);
+        given(reader.getValue("test.path")).willReturn(-2508.346);
 
         // when
         PropertyValue<Float> result = property.determineValue(reader);
@@ -39,7 +39,7 @@ class FloatPropertyTest {
     void shouldReturnDefaultValue() {
         // given
         Property<Float> property = new FloatProperty("property.path", 140f);
-        given(reader.getObject("property.path")).willReturn(null);
+        given(reader.getValue("property.path")).willReturn(null);
 
         // when
         PropertyValue<Float> result = property.determineValue(reader);

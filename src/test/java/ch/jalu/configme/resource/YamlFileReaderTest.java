@@ -114,7 +114,7 @@ class YamlFileReaderTest {
 
         // when / then
         assertThat(reader.getBoolean(TestConfiguration.DURATION_IN_SECONDS.getPath()), nullValue());
-        assertThat(reader.getString(TestConfiguration.DURATION_IN_SECONDS.getPath()), nullValue());
+        assertThat(reader.getString(TestConfiguration.DURATION_IN_SECONDS.getPath()), equalTo("22"));
         assertThat(reader.getDouble(TestConfiguration.DURATION_IN_SECONDS.getPath()), equalTo(22.0));
         assertThat(reader.getDouble(TestConfiguration.SKIP_BORING_FEATURES.getPath()), nullValue());
     }
@@ -157,7 +157,7 @@ class YamlFileReaderTest {
         PropertyReader reader = new YamlFileReader(file);
 
         // when
-        Object result = reader.getObject("");
+        Object result = reader.getValue("");
 
         // then
         assertThat(result, instanceOf(Map.class));
@@ -171,8 +171,8 @@ class YamlFileReaderTest {
         YamlFileReader reader = new YamlFileReader(file);
 
         // when / then
-        assertThat(reader.getObject("sample.ratio.wrong.dunno"), nullValue());
-        assertThat(reader.getObject(TestConfiguration.RATIO_ORDER.getPath() + ".child"), nullValue());
+        assertThat(reader.getValue("sample.ratio.wrong.dunno"), nullValue());
+        assertThat(reader.getValue(TestConfiguration.RATIO_ORDER.getPath() + ".child"), nullValue());
         assertThat(reader.getRoot().keySet(), containsInAnyOrder("test", "sample", "version", "features", "security"));
     }
 

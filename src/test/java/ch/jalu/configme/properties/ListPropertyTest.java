@@ -39,7 +39,7 @@ class ListPropertyTest {
     void shouldReturnValueFromResource() {
         // given
         Property<List<Integer>> property = new ListProperty<>("list", NumberType.INTEGER);
-        given(reader.getObject("list")).willReturn(Arrays.asList(3, 5, 7.0));
+        given(reader.getValue("list")).willReturn(Arrays.asList(3, 5, 7.0));
 
         // when
         PropertyValue<List<Integer>> result = property.determineValue(reader);
@@ -52,7 +52,7 @@ class ListPropertyTest {
     void shouldReturnDefaultValue() {
         // given
         Property<List<Integer>> property = new ListProperty<>("list", NumberType.INTEGER, 8, 9, 10);
-        given(reader.getObject("list")).willReturn(null);
+        given(reader.getValue("list")).willReturn(null);
 
         // when
         PropertyValue<List<Integer>> result = property.determineValue(reader);
@@ -101,7 +101,7 @@ class ListPropertyTest {
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
         String value = "s,h";
         given(timeUnitListType.convert(value, errorRecorder)).willReturn(Arrays.asList(TimeUnit.SECONDS, TimeUnit.HOURS));
-        given(reader.getObject(path)).willReturn(value);
+        given(reader.getValue(path)).willReturn(value);
 
         // when
         ListProperty<TimeUnit> property = ListProperty.withListType(path, timeUnitListType, singletonList(TimeUnit.DAYS));

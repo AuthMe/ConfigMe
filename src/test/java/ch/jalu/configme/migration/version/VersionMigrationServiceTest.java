@@ -43,7 +43,7 @@ class VersionMigrationServiceTest {
         VersionMigrationService migrationService = new VersionMigrationService(versionProperty, migration1To2, migration2To3);
 
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject(versionProperty.getPath())).willReturn(3);
+        given(reader.getValue(versionProperty.getPath())).willReturn(3);
         ConfigurationData configurationData = mock(ConfigurationData.class);
 
         // when
@@ -66,7 +66,7 @@ class VersionMigrationServiceTest {
         VersionMigrationService migrationService = new VersionMigrationService(versionProperty, migration1To2, migration2To3);
 
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject(versionProperty.getPath())).willReturn(3);
+        given(reader.getValue(versionProperty.getPath())).willReturn(3);
         ConfigurationData configurationData = mock(ConfigurationData.class);
         given(configurationData.areAllValuesValidInResource()).willReturn(false); // <-- Invalid value; resave expected.
 
@@ -90,7 +90,7 @@ class VersionMigrationServiceTest {
         VersionMigrationService migrationService = new VersionMigrationService(versionProperty, migration1To3, migration2To3);
 
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject(versionProperty.getPath())).willReturn(1);
+        given(reader.getValue(versionProperty.getPath())).willReturn(1);
         ConfigurationData configurationData = mock(ConfigurationData.class);
 
         // when
@@ -116,7 +116,7 @@ class VersionMigrationServiceTest {
             migration1To2, migration2To3, migration3To5, migration4To5);
 
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject(versionProperty.getPath())).willReturn(1);
+        given(reader.getValue(versionProperty.getPath())).willReturn(1);
         ConfigurationData configurationData = mock(ConfigurationData.class);
 
         // when
@@ -141,7 +141,7 @@ class VersionMigrationServiceTest {
         VersionMigrationService migrationService = new VersionMigrationService(versionProperty, migration2To3, migration3To4);
 
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject(versionProperty.getPath())).willReturn(0);
+        given(reader.getValue(versionProperty.getPath())).willReturn(0);
         ConfigurationData configurationData = mock(ConfigurationData.class);
 
         // when

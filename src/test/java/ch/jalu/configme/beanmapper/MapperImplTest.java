@@ -82,7 +82,7 @@ class MapperImplTest {
 
         // when
         WorldGroupConfig result =
-            mapper.convertToBean(reader.getObject(""), WorldGroupConfig.class, errorRecorder);
+            mapper.convertToBean(reader.getValue(""), WorldGroupConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
@@ -104,7 +104,7 @@ class MapperImplTest {
 
         // when
         CommandConfig config =
-            mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class, errorRecorder);
+            mapper.convertToBean(reader.getValue("commandconfig"), CommandConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(false));
@@ -139,7 +139,7 @@ class MapperImplTest {
 
         // when
         WorldGroupConfig config = mapper.convertToBean(
-            reader.getObject(""), WorldGroupConfig.class, errorRecorder);
+            reader.getValue(""), WorldGroupConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(false));
@@ -154,7 +154,7 @@ class MapperImplTest {
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        CommandConfig config = mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class, errorRecorder);
+        CommandConfig config = mapper.convertToBean(reader.getValue("commandconfig"), CommandConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(false));
@@ -185,7 +185,7 @@ class MapperImplTest {
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> mapper.convertToBean(reader.getObject(""), MapWithNonStringKeys.class, new ConvertErrorRecorder()));
+            () -> mapper.convertToBean(reader.getValue(""), MapWithNonStringKeys.class, new ConvertErrorRecorder()));
 
         // then
         assertThat(ex.getMessage(), equalTo(
@@ -200,7 +200,7 @@ class MapperImplTest {
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> mapper.convertToBean(reader.getObject(""), UnsupportedCollection.class, new ConvertErrorRecorder()));
+            () -> mapper.convertToBean(reader.getValue(""), UnsupportedCollection.class, new ConvertErrorRecorder()));
 
         // then
         assertThat(ex.getMessage(),
@@ -214,7 +214,7 @@ class MapperImplTest {
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> mapper.convertToBean(reader.getObject(""), UntypedCollection.class, new ConvertErrorRecorder()));
+            () -> mapper.convertToBean(reader.getValue(""), UntypedCollection.class, new ConvertErrorRecorder()));
 
         // then
         assertThat(ex.getMessage(),
@@ -228,7 +228,7 @@ class MapperImplTest {
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> mapper.convertToBean(reader.getObject(""), UntypedMap.class, new ConvertErrorRecorder()));
+            () -> mapper.convertToBean(reader.getValue(""), UntypedMap.class, new ConvertErrorRecorder()));
 
         // then
         assertThat(ex.getMessage(),
@@ -242,7 +242,7 @@ class MapperImplTest {
 
         // when
         ConfigMeMapperException ex = assertThrows(ConfigMeMapperException.class,
-            () -> mapper.convertToBean(reader.getObject(""), GenericCollection.class, new ConvertErrorRecorder()));
+            () -> mapper.convertToBean(reader.getValue(""), GenericCollection.class, new ConvertErrorRecorder()));
 
         // then
         assertThat(ex.getMessage(),
@@ -285,7 +285,7 @@ class MapperImplTest {
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        CommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), CommandConfig.class, errorRecorder);
+        CommandConfig result = mapper.convertToBean(reader.getValue("commandconfig"), CommandConfig.class, errorRecorder);
 
         // then
         assertThat(result, nullValue());
@@ -298,7 +298,7 @@ class MapperImplTest {
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        CommandConfig result = mapper.convertToBean(reader.getObject("commands"), CommandConfig.class, errorRecorder);
+        CommandConfig result = mapper.convertToBean(reader.getValue("commands"), CommandConfig.class, errorRecorder);
 
         // then
         assertThat(result, nullValue());
@@ -312,7 +312,7 @@ class MapperImplTest {
 
         // when
         ComplexCommandConfig result =
-            mapper.convertToBean(reader.getObject("commandconfig"), ComplexCommandConfig.class, errorRecorder);
+            mapper.convertToBean(reader.getValue("commandconfig"), ComplexCommandConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(false)); // e.g. save.arguments are missing
@@ -331,7 +331,7 @@ class MapperImplTest {
 
         // when
         ComplexCommandConfig result = mapper.convertToBean(
-            reader.getObject("commandconfig"), ComplexCommandConfig.class, errorRecorder);
+            reader.getValue("commandconfig"), ComplexCommandConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(false));
@@ -371,7 +371,7 @@ class MapperImplTest {
 
         // when
         ComplexOptionalTypeConfig result =
-            mapper.convertToBean(reader.getObject(""), ComplexOptionalTypeConfig.class, errorRecorder);
+            mapper.convertToBean(reader.getValue(""), ComplexOptionalTypeConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
@@ -388,7 +388,7 @@ class MapperImplTest {
 
         // when
         ComplexOptionalTypeConfig result =
-            mapper.convertToBean(reader.getObject(""), ComplexOptionalTypeConfig.class, errorRecorder);
+            mapper.convertToBean(reader.getValue(""), ComplexOptionalTypeConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
@@ -405,7 +405,7 @@ class MapperImplTest {
 
         // when
         ComplexOptionalTypeConfig result =
-            mapper.convertToBean(reader.getObject(""), ComplexOptionalTypeConfig.class, errorRecorder);
+            mapper.convertToBean(reader.getValue(""), ComplexOptionalTypeConfig.class, errorRecorder);
 
         // then
         assertThat(errorRecorder.isFullyValid(), equalTo(true));
@@ -422,7 +422,7 @@ class MapperImplTest {
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
 
         // when
-        Instant result = mapper.convertToBean(reader.getObject(""), Instant.class, errorRecorder);
+        Instant result = mapper.convertToBean(reader.getValue(""), Instant.class, errorRecorder);
 
         // then
         assertThat(result, nullValue());

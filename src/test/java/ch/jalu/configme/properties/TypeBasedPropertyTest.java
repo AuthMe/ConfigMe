@@ -29,7 +29,7 @@ class TypeBasedPropertyTest {
     void shouldReturnValueFromResource() {
         // given
         Property<String> property = new TypeBasedProperty<>("common.path", StringType.STRING, "default");
-        given(reader.getObject("common.path")).willReturn("some string");
+        given(reader.getValue("common.path")).willReturn("some string");
 
         // when / then
         assertThat(property.determineValue(reader), isValidValueOf("some string"));

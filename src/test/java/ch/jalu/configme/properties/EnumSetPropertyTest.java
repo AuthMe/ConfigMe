@@ -28,7 +28,7 @@ class EnumSetPropertyTest {
         // given
         EnumSet<TestEnum> set = EnumSet.of(TestEnum.ENTRY_A);
         EnumSetProperty<TestEnum> property = new EnumSetProperty<>("enum.path", TestEnum.class, set);
-        given(reader.getObject(property.getPath())).willReturn(null);
+        given(reader.getValue(property.getPath())).willReturn(null);
 
         // when
         PropertyValue<EnumSet<TestEnum>> result = property.determineValue(reader);

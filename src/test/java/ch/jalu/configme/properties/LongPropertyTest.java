@@ -25,8 +25,8 @@ class LongPropertyTest {
     @BeforeAll
     static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
-        when(reader.getObject("long.path.test")).thenReturn(30L);
-        when(reader.getObject("long.path.wrong")).thenReturn(null);
+        when(reader.getValue("long.path.test")).thenReturn(30L);
+        when(reader.getValue("long.path.wrong")).thenReturn(null);
     }
 
     @Test

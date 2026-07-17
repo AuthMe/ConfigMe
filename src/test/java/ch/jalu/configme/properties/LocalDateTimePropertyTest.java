@@ -27,8 +27,8 @@ class LocalDateTimePropertyTest {
     @BeforeAll
     static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
-        when(reader.getObject("local-date-time.path.test")).thenReturn("2001-10-20 19:55:30");
-        when(reader.getObject("local-date-time.path.wrong")).thenReturn("20-2001-10 55:19:30");
+        when(reader.getValue("local-date-time.path.test")).thenReturn("2001-10-20 19:55:30");
+        when(reader.getValue("local-date-time.path.wrong")).thenReturn("20-2001-10 55:19:30");
     }
 
     @Test

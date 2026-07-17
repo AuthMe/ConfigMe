@@ -26,7 +26,7 @@ class BeanWithFinalFieldsTest {
         // given
         BeanProperty<BeanWithFinalField> property = new BeanProperty<>("", BeanWithFinalField.class, new BeanWithFinalField());
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject("")).willReturn(newMapWithName("t"));
+        given(reader.getValue("")).willReturn(newMapWithName("t"));
 
         // when
         ConfigMeException ex = assertThrows(ConfigMeException.class, () -> property.determineValue(reader));
@@ -41,7 +41,7 @@ class BeanWithFinalFieldsTest {
         BeanProperty<BeanWithFinalTransientField> property =
             new BeanProperty<>("", BeanWithFinalTransientField.class, new BeanWithFinalTransientField());
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject("")).willReturn(newMapWithName("Zoran"));
+        given(reader.getValue("")).willReturn(newMapWithName("Zoran"));
 
         // when
         PropertyValue<BeanWithFinalTransientField> value = property.determineValue(reader);
@@ -56,7 +56,7 @@ class BeanWithFinalFieldsTest {
         BeanProperty<BeanWithFinalIgnoredField> property =
             new BeanProperty<>("", BeanWithFinalIgnoredField.class, new BeanWithFinalIgnoredField());
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject("")).willReturn(newMapWithName("Goran"));
+        given(reader.getValue("")).willReturn(newMapWithName("Goran"));
 
         // when
         PropertyValue<BeanWithFinalIgnoredField> value = property.determineValue(reader);
@@ -71,7 +71,7 @@ class BeanWithFinalFieldsTest {
         BeanProperty<BeanWithFinalOverriddenField> property =
             new BeanProperty<>("", BeanWithFinalOverriddenField.class, new BeanWithFinalOverriddenField());
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject("")).willReturn(newMapWithName("Bojan"));
+        given(reader.getValue("")).willReturn(newMapWithName("Bojan"));
 
         // when
         PropertyValue<BeanWithFinalOverriddenField> value = property.determineValue(reader);

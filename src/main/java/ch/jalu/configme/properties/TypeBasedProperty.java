@@ -32,7 +32,7 @@ public class TypeBasedProperty<T> extends BaseProperty<T> {
 
     @Override
     protected @Nullable T getFromReader(@NotNull PropertyReader reader, @NotNull ConvertErrorRecorder errorRecorder) {
-        return type.convert(reader.getObject(getPath()), errorRecorder);
+        return type.convert(reader.getValue(getPath()), errorRecorder);
     }
 
     @Override
