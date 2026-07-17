@@ -116,6 +116,7 @@ class YamlFileReaderTest {
         assertThat(reader.getBoolean(TestConfiguration.DURATION_IN_SECONDS.getPath()), nullValue());
         assertThat(reader.getString(TestConfiguration.DURATION_IN_SECONDS.getPath()), equalTo("22"));
         assertThat(reader.getDouble(TestConfiguration.DURATION_IN_SECONDS.getPath()), equalTo(22.0));
+        assertThat(reader.getObject(TestConfiguration.DURATION_IN_SECONDS.getPath()), equalTo(22));
         assertThat(reader.getDouble(TestConfiguration.SKIP_BORING_FEATURES.getPath()), nullValue());
     }
 
