@@ -38,7 +38,7 @@ class RegexPropertyTest {
         // given
         RegexProperty property = new RegexProperty("names.whitelist", "s_.*?");
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject("names.whitelist")).willReturn("m[0-9]+");
+        given(reader.getValue("names.whitelist")).willReturn("m[0-9]+");
         ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -53,7 +53,7 @@ class RegexPropertyTest {
         // given
         RegexProperty property = new RegexProperty("names.whitelist", "s_.*?");
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject("names.whitelist")).willReturn(null);
+        given(reader.getValue("names.whitelist")).willReturn(null);
         ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -68,7 +68,7 @@ class RegexPropertyTest {
         // given
         RegexProperty property = new RegexProperty("names.whitelist", "s_.*?");
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject("names.whitelist")).willReturn("m[0-9+");
+        given(reader.getValue("names.whitelist")).willReturn("m[0-9+");
         ConvertErrorRecorder convertErrorRecorder = new ConvertErrorRecorder();
 
         // when
@@ -106,7 +106,7 @@ class RegexPropertyTest {
         // given
         RegexProperty property = RegexProperty.caseInsensitive("validName", "\\d+");
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject("validName")).willReturn("[a-z_]+");
+        given(reader.getValue("validName")).willReturn("[a-z_]+");
 
 
         // when

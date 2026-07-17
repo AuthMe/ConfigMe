@@ -107,7 +107,7 @@ class BeanPropertyTest {
             path, WorldGroupConfig.class, new WorldGroupConfig(), mapper);
         PropertyReader reader = mock(PropertyReader.class);
         Object value = new Object();
-        given(reader.getObject(path)).willReturn(value);
+        given(reader.getValue(path)).willReturn(value);
         WorldGroupConfig groupConfig = new WorldGroupConfig();
         given(mapper.convertToBean(eq(value), eq(new TypeInfo(WorldGroupConfig.class)), any(ConvertErrorRecorder.class)))
             .willReturn(groupConfig);

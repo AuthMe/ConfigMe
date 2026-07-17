@@ -44,7 +44,7 @@ class YamlFileResourceOptionalInBeanPropertyTest {
         PropertyResource resource = new YamlFileResource(file);
         PropertyReader reader = resource.createReader();
         Mapper mapper = new MapperImpl();
-        ComplexCommandConfig result = mapper.convertToBean(reader.getObject("commandconfig"), ComplexCommandConfig.class, new ConvertErrorRecorder());
+        ComplexCommandConfig result = mapper.convertToBean(reader.getValue("commandconfig"), ComplexCommandConfig.class, new ConvertErrorRecorder());
         result.getCommands().put("shutdown", createShutdownCommand());
         ConfigurationData configurationData = createConfigurationData();
         configurationData.setValue(commandConfigProperty, result);
@@ -56,7 +56,7 @@ class YamlFileResourceOptionalInBeanPropertyTest {
         PropertyResource resourceAfterSave = new YamlFileResource(file);
         ConvertErrorRecorder errorRecorderAfterSave = new ConvertErrorRecorder();
         ComplexCommandConfig commandConfig = mapper.convertToBean(
-            resourceAfterSave.createReader().getObject("commandconfig"), ComplexCommandConfig.class, errorRecorderAfterSave);
+            resourceAfterSave.createReader().getValue("commandconfig"), ComplexCommandConfig.class, errorRecorderAfterSave);
         assertThat(errorRecorderAfterSave.isFullyValid(), equalTo(true));
 
         assertThat(commandConfig.getCommands().keySet(),

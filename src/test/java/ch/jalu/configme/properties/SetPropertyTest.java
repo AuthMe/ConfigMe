@@ -37,7 +37,7 @@ class SetPropertyTest {
             1.414, 1.732, 2.0);
         PropertyReader reader = mock(PropertyReader.class);
         List<Double> list = Arrays.asList(3.6, 6.9, 10.2);
-        given(reader.getObject("error.codes")).willReturn(list);
+        given(reader.getValue("error.codes")).willReturn(list);
 
         // when
         PropertyValue<Set<Double>> result = property.determineValue(reader);
@@ -53,7 +53,7 @@ class SetPropertyTest {
         SetProperty<Integer> property = new SetProperty<>("error.codes", NumberType.INTEGER,
             -27, -8);
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject("error.codes")).willReturn(null);
+        given(reader.getValue("error.codes")).willReturn(null);
 
         // when
         PropertyValue<Set<Integer>> result = property.determineValue(reader);
@@ -107,7 +107,7 @@ class SetPropertyTest {
         LinkedHashSet<String> convertedValue = new LinkedHashSet<>(Arrays.asList("α", "μ"));
         given(greekStringSetType.convert(value, errorRecorder)).willReturn(convertedValue);
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject(path)).willReturn(value);
+        given(reader.getValue(path)).willReturn(value);
 
         // when
         SetProperty<String> property = SetProperty.withSetType(path, greekStringSetType, singleton("θ"));

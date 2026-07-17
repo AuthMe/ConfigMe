@@ -25,8 +25,8 @@ class ShortPropertyTest {
     @BeforeAll
     static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
-        when(reader.getObject("short.path.test")).thenReturn((short) 15);
-        when(reader.getObject("short.path.wrong")).thenReturn(null);
+        when(reader.getValue("short.path.test")).thenReturn((short) 15);
+        when(reader.getValue("short.path.wrong")).thenReturn(null);
     }
 
     @Test

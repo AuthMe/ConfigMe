@@ -28,7 +28,7 @@ class InlineArrayPropertyTest {
             new String[] {"multiline", "message"}
         );
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject("inline_value")).willReturn("hello\nkek");
+        given(reader.getValue("inline_value")).willReturn("hello\nkek");
 
         // when
         String[] result = property.getFromReader(reader, new ConvertErrorRecorder());
@@ -58,7 +58,7 @@ class InlineArrayPropertyTest {
         InlineArrayProperty<Integer> property = new InlineArrayProperty<>("path", InlineArrayPropertyType.INTEGER,  new Integer[0]);
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
         PropertyReader reader = mock(PropertyReader.class);
-        given(reader.getObject("path")).willReturn(value);
+        given(reader.getValue("path")).willReturn(value);
 
         // when
         Integer[] result = property.getFromReader(reader, errorRecorder);

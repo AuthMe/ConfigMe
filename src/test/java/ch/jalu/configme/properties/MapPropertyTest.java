@@ -50,7 +50,7 @@ class MapPropertyTest {
         // given
         MapProperty<String> property = new MapProperty<>("map", StringType.STRING, new HashMap<>());
         Map<String, String> mapFromReader = createSampleMap();
-        given(reader.getObject("map")).willReturn(mapFromReader);
+        given(reader.getValue("map")).willReturn(mapFromReader);
 
         // when / then
         assertThat(property.determineValue(reader), isValidValueOf(mapFromReader));
@@ -60,7 +60,7 @@ class MapPropertyTest {
     void shouldReturnDefaultValue() {
         // given
         MapProperty<String> property = new MapProperty<>("map", StringType.STRING, createSampleMap());
-        given(reader.getObject("map")).willReturn(null);
+        given(reader.getValue("map")).willReturn(null);
 
         // when / then
         assertThat(property.determineValue(reader), isErrorValueOf(property.getDefaultValue()));
@@ -146,7 +146,7 @@ class MapPropertyTest {
         Map<Integer, Integer> inputMap = new LinkedHashMap<>();
         inputMap.put(1, 1);
         inputMap.put(4, 4);
-        given(reader.getObject("mapping")).willReturn(inputMap);
+        given(reader.getValue("mapping")).willReturn(inputMap);
 
         // when
         PropertyValue<Map<String, Double>> propertyValue = mapProperty.determineValue(reader);
@@ -174,7 +174,7 @@ class MapPropertyTest {
         Map<Integer, Integer> inputMap = new LinkedHashMap<>();
         inputMap.put(8, 3);
         inputMap.put(4, 6);
-        given(reader.getObject("mapping")).willReturn(inputMap);
+        given(reader.getValue("mapping")).willReturn(inputMap);
 
         // when
         PropertyValue<Map<String, Double>> propertyValue = mapProperty.determineValue(reader);

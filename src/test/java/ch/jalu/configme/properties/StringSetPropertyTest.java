@@ -32,10 +32,10 @@ class StringSetPropertyTest {
     static void setUpConfiguration() {
         reader = mock(PropertyReader.class);
         List<String> stringList = Arrays.asList("test1", "Test2", "3rd test", "Test2");
-        given(reader.getObject("list.path.test")).willReturn(stringList);
-        given(reader.getObject("list.path.wrong")).willReturn(null);
+        given(reader.getValue("list.path.test")).willReturn(stringList);
+        given(reader.getValue("list.path.wrong")).willReturn(null);
         List<Object> mixedList = Arrays.asList("test1", false, "toast", 1);
-        given(reader.getObject("list.path.mixed")).willReturn(mixedList);
+        given(reader.getValue("list.path.mixed")).willReturn(mixedList);
     }
 
     @Test

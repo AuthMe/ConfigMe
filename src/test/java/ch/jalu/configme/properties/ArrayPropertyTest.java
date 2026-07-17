@@ -40,7 +40,7 @@ class ArrayPropertyTest {
             "singleton", StringType.STRING.arrayType(),
             "multiline", "message");
 
-        given(reader.getObject("singleton")).willReturn("hello");
+        given(reader.getValue("singleton")).willReturn("hello");
 
         // when
         String[] result = property.getFromReader(reader, new ConvertErrorRecorder());
@@ -56,7 +56,7 @@ class ArrayPropertyTest {
             "singleton", StringType.STRING, String[]::new,
             new String[] {"multiline", "message"});
 
-        given(reader.getObject("singleton")).willReturn(null);
+        given(reader.getValue("singleton")).willReturn(null);
 
         // when
         String[] result = property.getFromReader(reader, new ConvertErrorRecorder());
@@ -71,7 +71,7 @@ class ArrayPropertyTest {
         Property<String[]> property = new ArrayProperty<>(
             "array", StringType.STRING, String[]::new,
             new String[] {"multiline", "message"});
-        given(reader.getObject("array")).willReturn(Arrays.asList("qwerty", "123"));
+        given(reader.getValue("array")).willReturn(Arrays.asList("qwerty", "123"));
 
         // when
         PropertyValue<String[]> result = property.determineValue(reader);
@@ -87,7 +87,7 @@ class ArrayPropertyTest {
             "array", StringType.STRING, String[]::new,
             new String[] {"multiline", "message c:"});
 
-        given(reader.getObject("array")).willReturn(null);
+        given(reader.getValue("array")).willReturn(null);
 
         // when
         PropertyValue<String[]> result = property.determineValue(reader);
@@ -123,7 +123,7 @@ class ArrayPropertyTest {
         ConvertErrorRecorder errorRecorder = new ConvertErrorRecorder();
         String value = "test";
         given(intArrayType.convert(value, errorRecorder)).willReturn(new Integer[]{3, 4});
-        given(reader.getObject(path)).willReturn(value);
+        given(reader.getValue(path)).willReturn(value);
 
         // when
         ArrayProperty<Integer> property = new ArrayProperty<>(path, intArrayType, 3, 8);

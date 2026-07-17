@@ -89,7 +89,7 @@ class YamlFileResourceTest {
             // If we go through Property objects they may fall back to their default values
             String propertyPath = entry.getKey().getPath();
             assertThat("Property '" + propertyPath + "' has expected value",
-               reader.getObject(propertyPath), equalTo(entry.getValue()));
+               reader.getValue(propertyPath), equalTo(entry.getValue()));
         }
     }
 
@@ -113,7 +113,7 @@ class YamlFileResourceTest {
 
         // then
         PropertyReader reader = resource.createReader();
-        assertThat(reader.getObject(TestConfiguration.DUST_LEVEL.getPath()), not(nullValue()));
+        assertThat(reader.getValue(TestConfiguration.DUST_LEVEL.getPath()), not(nullValue()));
 
         Map<Property<?>, Object> expected = new HashMap<>();
         expected.put(TestConfiguration.DURATION_IN_SECONDS, 20);
@@ -131,7 +131,7 @@ class YamlFileResourceTest {
 
         for (Map.Entry<Property<?>, Object> entry : expected.entrySet()) {
             assertThat("Property '" + entry.getKey().getPath() + "' has expected value",
-                reader.getObject(entry.getKey().getPath()), equalTo(entry.getValue()));
+                reader.getValue(entry.getKey().getPath()), equalTo(entry.getValue()));
         }
     }
 

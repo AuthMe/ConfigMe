@@ -2,7 +2,6 @@ package ch.jalu.configme.resource;
 
 import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.internal.PathUtils;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
@@ -17,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * YAML file reader.
  */
-public class YamlFileReader implements PropertyReader {
+public class YamlFileReader implements PropertyReader, PathProvider {
 
     private final Path path;
     private final Charset charset;
@@ -54,7 +52,7 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    public @Nullable Object getObject(@NotNull String path) {
+    public @Nullable Object getValue(@NotNull String path) {
         if (path.isEmpty()) {
             return root;
         }
@@ -71,54 +69,23 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    public @Nullable String getString(@NotNull String path) {
-        return getTypedObject(path, String.class);
-    }
-
-    @Override
-    public @Nullable Integer getInt(@NotNull String path) {
-        Number n = getTypedObject(path, Number.class);
-        return (n == null)
-            ? null
-            : n.intValue();
-    }
-
-    @Override
-    public @Nullable Double getDouble(@NotNull String path) {
-        Number n = getTypedObject(path, Number.class);
-        return (n == null)
-            ? null
-            : n.doubleValue();
-    }
-
-    @Override
-    public @Nullable Boolean getBoolean(@NotNull String path) {
-        return getTypedObject(path, Boolean.class);
-    }
-
-    @Override
-    public @Nullable List<?> getList(@NotNull String path) {
-        return getTypedObject(path, List.class);
-    }
-
-    @Override
     public boolean contains(@NotNull String path) {
-        return getObject(path) != null;
+        return getValue(path) != null;
     }
 
     @Override
-    public @NotNull Set<String> getKeys(boolean onlyLeafNodes) {
-        if (root == null) {
-            return Collections.emptySet();
-        }
-        Set<String> allKeys = new LinkedHashSet<>();
-        collectKeysIntoSet("", root, allKeys, onlyLeafNodes);
-        return allKeys;
+    public @NotNull Set<String> getPaths() {
+        return collectPaths(false);
     }
 
     @Override
-    public @NotNull Set<String> getChildKeys(@NotNull String path) {
-        Object object = getObject(path);
+    public @NotNull Set<String> getLeafPaths() {
+        return collectPaths(true);
+    }
+
+    @Override
+    public @NotNull Set<String> getChildPaths(@NotNull String path) {
+        Object object = getValue(path);
         if (object instanceof Map) {
             String pathPrefix = path.isEmpty() ? "" : path + ".";
             return ((Map<String, Object>) object).keySet().stream()
@@ -128,16 +95,25 @@ public class YamlFileReader implements PropertyReader {
         return Collections.emptySet();
     }
 
+    private @NotNull Set<String> collectPaths(boolean onlyLeafNodes) {
+        if (root == null) {
+            return Collections.emptySet();
+        }
+        Set<String> allPaths = new LinkedHashSet<>();
+        collectPathsIntoSet("", root, allPaths, onlyLeafNodes);
+        return allPaths;
+    }
+
     /**
-     * Recursively collects keys from maps into the given set.
+     * Recursively collects keys from maps and adds them as paths to {@code result}.
      *
-     * @param path the path of the given map
+     * @param path the path to the given map
      * @param map the map to process recursively
-     * @param result set to save keys to
+     * @param result set to save paths to
      * @param onlyLeafNodes whether only leaf nodes should be added to the result set
      */
-    private void collectKeysIntoSet(@NotNull String path, @NotNull Map<String, Object> map, @NotNull Set<String> result,
-                                    boolean onlyLeafNodes) {
+    private static void collectPathsIntoSet(@NotNull String path, @NotNull Map<String, Object> map,
+                                            @NotNull Set<String> result, boolean onlyLeafNodes) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String childPath = PathUtils.concat(path, entry.getKey());
             if (!onlyLeafNodes || isLeafValue(entry.getValue())) {
@@ -145,7 +121,7 @@ public class YamlFileReader implements PropertyReader {
             }
 
             if (entry.getValue() instanceof Map) {
-                collectKeysIntoSet(childPath, (Map) entry.getValue(), result, onlyLeafNodes);
+                collectPathsIntoSet(childPath, (Map) entry.getValue(), result, onlyLeafNodes);
             }
         }
     }
@@ -183,6 +159,9 @@ public class YamlFileReader implements PropertyReader {
         return new MapNormalizer().normalizeMap(map);
     }
 
+    /**
+     * @return the file this reader read from
+     */
     protected final @NotNull Path getPath() {
         return path;
     }
@@ -194,23 +173,6 @@ public class YamlFileReader implements PropertyReader {
     @Deprecated
     protected final @Nullable Map<String, Object> getRoot() {
         return root;
-    }
-
-    /**
-     * Gets the object at the given path and safely casts it to the given class's type. Returns null
-     * if no value is available or if it cannot be cast.
-     *
-     * @param path the path to retrieve
-     * @param clazz the class to cast to
-     * @param <T> the class type
-     * @return cast value at the given path, null if not applicable
-     */
-    protected <T> @Nullable T getTypedObject(@NotNull String path, @NotNull Class<T> clazz) {
-        Object value = getObject(path);
-        if (clazz.isInstance(value)) {
-            return clazz.cast(value);
-        }
-        return null;
     }
 
     private static @Nullable Object getEntryIfIsMap(@NotNull String key, @Nullable Object value) {
