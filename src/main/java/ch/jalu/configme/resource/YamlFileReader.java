@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * YAML file reader.
  */
-public class YamlFileReader implements PropertyReader {
+public class YamlFileReader implements PropertyReader, PathProvider {
 
     private final Path path;
     private final Charset charset;
@@ -74,17 +74,17 @@ public class YamlFileReader implements PropertyReader {
     }
 
     @Override
-    public @NotNull Set<String> getKeys(boolean onlyLeafNodes) {
-        if (root == null) {
-            return Collections.emptySet();
-        }
-        Set<String> allKeys = new LinkedHashSet<>();
-        collectKeysIntoSet("", root, allKeys, onlyLeafNodes);
-        return allKeys;
+    public @NotNull Set<String> getPaths() {
+        return collectPaths(false);
     }
 
     @Override
-    public @NotNull Set<String> getChildKeys(@NotNull String path) {
+    public @NotNull Set<String> getLeafPaths() {
+        return collectPaths(true);
+    }
+
+    @Override
+    public @NotNull Set<String> getChildPaths(@NotNull String path) {
         Object object = getValue(path);
         if (object instanceof Map) {
             String pathPrefix = path.isEmpty() ? "" : path + ".";
@@ -95,6 +95,15 @@ public class YamlFileReader implements PropertyReader {
         return Collections.emptySet();
     }
 
+    private @NotNull Set<String> collectPaths(boolean onlyLeafNodes) {
+        if (root == null) {
+            return Collections.emptySet();
+        }
+        Set<String> allKeys = new LinkedHashSet<>();
+        collectKeysIntoSet("", root, allKeys, onlyLeafNodes);
+        return allKeys;
+    }
+
     /**
      * Recursively collects keys from maps into the given set.
      *
@@ -103,8 +112,8 @@ public class YamlFileReader implements PropertyReader {
      * @param result set to save keys to
      * @param onlyLeafNodes whether only leaf nodes should be added to the result set
      */
-    private void collectKeysIntoSet(@NotNull String path, @NotNull Map<String, Object> map, @NotNull Set<String> result,
-                                    boolean onlyLeafNodes) {
+    private static void collectKeysIntoSet(@NotNull String path, @NotNull Map<String, Object> map,
+                                           @NotNull Set<String> result, boolean onlyLeafNodes) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String childPath = PathUtils.concat(path, entry.getKey());
             if (!onlyLeafNodes || isLeafValue(entry.getValue())) {

@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * A property reader provides values from a resource (e.g. a YAML file) based on whose data the values of properties
@@ -36,24 +35,6 @@ public interface PropertyReader {
      * @return the value, or null if there is none
      */
     @Nullable Object getValue(@NotNull String path);
-
-    /**
-     * Returns the keys available in the file. Depending on the parameter either all keys are returned,
-     * or only the keys of the leaf nodes are considered.
-     *
-     * @param onlyLeafNodes true if only the paths of leaf nodes should be returned (no intermediate paths)
-     * @return set of all existing keys (ordered)
-     */
-    @NotNull Set<String> getKeys(boolean onlyLeafNodes);
-
-    /**
-     * Returns the direct children of the given path which are available in the file. Returns an empty set
-     * if the path does not exist in the file (never null).
-     *
-     * @param path the path whose direct child paths should be looked up
-     * @return set of all direct children (ordered, never null)
-     */
-    @NotNull Set<String> getChildKeys(@NotNull String path);
 
     /**
      * Returns the object at the given path, or null if absent.

@@ -204,8 +204,8 @@ class YamlFileReaderTest {
         // then
         assertThat(result, sameInstance(configFile));
         assertThat(reader.getRoot(), nullValue());
-        assertThat(reader.getKeys(true), empty());
-        assertThat(reader.getChildKeys(""), empty());
+        assertThat(reader.getLeafPaths(), empty());
+        assertThat(reader.getChildPaths(""), empty());
     }
 
     @Test
@@ -232,16 +232,16 @@ class YamlFileReaderTest {
     }
 
     @Test
-    void shouldReturnKeysOfFile() {
+    void shouldReturnPathsOfFile() {
         // given
         Path file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
 
         // when
-        Set<String> keys = reader.getKeys(false);
+        Set<String> paths = reader.getPaths();
 
         // then
-        assertThat(keys, contains("test", "test.duration", "test.systemName",
+        assertThat(paths, contains("test", "test.duration", "test.systemName",
             "sample", "sample.ratio", "sample.ratio.order", "sample.ratio.fields",
             "version",
             "features", "features.boring", "features.boring.skip", "features.boring.colors", "features.boring.dustLevel",
@@ -250,16 +250,16 @@ class YamlFileReaderTest {
     }
 
     @Test
-    void shouldReturnLeafNodeKeysInFile() {
+    void shouldReturnLeafPathsInFile() {
         // given
         Path file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
 
         // when
-        Set<String> keys = reader.getKeys(true);
+        Set<String> paths = reader.getLeafPaths();
 
         // then
-        assertThat(keys, contains("test.duration", "test.systemName",
+        assertThat(paths, contains("test.duration", "test.systemName",
             "sample.ratio.order", "sample.ratio.fields",
             "version",
             "features.boring.skip", "features.boring.colors", "features.boring.dustLevel",
@@ -274,11 +274,11 @@ class YamlFileReaderTest {
         YamlFileReader reader = new YamlFileReader(file);
 
         // when
-        Set<String> keys = reader.getKeys(true);
+        Set<String> paths = reader.getLeafPaths();
 
         // then
-        assertThat(keys, hasSize(24));
-        assertThat(keys, hasItems(
+        assertThat(paths, hasSize(24));
+        assertThat(paths, hasItems(
             "message-key.conditionalElem.conditionals.low.conditionals", // empty map
             "message-key.conditionalElem.conditionals.med.color",
             "message-key.conditionalElem.conditionals.high.conditionalElem.bold",
@@ -290,29 +290,29 @@ class YamlFileReaderTest {
     }
 
     @Test
-    void shouldReturnChildrenPathsOfGivenPath() {
+    void shouldReturnChildPathsOfGivenPath() {
         // given
         Path file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
 
         // when
-        Set<String> keys = reader.getChildKeys("features.boring");
+        Set<String> paths = reader.getChildPaths("features.boring");
 
         // then
-        assertThat(keys, contains("features.boring.skip", "features.boring.colors", "features.boring.dustLevel"));
+        assertThat(paths, contains("features.boring.skip", "features.boring.colors", "features.boring.dustLevel"));
     }
 
     @Test
-    void shouldReturnChildrenPathsOfRoot() {
+    void shouldReturnChildPathsOfRoot() {
         // given
         Path file = copyFileFromResources(COMPLETE_FILE);
         YamlFileReader reader = new YamlFileReader(file);
 
         // when
-        Set<String> keys = reader.getChildKeys("");
+        Set<String> paths = reader.getChildPaths("");
 
         // then
-        assertThat(keys, contains("test", "sample", "version", "features", "security"));
+        assertThat(paths, contains("test", "sample", "version", "features", "security"));
     }
 
     @Test
@@ -322,8 +322,8 @@ class YamlFileReaderTest {
         YamlFileReader reader = new YamlFileReader(file);
 
         // when
-        Set<String> bogusChildren = reader.getChildKeys("bogus");
-        Set<String> leafChildren = reader.getChildKeys("features.boring.colors");
+        Set<String> bogusChildren = reader.getChildPaths("bogus");
+        Set<String> leafChildren = reader.getChildPaths("features.boring.colors");
 
         // then
         assertThat(bogusChildren, empty());
