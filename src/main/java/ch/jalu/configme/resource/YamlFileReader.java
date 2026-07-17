@@ -99,21 +99,21 @@ public class YamlFileReader implements PropertyReader, PathProvider {
         if (root == null) {
             return Collections.emptySet();
         }
-        Set<String> allKeys = new LinkedHashSet<>();
-        collectKeysIntoSet("", root, allKeys, onlyLeafNodes);
-        return allKeys;
+        Set<String> allPaths = new LinkedHashSet<>();
+        collectPathsIntoSet("", root, allPaths, onlyLeafNodes);
+        return allPaths;
     }
 
     /**
-     * Recursively collects keys from maps into the given set.
+     * Recursively collects keys from maps and adds them as paths to {@code result}.
      *
-     * @param path the path of the given map
+     * @param path the path to the given map
      * @param map the map to process recursively
-     * @param result set to save keys to
+     * @param result set to save paths to
      * @param onlyLeafNodes whether only leaf nodes should be added to the result set
      */
-    private static void collectKeysIntoSet(@NotNull String path, @NotNull Map<String, Object> map,
-                                           @NotNull Set<String> result, boolean onlyLeafNodes) {
+    private static void collectPathsIntoSet(@NotNull String path, @NotNull Map<String, Object> map,
+                                            @NotNull Set<String> result, boolean onlyLeafNodes) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String childPath = PathUtils.concat(path, entry.getKey());
             if (!onlyLeafNodes || isLeafValue(entry.getValue())) {
@@ -121,7 +121,7 @@ public class YamlFileReader implements PropertyReader, PathProvider {
             }
 
             if (entry.getValue() instanceof Map) {
-                collectKeysIntoSet(childPath, (Map) entry.getValue(), result, onlyLeafNodes);
+                collectPathsIntoSet(childPath, (Map) entry.getValue(), result, onlyLeafNodes);
             }
         }
     }
@@ -159,6 +159,9 @@ public class YamlFileReader implements PropertyReader, PathProvider {
         return new MapNormalizer().normalizeMap(map);
     }
 
+    /**
+     * @return the file this reader read from
+     */
     protected final @NotNull Path getPath() {
         return path;
     }
