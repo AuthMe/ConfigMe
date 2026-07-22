@@ -66,8 +66,10 @@ class PropertyInitializerTest {
         assertThat(newRegexProperty("reg.path", Pattern.compile("w[0-9]*")), instanceOf(RegexProperty.class));
         assertThat(newListProperty("path", "default", "entries"), instanceOf(StringListProperty.class));
         assertThat(newListProperty("path", Arrays.asList("a1", "a2", "a3")), instanceOf(StringListProperty.class));
+        assertThat(newListProperty("path", NumberType.INTEGER, 3, 4), instanceOf(ListProperty.class));
         assertThat(newSetProperty("path", "some", "values"), instanceOf(StringSetProperty.class));
         assertThat(newSetProperty("path", newLinkedHashSet("ah", "hmm", "oh")), instanceOf(StringSetProperty.class));
+        assertThat(newSetProperty("path", NumberType.DOUBLE, 3.1415), instanceOf(SetProperty.class));
         assertThat(newLowercaseStringSetProperty("path", "a", "b", "c"), instanceOf(LowercaseStringSetProperty.class));
         assertThat(newLowercaseStringSetProperty("path", Arrays.asList("5", "7")), instanceOf(LowercaseStringSetProperty.class));
         assertThat(newBeanProperty(WorldGroupConfig.class, "worlds", new WorldGroupConfig()), instanceOf(BeanProperty.class));

@@ -216,6 +216,23 @@ public class PropertyInitializer {
     }
 
     /**
+     * Creates a new list property of the given entry type.
+     *
+     * @param path the property's path
+     * @param entryType the type to convert the entries of the list
+     * @param defaultValues the entries that make up the default value
+     * @param <E> entry type
+     * @return the created list property
+     * @see #listProperty(PropertyType) list property builder
+     */
+    @SafeVarargs
+    public static <E> @NotNull ListProperty<E> newListProperty(@NotNull String path,
+                                                               @NotNull PropertyType<E> entryType,
+                                                               @NotNull E @NotNull ... defaultValues) {
+        return new ListProperty<>(path, entryType, defaultValues);
+    }
+
+    /**
      * Creates a new String set property.
      *
      * @param path the property's path
@@ -237,6 +254,23 @@ public class PropertyInitializer {
     public static @NotNull StringSetProperty newSetProperty(@NotNull String path,
                                                             @NotNull Set<String> defaultValues) {
         return new StringSetProperty(path, defaultValues);
+    }
+
+    /**
+     * Creates a new set property of the given entry type.
+     *
+     * @param path the property's path
+     * @param entryType the type to convert the entries of the list
+     * @param defaultValues the entries that make up the default value
+     * @param <E> entry type
+     * @return the created set property
+     * @see #setProperty(PropertyType) set property builder
+     */
+    @SafeVarargs
+    public static <E> @NotNull SetProperty<E> newSetProperty(@NotNull String path,
+                                                             @NotNull PropertyType<E> entryType,
+                                                             @NotNull E @NotNull ... defaultValues) {
+        return new SetProperty<>(path, entryType, defaultValues);
     }
 
     /**
@@ -293,8 +327,9 @@ public class PropertyInitializer {
     }
 
     @NotNull
-    public static <V> MapPropertyBuilder<V, Map<String, V>, MapProperty<V>> mapProperty(@NotNull PropertyType<V> type) {
-        return MapPropertyBuilder.mapBuilder(type);
+    public static <V> MapPropertyBuilder<V, Map<String, V>, MapProperty<V>> mapProperty(
+                                                                                   @NotNull PropertyType<V> valueType) {
+        return MapPropertyBuilder.mapBuilder(valueType);
     }
 
     @NotNull
@@ -317,6 +352,7 @@ public class PropertyInitializer {
     // --------------
     // Optional flavors
     // --------------
+
     public static <T> @NotNull OptionalProperty<T> optionalProperty(@NotNull String path, PropertyType<T> type) {
         return new OptionalProperty<>(path, type);
     }
