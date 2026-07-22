@@ -58,7 +58,7 @@ class PropertyInitializerTest {
         assertThat(newProperty("my.path", 3.5f), instanceOf(FloatProperty.class));
         assertThat(newProperty("my.path", -8.4d), instanceOf(DoubleProperty.class));
         assertThat(newProperty("my.path", "default"), instanceOf(StringProperty.class));
-        assertThat(newProperty(TestEnum.class, "my.path", TestEnum.FIRST), instanceOf(EnumProperty.class));
+        assertThat(newProperty("my.path", TestEnum.class, TestEnum.FIRST), instanceOf(EnumProperty.class));
         assertThat(newProperty("my.path", LocalDate.now()), instanceOf(LocalDateProperty.class));
         assertThat(newProperty("my.path", LocalTime.now()), instanceOf(LocalTimeProperty.class));
         assertThat(newProperty("my.path", LocalDateTime.now()), instanceOf(LocalDateTimeProperty.class));
@@ -72,7 +72,7 @@ class PropertyInitializerTest {
         assertThat(newSetProperty("path", NumberType.DOUBLE, 3.1415), instanceOf(SetProperty.class));
         assertThat(newLowercaseStringSetProperty("path", "a", "b", "c"), instanceOf(LowercaseStringSetProperty.class));
         assertThat(newLowercaseStringSetProperty("path", Arrays.asList("5", "7")), instanceOf(LowercaseStringSetProperty.class));
-        assertThat(newBeanProperty(WorldGroupConfig.class, "worlds", new WorldGroupConfig()), instanceOf(BeanProperty.class));
+        assertThat(newBeanProperty("worlds", WorldGroupConfig.class, new WorldGroupConfig()), instanceOf(BeanProperty.class));
 
         assertThat(optionalProperty("path", NumberType.LONG), instanceOf(OptionalProperty.class));
         assertThat(optionalBooleanProperty("path"), instanceOf(OptionalProperty.class));

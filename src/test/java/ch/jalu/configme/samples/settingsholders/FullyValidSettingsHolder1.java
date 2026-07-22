@@ -20,7 +20,7 @@ public final class FullyValidSettingsHolder1 implements SettingsHolder {
 
     @Comment("Enum property. Possible values: CREATIVE, SURVIVAL")
     public static final Property<GameMode> GAME_MODE_PROPERTY =
-        newProperty(GameMode.class, "test.gamemode", GameMode.SURVIVAL);
+        newProperty("test.gamemode", GameMode.class, GameMode.SURVIVAL);
 
     private FullyValidSettingsHolder1() {
     }

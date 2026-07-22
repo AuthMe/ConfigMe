@@ -148,7 +148,7 @@ class BeanWithCollectionOfBeanTypeTest {
     public static final class PropertyHolder implements SettingsHolder {
 
         public static final Property<ChatComponent> TEST =
-            newBeanProperty(ChatComponent.class, "message-key", new ChatComponent());
+            newBeanProperty("message-key", ChatComponent.class, new ChatComponent());
     }
 
     public static class ChatComponent {

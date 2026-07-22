@@ -12,8 +12,8 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 public class SettingsHolderWithEnumPropertyComments implements SettingsHolder {
 
     @Comment("Time unit (SECONDS, MINUTES, HOURS)")
-    public static final Property<TimeUnit> TIME_UNIT_PROP = newProperty(TimeUnit.class, "sample.timeUnit", TimeUnit.SECONDS);
+    public static final Property<TimeUnit> TIME_UNIT_PROP = newProperty("sample.timeUnit", TimeUnit.class, TimeUnit.SECONDS);
 
-    public static final Property<GameMode> GAME_MODE = newProperty(GameMode.class, "sample.gameMode", GameMode.SURVIVAL);
+    public static final Property<GameMode> GAME_MODE = newProperty("sample.gameMode", GameMode.class, GameMode.SURVIVAL);
 
 }

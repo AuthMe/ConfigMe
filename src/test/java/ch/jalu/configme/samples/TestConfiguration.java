@@ -28,7 +28,7 @@ public final class TestConfiguration implements SettingsHolder {
 
     // No comment
     public static final Property<TestEnum> RATIO_ORDER =
-        newProperty(TestEnum.class, "sample.ratio.order", TestEnum.SECOND);
+        newProperty("sample.ratio.order", TestEnum.class, TestEnum.SECOND);
 
     // No comment
     public static final Property<List<String>> RATIO_FIELDS =

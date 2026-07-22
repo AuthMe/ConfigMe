@@ -119,14 +119,14 @@ public class PropertyInitializer {
     /**
      * Creates a new enum property.
      *
-     * @param clazz the enum class
      * @param path the property's path
+     * @param clazz the enum class
      * @param defaultValue the default value
      * @param <E> the enum type
      * @return the created enum property
      */
-    public static <E extends Enum<E>> @NotNull EnumProperty<E> newProperty(@NotNull Class<E> clazz,
-                                                                           @NotNull String path,
+    public static <E extends Enum<E>> @NotNull EnumProperty<E> newProperty(@NotNull String path,
+                                                                           @NotNull Class<E> clazz,
                                                                            @NotNull E defaultValue) {
         return new EnumProperty<>(path, clazz, defaultValue);
     }
@@ -306,7 +306,7 @@ public class PropertyInitializer {
      * @param <B> the bean type
      * @return the created bean property
      */
-    public static <B> @NotNull BeanProperty<B> newBeanProperty(@NotNull Class<B> beanClass, @NotNull String path,
+    public static <B> @NotNull BeanProperty<B> newBeanProperty(@NotNull String path, @NotNull Class<B> beanClass,
                                                                @NotNull B defaultValue) {
         return new BeanProperty<>(path, beanClass, defaultValue);
     }

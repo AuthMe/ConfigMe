@@ -59,7 +59,7 @@ class NestedMapPropertyDemoTest {
     public static class MyTestSettings implements SettingsHolder {
 
         public static final Property<TextEntryHolder> TEXTS =
-            PropertyInitializer.newBeanProperty(TextEntryHolder.class, "", new TextEntryHolder());
+            PropertyInitializer.newBeanProperty("", TextEntryHolder.class, new TextEntryHolder());
 
         private MyTestSettings() {
         }

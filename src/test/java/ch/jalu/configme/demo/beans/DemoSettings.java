@@ -13,10 +13,10 @@ import static ch.jalu.configme.properties.PropertyInitializer.newBeanProperty;
 public final class DemoSettings implements SettingsHolder {
 
     public static final Property<UserBase> USER_BASE =
-        newBeanProperty(UserBase.class, "userdata", initDefaultUserBase());
+        newBeanProperty("userdata", UserBase.class, initDefaultUserBase());
 
     public static final Property<Country> COUNTRY =
-        newBeanProperty(Country.class, "country", initDefaultCountry());
+        newBeanProperty("country", Country.class, initDefaultCountry());
 
     private DemoSettings() {
     }

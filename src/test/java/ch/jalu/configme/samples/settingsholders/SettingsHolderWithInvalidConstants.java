@@ -18,7 +18,7 @@ public class SettingsHolderWithInvalidConstants implements SettingsHolder {
 
     public static /*final*/ Property<List<String>> STRLIST = newListProperty("com.bar");
 
-    /*public*/ static final Property<TimeUnit> TIME_UNIT = newProperty(TimeUnit.class, "com.timeUnit", TimeUnit.SECONDS);
+    /*public*/ static final Property<TimeUnit> TIME_UNIT = newProperty("com.timeUnit", TimeUnit.class, TimeUnit.SECONDS);
 
     private SettingsHolderWithInvalidConstants() {
     }

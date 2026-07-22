@@ -24,7 +24,7 @@ public class TitleConfig implements SettingsHolder {
         newProperty("subtitle.size", 10);
 
     public static final Property<Color> SUBTITLE_COLOR =
-        newProperty(Color.class, "subtitle.color", Color.ORANGE);
+        newProperty("subtitle.color", Color.class, Color.ORANGE);
 
     private TitleConfig() {
     }

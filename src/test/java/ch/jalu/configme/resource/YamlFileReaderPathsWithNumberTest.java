@@ -62,7 +62,7 @@ class YamlFileReaderPathsWithNumberTest {
             newProperty("roles.1.change-home", false);
 
         static final Property<TestEnum> ROLE_FALSE_ENUM =
-            newProperty(TestEnum.class, "roles.false.-5", TestEnum.FOURTH);
+            newProperty("roles.false.-5", TestEnum.class, TestEnum.FOURTH);
 
         private PathsWithNumbers() {
         }
