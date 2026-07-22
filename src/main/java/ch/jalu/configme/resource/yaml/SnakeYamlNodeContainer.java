@@ -1,7 +1,7 @@
 package ch.jalu.configme.resource.yaml;
 
 import org.jetbrains.annotations.NotNull;
-import org.yaml.snakeyaml.nodes.Node;
+import org.snakeyaml.engine.v2.nodes.Node;
 
 import java.util.List;
 import java.util.function.Supplier;

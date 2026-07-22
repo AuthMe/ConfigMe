@@ -3,17 +3,17 @@ package ch.jalu.configme.resource.yaml;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.internal.StreamUtils;
 import ch.jalu.configme.properties.convertresult.ValueWithComments;
-
 import org.jetbrains.annotations.NotNull;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.comments.CommentLine;
-import org.yaml.snakeyaml.comments.CommentType;
-import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.NodeTuple;
-import org.yaml.snakeyaml.nodes.ScalarNode;
-import org.yaml.snakeyaml.nodes.SequenceNode;
-import org.yaml.snakeyaml.nodes.Tag;
+import org.snakeyaml.engine.v2.comments.CommentLine;
+import org.snakeyaml.engine.v2.comments.CommentType;
+import org.snakeyaml.engine.v2.common.FlowStyle;
+import org.snakeyaml.engine.v2.common.ScalarStyle;
+import org.snakeyaml.engine.v2.nodes.MappingNode;
+import org.snakeyaml.engine.v2.nodes.Node;
+import org.snakeyaml.engine.v2.nodes.NodeTuple;
+import org.snakeyaml.engine.v2.nodes.ScalarNode;
+import org.snakeyaml.engine.v2.nodes.SequenceNode;
+import org.snakeyaml.engine.v2.nodes.Tag;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -82,11 +83,11 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
     @Override
     public @NotNull Stream<CommentLine> createCommentLines(@NotNull String comment) {
         if ("\n".equals(comment)) {
-            return Stream.of(new CommentLine(null, null, "", CommentType.BLANK_LINE));
+            return Stream.of(new CommentLine(Optional.empty(), Optional.empty(), "", CommentType.BLANK_LINE));
         }
 
         return Arrays.stream(comment.split("\\n", -1))
-            .map(text -> new CommentLine(null, null, " ".concat(text), CommentType.BLOCK));
+            .map(text -> new CommentLine(Optional.empty(), Optional.empty(), " ".concat(text), CommentType.BLOCK));
     }
 
     @Override
@@ -98,21 +99,21 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
     }
 
     protected @NotNull Node createStringNode(@NotNull String value) {
-        DumperOptions.ScalarStyle scalarStyle = value.contains("\n")
-            ? DumperOptions.ScalarStyle.LITERAL // Used for strings that span multiple lines
-            : DumperOptions.ScalarStyle.PLAIN; // Used for single line string
-        return new ScalarNode(Tag.STR, value, null, null, scalarStyle);
+        ScalarStyle scalarStyle = value.contains("\n")
+            ? ScalarStyle.LITERAL // Used for strings that span multiple lines
+            : ScalarStyle.PLAIN; // Used for single line string
+        return new ScalarNode(Tag.STR, value, scalarStyle);
     }
 
     protected @NotNull Node createNumberNode(@NotNull Number value) {
         Tag tag = (value instanceof Double || value instanceof Float || value instanceof BigDecimal)
             ? Tag.FLOAT
             : Tag.INT;
-        return new ScalarNode(tag, value.toString(), null, null, DumperOptions.ScalarStyle.PLAIN);
+        return new ScalarNode(tag, value.toString(), ScalarStyle.PLAIN);
     }
 
     protected @NotNull Node createBooleanNode(boolean value) {
-        return new ScalarNode(Tag.BOOL, String.valueOf(value), null, null, DumperOptions.ScalarStyle.PLAIN);
+        return new ScalarNode(Tag.BOOL, String.valueOf(value), ScalarStyle.PLAIN);
     }
 
     /**
@@ -134,7 +135,7 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
             })
             .collect(Collectors.toList());
 
-        return new SequenceNode(Tag.SEQ, values, DumperOptions.FlowStyle.BLOCK);
+        return new SequenceNode(Tag.SEQ, values, FlowStyle.BLOCK);
     }
 
     /**
@@ -158,7 +159,7 @@ public class SnakeYamlNodeBuilderImpl implements SnakeYamlNodeBuilder {
             nodeEntries.add(new NodeTuple(keyNode, valueNode));
         }
 
-        return new MappingNode(Tag.MAP, nodeEntries, DumperOptions.FlowStyle.BLOCK);
+        return new MappingNode(Tag.MAP, nodeEntries, FlowStyle.BLOCK);
     }
 
     /**

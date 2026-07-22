@@ -4,8 +4,9 @@ import ch.jalu.configme.exception.ConfigMeException;
 import ch.jalu.configme.internal.PathUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.error.YAMLException;
+import org.snakeyaml.engine.v2.api.Load;
+import org.snakeyaml.engine.v2.api.LoadSettings;
+import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -138,13 +139,15 @@ public class YamlFileReader implements PropertyReader, PathProvider {
     protected @Nullable Map<String, Object> loadFile() {
         try (InputStream is = Files.newInputStream(path);
              InputStreamReader isr = new InputStreamReader(is, charset)) {
-            Map<Object, Object> rootMap = new Yaml().load(isr);
+            LoadSettings settings = LoadSettings.builder().build();
+            Load load = new Load(settings);
+            Map<Object, Object> rootMap = (Map) load.loadFromReader(isr);
             return normalizeMap(rootMap);
         } catch (IOException e) {
             throw new ConfigMeException("Could not read file '" + path + "'", e);
         } catch (ClassCastException e) {
             throw new ConfigMeException("Top-level is not a map in '" + path + "'", e);
-        } catch (YAMLException e) {
+        } catch (YamlEngineException e) {
             throw new ConfigMeException("YAML error while trying to load file '" + path + "'", e);
         }
     }

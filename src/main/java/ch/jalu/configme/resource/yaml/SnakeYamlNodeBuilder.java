@@ -2,8 +2,8 @@ package ch.jalu.configme.resource.yaml;
 
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import org.jetbrains.annotations.NotNull;
-import org.yaml.snakeyaml.comments.CommentLine;
-import org.yaml.snakeyaml.nodes.Node;
+import org.snakeyaml.engine.v2.comments.CommentLine;
+import org.snakeyaml.engine.v2.nodes.Node;
 
 import java.util.stream.Stream;
 

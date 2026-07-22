@@ -1,12 +1,12 @@
 package ch.jalu.configme.resource.yaml;
 
 import org.jetbrains.annotations.NotNull;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.comments.CommentLine;
-import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.NodeTuple;
-import org.yaml.snakeyaml.nodes.Tag;
+import org.snakeyaml.engine.v2.comments.CommentLine;
+import org.snakeyaml.engine.v2.common.FlowStyle;
+import org.snakeyaml.engine.v2.nodes.MappingNode;
+import org.snakeyaml.engine.v2.nodes.Node;
+import org.snakeyaml.engine.v2.nodes.NodeTuple;
+import org.snakeyaml.engine.v2.nodes.Tag;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -76,7 +76,7 @@ public class SnakeYamlNodeContainerImpl implements SnakeYamlNodeContainer {
     }
 
     protected @NotNull Node createRootNode(@NotNull List<NodeTuple> entryNodes) {
-        return new MappingNode(Tag.MAP, entryNodes, DumperOptions.FlowStyle.BLOCK);
+        return new MappingNode(Tag.MAP, entryNodes, FlowStyle.BLOCK);
     }
 
     protected final @NotNull List<String> getComments() {

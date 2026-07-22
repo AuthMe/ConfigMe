@@ -10,17 +10,20 @@ import ch.jalu.configme.resource.yaml.SnakeYamlNodeBuilder;
 import ch.jalu.configme.resource.yaml.SnakeYamlNodeBuilderImpl;
 import ch.jalu.configme.resource.yaml.SnakeYamlNodeContainer;
 import ch.jalu.configme.resource.yaml.SnakeYamlNodeContainerImpl;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.comments.CommentLine;
-import org.yaml.snakeyaml.nodes.Node;
+import org.snakeyaml.engine.v2.api.Dump;
+import org.snakeyaml.engine.v2.api.DumpSettings;
+import org.snakeyaml.engine.v2.api.YamlOutputStreamWriter;
+import org.snakeyaml.engine.v2.comments.CommentLine;
+import org.snakeyaml.engine.v2.common.FlowStyle;
+import org.snakeyaml.engine.v2.emitter.Emitter;
+import org.snakeyaml.engine.v2.nodes.Node;
+import org.snakeyaml.engine.v2.serializer.Serializer;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -81,8 +84,36 @@ public class YamlFileResource implements PropertyResource {
         rootNode.setEndComments(footerCommentLines);
 
         try (OutputStream os = Files.newOutputStream(path);
-             OutputStreamWriter writer = new OutputStreamWriter(os, options.getCharset())) {
-            createSnakeYamlInstance().serialize(rootNode, writer);
+             YamlOutputStreamWriter writer = new YamlOutputStreamWriter(os, options.getCharset())) {
+            createDumper().dump(rootNode, writer);
+
+            // GEMINI
+
+            /*
+            Since you already have the Node, you only need the second half of the pipeline:
+             Node -> Events -> String, which is handled by combining the Serializer and the Emitter.
+             */
+
+            // 1. Setup your settings
+            DumpSettings settings = DumpSettings.builder()
+                .setDumpComments(true)
+                .setIndent(this.options.getIndentationSize())
+                .setDefaultFlowStyle(FlowStyle.BLOCK)
+                .build();
+
+            StringWriter writer = new StringWriter();
+
+// 2. Instantiate the Serializer and Emitter manually
+            Serializer serializer = new Serializer(settings, new Emitter(settings, writer));
+
+// 3. Serialize your root node
+            serializer.open();
+            serializer.serialize(rootNode);
+            serializer.close();
+
+// Your YAML is now in the writer
+            String yamlOutput = writer.toString();
+            // END GEMINI
         } catch (IOException e) {
             throw new ConfigMeException("Could not save config to '" + path + "'", e);
         }
@@ -130,18 +161,29 @@ public class YamlFileResource implements PropertyResource {
         return path;
     }
 
-    /**
-     * Creates a new SnakeYAML object with the appropriate options.
-     *
-     * @return the YAML instance for exporting values
-     */
-    protected @NotNull Yaml createSnakeYamlInstance() {
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        options.setAllowUnicode(true);
-        options.setProcessComments(true);
-        options.setIndent(this.options.getIndentationSize());
-        return new Yaml(options);
+    // TODO - check what needs to be taken over, rename method, etc.
+//    /**
+//     * Creates a new SnakeYAML object with the appropriate options.
+//     *
+//     * @return the YAML instance for exporting values
+//     */
+//    protected @NotNull Yaml createSnakeYamlInstance() {
+//        DumperOptions options = new DumperOptions();
+//        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+//        options.setAllowUnicode(true);
+//        options.setProcessComments(true);
+//        options.setIndent(this.options.getIndentationSize());
+//        return new Yaml(options);
+//    }
+
+    protected Dump createDumper() {
+        DumpSettings settings = DumpSettings.builder()
+            .setDumpComments(true)
+            .setIndent(this.options.getIndentationSize())
+            .setDefaultFlowStyle(FlowStyle.BLOCK)
+            .build();
+        Dump dump = new Dump(settings);
+        return dump;
     }
 
     protected final @NotNull YamlFileResourceOptions getOptions() {

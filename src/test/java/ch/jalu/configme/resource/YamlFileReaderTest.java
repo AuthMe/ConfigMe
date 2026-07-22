@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.yaml.snakeyaml.error.YAMLException;
+import org.snakeyaml.engine.v2.exceptions.YamlEngineException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -190,7 +190,7 @@ class YamlFileReaderTest {
 
         // then
         assertThat(ex.getMessage(), equalTo("YAML error while trying to load file '" + file + "'"));
-        assertThat(ex.getCause(), instanceOf(YAMLException.class));
+        assertThat(ex.getCause(), instanceOf(YamlEngineException.class));
     }
 
     @Test

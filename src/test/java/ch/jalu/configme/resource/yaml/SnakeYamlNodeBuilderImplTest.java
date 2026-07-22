@@ -9,15 +9,15 @@ import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.comments.CommentLine;
-import org.yaml.snakeyaml.comments.CommentType;
-import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.NodeTuple;
-import org.yaml.snakeyaml.nodes.ScalarNode;
-import org.yaml.snakeyaml.nodes.SequenceNode;
-import org.yaml.snakeyaml.nodes.Tag;
+import org.snakeyaml.engine.v2.comments.CommentLine;
+import org.snakeyaml.engine.v2.comments.CommentType;
+import org.snakeyaml.engine.v2.common.ScalarStyle;
+import org.snakeyaml.engine.v2.nodes.MappingNode;
+import org.snakeyaml.engine.v2.nodes.Node;
+import org.snakeyaml.engine.v2.nodes.NodeTuple;
+import org.snakeyaml.engine.v2.nodes.ScalarNode;
+import org.snakeyaml.engine.v2.nodes.SequenceNode;
+import org.snakeyaml.engine.v2.nodes.Tag;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ class SnakeYamlNodeBuilderImplTest {
         ScalarNode scalarNode = (ScalarNode) node;
         assertThat(scalarNode.getTag(), equalTo(Tag.STR));
         assertThat(scalarNode.getValue(), equalTo(value));
-        assertThat(scalarNode.getScalarStyle(), equalTo(DumperOptions.ScalarStyle.PLAIN));
+        assertThat(scalarNode.getScalarStyle(), equalTo(ScalarStyle.PLAIN));
 
         assertThat(scalarNode.getInLineComments(), nullValue());
         assertThat(scalarNode.getEndComments(), nullValue());
@@ -96,7 +96,7 @@ class SnakeYamlNodeBuilderImplTest {
         ScalarNode scalarNode = (ScalarNode) node;
         assertThat(scalarNode.getTag(), equalTo(Tag.STR));
         assertThat(scalarNode.getValue(), equalTo(value));
-        assertThat(scalarNode.getScalarStyle(), equalTo(DumperOptions.ScalarStyle.LITERAL));
+        assertThat(scalarNode.getScalarStyle(), equalTo(ScalarStyle.LITERAL));
 
         assertThat(scalarNode.getInLineComments(), nullValue());
         assertThat(scalarNode.getEndComments(), nullValue());
@@ -119,7 +119,7 @@ class SnakeYamlNodeBuilderImplTest {
         ScalarNode scalarNode = (ScalarNode) node;
         assertThat(scalarNode.getTag(), equalTo(Tag.STR));
         assertThat(scalarNode.getValue(), equalTo("DAYS"));
-        assertThat(scalarNode.getScalarStyle(), equalTo(DumperOptions.ScalarStyle.PLAIN));
+        assertThat(scalarNode.getScalarStyle(), equalTo(ScalarStyle.PLAIN));
 
         assertThat(scalarNode.getInLineComments(), nullValue());
         assertThat(scalarNode.getEndComments(), nullValue());
@@ -452,10 +452,10 @@ class SnakeYamlNodeBuilderImplTest {
     @Test
     void shouldTransferCommentsFromValueToKey() {
         // given
-        Node keyNode = new ScalarNode(Tag.STR, "key", null, null, DumperOptions.ScalarStyle.PLAIN);
-        Node valueNode = new ScalarNode(Tag.INT, "34", null, null, DumperOptions.ScalarStyle.PLAIN);
+        Node keyNode = new ScalarNode(Tag.STR, "key", ScalarStyle.PLAIN);
+        Node valueNode = new ScalarNode(Tag.INT, "34", ScalarStyle.PLAIN);
         valueNode.setBlockComments(new ArrayList<>());
-        CommentLine commentLine = new CommentLine(null, null, "Test", CommentType.BLOCK);
+        CommentLine commentLine = new CommentLine(Optional.empty(), Optional.empty(), "Test", CommentType.BLOCK);
         valueNode.getBlockComments().add(commentLine);
 
         // when

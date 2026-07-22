@@ -1,18 +1,19 @@
 package ch.jalu.configme.resource.yaml;
 
 import org.junit.jupiter.api.Test;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.comments.CommentLine;
-import org.yaml.snakeyaml.comments.CommentType;
-import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.NodeTuple;
-import org.yaml.snakeyaml.nodes.ScalarNode;
-import org.yaml.snakeyaml.nodes.Tag;
+import org.snakeyaml.engine.v2.comments.CommentLine;
+import org.snakeyaml.engine.v2.comments.CommentType;
+import org.snakeyaml.engine.v2.common.ScalarStyle;
+import org.snakeyaml.engine.v2.nodes.MappingNode;
+import org.snakeyaml.engine.v2.nodes.Node;
+import org.snakeyaml.engine.v2.nodes.NodeTuple;
+import org.snakeyaml.engine.v2.nodes.ScalarNode;
+import org.snakeyaml.engine.v2.nodes.Tag;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static ch.jalu.configme.resource.yaml.SnakeYamlNodeBuilderImplTest.isBlankComment;
 import static ch.jalu.configme.resource.yaml.SnakeYamlNodeBuilderImplTest.isBlockComment;
@@ -35,8 +36,8 @@ class SnakeYamlNodeContainerImplTest {
     void shouldStoreNodes() {
         // given
         SnakeYamlNodeContainerImpl rootContainer = new SnakeYamlNodeContainerImpl(Collections.emptyList());
-        ScalarNode stringNode = new ScalarNode(Tag.STR, "test", null, null, DumperOptions.ScalarStyle.PLAIN);
-        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", null, null, DumperOptions.ScalarStyle.PLAIN);
+        ScalarNode stringNode = new ScalarNode(Tag.STR, "test", ScalarStyle.PLAIN);
+        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", ScalarStyle.PLAIN);
 
         // when
         rootContainer.putNode("name", stringNode);
@@ -60,14 +61,14 @@ class SnakeYamlNodeContainerImplTest {
     void shouldCreateMapNodeFromAllValuesAndMoveCommentsToKeyNodes() {
         // given
         SnakeYamlNodeContainerImpl rootContainer = new SnakeYamlNodeContainerImpl(Arrays.asList("root1", "\n", "root2"));
-        ScalarNode stringNode = new ScalarNode(Tag.STR, "test", null, null, DumperOptions.ScalarStyle.PLAIN);
+        ScalarNode stringNode = new ScalarNode(Tag.STR, "test", ScalarStyle.PLAIN);
         stringNode.setBlockComments(Arrays.asList(
-            new CommentLine(null, null, "sc1", CommentType.BLOCK),
-            new CommentLine(null, null, "sc2", CommentType.BLOCK)));
+            new CommentLine(Optional.empty(), Optional.empty(), "sc1", CommentType.BLOCK),
+            new CommentLine(Optional.empty(), Optional.empty(), "sc2", CommentType.BLOCK)));
 
-        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", null, null, DumperOptions.ScalarStyle.PLAIN);
+        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", ScalarStyle.PLAIN);
         boolNode.setBlockComments(Collections.singletonList(
-            new CommentLine(null, null, "bc1", CommentType.BLOCK)));
+            new CommentLine(Optional.empty(), Optional.empty(), "bc1", CommentType.BLOCK)));
 
         rootContainer.putNode("name", stringNode);
         SnakeYamlNodeContainerImpl debugContainer =
@@ -112,7 +113,7 @@ class SnakeYamlNodeContainerImplTest {
         // given
         SnakeYamlNodeContainer container = new SnakeYamlNodeContainerImpl(Collections.emptyList());
         container.getOrCreateChildContainer("test", Collections::emptyList);
-        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", null, null, DumperOptions.ScalarStyle.PLAIN);
+        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", ScalarStyle.PLAIN);
 
         // when
         IllegalStateException ex = assertThrows(IllegalStateException.class, () -> container.putNode("test", boolNode));
@@ -125,7 +126,7 @@ class SnakeYamlNodeContainerImplTest {
     void shouldThrowIfPathDoesNotHaveContainer() {
         // given
         SnakeYamlNodeContainer container = new SnakeYamlNodeContainerImpl(Collections.emptyList());
-        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", null, null, DumperOptions.ScalarStyle.PLAIN);
+        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", ScalarStyle.PLAIN);
         container.putNode("toast", boolNode);
 
         // when
@@ -139,7 +140,7 @@ class SnakeYamlNodeContainerImplTest {
     void shouldReturnRootNode() {
         // given
         SnakeYamlNodeContainer container = new SnakeYamlNodeContainerImpl(Collections.emptyList());
-        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", null, null, DumperOptions.ScalarStyle.PLAIN);
+        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", ScalarStyle.PLAIN);
         container.putNode("", boolNode);
 
         // when
@@ -153,7 +154,7 @@ class SnakeYamlNodeContainerImplTest {
     void shouldThrowIfNoRootValueWasSaved() {
         // given
         SnakeYamlNodeContainer container = new SnakeYamlNodeContainerImpl(Collections.emptyList());
-        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", null, null, DumperOptions.ScalarStyle.PLAIN);
+        ScalarNode boolNode = new ScalarNode(Tag.BOOL, "true", ScalarStyle.PLAIN);
         container.putNode("isTest", boolNode);
 
         // when
